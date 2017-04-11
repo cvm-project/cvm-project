@@ -1,11 +1,24 @@
 from itertools import chain
 from .operations import *
+from timeit import default_timer as timer
+
+
+def profile_decorator(func):
+    def wrapper(self, values, *args, **kwargs):
+        print("Time %s function" % func.__name__)
+        start = timer()
+        res = func(self, values, *args, **kwargs)
+        print("function %s took: %f" % (func.__name__, (timer() - start)))
+        return res
+
+    return wrapper
 
 
 def rdd_decorator(func):
+    l_func = profile_decorator(func)
 
     def wrapper(self, *args, **kwargs):
-        return RDD(self, lambda values: func(self, values, *args, **kwargs))
+        return RDD(self, lambda values: l_func(self, values, *args, **kwargs))
 
     return wrapper
 
