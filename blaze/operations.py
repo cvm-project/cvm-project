@@ -1,19 +1,26 @@
+import numba
+from numba import njit, jit
+
 
 def group_by_key(values):
+    @jit()
+    def inner(vals):
+        grouped = []
+        g_key = None
+        g_counter = -1
+        for key, val in vals:
+            if key == g_key:
+                grouped[g_counter][1].append(val)
+            else:
+                # create a new group
+                grouped.append((key, [val]))
+                g_key = key
+                g_counter += 1
+        return grouped
+
     # sort by key
     vals = sorted(values, key=lambda v: v[0])
-    grouped = []
-    g_key = None
-    g_counter = -1
-    for key, val in vals:
-        if key == g_key:
-            grouped[g_counter][1].append(val)
-        else:
-            # create a new group
-            grouped.append((key, [val]))
-            g_key = key
-            g_counter += 1
-    return grouped
+    return inner(vals)
 
 
 def reduce_by_key(f, values):
@@ -56,3 +63,20 @@ def join(rel1, rel2):
             res[k].append(tupl[1])
 
     return res.items()
+
+
+# inner will be recompiled on every call
+def map_(func, values):
+    l_func = njit(func)
+
+    @njit
+    def inner(values):
+        res = []
+        for v in values:
+            res.append(l_func(v))
+        return res
+
+    print(numba.typeof(values))
+    res = inner(values)
+    print(numba.typeof(res))
+    return res

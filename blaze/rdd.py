@@ -1,4 +1,5 @@
 from itertools import chain
+
 from .operations import *
 from timeit import default_timer as timer
 
@@ -24,23 +25,29 @@ def rdd_decorator(func):
 
 
 class RDD:
-    def __init__(self, parent, action, result=None):
+    def __init__(self, parent, action=None, result=None):
         self.__parent = parent
         self.__action = action
         self.__result = result
         self.__cache = False
 
-    def __compute(self):
+    def _compute(self):
         if self.__result:
             return self.__result
         else:
             assert self.__parent, "Parent RDD or the result must be set!"
             if self.__cache:
-                self.__result = self.__action(self.__parent.collect())
+                if self.__action:
+                    self.__result = self.__action(self.__parent._compute())
+                else:
+                    self.__result = self.__parent._compute()
                 return self.__result
             else:
-                p_result = self.__parent.collect()
-                return self.__action(p_result)
+                p_result = self.__parent._compute()
+                if self.__action:
+                    return self.__action(p_result)
+                else:
+                    return p_result
 
     def cache(self):
         self.__cache = True
@@ -48,7 +55,7 @@ class RDD:
 
     @rdd_decorator
     def map(self, values, *args):
-        return list(map(args[0], values))
+        return map(args[0], values)
 
     @rdd_decorator
     def filter(self, values, *args):
@@ -80,4 +87,5 @@ class RDD:
         return join(values, other)
 
     def collect(self):
-        return self.__compute()
+
+        return list(self._compute())
