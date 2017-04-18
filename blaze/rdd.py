@@ -3,13 +3,20 @@ from itertools import chain
 from .operations import *
 from timeit import default_timer as timer
 
+DEBUG = False
+
+
+def print_debug(msg):
+    if DEBUG:
+        print(msg)
+
 
 def profile_decorator(func):
     def wrapper(self, values, *args, **kwargs):
-        print("Time %s function" % func.__name__)
+        print_debug("Time %s function" % func.__name__)
         start = timer()
         res = func(self, values, *args, **kwargs)
-        print("function %s took: %f" % (func.__name__, (timer() - start)))
+        print_debug("function %s took: %f" % (func.__name__, (timer() - start)))
         return res
 
     return wrapper
@@ -55,11 +62,11 @@ class RDD:
 
     @rdd_decorator
     def map(self, values, *args):
-        return map(args[0], values)
+        return map_(args[0], values)
 
     @rdd_decorator
     def filter(self, values, *args):
-        return filter(args[0], values)
+        return filter_(args[0], values)
 
     @rdd_decorator
     def flat_map(self, values, *args):
@@ -83,7 +90,7 @@ class RDD:
 
     @rdd_decorator
     def join(self, values, *args):
-        other = args[0].collect()
+        other = args[0]._compute()
         return join(values, other)
 
     def collect(self):

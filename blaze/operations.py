@@ -1,9 +1,9 @@
 import numba
-from numba import njit, jit
+# from numba import njit, jit
 
 
 def group_by_key(values):
-    @jit()
+    # @jit()
     def inner(vals):
         grouped = []
         g_key = None
@@ -42,41 +42,47 @@ def reduce(f, values):
 
 
 def join(rel1, rel2):
-    # hash
-    res = {}
-    for tupl in rel1:
-        k = tupl[0]
-        if k not in res:
-            res[k] = []
-        try:
-            res[k] += tupl[1]
-        except TypeError:
-            res[k].append(tupl[1])
-
-    for tupl in rel2:
-        k = tupl[0]
-        if k not in res:  # log n
-            res[k] = []
-        try:
-            res[k] += tupl[1]
-        except TypeError:
-            res[k].append(tupl[1])
-
-    return res.items()
+    res = []
+    r1 = group_by_key(rel1)
+    r2 = group_by_key(rel2)
+    ind2 = 0
+    ind1 = 0
+    while True:
+        k1 = r1.next[0]
+        k2 = r2.next[0]
+        if k1 == k2:
+            t = (k1, [])
+            t[1].append(r1[ind1][1])
+            t[1].append(r2[ind2][1])
+            res.append(t)
+        elif k1 < k2:
+            ind1 += 1
+        else:
+            ind2 += 1
+    return res
 
 
 # inner will be recompiled on every call
 def map_(func, values):
-    l_func = njit(func)
+    l_func = func
 
-    @njit
+    # @jit
     def inner(values):
-        res = []
         for v in values:
-            res.append(l_func(v))
-        return res
+            yield l_func(v)
 
-    print(numba.typeof(values))
     res = inner(values)
-    print(numba.typeof(res))
+    return res
+
+
+def filter_(func, values):
+    l_func = func
+
+    # @jit
+    def inner(values):
+        for v in values:
+            if (l_func(v)):
+                yield v
+
+    res = inner(values)
     return res
