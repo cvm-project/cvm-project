@@ -1,9 +1,11 @@
 import numba
-# from numba import njit, jit
+
+
+from numba import njit, jit
 
 
 def group_by_key(values):
-    # @jit()
+    @jit()
     def inner(vals):
         grouped = []
         g_key = None
@@ -20,16 +22,14 @@ def group_by_key(values):
 
     # sort by key
     vals = sorted(values, key=lambda v: v[0])
-    return inner(vals)
+    return iter(inner(vals))
 
-
+@jit
 def reduce_by_key(f, values):
     grouped = group_by_key(values)
-    reduced = []
     for k, vals in grouped:
         acc = reduce(f, vals)
-        reduced.append((k, acc))
-    return reduced
+        yield (k, acc)
 
 
 def reduce(f, values):
@@ -42,47 +42,54 @@ def reduce(f, values):
 
 
 def join(rel1, rel2):
-    res = []
-    r1 = group_by_key(rel1)
-    r2 = group_by_key(rel2)
-    ind2 = 0
-    ind1 = 0
-    while True:
-        k1 = r1.next[0]
-        k2 = r2.next[0]
-        if k1 == k2:
-            t = (k1, [])
-            t[1].append(r1[ind1][1])
-            t[1].append(r2[ind2][1])
-            res.append(t)
-        elif k1 < k2:
-            ind1 += 1
-        else:
-            ind2 += 1
-    return res
+    # hash
+    res1 = {}
+    for tupl in rel1:
+        k = tupl[0]
+        if k not in res1:
+            res1[k] = []
+        try:
+            res1[k] += tupl[1]
+        except TypeError:
+            res1[k].append(tupl[1])
+
+    res2 = {}
+    for tupl in rel2:
+        k = tupl[0]
+        if k not in res2:  # log n
+            res2[k] = []
+        try:
+            res2[k] += tupl[1]
+        except TypeError:
+            res2[k].append(tupl[1])
+
+    res = {}
+    for k, v in res1.items():
+        if k in res2:
+            res[k] = v + res2[k]
+    return iter(res.items())
 
 
-# inner will be recompiled on every call
 def map_(func, values):
-    l_func = func
+    l_func = njit()(func)
 
     # @jit
-    def inner(values):
+    def inner():
         for v in values:
             yield l_func(v)
 
-    res = inner(values)
+    res = inner()
     return res
 
 
 def filter_(func, values):
-    l_func = func
+    l_func = njit()(func)
 
-    # @jit
-    def inner(values):
+    @njit
+    def inner():
         for v in values:
-            if (l_func(v)):
+            if l_func(v):
                 yield v
 
-    res = inner(values)
+    res = inner()
     return res

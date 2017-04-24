@@ -1,7 +1,6 @@
 from itertools import chain
-
-from .operations import *
 from timeit import default_timer as timer
+from .operations import *
 
 DEBUG = False
 
@@ -93,6 +92,9 @@ class RDD:
         other = args[0]._compute()
         return join(values, other)
 
-    def collect(self):
+    def grouped_join(self, values, *args):
+        # the other is grouped
+        return self.join(values, args)
 
+    def collect(self):
         return list(self._compute())

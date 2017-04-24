@@ -11,7 +11,7 @@ from timeit import default_timer as timer
 sys.path.append(os.getcwd())
 
 bc = BlazeContext()
-data = bc.collection([i for i in range(0, 10000000)])
+data = bc.collection([i for i in range(0, 1000000)])
 
 
 def long_running_function(v):
