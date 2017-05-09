@@ -3,34 +3,60 @@ import os
 from time import sleep
 
 import math
+
+import numba
 from numba import jit
+from numba import njit
 
 from blaze.blaze_context import BlazeContext
 from timeit import default_timer as timer
 
 sys.path.append(os.getcwd())
-
+#
 bc = BlazeContext()
-data = bc.collection([i for i in range(0, 1000000)])
+data = bc.collection(list([i for i in range(0, 5)]))
 
+w = data.map(lambda w: w * 1).filter(lambda w: w % 2 == 0).flat_map(lambda w: [1, 10, 12])
+print(w.collect())
 
-def long_running_function(v):
-    return v, math.sqrt(v)
+# @njit()
+# def my_g():
+#     for i in [0, 10]:
+#         yield i
 
+# alist = numba.types.Array([1,2])
 
-gr = data.map(long_running_function) \
-    .filter(lambda w: w[0] % 2)
+# op = njit(open)
+# @njit()
+# def f():
+#     for a in open('dsf'):
+#         print (a)
 
-start = timer()
-r1 = gr.collect()
-end = timer()
-print('ELAPSED %f' % (end - start))
+# f()
+# def f():
+#     @njit()
+#     def my_g():
+#         for i in [0, 10]:
+#             yield i
+#
+#     @njit()
+#     def bar():
+#         for a in my_g():
+#             print (a)
+#
+#     bar()
 
-faster_gr = data.filter(lambda w: w % 2) \
-    .map(long_running_function)
+# f()
 
-start = timer()
-r2 = faster_gr.collect()
-end = timer()
-print('ELAPSED %f' % (end - start))
-assert r1 == r2
+# list_ = [1,2]
+# def f(a):
+#     return a+list_[:-1]
+# f(1)
+# list_[0]
+# f(1)
+# with open('/home/sabir/add.ll', 'w') as file:
+#     llvm = f.inspect_llvm()
+#     for k, v in llvm.items():
+#         file.write(str(k))
+#         file.write(v)
+#         file.write('\n')

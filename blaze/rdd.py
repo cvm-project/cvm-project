@@ -1,6 +1,7 @@
-from itertools import chain
-from timeit import default_timer as timer
-from .operations import *
+import re
+
+from blaze.ast_generator import ASTGenerator
+from .transforms import *
 
 DEBUG = False
 
@@ -10,91 +11,104 @@ def print_debug(msg):
         print(msg)
 
 
-def profile_decorator(func):
-    def wrapper(self, values, *args, **kwargs):
-        print_debug("Time %s function" % func.__name__)
-        start = timer()
-        res = func(self, values, *args, **kwargs)
-        print_debug("function %s took: %f" % (func.__name__, (timer() - start)))
-        return res
+class RDD(object):
+    def __init__(self, parent=None, result=None):
+        self.parent = parent
+        self._result = result
+        self._cache = False
+        self.successor = None
 
-    return wrapper
-
-
-def rdd_decorator(func):
-    l_func = profile_decorator(func)
-
-    def wrapper(self, *args, **kwargs):
-        return RDD(self, lambda values: l_func(self, values, *args, **kwargs))
-
-    return wrapper
-
-
-class RDD:
-    def __init__(self, parent, action=None, result=None):
-        self.__parent = parent
-        self.__action = action
-        self.__result = result
-        self.__cache = False
 
     def _compute(self):
-        if self.__result:
-            return self.__result
+        if self._result:
+            return self._result
         else:
-            assert self.__parent, "Parent RDD or the result must be set!"
-            if self.__cache:
-                if self.__action:
-                    self.__result = self.__action(self.__parent._compute())
-                else:
-                    self.__result = self.__parent._compute()
-                return self.__result
-            else:
-                p_result = self.__parent._compute()
-                if self.__action:
-                    return self.__action(p_result)
-                else:
-                    return p_result
+            return ASTGenerator().go(self)
 
     def cache(self):
-        self.__cache = True
+        self._cache = True
         return self
 
-    @rdd_decorator
-    def map(self, values, *args):
-        return map_(args[0], values)
+    def map(self, map_func):
+        return Map(self, map_func)
 
-    @rdd_decorator
-    def filter(self, values, *args):
-        return filter_(args[0], values)
+    def filter(self, predicate):
+        return Filter(self, predicate)
 
-    @rdd_decorator
-    def flat_map(self, values, *args):
-        return list(chain.from_iterable(map(args[0], values)))
+    def flat_map(self, func):
+        return FlatMap(self, func)
 
-    @rdd_decorator
-    def group_by_key(self, values):
-        return group_by_key(values)
+    # @rdd_decorator
+    # def group_by_key(self, values):
+    #     return group_by_key(values)
+    #
+    # @rdd_decorator
+    # def reduce_by_key(self, values, *args):
+    #     return reduce_by_key(args[0], values)
+    #
+    # @rdd_decorator
+    # def sort(self, values, *args, **kwargs):
+    #     return sorted(values, *args, **kwargs)
+    #
+    # @rdd_decorator
+    # def reduce(self, values, *args):
+    #     return reduce(args[0], values)
 
-    @rdd_decorator
-    def reduce_by_key(self, values, *args):
-        return reduce_by_key(args[0], values)
-
-    @rdd_decorator
-    def sort(self, values, *args, **kwargs):
-        return sorted(values, *args, **kwargs)
-
-    @rdd_decorator
-    def reduce(self, values, *args):
-        return reduce(args[0], values)
-
-    @rdd_decorator
-    def join(self, values, *args):
-        other = args[0]._compute()
-        return join(values, other)
-
-    def grouped_join(self, values, *args):
-        # the other is grouped
-        return self.join(values, args)
+    def join(self, other):
+        return Join(self, other)
 
     def collect(self):
         return list(self._compute())
+
+    def accept(self, visitor):
+
+        def convert(name):
+            s1 = first_cap_re.sub(r'\1_\2', name)
+            return all_cap_re.sub(r'\1_\2', s1).lower()
+
+        method_name = 'visit_{}'.format(convert(self.__class__.__name__))
+        visit = getattr(visitor, method_name)
+        return visit(self)
+
+
+first_cap_re = re.compile('(.)([A-Z][a-z]+)')
+all_cap_re = re.compile('([a-z0-9])([A-Z])')
+
+
+class PipeRDD(RDD):
+    def __init__(self, parent, func):
+        super(PipeRDD, self).__init__(parent)
+        self.func = func
+
+
+class ShuffleRDD(RDD):
+    def __init__(self, parent, other):
+        super(ShuffleRDD, self).__init__(parent)
+        self._other = other
+
+class Map(PipeRDD):
+    pass
+
+
+class Filter(PipeRDD):
+    pass
+
+
+class FlatMap(PipeRDD):
+    pass
+
+
+class Join(ShuffleRDD):
+    pass
+
+
+class TextSource(RDD):
+    def __init__(self, path):
+        super(TextSource, self).__init__()
+        self.path = path
+
+
+class CollectionSource(RDD):
+    def __init__(self, values):
+        super(CollectionSource, self).__init__()
+        self.values = values
