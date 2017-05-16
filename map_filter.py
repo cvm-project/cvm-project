@@ -8,16 +8,16 @@ import numba
 from numba import jit
 from numba import njit
 
-from blaze.blaze_context import BlazeContext
-from timeit import default_timer as timer
-
-sys.path.append(os.getcwd())
+# from blaze.blaze_context import BlazeContext
+# from timeit import default_timer as timer
 #
-bc = BlazeContext()
-data = bc.collection(list([i for i in range(0, 5)]))
-
-w = data.map(lambda w: w * 1).filter(lambda w: w % 2 == 0).flat_map(lambda w: [1, 10, 12])
-print(w.collect())
+# sys.path.append(os.getcwd())
+# #
+# bc = BlazeContext()
+# data = bc.collection(list([i for i in range(0, 5)]))
+#
+# w = data.map(lambda w: w * 1).filter(lambda w: w % 2 == 0).flat_map(lambda w: [1, 10, 12])
+# print(w.collect())
 
 # @njit()
 # def my_g():
@@ -48,10 +48,13 @@ print(w.collect())
 
 # f()
 
-# list_ = [1,2]
-# def f(a):
-#     return a+list_[:-1]
-# f(1)
+list_ = [1,2]
+@njit()
+def f(a, b):
+    return a+b
+f(1,2)
+print(f.signatures)
+# print(type(b))
 # list_[0]
 # f(1)
 # with open('/home/sabir/add.ll', 'w') as file:

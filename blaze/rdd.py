@@ -1,6 +1,7 @@
 import re
 
 from blaze.ast_generator import ASTGenerator
+from blaze.stage_generator import StageGenerator
 from .transforms import *
 
 DEBUG = False
@@ -13,17 +14,16 @@ def print_debug(msg):
 
 class RDD(object):
     def __init__(self, parent=None, result=None):
-        self.parent = parent
+        self.parents = [parent]
         self._result = result
         self._cache = False
         self.successor = None
-
 
     def _compute(self):
         if self._result:
             return self._result
         else:
-            return ASTGenerator().go(self)
+            return StageGenerator().schedule(self)
 
     def cache(self):
         self._cache = True
@@ -82,9 +82,8 @@ class PipeRDD(RDD):
 
 
 class ShuffleRDD(RDD):
-    def __init__(self, parent, other):
-        super(ShuffleRDD, self).__init__(parent)
-        self._other = other
+    pass
+
 
 class Map(PipeRDD):
     pass
@@ -99,7 +98,10 @@ class FlatMap(PipeRDD):
 
 
 class Join(ShuffleRDD):
-    pass
+    def __init__(self, left, right):
+        super(Join, self).__init__(left)
+        self.parents.append(right)
+        self.hash_right = True
 
 
 class TextSource(RDD):
