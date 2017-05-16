@@ -2,6 +2,7 @@ from queue import Queue
 
 from blaze.ast_generator import _find_top_node, ASTGenerator, RDD, ShuffleRDD, Join
 from blaze.stage_ast import StageAst
+from blaze.ast_shortcuts import *
 
 
 class Stage:
@@ -37,7 +38,23 @@ def append_breaker_ast(source_breaker, cur_stage):
             hash_stage_ast = cur_stage.source_stages[1].stage_ast
             other_stage_ast = cur_stage.source_stages[0].stage_ast
 
-        # TODO: hashing by the key
+        # could otherwise use a UDF to determine the key
+
+        # hash_table[var_name[0]]=var_name
+        hash_stage_ast.append_inner_ast(
+            assign_(left=subscript_store(var_name=ASTGenerator.ROOT_HASH_TABLE, slice=index_(value=
+            subscript_load(
+                var_name=hash_stage_ast.get_current_var(),
+                slice=index_num(0)
+            ))),
+                    right=name_load(name=hash_stage_ast.get_current_var())))
+
+        # return hash_table
+        hash_stage_ast.append_root_ast(
+            return_(ASTGenerator.ROOT_HASH_TABLE)
+        )
+        
+        other_stage_ast
 
 
 class StageGenerator:
@@ -58,6 +75,7 @@ class StageGenerator:
 
             # add breaker specific code
             append_breaker_ast(source_breaker, cur_stage)
+
         go(None, rdd)
 
     @staticmethod

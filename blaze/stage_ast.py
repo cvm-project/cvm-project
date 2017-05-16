@@ -19,7 +19,7 @@ class StageAst:
         self._var_counter += 1
         return self._var_prefix + str(self._var_counter)
 
-    def get_cur_var(self):
+    def get_current_var(self):
         return self._var_prefix + str(self._var_counter)
 
     def get_loop_var(self):
@@ -31,3 +31,9 @@ class StageAst:
 
     def get_current_func_name(self):
         return self._func_prefix + str(self._func_counter)
+
+    def append_inner_ast(self, ast):
+        self.inner_ast.append(ast)
+
+    def append_root_ast(self, ast):
+        self.root_ast.append(ast)
