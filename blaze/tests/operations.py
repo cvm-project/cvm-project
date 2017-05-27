@@ -21,6 +21,7 @@ class TestOps(unittest.TestCase):
         d = bc.collection(range(0, 10)).filter(lambda w: w % 2 == 0)
         res = d.collect()
         self.assertEqual(res, list(filter(lambda w: w % 2 == 0, range(0, 10))))
+        self.assertEqual(0, 1)
 
 
 class TestFlatMap(unittest.TestCase):
