@@ -1,7 +1,6 @@
 import re
 
-from blaze.ast_generator import ASTGenerator
-from blaze.stage_generator import StageGenerator
+from blaze.controller import compute_sink_rdd
 from .transforms import *
 
 DEBUG = False
@@ -14,7 +13,11 @@ def print_debug(msg):
 
 class RDD(object):
     def __init__(self, parent=None, result=None):
-        self.parents = [parent]
+        if parent:
+            self.parents = [parent]
+            parent.successor = self
+        else:
+            self.parents = []
         self._result = result
         self._cache = False
         self.successor = None
@@ -23,7 +26,7 @@ class RDD(object):
         if self._result:
             return self._result
         else:
-            return StageGenerator().schedule(self)
+            return compute_sink_rdd(self)
 
     def cache(self):
         self._cache = True
@@ -58,7 +61,7 @@ class RDD(object):
         return Join(self, other)
 
     def collect(self):
-        return list(self._compute())
+        return self._compute()
 
     def accept(self, visitor):
 
@@ -99,8 +102,9 @@ class FlatMap(PipeRDD):
 
 class Join(ShuffleRDD):
     def __init__(self, left, right):
-        super(Join, self).__init__(left)
+        super(Join, self).__init__(parent=left)
         self.parents.append(right)
+        right.successor = self
         self.hash_right = True
 
 

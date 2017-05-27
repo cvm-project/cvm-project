@@ -1,7 +1,6 @@
 from numba import njit
 
-from blaze.rdd import *
-from blaze.pretty_print import parseprint
+# from blaze.pretty_print import parseprint
 from ast import *
 import blaze.ast_shortcuts as ast_scuts
 
@@ -9,15 +8,20 @@ import blaze.ast_shortcuts as ast_scuts
 def ast_decorator(func):
     def wrapper(self, node):
         func(self, node)
-        if node.successor is not None and self.bot_node != node.successor:
+        if node.successor is not None and self.bot_node != node:
             node.successor.accept(self)
 
     return wrapper
 
 
-class ASTGenerator:
-    ROOT_HASH_TABLE = 'hash_table'
+ROOT_HASH_TABLE = 'hash_table'
+RESULT_LIST = 'result_list'
+PARAMETER_LIST = 'param_list'
+PARAMETER_HASH_TABLE = 'param_hash_table'
+FUNCTION_NAME = 'f'
 
+
+class ASTGenerator:
     def __init__(self, stage_ast, top_node, bot_node):
         self.stage_ast = stage_ast
         self.top_node = top_node
@@ -28,14 +32,22 @@ class ASTGenerator:
         # setup ast
         body_ast = []
         func_def = Module(
-            body=[FunctionDef(name='f', args=arguments(args=[arg(arg='values', annotation=None)], vararg=None,
-                                                       kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[]),
+            body=[FunctionDef(name=FUNCTION_NAME, args=arguments(
+                args=[arg(arg=PARAMETER_LIST, annotation=None), arg(arg=PARAMETER_HASH_TABLE, annotation=None)],
+                vararg=None,
+                kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[NameConstant(value=None)]),
                               body=body_ast, decorator_list=[], returns=None)])
 
         # always add a hash_table
-        body_ast.append(ast_scuts.assign_(self.root_hash_table_name, Dict(keys=[], values=[])))
+        body_ast.append(ast_scuts.assign_(ROOT_HASH_TABLE, Dict(keys=[], values=[])))
+        body_ast.append(ast_scuts.assign_(RESULT_LIST, List(elts=[], ctx=Load())))
 
-        self.stage_ast.inner_ast = body_ast
+        inner_ast = []
+        body_ast.append(
+            For(target=Name(id=self.stage_ast.get_current_var(), ctx=Store()), iter=Name(id=PARAMETER_LIST, ctx=Load()),
+                body=inner_ast, orelse=[]))
+
+        self.stage_ast.inner_ast = inner_ast
         self.stage_ast.root_ast = body_ast
         self.stage_ast.func_def = func_def
 
@@ -56,7 +68,7 @@ class ASTGenerator:
         #         file.write('\n')
 
     def add_final_statement_inner(self):
-        self.stage_ast.root_ast.append(Expr(value=Yield(value=Name(id=self.stage_ast._get_current_var(), ctx=Load()))))
+        self.stage_ast.root_ast.append(Expr(value=Yield(value=Name(id=self.stage_ast.get_current_var(), ctx=Load()))))
 
     def add_final_statement_root(self, stm):
         self.stage_ast.root_ast.append(stm)
@@ -70,7 +82,7 @@ class ASTGenerator:
         # add the node function to the locals list
         self.stage_ast.locals[self.stage_ast.get_next_func_name()] = njit(node.func)
         current_var = self.stage_ast.get_current_var()
-        self.stage_ast.ast.append(
+        self.stage_ast.append_inner_ast(
             Assign(targets=[Name(id=self.stage_ast.get_next_var(), ctx=Store())],
                    value=Call(func=Name(id=self.stage_ast.get_current_func_name(), ctx=Load()),
                               args=[Name(id=current_var, ctx=Load())], keywords=[])))
@@ -81,7 +93,7 @@ class ASTGenerator:
         # add the node function to the locals list
         self.stage_ast.locals[self.stage_ast.get_next_func_name()] = njit(node.func)
         current_var = self.stage_ast.get_current_var()
-        self.stage_ast.ast.append(
+        self.stage_ast.append_inner_ast(
             If(test=UnaryOp(op=Not(), operand=Call(func=Name(id=self.stage_ast.get_current_func_name(), ctx=Load()),
                                                    args=[Name(id=current_var, ctx=Load())], keywords=[])),
                body=[Continue()],
@@ -94,22 +106,22 @@ class ASTGenerator:
         self.stage_ast.locals[self.stage_ast.get_next_func_name()] = njit(node.func)
         current_var = self.stage_ast.get_current_var()
         # produce a new list
-        self.stage_ast.ast.append(
+        self.stage_ast.append_inner_ast(
             Assign(targets=[Name(id=self.stage_ast.get_next_var(), ctx=Store())],
                    value=Call(func=Name(id=self.stage_ast.get_current_func_name(), ctx=Load()),
                               args=[Name(id=current_var, ctx=Load())], keywords=[])))
         # add new loop
         body_ast = []
         current_var = self.stage_ast.get_current_var()
-        self.stage_ast.ast.append(
+        self.stage_ast.append_inner_ast(
             For(target=Name(id=self.stage_ast.get_next_var(), ctx=Store()), iter=Name(id=current_var, ctx=Load()),
                 body=body_ast, orelse=[])
         )
-        self.stage_ast.ast = body_ast
+        self.stage_ast.inner_ast = body_ast
 
     @ast_decorator
     def visit_join(self, node):
-        pass
+        raise NotImplemented
 
     @ast_decorator
     def visit_text_source(self, node):
@@ -124,14 +136,13 @@ class ASTGenerator:
     @ast_decorator
     def visit_collection_source(self, node):
         values = node.values
-        self.stage_ast.values = values
-        self.stage_ast.locals['values'] = values
-        body_ast = []
-        self.stage_ast.ast.append(
-            For(target=Name(id=self.stage_ast.get_current_var(), ctx=Store()), iter=Name(id='values', ctx=Load()),
-                body=body_ast, orelse=[])
-            )
-        self.stage_ast.ast = body_ast
+        self.stage_ast.input_values = values
+        # body_ast = []
+        # self.stage_ast.ast.append(
+        #     For(target=Name(id=self.stage_ast.get_current_var(), ctx=Store()), iter=Name(id='values', ctx=Load()),
+        #         body=body_ast, orelse=[])
+        # )
+        # self.stage_ast.ast = body_ast
 
 
 def _find_top_node(node):

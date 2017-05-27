@@ -1,7 +1,4 @@
 from _ast import *
-from queue import Queue
-
-from blaze.ast_generator import _find_top_node, ASTGenerator, RDD, ShuffleRDD
 
 
 def for_(it_var, iterator, body_list):
@@ -12,6 +9,11 @@ def for_(it_var, iterator, body_list):
 
 def assign_(left, right):
     return Assign(targets=[Name(id=left, ctx=Store())],
+                  value=right)
+
+
+def assign_explicit(left, right):
+    return Assign(targets=[left],
                   value=right)
 
 
@@ -48,6 +50,7 @@ def name_load(name):
 
 def name_store(name):
     return Name(id=name, ctx=Store())
+
 
 def return_(name):
     return Return(value=Name(id=name, ctx=Load()))

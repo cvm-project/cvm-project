@@ -1,10 +1,14 @@
-from queue import Queue
+import ast
+from ast import fix_missing_locations
 
-from blaze.ast_generator import _find_top_node, ASTGenerator, RDD, ShuffleRDD
+from numba import jit
+from numba import njit
+from blaze.pretty_print import parseprint
+import astunparse
 
+from ast import *
 
 class StageAst:
-
     def __init__(self):
         self._var_counter = 0
         self._var_prefix = "v"
@@ -14,6 +18,19 @@ class StageAst:
         self.root_ast = []
         self.inner_ast = self.root_ast
         self.func_def = None
+        self.stage = None
+        self.input_values = None
+
+    def execute(self, left, right=None):
+
+        # parseprint(self.func_def)
+        print(astunparse.unparse(self.func_def))
+        fix_missing_locations(self.func_def)
+        # print(ast.dump(self.func_def))
+        c = compile(self.func_def, "<string>", "exec")
+        exec(c, self.locals)
+        f = self.locals['f']
+        return f(left, right)
 
     def get_next_var(self):
         self._var_counter += 1
@@ -23,7 +40,7 @@ class StageAst:
         return self._var_prefix + str(self._var_counter)
 
     def get_loop_var(self):
-        return self._var_prefix + "0"
+        return self._var_prefix + "loop"
 
     def get_next_func_name(self):
         self._func_counter += 1

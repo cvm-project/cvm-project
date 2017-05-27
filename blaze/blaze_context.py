@@ -1,5 +1,5 @@
 
-from blaze.rdd import RDD, TextSource, CollectionSource
+from blaze.rdd import TextSource, CollectionSource
 import numpy as np
 
 
