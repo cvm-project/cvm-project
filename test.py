@@ -16,8 +16,8 @@ from timeit import default_timer as timer
 sys.path.append(os.getcwd())
 # #
 bc = BlazeContext()
-data1 = bc.collection([(v, rand(1,1)[0]*100) for v in range(0, 100)])
-data2 = bc.collection([(v, rand(1,1)[0]*100) for v in range(0, 50)])
+data1 = bc.collection([(v, rand(1, 1)[0] * 100) for v in range(0, 100)])
+data2 = bc.collection([(v, rand(1, 1)[0] * 100) for v in range(0, 50)])
 
 joined = data1.join(data2).map(lambda w: w).filter(lambda t: t[0] % 20 == 0).join(data1)
 res = joined.collect()

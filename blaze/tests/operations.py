@@ -12,6 +12,7 @@ class TestJoin(unittest.TestCase):
         joined = data1.join(data2).map(lambda v: v[0])
         res = joined.collect()
         self.assertEqual(res, list(range(50, 100)))
+        self.assertEqual(0, 1)
 
 
 class TestOps(unittest.TestCase):
