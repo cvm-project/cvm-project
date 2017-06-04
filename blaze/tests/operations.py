@@ -12,7 +12,6 @@ class TestJoin(unittest.TestCase):
         joined = data1.join(data2).map(lambda v: v[0])
         res = joined.collect()
         self.assertEqual(res, list(range(50, 100)))
-        self.assertEqual(0, 1)
 
 
 class TestOps(unittest.TestCase):
@@ -21,7 +20,6 @@ class TestOps(unittest.TestCase):
         d = bc.collection(range(0, 10)).filter(lambda w: w % 2 == 0)
         res = d.collect()
         self.assertEqual(res, list(filter(lambda w: w % 2 == 0, range(0, 10))))
-        self.assertEqual(0, 1)
 
 
 class TestFlatMap(unittest.TestCase):
