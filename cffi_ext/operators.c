@@ -433,6 +433,7 @@ static void (*_cffi_call_python_org)(struct _cffi_externpy_s *, char *);
  // passed to the real C compiler
         #include <sys/types.h>
         #include "../c_operators/intersect.c"
+        #include "../c_operators/add.c"
     
 
 /************************************************************/
@@ -445,7 +446,49 @@ static void *_cffi_types[] = {
 /*  4 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
 /*  5 */ _CFFI_OP(_CFFI_OP_NOOP, 1),
 /*  6 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
+/*  7 */ _CFFI_OP(_CFFI_OP_FUNCTION, 3), // int()(int, int)
+/*  8 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/*  9 */ _CFFI_OP(_CFFI_OP_PRIMITIVE, 7),
+/* 10 */ _CFFI_OP(_CFFI_OP_FUNCTION_END, 0),
 };
+
+static int _cffi_d_add(int x0, int x1)
+{
+  return add(x0, x1);
+}
+#ifndef PYPY_VERSION
+static PyObject *
+_cffi_f_add(PyObject *self, PyObject *args)
+{
+  int x0;
+  int x1;
+  int result;
+  PyObject *arg0;
+  PyObject *arg1;
+
+  if (!PyArg_UnpackTuple(args, "add", 2, 2, &arg0, &arg1))
+    return NULL;
+
+  x0 = _cffi_to_c_int(arg0, int);
+  if (x0 == (int)-1 && PyErr_Occurred())
+    return NULL;
+
+  x1 = _cffi_to_c_int(arg1, int);
+  if (x1 == (int)-1 && PyErr_Occurred())
+    return NULL;
+
+  Py_BEGIN_ALLOW_THREADS
+  _cffi_restore_errno();
+  { result = add(x0, x1); }
+  _cffi_save_errno();
+  Py_END_ALLOW_THREADS
+
+  (void)self; /* unused */
+  return _cffi_from_c_int(result, int);
+}
+#else
+#  define _cffi_f_add _cffi_d_add
+#endif
 
 static int * _cffi_d_intersect(int * x0, int * x1, int x2, int x3, int * x4)
 {
@@ -526,6 +569,7 @@ _cffi_f_intersect(PyObject *self, PyObject *args)
 #endif
 
 static const struct _cffi_global_s _cffi_globals[] = {
+  { "add", (void *)_cffi_f_add, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 7), (void *)_cffi_d_add },
   { "intersect", (void *)_cffi_f_intersect, _CFFI_OP(_CFFI_OP_CPYTHON_BLTN_V, 0), (void *)_cffi_d_intersect },
 };
 
@@ -536,12 +580,12 @@ static const struct _cffi_type_context_s _cffi_type_context = {
   NULL,  /* no struct_unions */
   NULL,  /* no enums */
   NULL,  /* no typenames */
-  1,  /* num_globals */
+  2,  /* num_globals */
   0,  /* num_struct_unions */
   0,  /* num_enums */
   0,  /* num_typenames */
   NULL,  /* no includes */
-  7,  /* num_types */
+  11,  /* num_types */
   0,  /* flags */
 };
 

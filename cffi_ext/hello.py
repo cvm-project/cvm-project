@@ -7,18 +7,20 @@
 from cffi import FFI
 ffibuilder = FFI()
 c_path = '../c_operators/'
-header = c_path + 'intersect.h'
+headers = [c_path + 'intersect.h', c_path + 'add.h']
 
 ffibuilder.set_source("operators",
    r""" // passed to the real C compiler
         #include <sys/types.h>
         #include "../c_operators/intersect.c"
+        #include "../c_operators/add.c"
     """,
     libraries=[])
 
 
-with open(header, 'r') as c_def:
-    ffibuilder.cdef(c_def.read())
+for header in headers:
+    with open(header, 'r') as c_def:
+        ffibuilder.cdef(c_def.read())
 
 if __name__ == "__main__":
     ffibuilder.compile(verbose=True)
