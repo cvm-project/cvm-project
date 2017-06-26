@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sabir/projects/blaze/cpp/main.cpp
+iostream
+-
+chrono
+-
+cmath
+-
+immintrin.h
+/home/sabir/projects/blaze/cpp/immintrin.h
+

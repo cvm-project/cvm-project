@@ -207,9 +207,9 @@ def schedule(rdd):
     if sink_stage.is_empty:
         return sink_stage.source_stages[0]
     else:
-        sink_stage.stage_ast.append_inner_ast(Expr(
-            value=Call(func=Attribute(value=Name(id=RESULT_LIST, ctx=Load()), attr='append', ctx=Load()),
-                       args=[Name(id=sink_stage.stage_ast.get_current_var(), ctx=Load())], keywords=[])))
+        # sink_stage.stage_ast.append_inner_ast(Expr(
+        #     value=Call(func=Attribute(value=Name(id=RESULT_LIST, ctx=Load()), attr='append', ctx=Load()),
+        #                args=[Name(id=sink_stage.stage_ast.get_current_var(), ctx=Load())], keywords=[])))
         sink_stage.stage_ast.append_root_ast(return_(RESULT_LIST))
         return sink_stage
 

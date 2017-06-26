@@ -53,9 +53,8 @@ class RDD(object):
     # def sort(self, values, *args, **kwargs):
     #     return sorted(values, *args, **kwargs)
     #
-    # @rdd_decorator
-    # def reduce(self, values, *args):
-    #     return reduce(args[0], values)
+    def reduce(self, func):
+        return Reduce(self, func)
 
     def join(self, other):
         return Join(self, other)
@@ -118,3 +117,7 @@ class CollectionSource(RDD):
     def __init__(self, values):
         super(CollectionSource, self).__init__()
         self.values = values
+
+
+class Reduce(ShuffleRDD):
+    pass

@@ -39,8 +39,8 @@ class ASTGenerator:
                               body=body_ast, decorator_list=[], returns=None)])
 
         # always add a hash_table
-        body_ast.append(ast_scuts.assign_(ROOT_HASH_TABLE, Dict(keys=[], values=[])))
-        body_ast.append(ast_scuts.assign_(RESULT_LIST, List(elts=[], ctx=Load())))
+        # body_ast.append(ast_scuts.assign_(ROOT_HASH_TABLE, Dict(keys=[], values=[])))
+        # body_ast.append(ast_scuts.assign_(RESULT_LIST, List(elts=[], ctx=Load())))
 
         inner_ast = []
         body_ast.append(
@@ -52,7 +52,7 @@ class ASTGenerator:
         self.stage_ast.func_def = func_def
 
         self.top_node.accept(self)
-        # self.add_final_statement_inner()
+        # self.stage_ast
 
         # compile and execute ast
         # fix_missing_locations(ast)

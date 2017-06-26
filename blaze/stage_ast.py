@@ -8,6 +8,7 @@ import astunparse
 
 from ast import *
 
+
 class StageAst:
     def __init__(self):
         self._var_counter = 0
@@ -22,14 +23,13 @@ class StageAst:
         self.input_values = None
 
     def execute(self, left, right=None):
-
         # parseprint(self.func_def)
         print(astunparse.unparse(self.func_def))
         fix_missing_locations(self.func_def)
         # print(ast.dump(self.func_def))
         c = compile(self.func_def, "<string>", "exec")
         exec(c, self.locals)
-        f = self.locals['f']
+        f = njit(self.locals['f'])
         return f(left, right)
 
     def get_next_var(self):
@@ -53,4 +53,13 @@ class StageAst:
         self.inner_ast.append(ast)
 
     def append_root_ast(self, ast):
-        self.root_ast.append(ast)
+        # self.root_ast.append(ast)
+
+        # hack for the reduce function
+        self.root_ast.insert(0, Assign(targets=[Name(id='accumulator', ctx=Store())], value=Num(n=0)))
+        # self.inner_ast.append(AugAssign(target=Name(id='accumulator', ctx=Store()), op=Add(),
+        #                                 value=Subscript(value=Name(id=self.get_current_var(), ctx=Load()), slice=Index(value=Num(n=0)),
+        #                                                 ctx=Load())))
+        #
+        self.inner_ast.append(AugAssign(target=Name(id='accumulator', ctx=Store()), op=Add(), value=Name(id=self.get_current_var(), ctx=Load())))
+        self.root_ast.append(Return(value=Name(id='accumulator', ctx=Load())))
