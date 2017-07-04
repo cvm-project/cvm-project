@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/blaze.iml" filepath="$PROJECT_DIR$/.idea/blaze.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../llvm-playground/.idea/llvm-playground.iml" filepath="$PROJECT_DIR$/../llvm-playground/.idea/llvm-playground.iml" />
       <module fileurl="file://$PROJECT_DIR$/../numba/.idea/numba.iml" filepath="$PROJECT_DIR$/../numba/.idea/numba.iml" />
     </modules>
   </component>

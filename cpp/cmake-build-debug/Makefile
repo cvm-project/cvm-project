@@ -150,6 +150,33 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/parser/JSONParser.o: src/parser/JSONParser.cpp.o
+
+.PHONY : src/parser/JSONParser.o
+
+# target to build an object file
+src/parser/JSONParser.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/parser/JSONParser.cpp.o
+.PHONY : src/parser/JSONParser.cpp.o
+
+src/parser/JSONParser.i: src/parser/JSONParser.cpp.i
+
+.PHONY : src/parser/JSONParser.i
+
+# target to preprocess a source file
+src/parser/JSONParser.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/parser/JSONParser.cpp.i
+.PHONY : src/parser/JSONParser.cpp.i
+
+src/parser/JSONParser.s: src/parser/JSONParser.cpp.s
+
+.PHONY : src/parser/JSONParser.s
+
+# target to generate assembly for a file
+src/parser/JSONParser.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/parser/JSONParser.cpp.s
+.PHONY : src/parser/JSONParser.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,6 +189,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... src/parser/JSONParser.o"
+	@echo "... src/parser/JSONParser.i"
+	@echo "... src/parser/JSONParser.s"
 .PHONY : help
 
 

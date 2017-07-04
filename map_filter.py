@@ -4,69 +4,39 @@ from time import sleep
 
 import math
 
-from blaze.blaze_context import BlazeContext
+from blaze.blaze_context import *
 from numba import cfunc
 
-sys.path.insert(0, "/home/sabir/projects/")
-print(sys.path)
+# sys.path.insert(0, "/home/sabir/projects/")
 from numba import njit
 import llvmlite.binding as llvm
 import numba as nb
 
+
+def my_gen():
+    yield 42
+
+
 # #
-bc = BlazeContext()
-data = bc.collection(list([i for i in range(0, 50)]))
-
-
+# data = generator(my_gen)
+data = range_(0, 10, 1)
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
 # os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
-os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
+# os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
 
 
 # os.environ["NUMBA_DUMP_LLVM"] = '1'
 
-w = data.map(lambda w: (w, w * 2)).filter(lambda t: t[0] % 2 == 0 and t[1] % 3 == 0)
+w = data.map(lambda w: (w, w + 1.0)).filter(lambda t: t[0] % 2 == 0)
+w2 = data
+w3 = w.join(w2)
 # w = data.map(lambda w: (w, w * 2)).filter(lambda t: t[0] % 2 == 0 and t[1] % 3 == 0)
-print(w.collect())
+w3.count()
+# print(w2.count())
 
-# @njit()
-# def my_g():
-#     for i in [0, 10]:
-#         yield i
 
-# alist = numba.types.Array([1,2])
 
-# op = njit(open)
-# @njit()
-# def f():
-#     for a in open('dsf'):
-#         print (a)
-
-# f()
-# def f():
-#     @njit()
-#     def my_g():
-#         for i in [0, 10]:
-#             yield i
-#
-#     @njit()
-#     def bar():
-#         for a in my_g():
-#             print (a)
-#
-#     bar()
-
-# f()
-#
-# list_ = [1,2]
-# @jit()
-# def f(a, b):
-#     file = open('/home/sabir/add.ll')
-#     print(file)
-#     file.close()
-#     return a + b
-#
 #
 # f(1, 2)
 # with open('/home/sabir/add.ll', 'w') as file:

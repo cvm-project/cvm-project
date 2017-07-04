@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/cpp.dir/main.cpp.o"
+  "CMakeFiles/cpp.dir/src/parser/JSONParser.cpp.o"
   "cpp.pdb"
   "cpp"
 )

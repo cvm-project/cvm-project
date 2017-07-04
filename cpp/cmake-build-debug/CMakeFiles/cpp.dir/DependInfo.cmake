@@ -5,11 +5,13 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/sabir/projects/blaze/cpp/main.cpp" "/home/sabir/projects/blaze/cpp/cmake-build-debug/CMakeFiles/cpp.dir/main.cpp.o"
+  "/home/sabir/projects/blaze/cpp/src/parser/JSONParser.cpp" "/home/sabir/projects/blaze/cpp/cmake-build-debug/CMakeFiles/cpp.dir/src/parser/JSONParser.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
+  "../src"
   )
 
 # Targets to which this target links.

@@ -1,17 +1,17 @@
-
-from blaze.rdd import TextSource, CollectionSource
-import numpy as np
+from blaze.rdd import TextSource, CollectionSource, RangeSource, GeneratorSource
 
 
-class BlazeContext:
-    def text_file(self, path):
-        """
-        read a text file line by line
-        return an RDD with elements lines of the text
-        """
+def text_file(path):
+    return TextSource(path)
 
-        return TextSource(path)
 
-    def collection(self, values):
-        return CollectionSource(values)
+def collection(values):
+    return CollectionSource(values)
 
+
+def range_(from_, to, step=1):
+    return RangeSource(from_, to, step)
+
+
+def generator(func):
+    return GeneratorSource(func)
