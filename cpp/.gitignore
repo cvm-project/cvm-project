@@ -1,0 +1,12 @@
+#cmakefiles
+CMakeFiles
+CMakeCache.txt
+cmake-build-debug
+cmake-build-release
+/cmake_install.cmake
+
+#llvm sources
+src/libs/llvm
+*.out
+*.ll
+*.s

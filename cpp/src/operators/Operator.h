@@ -8,7 +8,7 @@
 
 class Operator {
 public:
-    virtual void printName()=0;
+      virtual void printName()=0;
 };
 
 #endif //CPP_OPERATOR_H

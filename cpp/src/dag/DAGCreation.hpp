@@ -6,17 +6,12 @@
 #define CPP_DAGCREATION_H
 
 
-#include <fstream>
-#include "libs/json.hpp"
+
+
+#include <iostream>
 #include <unordered_map>
 #include "DAGOperator.h"
-#include "DAGRange.h"
-#include "DAGFilter.h"
 #include "DAG.h"
-
-#include <typeinfo>
-#include <libs/json.hpp>
-#include <fstream>
 
 #define FILTER "filter"
 #define MAP "map"
@@ -38,6 +33,8 @@ const std::string DAG_PREDS = "predecessors";
 #define STEP "step";
 #define VALUES "values";
 #define OUTPUT_TYPE "output_type";
+const std::string PLUGINS_DIR = "src/op_plugins";
+
 
 
 
@@ -47,5 +44,6 @@ typedef std::unordered_map<std::string, make_dag_function> DAGOperatorsMap;
 DAG *create_dag(std::string filename = "./dag.json");
 DAG *parse(std::ifstream);
 DAGOperator *get_operator(std::string);
+void load_plugins();
 
 #endif //CPP_DAGCREATION_H

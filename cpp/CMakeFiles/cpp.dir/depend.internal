@@ -3,15 +3,6 @@
 
 CMakeFiles/cpp.dir/main.cpp.o
  /home/sabir/projects/blaze/cpp/main.cpp
- src/dag/DAG.h
- src/dag/DAGCreation.hpp
- src/dag/DAGFilter.h
- src/dag/DAGOperator.h
- src/dag/DAGRange.h
- src/libs/json.hpp
- src/operators/FilterOperator.h
- src/operators/Operator.h
- src/operators/RangeSourceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAG.cpp.o
  /home/sabir/projects/blaze/cpp/src/dag/DAG.cpp
  /home/sabir/projects/blaze/cpp/src/dag/DAG.h
@@ -26,8 +17,8 @@ CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o
  /home/sabir/projects/blaze/cpp/src/dag/DAGMap.h
  /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
  /home/sabir/projects/blaze/cpp/src/dag/DAGRange.h
+ /home/sabir/projects/blaze/cpp/src/libs/json.hpp
  /home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h
- src/libs/json.hpp
  src/operators/FilterOperator.h
  src/operators/MapOperator.h
  src/operators/Operator.h

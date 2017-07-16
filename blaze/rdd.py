@@ -6,8 +6,9 @@ from numba import typeof
 from .transforms import *
 import json
 import numba
-from numba.types import *
+import numba.types as types
 from numba.types.containers import *
+from blaze.libs.numba.llvm_ir import cfunc
 
 DEBUG = False
 
@@ -40,17 +41,53 @@ def cleanRDDs(rdd):
         cleanRDDs(par)
 
 
+def numba_abi_to_llvm_abi(type_):
+    if isinstance(type_, types.List):
+        inner_type = type_.dtype
+        out = types.List(numba_abi_to_llvm_abi(inner_type), reflected=False)
+    elif isinstance(type_, types.Tuple):
+        type_type = type(type_)
+        child_types = []
+        for child_type in type_.types:
+            child_types.append(numba_abi_to_llvm_abi(child_type))
+        out = type_type(child_types)
+    elif isinstance(type_, types.UniTuple):
+        type_type = type(type_)
+        out = type_type(numba_abi_to_llvm_abi(type_.dtype), type_.count)
+    else:
+        out = type_
+    return out
+
+
 def get_llvm_ir_and_output_type(func, input_type=None):
+    # input_type = types.UniTuple(types.int16, 2)
+    print("old input type: " + str(input_type))
+
+    # input_type = numba_abi_to_llvm_abi(input_type)
+
     # get the output type with njit
-    dec_func = numba.njit((input_type,))(func)
-    output_type = dec_func.nopython_signatures[0].return_type
-
+    # dec_func = numba.njit((input_type, ))(func)
+    # llvm = dec_func.inspect_llvm()
+    # for k, v in llvm.items():
+    #     # print(str(v))
+    #     pass
+    # #     # file.write(v)
+    # #     # file.write('\n')
+    # output_type = dec_func.nopython_signatures[0].return_type
+    #
+    # print("old output type" + str(output_type))
     # get short llvm ir code with cfunc
+    # output_type = types.boolean
+    # input_type = types.CPointer(input_type)
+    # output_type = numba_abi_to_llvm_abi(output_type)
 
-    cfunc_code = numba.cfunc(output_type(input_type))(func)
+    retptr_type = types.CPointer(types.Tuple([types.intc, types.intc, types.intc]))
+    input_type = (retptr_type, types.intc, types.intc, types.intc)
+    output_type = types.void
+    cfunc_code = cfunc(output_type(retptr_type, types.intc, types.intc, types.intc))(func)
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
-    m = re.search('define .{1,20} @"cfunc.*?\n\n', code, re.DOTALL)
+    m = re.search('define [^\n\r]* @"cfunc.*\n\n', code, re.DOTALL)
     code_string = m.group(0)
 
     # Change the name of the funciont and print the code
@@ -58,6 +95,9 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     # print(pyadd.inspect_numba())
 
     # get the output type
+    print("new input type: " + str(input_type))
+    print("new output-type: " + str(output_type))
+    # print(code_string)
     return code_string, output_type
 
 
@@ -110,8 +150,8 @@ class RDD(object):
         self.writeDAG(dagdict[DAG], 0)
         # write to file
         fp = open('dag.json', 'w')
-        json.dump(dagdict, fp=fp, cls=RDDEncoder)
-        print(json.dumps(dagdict, cls=RDDEncoder))
+        # json.dump(dagdict, fp=fp, cls=RDDEncoder)
+        # print(json.dumps(dagdict, cls=RDDEncoder))
 
         # unleash the C beast
 

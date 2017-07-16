@@ -6,11 +6,12 @@
 #define CPP_DAGFILTER_H
 
 
-#include <operators/Operator.h>
+#include "operators/Operator.h"
 #include <stdexcept>
-#include <operators/FilterOperator.h>
+#include "operators/FilterOperator.h"
 #include "DAGOperator.h"
 #include "DAGRange.h"
+#include <typeinfo>
 
 class DAGFilter : public DAGOperator {
 
@@ -26,7 +27,8 @@ public:
         if (!predecessors.size()) {
             throw std::logic_error("Filter predecessor has to be set before instantiating operator template");
         }
-        return this->make_filter(predecessors[0]->make_operator());
+        Operator *pred = predecessors[0]->make_operator();
+        return this->make_filter(pred);
     };
 
     template<class Upstream>

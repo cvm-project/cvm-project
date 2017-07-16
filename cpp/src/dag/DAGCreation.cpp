@@ -1,30 +1,37 @@
+
+#include <dirent.h>
+#include <fstream>
 #include "DAGCreation.hpp"
-#include "DAGFilter.h"
+#include "DAGRange.h"
 #include "DAGMap.h"
 #include "DAGJoin.h"
-#include "DAGRange.h"
+#include "../libs/json.hpp"
+#include "DAGFilter.h"
+
 
 using namespace std;
 
 static DAGOperatorsMap opMap;
 
 DAG *create_dag(std::string filename) {
+    load_plugins();
+    DAG *dag = parse(std::ifstream(filename));
+    Operator *op = dag->sink->make_operator();
+    op->printName();
+    return dag;
+};
 
+void load_plugins() {
 
     opMap.emplace(FILTER, &DAGFilter::make_dag_operator);
     opMap.emplace(RANGE, &DAGRange::make_dag_operator);
     opMap.emplace(MAP, &DAGMap::make_dag_operator);
     opMap.emplace(JOIN, &DAGJoin::make_dag_operator);
-
-    DAG *dag = parse(std::ifstream(filename));
-    dag->sink->make_operator()->printName();
-    return dag;
-};
-
+}
 
 DAG *parse(std::ifstream ifstream) {
     DAG *dag = new DAG;
-    //read json file
+
     nlohmann::json j;
     ifstream >> j;
     auto action = j[DAG_ACTION];
@@ -59,7 +66,7 @@ DAG *parse(std::ifstream ifstream) {
     for (size_t i = 0; i < op_count; i++) {
         auto op = dag_ops[i].first;
         auto preds = dag_ops[i].second;
-        for (auto it = preds.begin(); it != preds.end(); it++){
+        for (auto it = preds.begin(); it != preds.end(); it++) {
             size_t pred_id = *it;
             auto predecessor = dag_ops[pred_id].first;
             op->predecessors.push_back(predecessor);
@@ -68,8 +75,8 @@ DAG *parse(std::ifstream ifstream) {
         }
     }
 
-    for (size_t i = 0; i < op_count; i++){
-        if(!has_successors[i]){
+    for (size_t i = 0; i < op_count; i++) {
+        if (!has_successors[i]) {
             dag->sink = dag_ops[i].first;
         }
     }
@@ -78,6 +85,5 @@ DAG *parse(std::ifstream ifstream) {
 }
 
 DAGOperator *get_operator(std::string opName) {
-    auto bla = opMap;
     return opMap[opName]();
 }
