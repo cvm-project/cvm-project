@@ -2,14 +2,13 @@
 // Created by sabir on 18.07.17.
 //
 
-#include "BuildDag.h"
+#include "BuildDAG.hpp"
 #include <tuple>
 #include "vector"
 
 #include "operators/CollectionSourceOperator.h"
 #include "operators/MapOperator.h"
 #include "functions/MapFunction0.hpp"
-#include "dag/DAG.h"
 
 Operator *build_dag() {
 
@@ -21,14 +20,16 @@ Operator *build_dag() {
 
     auto op1 = makeCollectionSourceOperator<t0>();
     op1.values = v1;
-    auto op2 = makeMapOperator<t0>(&op1, MapFunction0());
+
+    typedef std::tuple<double, double> t1;
+    auto op2 = makeMapOperator<t1>(&op1, MapFunction0());
 
     op2.open();
-    while(auto res = op2.next()){
-        std::cout << std::get<0>(res.value) << ", " << std::get<1>(res.value) << ", " << std::get<2>(res.value)<<std::endl;
+    while (auto res = op2.next()) {
+        std::cout << std::get<0>(res.value) << ", " << std::get<1>(res.value) << std::endl;
     }
 
     auto m = malloc(sizeof(op2));
-    memmove(m, &op2, sizeof(op2));
+    memmove(m, (void*)&op2, sizeof(op2));
     return (Operator *) m;
 }

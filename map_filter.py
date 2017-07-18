@@ -8,7 +8,7 @@ data = collection(input)
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
 # os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
-# os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
+os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
 
 
 # os.environ["NUMBA_DUMP_LLVM"] = '1'

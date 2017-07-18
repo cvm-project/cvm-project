@@ -23,11 +23,13 @@ public:
     }
 
     Optional<Tuple> next() {
-        auto ret = upstream->next();
-        return mapFunction(ret);
+        if (auto ret = upstream->next()) {
+            return mapFunction(ret);
+        }
+        return {};
     }
 
-    void open(){upstream->open();}
+    void open() { upstream->open(); }
 
 };
 

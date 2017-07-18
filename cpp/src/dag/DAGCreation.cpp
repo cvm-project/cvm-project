@@ -8,7 +8,7 @@
 #include "DAGJoin.h"
 #include "../libs/json.hpp"
 #include "DAGFilter.h"
-#include "../../gen/BuildDag.h"
+#include "../../gen/BuildDAG.hpp"
 
 
 using namespace std;
@@ -95,10 +95,4 @@ DAGOperator *get_operator(std::string opName) {
 
 void generate_code(DAG* dag){
     //generate code for build_dag function
-}
-
-
-Operator* init_dag(DAG* dag){
-    generate_code(dag);
-    return build_dag();
 }
