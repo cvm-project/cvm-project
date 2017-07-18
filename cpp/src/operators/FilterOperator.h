@@ -9,12 +9,12 @@
 #include <iostream>
 #include "Operator.h"
 
-template<class Upstream>
+template<class Upstream, class Tuple>
 class FilterOperator : public Operator {
 public:
-    Upstream upstream;
+    Upstream *upstream;
 
-    FilterOperator(Upstream upstream1) : upstream(upstream1) {}
+    FilterOperator(Upstream *upstream1) : upstream(*upstream1) {}
 
     void printName() {
         std::cout << "filter op\n";

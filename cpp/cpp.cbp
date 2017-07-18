@@ -86,69 +86,6 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/sabir/projects/blaze/cpp/main.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAG.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAG.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCreation.hpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGFilter.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGFilter.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGMap.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGMap.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/FilterOperator.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/FilterOperator.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/JoinOperator.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/MapOperator.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/MapOperator.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/Operator.h">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/RangeSourceOperator.cpp">
-			<Option target="cpp"/>
-		</Unit>
-		<Unit filename="/home/sabir/projects/blaze/cpp/src/operators/RangeSourceOperator.h">
-			<Option target="cpp"/>
-		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

@@ -3,21 +3,21 @@
 #include <fstream>
 #include "DAGCreation.hpp"
 #include "DAGRange.h"
+#include "DAGCollection.h"
 #include "DAGMap.h"
 #include "DAGJoin.h"
 #include "../libs/json.hpp"
 #include "DAGFilter.h"
+#include "../../gen/BuildDag.h"
 
 
 using namespace std;
 
 static DAGOperatorsMap opMap;
 
-DAG *create_dag(std::string filename) {
+DAG *parse_dag(std::string filename) {
     load_plugins();
     DAG *dag = parse(std::ifstream(filename));
-    Operator *op = dag->sink->make_operator();
-    op->printName();
     return dag;
 };
 
@@ -25,6 +25,7 @@ void load_plugins() {
 
     opMap.emplace(FILTER, &DAGFilter::make_dag_operator);
     opMap.emplace(RANGE, &DAGRange::make_dag_operator);
+    opMap.emplace(COLLECTION, &DAGCollection::make_dag_operator);
     opMap.emplace(MAP, &DAGMap::make_dag_operator);
     opMap.emplace(JOIN, &DAGJoin::make_dag_operator);
 }
@@ -48,7 +49,8 @@ DAG *parse(std::ifstream ifstream) {
         if (!llvr_ir.is_null()) {
             op->llvm_ir = llvr_ir;
         }
-
+        op->output_type = (*it)[DAG_OUTPUT_TYPE];
+        op->initWithJson(*it);
         vector<size_t> preds;
         auto preds_json = (*it)[DAG_PREDS];
         for (auto it_preds = preds_json.begin(); it_preds != preds_json.end(); it_preds++) {
@@ -85,5 +87,18 @@ DAG *parse(std::ifstream ifstream) {
 }
 
 DAGOperator *get_operator(std::string opName) {
+    if (!opMap.count(opName)) {
+        cerr << "operator " << opName << " could not be found" << endl;
+    }
     return opMap[opName]();
+}
+
+void generate_code(DAG* dag){
+    //generate code for build_dag function
+}
+
+
+Operator* init_dag(DAG* dag){
+    generate_code(dag);
+    return build_dag();
 }

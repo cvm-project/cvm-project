@@ -5,8 +5,8 @@
 #ifndef CPP_DAGRANGE_H
 #define CPP_DAGRANGE_H
 
-#include "operators/Operator.h"
-#include "operators/RangeSourceOperator.h"
+//#include "operators/RangeSourceOperator.h"
+#include <operators/RangeSourceOperator.h>
 #include "DAGOperator.h"
 
 class DAGRange : public DAGOperator {
@@ -15,10 +15,19 @@ public:
         return new DAGRange;
     };
 
-    Operator *make_operator() {
-        return new RangeSourceOperator;
+    template<class Tuple>
+    RangeSourceOperator<Tuple> make_operator() {
+        return RangeSourceOperator<Tuple>(start, end, step);
     }
 
+    void initWithJson(nlohmann::basic_json<>) {
+
+    };
+
+private:
+    int start;
+    int end;
+    int step = 1;
 };
 
 

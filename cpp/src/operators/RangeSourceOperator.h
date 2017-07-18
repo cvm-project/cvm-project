@@ -9,13 +9,21 @@
 #include <iostream>
 #include "Operator.h"
 
+template<class Tuple>
 class RangeSourceOperator : public Operator {
 public:
+
+    RangeSourceOperator(Tuple start, Tuple end, Tuple step) : start(start), end(end), step(step) {}
+
     void printName() {
         std::cout << "range op\n";
     }
 
 //    Tuple next(){return NULL;}
+private:
+    Tuple start;
+    Tuple end;
+    Tuple step;
 };
 
 

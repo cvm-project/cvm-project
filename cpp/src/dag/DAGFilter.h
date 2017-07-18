@@ -7,10 +7,8 @@
 
 
 #include "operators/Operator.h"
-#include <stdexcept>
 #include "operators/FilterOperator.h"
 #include "DAGOperator.h"
-#include "DAGRange.h"
 #include <typeinfo>
 
 class DAGFilter : public DAGOperator {
@@ -23,17 +21,10 @@ public:
         return new DAGFilter;
     };
 
-    Operator *make_operator() {
-        if (!predecessors.size()) {
-            throw std::logic_error("Filter predecessor has to be set before instantiating operator template");
-        }
-        Operator *pred = predecessors[0]->make_operator();
-        return this->make_filter(pred);
-    };
 
-    template<class Upstream>
-    FilterOperator<Upstream> *make_filter(Upstream _) {
-        return new FilterOperator<Upstream>(_);
+    template<class Upstream, class Tuple>
+    FilterOperator<Upstream, Tuple> make_operator(Upstream _) {
+        return FilterOperator<Upstream, Tuple>(_);
     };
 };
 

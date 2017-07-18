@@ -2,5 +2,14 @@
 -- Found LLVM 5.0.0svn-r307524
 -- Using LLVMConfig.cmake in: /usr/local/lib/cmake/llvm
 -- Configuring done
+CMake Error at CMakeLists.txt:22 (add_executable):
+  Cannot find source file:
+
+    src/function_template.cpp
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .m .M .mm .h .hh .h++ .hm .hpp
+  .hxx .in .txx
+
+
 -- Generating done
 -- Build files have been written to: /home/sabir/projects/blaze/cpp

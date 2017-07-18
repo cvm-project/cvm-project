@@ -1,31 +1,24 @@
 import os
 from blaze.blaze_context import *
 
-
 # sys.path.insert(0, "/home/sabir/projects/")
 
-input = [(1,2,4)]
+input = [(1, 2.0, 3.9), (2, 3.5, 4.3)]
 data = collection(input)
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
 # os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
-os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
+# os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
 
 
 # os.environ["NUMBA_DUMP_LLVM"] = '1'
 
-def func(retptr, a, b, c):
-    # for i in t:
-    #     if i < 0:
-    #         return False
-    # return True
-    retptr[0][0] = a
+def func(a):
+    return a[0] + a[1] + 7, a[2]
 
 
 # func = lambda t: t[3]
-w = data.filter(func)
-w2 = data
-w3 = w.join(w2)
+w = data.map(func)
 
 # w = data.map(lambda w: (w, w * 2)).filter(lambda t: t[0] % 2 == 0 and t[1] % 3 == 0)
 w.count()

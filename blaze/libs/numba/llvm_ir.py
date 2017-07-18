@@ -7,15 +7,19 @@ from __future__ import print_function, division, absolute_import
 import ctypes
 
 from llvmlite import ir
+from llvmlite.ir import VoidType
 
-from numba import config, sigutils, utils, compiler
+from numba import config, sigutils, utils, compiler, void
 from numba.caching import NullCache, FunctionCache
 from numba.dispatcher import _FunctionCompiler
 from numba.targets import registry
 from numba.typing import signature
 from numba.typing.ctypes_utils import to_ctypes
-from numba.targets.callconv import errcode_t, CPUCallConv
-from numba.types import Tuple, UniTuple
+from numba.types import Tuple, UniTuple, NoneType, intc, float32
+
+# types larger than this are classiefied as "MEMORY" in amd64 ABI
+MINIMAL_TYPE_SIZE = 16
+
 
 def flatten(iterable):
     """
@@ -33,7 +37,7 @@ def flatten(iterable):
             else:
                 yield i
 
-    return list(rec(iterable))
+    return tuple(rec(iterable))
 
 
 def cfunc(sig, locals={}, cache=False, **options):
@@ -73,6 +77,40 @@ class _CFuncCompiler(_FunctionCompiler):
         return flags
 
 
+def replace_unituple(type_):
+    out = type_
+    if isinstance(type_, Tuple):
+        child_types = []
+        for child_type in type_.types:
+            child_types.append(replace_unituple(child_type))
+        out = Tuple([])
+        out.types = tuple(child_types)
+        out.name = "(%s)" % ', '.join(str(i) for i in child_types)
+        out.count = len(child_types)
+    elif isinstance(type_, UniTuple):
+        type_type = Tuple([])
+        type_type.types = (replace_unituple(type_.dtype),) * type_.count
+        type_type.count = type_.count
+        type_type.name = "(%s)" % ', '.join(str(i) for i in type_type.types)
+        out = type_type
+    elif isinstance(type_, (list, tuple)):
+        out = tuple(map(lambda t: replace_unituple(t), type_))
+    return out
+
+
+def get_type_size(type_):
+    size = 0
+    try:
+        size = type_.bitwidth / 8
+    except AttributeError:
+        if isinstance(type_, Tuple):
+            for child_type in type_.types:
+                size += get_type_size(child_type)
+        elif isinstance(type_, UniTuple):
+            size = get_type_size(type_.dtype) * type_.count
+    return size
+
+
 class CFunc(object):
     """
     A compiled C callback, as created by the @cfunc decorator.
@@ -86,6 +124,16 @@ class CFunc(object):
         self.__name__ = pyfunc.__name__
         self.__qualname__ = getattr(pyfunc, '__qualname__', self.__name__)
         self.__wrapped__ = pyfunc
+
+        # replace the unituple with tuple
+        # abi compliance
+        return_type = replace_unituple(return_type)
+        args = replace_unituple(args)
+
+        # abi compliance
+        # if the return type is small enough we have to return a struct
+        # otherwise a return pointer is used
+        self.is_small_return_type = get_type_size(return_type) <= MINIMAL_TYPE_SIZE
 
         self._pyfunc = pyfunc
         self._sig = signature(return_type, *args)
@@ -120,6 +168,7 @@ class CFunc(object):
         sig = self._sig
 
         # Compile native function
+
         cres = self._compiler.compile(sig.args, sig.return_type)
         assert not cres.objectmode  # disabled by compiler above
         fndesc = cres.fndesc
@@ -130,25 +179,35 @@ class CFunc(object):
         library = cres.library
         module = library.create_ir_module(fndesc.unique_name)
         context = cres.target_context
-        resptr = context.call_conv.get_return_type(sig.return_type)
 
         ll_argtypes = [context.get_value_type(ty) for ty in flatten(sig.args)]
-        ll_argtypes = [resptr] + ll_argtypes
-        ll_return_type = errcode_t
+        if not self.is_small_return_type:
+            resptr = context.call_conv.get_return_type(sig.return_type)
 
-        wrapty = ir.FunctionType(ll_return_type, ll_argtypes)
-        wrapfn = module.add_function(wrapty, fndesc.llvm_cfunc_wrapper_name)
-        builder = ir.IRBuilder(wrapfn.append_basic_block('entry'))
+            ll_argtypes = [resptr] + ll_argtypes
+            ll_return_type = VoidType()
 
-        # omit the first argument which is the res ptr
-        self._build_c_wrapper(context, builder, cres, wrapfn.args[1:], wrapfn.args[0])
+            wrapty = ir.FunctionType(ll_return_type, ll_argtypes)
+            wrapfn = module.add_function(wrapty, fndesc.llvm_cfunc_wrapper_name)
+            builder = ir.IRBuilder(wrapfn.append_basic_block('entry'))
+
+            # omit the first argument which is the res ptr
+            self._build_c_wrapper(context, builder, cres, wrapfn.args[1:], wrapfn.args[0])
+        else:
+            ll_return_type = context.get_value_type(sig.return_type)
+
+            wrapty = ir.FunctionType(ll_return_type, ll_argtypes)
+            wrapfn = module.add_function(wrapty, fndesc.llvm_cfunc_wrapper_name)
+            builder = ir.IRBuilder(wrapfn.append_basic_block('entry'))
+
+            self._build_c_wrapper(context, builder, cres, wrapfn.args)
 
         library.add_ir_module(module)
         library.finalize()
 
         return cres
 
-    def _build_c_wrapper(self, context, builder, cres, c_args, retptr):
+    def _build_c_wrapper(self, context, builder, cres, c_args, retptr=None):
         sig = self._sig
         pyapi = context.get_python_api(builder)
 
@@ -156,14 +215,16 @@ class CFunc(object):
         fn = builder.module.add_function(fnty, cres.fndesc.llvm_func_name)
 
         # sig.args and c_args should both be flatten
-
+        sig.args = flatten(sig.args)
         status, out = context.call_conv.call_function(
-            builder, fn, sig.return_type, flatten(sig.args), c_args, env=None)
+            builder, fn, sig.return_type, sig.args, c_args, env=None)
+        if not self.is_small_return_type:
 
-        # return callee status
-        # the out must be written to the resptr
-        builder.store(out, retptr)
-        builder.ret(status[0])
+            # the out must be written to the retptr
+            builder.store(out, retptr)
+            builder.ret_void()
+        else:
+            builder.ret(out)
 
     @property
     def native_name(self):

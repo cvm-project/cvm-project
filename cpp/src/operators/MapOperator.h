@@ -9,18 +9,31 @@
 #include <iostream>
 #include "Operator.h"
 
-template <class Upstream>
+template<class Upstream, class Tuple, class MapFunction>
 class MapOperator : public Operator {
 public:
-    Upstream upstream;
+    Upstream *upstream;
+    MapFunction mapFunction;
 
-    MapOperator(Upstream upstream1) : upstream(upstream1) {}
+    MapOperator(Upstream *upstream1, MapFunction mapFunction) : upstream(upstream1), mapFunction(mapFunction) {}
 
     void printName() {
-        std::cout << "map op\n";
         upstream->printName();
+        std::cout << "map op\n";
     }
+
+    Optional<Tuple> next() {
+        auto ret = upstream->next();
+        return mapFunction(ret);
+    }
+
+    void open(){upstream->open();}
+
 };
 
+template<class Tuple, class Upstream, class MapFunction>
+MapOperator<Upstream, Tuple, MapFunction> makeMapOperator(Upstream *upstream, MapFunction func) {
+    return MapOperator<Upstream, Tuple, MapFunction>(upstream, func);
+};
 
 #endif //CPP_MAPOPERATOR_H

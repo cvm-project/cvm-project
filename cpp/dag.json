@@ -4,11 +4,20 @@
     {
       "id": 0,
       "predecessors": [],
-      "op": "range_source",
-      "from": 0,
-      "to": 10,
-      "step": 1,
-      "output_type": "int64"
+      "op": "collection_source",
+      "values": [
+        [
+          1,
+          2.0,
+          3.9
+        ],
+        [
+          2,
+          3.5,
+          4.3
+        ]
+      ],
+      "output_type": "(int64, float64, float64)"
     },
     {
       "id": 1,
@@ -16,26 +25,8 @@
         0
       ],
       "op": "map",
-      "func": "define { i64, double } @\"cfunc._ZN8__main__16$3clambda$3e$242Ex\"(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = sitofp i64 %.1 to double\n  %.15.i = fadd double %.14.i, 1.000000e+00\n  %.15.fca.0.insert = insertvalue { i64, double } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, double } %.15.fca.0.insert, double %.15.i, 1\n  ret { i64, double } %.15.fca.1.insert\n}\n\n",
-      "output_type": "(int64, float64)"
-    },
-    {
-      "id": 2,
-      "predecessors": [
-        1
-      ],
-      "op": "filter",
-      "func": "define i1 @\"cfunc._ZN8__main__16$3clambda$3e$244E5TupleIxdE\"({ i64, double } %.1) local_unnamed_addr #1 {\nentry:\n  %extracted.f0 = extractvalue { i64, double } %.1, 0\n  %.41.i = srem i64 %extracted.f0, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  ret i1 %.74.i\n}\n\n",
-      "output_type": "(int64, float64)"
-    },
-    {
-      "id": 3,
-      "predecessors": [
-        2,
-        0
-      ],
-      "op": "join",
-      "output_type": "(int64, float64)"
+      "func": "define { double, double } @\"cfunc._ZN8__main__8func$242E5TupleIxddE\"(i64 %.1, double %.2, double %.3) local_unnamed_addr #1 {\nentry:\n  %.33.i = sitofp i64 %.1 to double\n  %.34.i = fadd double %.33.i, %.2\n  %.48.i = fadd double %.34.i, 7.000000e+00\n  %.17.fca.0.insert = insertvalue { double, double } undef, double %.48.i, 0\n  %.17.fca.1.insert = insertvalue { double, double } %.17.fca.0.insert, double %.3, 1\n  ret { double, double } %.17.fca.1.insert\n}\n\n",
+      "output_type": "(float64, float64)"
     }
   ]
 }
