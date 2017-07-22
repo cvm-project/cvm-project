@@ -1,7 +1,7 @@
-//
-// Created by sabir on 04.07.17.
-//
 
 #include "DAGMap.h"
+#include "utils/DAGVisitor.h"
 
-const std::string DAGMap::DAG_OP_NAME =  "map";
+void DAGMap::accept(DAGVisitor &v) {
+    v.visit(this);
+}

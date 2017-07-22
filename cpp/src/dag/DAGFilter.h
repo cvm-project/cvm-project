@@ -22,10 +22,9 @@ public:
     };
 
 
-    template<class Upstream, class Tuple>
-    FilterOperator<Upstream, Tuple> make_operator(Upstream _) {
-        return FilterOperator<Upstream, Tuple>(_);
-    };
+    void accept(DAGVisitor &v);
+
+    DAGFilter *getThis(){return this;}
 };
 
 

@@ -1,6 +1,7 @@
-#include "BuildDAG.hpp"
+
+void execute();
 
 int main(int argc, char **argv) {
-    build_dag();
+    execute();
     return 0;
 }

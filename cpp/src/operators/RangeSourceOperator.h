@@ -19,7 +19,18 @@ public:
         std::cout << "range op\n";
     }
 
-//    Tuple next(){return NULL;}
+    void open() {
+
+    }
+
+    Optional<Tuple> next() {
+        if (start < end) {
+            start += step;
+            return start - step;
+        }
+        return {};
+    }
+
 private:
     Tuple start;
     Tuple end;

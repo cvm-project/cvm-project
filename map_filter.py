@@ -3,7 +3,7 @@ from blaze.blaze_context import *
 
 # sys.path.insert(0, "/home/sabir/projects/")
 
-input = [(1, 2.0, 3.9), (2, 3.5, 4.3)]
+input = [(1, 2, 3, 4), (5, 6, 7, 8)]
 data = collection(input)
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
@@ -14,7 +14,7 @@ os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
 # os.environ["NUMBA_DUMP_LLVM"] = '1'
 
 def func(a):
-    return a[0] + a[1] + 7, a[2]
+    return ((a[0],), a[1])
 
 
 # func = lambda t: t[3]

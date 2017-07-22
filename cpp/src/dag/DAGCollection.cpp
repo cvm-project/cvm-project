@@ -1,9 +1,6 @@
-//
-// Created by sabir on 04.07.17.
-//
 
-#include "DAGCollection.h"
+#include "utils/DAGVisitor.h"
 
-void DAGCollection::initWithJson(nlohmann::basic_json<> j){
-    this->values = j["values"];
+void DAGCollection::accept(DAGVisitor &v) {
+    v.visit(this);
 }

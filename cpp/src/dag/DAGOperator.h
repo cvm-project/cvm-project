@@ -9,8 +9,7 @@
 #include <cstddef>
 #include <iostream>
 #include <vector>
-#include <libs/json.hpp>
-//#include <operators/Operator.h>
+#include "libs/json.hpp"
 
 class DAGOperator {
 public:
@@ -18,9 +17,9 @@ public:
     std::vector<DAGOperator *> successors;
     std::string llvm_ir;
     std::string output_type;
+    size_t id;
 
-    virtual void initWithJson(nlohmann::basic_json<>) {};
-
+    virtual void accept(class DAGVisitor &v) = 0;
 };
 
 #endif //CPP_DAGOPERATOR_H

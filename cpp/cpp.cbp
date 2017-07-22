@@ -86,6 +86,51 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/sabir/projects/blaze/cpp/main.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/code_gen/generate_code.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/code_gen/generate_code.h">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCollection.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCollection.h">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCreation.hpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGFilter.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGFilter.h">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGJoin.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGJoin.h">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGMap.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGMap.h">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.h">
+			<Option target="cpp"/>
+		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

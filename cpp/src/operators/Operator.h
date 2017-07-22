@@ -5,6 +5,10 @@
 #ifndef CPP_OPERATOR_H
 #define CPP_OPERATOR_H
 #include <libs/optional.h>
+#include "utils/debug_print.h"
+
+
+#define INLINE __attribute__((always_inline))
 
 class Operator {
 public:

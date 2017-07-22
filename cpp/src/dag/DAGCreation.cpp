@@ -8,7 +8,6 @@
 #include "DAGJoin.h"
 #include "../libs/json.hpp"
 #include "DAGFilter.h"
-#include "../../gen/BuildDAG.hpp"
 
 
 using namespace std;
@@ -45,12 +44,12 @@ DAG *parse(std::ifstream ifstream) {
         size_t id = (*it)[DAG_ID];
         std::string op_name = (*it)[DAG_OP];
         DAGOperator *op = get_operator(op_name);
+        op->id = id;
         auto llvr_ir = (*it)[DAG_FUNC];
         if (!llvr_ir.is_null()) {
             op->llvm_ir = llvr_ir;
         }
         op->output_type = (*it)[DAG_OUTPUT_TYPE];
-        op->initWithJson(*it);
         vector<size_t> preds;
         auto preds_json = (*it)[DAG_PREDS];
         for (auto it_preds = preds_json.begin(); it_preds != preds_json.end(); it_preds++) {
@@ -91,8 +90,4 @@ DAGOperator *get_operator(std::string opName) {
         cerr << "operator " << opName << " could not be found" << endl;
     }
     return opMap[opName]();
-}
-
-void generate_code(DAG* dag){
-    //generate code for build_dag function
 }

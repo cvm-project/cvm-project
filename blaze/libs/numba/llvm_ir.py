@@ -111,6 +111,14 @@ def get_type_size(type_):
     return size
 
 
+def make_tuple(child_types):
+    out = Tuple([])
+    out.types = tuple(child_types)
+    out.name = "(%s)" % ', '.join(str(i) for i in child_types)
+    out.count = len(child_types)
+    return out
+
+
 class CFunc(object):
     """
     A compiled C callback, as created by the @cfunc decorator.

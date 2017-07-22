@@ -123,6 +123,222 @@ cpp/fast:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/build
 .PHONY : cpp/fast
 
+main.o: main.cpp.o
+
+.PHONY : main.o
+
+# target to build an object file
+main.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/main.cpp.o
+.PHONY : main.cpp.o
+
+main.i: main.cpp.i
+
+.PHONY : main.i
+
+# target to preprocess a source file
+main.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/main.cpp.i
+.PHONY : main.cpp.i
+
+main.s: main.cpp.s
+
+.PHONY : main.s
+
+# target to generate assembly for a file
+main.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/main.cpp.s
+.PHONY : main.cpp.s
+
+src/code_gen/generate_code.o: src/code_gen/generate_code.cpp.o
+
+.PHONY : src/code_gen/generate_code.o
+
+# target to build an object file
+src/code_gen/generate_code.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o
+.PHONY : src/code_gen/generate_code.cpp.o
+
+src/code_gen/generate_code.i: src/code_gen/generate_code.cpp.i
+
+.PHONY : src/code_gen/generate_code.i
+
+# target to preprocess a source file
+src/code_gen/generate_code.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.i
+.PHONY : src/code_gen/generate_code.cpp.i
+
+src/code_gen/generate_code.s: src/code_gen/generate_code.cpp.s
+
+.PHONY : src/code_gen/generate_code.s
+
+# target to generate assembly for a file
+src/code_gen/generate_code.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.s
+.PHONY : src/code_gen/generate_code.cpp.s
+
+src/dag/DAGCollection.o: src/dag/DAGCollection.cpp.o
+
+.PHONY : src/dag/DAGCollection.o
+
+# target to build an object file
+src/dag/DAGCollection.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o
+.PHONY : src/dag/DAGCollection.cpp.o
+
+src/dag/DAGCollection.i: src/dag/DAGCollection.cpp.i
+
+.PHONY : src/dag/DAGCollection.i
+
+# target to preprocess a source file
+src/dag/DAGCollection.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.i
+.PHONY : src/dag/DAGCollection.cpp.i
+
+src/dag/DAGCollection.s: src/dag/DAGCollection.cpp.s
+
+.PHONY : src/dag/DAGCollection.s
+
+# target to generate assembly for a file
+src/dag/DAGCollection.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.s
+.PHONY : src/dag/DAGCollection.cpp.s
+
+src/dag/DAGCreation.o: src/dag/DAGCreation.cpp.o
+
+.PHONY : src/dag/DAGCreation.o
+
+# target to build an object file
+src/dag/DAGCreation.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o
+.PHONY : src/dag/DAGCreation.cpp.o
+
+src/dag/DAGCreation.i: src/dag/DAGCreation.cpp.i
+
+.PHONY : src/dag/DAGCreation.i
+
+# target to preprocess a source file
+src/dag/DAGCreation.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.i
+.PHONY : src/dag/DAGCreation.cpp.i
+
+src/dag/DAGCreation.s: src/dag/DAGCreation.cpp.s
+
+.PHONY : src/dag/DAGCreation.s
+
+# target to generate assembly for a file
+src/dag/DAGCreation.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.s
+.PHONY : src/dag/DAGCreation.cpp.s
+
+src/dag/DAGFilter.o: src/dag/DAGFilter.cpp.o
+
+.PHONY : src/dag/DAGFilter.o
+
+# target to build an object file
+src/dag/DAGFilter.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o
+.PHONY : src/dag/DAGFilter.cpp.o
+
+src/dag/DAGFilter.i: src/dag/DAGFilter.cpp.i
+
+.PHONY : src/dag/DAGFilter.i
+
+# target to preprocess a source file
+src/dag/DAGFilter.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.i
+.PHONY : src/dag/DAGFilter.cpp.i
+
+src/dag/DAGFilter.s: src/dag/DAGFilter.cpp.s
+
+.PHONY : src/dag/DAGFilter.s
+
+# target to generate assembly for a file
+src/dag/DAGFilter.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.s
+.PHONY : src/dag/DAGFilter.cpp.s
+
+src/dag/DAGJoin.o: src/dag/DAGJoin.cpp.o
+
+.PHONY : src/dag/DAGJoin.o
+
+# target to build an object file
+src/dag/DAGJoin.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o
+.PHONY : src/dag/DAGJoin.cpp.o
+
+src/dag/DAGJoin.i: src/dag/DAGJoin.cpp.i
+
+.PHONY : src/dag/DAGJoin.i
+
+# target to preprocess a source file
+src/dag/DAGJoin.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.i
+.PHONY : src/dag/DAGJoin.cpp.i
+
+src/dag/DAGJoin.s: src/dag/DAGJoin.cpp.s
+
+.PHONY : src/dag/DAGJoin.s
+
+# target to generate assembly for a file
+src/dag/DAGJoin.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.s
+.PHONY : src/dag/DAGJoin.cpp.s
+
+src/dag/DAGMap.o: src/dag/DAGMap.cpp.o
+
+.PHONY : src/dag/DAGMap.o
+
+# target to build an object file
+src/dag/DAGMap.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o
+.PHONY : src/dag/DAGMap.cpp.o
+
+src/dag/DAGMap.i: src/dag/DAGMap.cpp.i
+
+.PHONY : src/dag/DAGMap.i
+
+# target to preprocess a source file
+src/dag/DAGMap.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.i
+.PHONY : src/dag/DAGMap.cpp.i
+
+src/dag/DAGMap.s: src/dag/DAGMap.cpp.s
+
+.PHONY : src/dag/DAGMap.s
+
+# target to generate assembly for a file
+src/dag/DAGMap.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.s
+.PHONY : src/dag/DAGMap.cpp.s
+
+src/dag/DAGRange.o: src/dag/DAGRange.cpp.o
+
+.PHONY : src/dag/DAGRange.o
+
+# target to build an object file
+src/dag/DAGRange.cpp.o:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o
+.PHONY : src/dag/DAGRange.cpp.o
+
+src/dag/DAGRange.i: src/dag/DAGRange.cpp.i
+
+.PHONY : src/dag/DAGRange.i
+
+# target to preprocess a source file
+src/dag/DAGRange.cpp.i:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.i
+.PHONY : src/dag/DAGRange.cpp.i
+
+src/dag/DAGRange.s: src/dag/DAGRange.cpp.s
+
+.PHONY : src/dag/DAGRange.s
+
+# target to generate assembly for a file
+src/dag/DAGRange.cpp.s:
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.s
+.PHONY : src/dag/DAGRange.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -132,6 +348,30 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... cpp"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
+	@echo "... src/code_gen/generate_code.o"
+	@echo "... src/code_gen/generate_code.i"
+	@echo "... src/code_gen/generate_code.s"
+	@echo "... src/dag/DAGCollection.o"
+	@echo "... src/dag/DAGCollection.i"
+	@echo "... src/dag/DAGCollection.s"
+	@echo "... src/dag/DAGCreation.o"
+	@echo "... src/dag/DAGCreation.i"
+	@echo "... src/dag/DAGCreation.s"
+	@echo "... src/dag/DAGFilter.o"
+	@echo "... src/dag/DAGFilter.i"
+	@echo "... src/dag/DAGFilter.s"
+	@echo "... src/dag/DAGJoin.o"
+	@echo "... src/dag/DAGJoin.i"
+	@echo "... src/dag/DAGJoin.s"
+	@echo "... src/dag/DAGMap.o"
+	@echo "... src/dag/DAGMap.i"
+	@echo "... src/dag/DAGMap.s"
+	@echo "... src/dag/DAGRange.o"
+	@echo "... src/dag/DAGRange.i"
+	@echo "... src/dag/DAGRange.s"
 .PHONY : help
 
 

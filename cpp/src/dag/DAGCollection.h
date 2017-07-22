@@ -5,8 +5,6 @@
 #ifndef CPP_DAGCOLLECTION_H
 #define CPP_DAGCOLLECTION_H
 
-#include "operators/Operator.h"
-#include "operators/CollectionSourceOperator.h"
 #include "DAGOperator.h"
 
 class DAGCollection : public DAGOperator {
@@ -15,7 +13,11 @@ public:
         return new DAGCollection;
     };
 
-    void initWithJson(nlohmann::basic_json<>);
+    DAGCollection *getThis(){
+        return this;
+    }
+
+    void accept(DAGVisitor &v);
 
 private:
     nlohmann::basic_json<> values;
