@@ -1,1 +1,23 @@
-{"action": "count", "dag": [{"id": 0, "predecessors": [], "op": "collection_source", "values": [[1, 2, 3, 4], [5, 6, 7, 8]], "output_type": "(int64 x 4)"}, {"id": 1, "predecessors": [0], "op": "map", "func": "define { { i64 }, i64 } @\"cfunc._ZN8__main__8func$242E5TupleIxxxxE\"(i64 %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  %.18.fca.0.0.insert = insertvalue { { i64 }, i64 } undef, i64 %.1, 0, 0\n  %inserted.f1 = insertvalue { { i64 }, i64 } %.18.fca.0.0.insert, i64 %.2, 1\n  ret { { i64 }, i64 } %inserted.f1\n}\n\n", "output_type": "((int64), int64)"}]}
+{
+  "action": "count",
+  "dag": [
+    {
+      "id": 0,
+      "predecessors": [],
+      "op": "range_source",
+      "from": 1,
+      "to": 10,
+      "step": 1.2,
+      "output_type": "double"
+    },
+    {
+      "id": 1,
+      "predecessors": [
+        0
+      ],
+      "op": "map",
+      "func": "define { double, double } @\"cfunc._ZN8__main__8func$242Ed\"(double %.1) local_unnamed_addr #1 {\nentry:\n  %.15.i = fadd double %.1, 1.000000e+00\n  %.27.i = fmul double %.1, 1.000000e+01\n  %.15.fca.0.insert = insertvalue { double, double } undef, double %.15.i, 0\n  %.15.fca.1.insert = insertvalue { double, double } %.15.fca.0.insert, double %.27.i, 1\n  ret { double, double } %.15.fca.1.insert\n}\n\n",
+      "output_type": "(double, double)"
+    }
+  ]
+}

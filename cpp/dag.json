@@ -4,20 +4,11 @@
     {
       "id": 0,
       "predecessors": [],
-      "op": "collection_source",
-      "values": [
-        [
-          1,
-          2.0,
-          3.9
-        ],
-        [
-          2,
-          3.5,
-          4.3
-        ]
-      ],
-      "output_type": "(int64, float64, float64)"
+      "op": "range_source",
+      "from": 1,
+      "to": 10,
+      "step": 1.2,
+      "output_type": "double"
     },
     {
       "id": 1,
@@ -25,8 +16,8 @@
         0
       ],
       "op": "map",
-      "func": "define { double, double } @\"cfunc._ZN8__main__8func$242E5TupleIxddE\"(i64 %.1, double %.2, double %.3) local_unnamed_addr #1 {\nentry:\n  %.33.i = sitofp i64 %.1 to double\n  %.34.i = fadd double %.33.i, %.2\n  %.48.i = fadd double %.34.i, 7.000000e+00\n  %.17.fca.0.insert = insertvalue { double, double } undef, double %.48.i, 0\n  %.17.fca.1.insert = insertvalue { double, double } %.17.fca.0.insert, double %.3, 1\n  ret { double, double } %.17.fca.1.insert\n}\n\n",
-      "output_type": "(float64, float64)"
+      "func": "define { double, double } @\"cfunc._ZN8__main__8func$242Ed\"(double %.1) local_unnamed_addr #1 {\nentry:\n  %.15.i = fadd double %.1, 1.000000e+00\n  %.27.i = fmul double %.1, 1.000000e+01\n  %.15.fca.0.insert = insertvalue { double, double } undef, double %.15.i, 0\n  %.15.fca.1.insert = insertvalue { double, double } %.15.fca.0.insert, double %.27.i, 1\n  ret { double, double } %.15.fca.1.insert\n}\n\n",
+      "output_type": "(double, double)"
     }
   ]
 }

@@ -13,7 +13,7 @@ template<class Tuple>
 class RangeSourceOperator : public Operator {
 public:
 
-    RangeSourceOperator(Tuple start, Tuple end, Tuple step) : start(start), end(end), step(step) {}
+    RangeSourceOperator(Tuple start, Tuple end, Tuple step) : from(start), to(end), step(step) {}
 
     void printName() {
         std::cout << "range op\n";
@@ -23,18 +23,24 @@ public:
 
     }
 
-    Optional<Tuple> next() {
-        if (start < end) {
-            start += step;
-            return start - step;
+    INLINE Optional<Tuple> next() {
+        if (from < to) {
+            from += step;
+            return from - step;
         }
         return {};
     }
 
 private:
-    Tuple start;
-    Tuple end;
+    Tuple from;
+    Tuple to;
     Tuple step;
+};
+
+
+template<class Tuple>
+RangeSourceOperator<Tuple> makeRangeSourceOperator(Tuple from, Tuple to, Tuple step) {
+    return RangeSourceOperator<Tuple>(from, to , step);
 };
 
 

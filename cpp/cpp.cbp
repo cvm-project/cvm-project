@@ -131,6 +131,12 @@
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.h">
 			<Option target="cpp"/>
 		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/utils/utils.cpp">
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/utils/utils.h">
+			<Option target="cpp"/>
+		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

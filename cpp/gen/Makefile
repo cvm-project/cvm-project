@@ -1,14 +1,15 @@
 CC = clang-3.7
 AS = llvm-as-3.7
 
-SOURCES = main.cpp execute.cpp $(wildcard ../src/operators/*.cpp)
+SOURCES = execute.cpp $(wildcard ../src/operators/*.cpp)
 INC = -I ../src/ -I functions_llvm
 UDF_SOURCES = $(wildcard functions_llvm/*.ll)
 
 OBJECTS = $(SOURCES:.cpp=.bc)
-UDF_OBJECTS = $(UDF_SOURCES:.cpp=.bc)
+UDF_OBJECTS = $(UDF_SOURCES:.ll=.bc)
 
-all: execute execute.asm
+
+all: execute
 
 
 .PRECIOUS: %.ll
@@ -19,13 +20,14 @@ all: execute execute.asm
 %.bc: %.ll
 	$(AS) $^ -o $@
 
-execute: $(UDF_OBJECTS) $(OBJECTS)
-	$(CC) -flto $^ -o $@ -lstdc++
 
-%.asm: %
-	objdump -D $^ > $@
+execute: $(UDF_OBJECTS) $(OBJECTS)
+	$(CC) -flto $^ -o $@.so -lstdc++ -shared
+
+#%.asm: %
+#	objdump -D $^ > $@
 
 clean:
-	rm -f *.bc *.ll execute *.asm
+	rm -f *.bc *.ll execute *.asm functions_llvm/*.bc
 
 .PHONY: clean

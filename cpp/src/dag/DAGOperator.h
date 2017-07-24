@@ -20,6 +20,8 @@ public:
     size_t id;
 
     virtual void accept(class DAGVisitor &v) = 0;
+
+    virtual void parse_json(nlohmann::json){};
 };
 
 #endif //CPP_DAGOPERATOR_H

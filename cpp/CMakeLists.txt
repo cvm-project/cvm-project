@@ -9,7 +9,8 @@ message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 set(CMAKE_CXX_STANDARD 14)
 set(SOURCE_FILES main.cpp src/code_gen/generate_code.cpp
         src/dag/DAGCreation.cpp
-        src/dag/DAGMap.cpp src/dag/DAGCollection.cpp src/dag/DAGRange.cpp src/dag/DAGFilter.cpp src/dag/DAGJoin.cpp )
+        src/dag/DAGMap.cpp src/dag/DAGCollection.cpp src/dag/DAGRange.cpp src/dag/DAGFilter.cpp src/dag/DAGJoin.cpp
+        src/utils/utils.cpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 add_definitions(${LLVM_DEFINITIONS})

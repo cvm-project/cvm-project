@@ -1,6 +1,6 @@
-//
-// Created by sabir on 18.07.17.
-//
+/**
+ * Auto-generated execution plan
+ */
 
 #include <tuple>
 #include <vector>
@@ -9,6 +9,7 @@
 #include "operators/CollectionSourceOperator.h"
 #include "operators/MapOperator.h"
 #include "functions/MapFunction0.hpp"
+#include "utils/tuple_to_string.cpp"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ void execute() {
     std::vector<t0> v1;
     v1.push_back(t0(1, 2, 3, 4));
     v1.push_back(t0(5, 6, 7, 8));
-
+    /**COLLECTION SOURCE **/
     auto op1 = makeCollectionSourceOperator<t0>();
     op1.values = v1;
 
@@ -28,6 +29,6 @@ void execute() {
 
     op2.open();
     while (auto res = op2.next()) {
-        cout << get<0>(res.value) << ", " << get<1>(res.value) << std::endl;
+        cout << to_string(res.value) << endl;
     }
 }

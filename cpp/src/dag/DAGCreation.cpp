@@ -14,13 +14,14 @@ using namespace std;
 
 static DAGOperatorsMap opMap;
 
-DAG *parse_dag(std::string filename) {
-    load_plugins();
-    DAG *dag = parse(std::ifstream(filename));
+DAG *parse_dag(std::string dagstr) {
+    load_operators();
+    std::stringstream in(dagstr);
+    DAG *dag = parse(&in);
     return dag;
 };
 
-void load_plugins() {
+void load_operators() {
 
     opMap.emplace(FILTER, &DAGFilter::make_dag_operator);
     opMap.emplace(RANGE, &DAGRange::make_dag_operator);
@@ -29,11 +30,11 @@ void load_plugins() {
     opMap.emplace(JOIN, &DAGJoin::make_dag_operator);
 }
 
-DAG *parse(std::ifstream ifstream) {
+DAG *parse(std::stringstream *istream) {
     DAG *dag = new DAG;
 
     nlohmann::json j;
-    ifstream >> j;
+    *istream >> j;
     auto action = j[DAG_ACTION];
     dag->action = action;
     auto dag_list = j[DAG_DAG];
@@ -49,6 +50,7 @@ DAG *parse(std::ifstream ifstream) {
         if (!llvr_ir.is_null()) {
             op->llvm_ir = llvr_ir;
         }
+        op->parse_json(*it);
         op->output_type = (*it)[DAG_OUTPUT_TYPE];
         vector<size_t> preds;
         auto preds_json = (*it)[DAG_PREDS];

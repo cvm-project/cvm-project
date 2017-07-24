@@ -3,7 +3,7 @@ from json import JSONEncoder
 
 from numba import typeof
 
-from .transforms import *
+from blaze.utils import numba_to_c_types
 import json
 import numba
 import numba.types as types
@@ -77,7 +77,6 @@ def replace_unituple(type_):
         out = tuple(map(lambda t: replace_unituple(t), type_))
     return out
 
-
 def get_llvm_ir_and_output_type(func, input_type=None):
     print("old input type: " + str(input_type))
     input_type = replace_unituple(input_type)
@@ -103,7 +102,7 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     m = re.search('define [^\n\r]* @"cfunc.*\n\n', code, re.DOTALL)
     code_string = m.group(0)
 
-    return code_string, output_type
+    return code_string, numba_to_c_types(output_type)
 
 
 def get_llvm_ir_output_type_generator(func):
@@ -214,7 +213,7 @@ class Map(PipeRDD):
         dic = self.dic
         dic[OP] = MAP
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
         return cur_index
 
 
@@ -227,7 +226,7 @@ class Filter(PipeRDD):
         dic[OP] = FILTER
         dic[FUNC], _ = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
         self.output_type = self.parents[0].output_type
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] =numba_to_c_types(self.output_type)
         return cur_index
 
 
@@ -239,7 +238,7 @@ class FlatMap(PipeRDD):
         dic = self.dic
         dic[OP] = FLAT_MAP
         dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
         return cur_index
 
 
@@ -288,7 +287,7 @@ class Join(ShuffleRDD):
         # (K, V), (K, W) => (K, (V, W))
 
         self.output_type = self.compute_output_type()
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
         return cur_index
 
 
@@ -328,7 +327,7 @@ class CollectionSource(RDD):
         dic = self.dic
         dic[OP] = 'collection_source'
         dic[VALUES] = self.values
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
 
         return cur_index
 
@@ -350,7 +349,7 @@ class RangeSource(RDD):
         dic[FROM] = self.from_
         dic[TO] = self.to
         dic[STEP] = self.step
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
         return cur_index
 
 
@@ -366,5 +365,5 @@ class GeneratorSource(RDD):
         dic = self.dic
         dic[OP] = 'generator_source'
         dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
         return cur_index
