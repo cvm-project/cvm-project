@@ -4,17 +4,17 @@ from blaze.blaze_context import *
 # sys.path.insert(0, "/home/sabir/projects/")
 
 # input = [(1, 2, 3, 4), (5, 6, 7, 8)]
-data = range_(1, 10, 1.2)
+data = range_(1, 12000, 1.2)
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
 # os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
-os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
+# os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
 
 
 # os.environ["NUMBA_DUMP_LLVM"] = '1'
 
 def func(a):
-    return (a + 1, a * 10)
+    return (a + 1, a * 300, a / 20)
 
 
 # func = lambda t: t[3]

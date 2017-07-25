@@ -105,9 +105,57 @@ CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o.provides: CMakeFiles/cpp.dir
 CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o.provides.build: CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o
 
 
+CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: CMakeFiles/cpp.dir/flags.make
+CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: generate_dag_plan.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cpp.dir/generate_dag_plan.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/generate_dag_plan.cpp.o -c /home/sabir/projects/blaze/cpp/generate_dag_plan.cpp
+
+CMakeFiles/cpp.dir/generate_dag_plan.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/cpp.dir/generate_dag_plan.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/sabir/projects/blaze/cpp/generate_dag_plan.cpp > CMakeFiles/cpp.dir/generate_dag_plan.cpp.i
+
+CMakeFiles/cpp.dir/generate_dag_plan.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/cpp.dir/generate_dag_plan.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/sabir/projects/blaze/cpp/generate_dag_plan.cpp -o CMakeFiles/cpp.dir/generate_dag_plan.cpp.s
+
+CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.requires:
+
+.PHONY : CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.requires
+
+CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.provides: CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.requires
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.provides.build
+.PHONY : CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.provides
+
+CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.provides.build: CMakeFiles/cpp.dir/generate_dag_plan.cpp.o
+
+
+CMakeFiles/cpp.dir/c_generate_dag_plan.c.o: CMakeFiles/cpp.dir/flags.make
+CMakeFiles/cpp.dir/c_generate_dag_plan.c.o: c_generate_dag_plan.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/cpp.dir/c_generate_dag_plan.c.o"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cpp.dir/c_generate_dag_plan.c.o   -c /home/sabir/projects/blaze/cpp/c_generate_dag_plan.c
+
+CMakeFiles/cpp.dir/c_generate_dag_plan.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/cpp.dir/c_generate_dag_plan.c.i"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/sabir/projects/blaze/cpp/c_generate_dag_plan.c > CMakeFiles/cpp.dir/c_generate_dag_plan.c.i
+
+CMakeFiles/cpp.dir/c_generate_dag_plan.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/cpp.dir/c_generate_dag_plan.c.s"
+	/usr/bin/cc  $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/sabir/projects/blaze/cpp/c_generate_dag_plan.c -o CMakeFiles/cpp.dir/c_generate_dag_plan.c.s
+
+CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.requires:
+
+.PHONY : CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.requires
+
+CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.provides: CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.requires
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.provides.build
+.PHONY : CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.provides
+
+CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.provides.build: CMakeFiles/cpp.dir/c_generate_dag_plan.c.o
+
+
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: CMakeFiles/cpp.dir/flags.make
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/dag/DAGCreation.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o -c /home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp
 
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.i: cmake_force
@@ -131,7 +179,7 @@ CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o.provides.build: CMakeFiles/cpp.dir/
 
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: CMakeFiles/cpp.dir/flags.make
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/dag/DAGMap.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o -c /home/sabir/projects/blaze/cpp/src/dag/DAGMap.cpp
 
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.i: cmake_force
@@ -155,7 +203,7 @@ CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o.provides.build: CMakeFiles/cpp.dir/src/d
 
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: CMakeFiles/cpp.dir/flags.make
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/dag/DAGCollection.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o -c /home/sabir/projects/blaze/cpp/src/dag/DAGCollection.cpp
 
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.i: cmake_force
@@ -179,7 +227,7 @@ CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o.provides.build: CMakeFiles/cpp.di
 
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: CMakeFiles/cpp.dir/flags.make
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/dag/DAGRange.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o -c /home/sabir/projects/blaze/cpp/src/dag/DAGRange.cpp
 
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.i: cmake_force
@@ -203,7 +251,7 @@ CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o.provides.build: CMakeFiles/cpp.dir/src
 
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: CMakeFiles/cpp.dir/flags.make
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/dag/DAGFilter.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o -c /home/sabir/projects/blaze/cpp/src/dag/DAGFilter.cpp
 
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.i: cmake_force
@@ -227,7 +275,7 @@ CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o.provides.build: CMakeFiles/cpp.dir/sr
 
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: CMakeFiles/cpp.dir/flags.make
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/dag/DAGJoin.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o -c /home/sabir/projects/blaze/cpp/src/dag/DAGJoin.cpp
 
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.i: cmake_force
@@ -251,7 +299,7 @@ CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o.provides.build: CMakeFiles/cpp.dir/src/
 
 CMakeFiles/cpp.dir/src/utils/utils.cpp.o: CMakeFiles/cpp.dir/flags.make
 CMakeFiles/cpp.dir/src/utils/utils.cpp.o: src/utils/utils.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/cpp.dir/src/utils/utils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/cpp.dir/src/utils/utils.cpp.o"
 	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/cpp.dir/src/utils/utils.cpp.o -c /home/sabir/projects/blaze/cpp/src/utils/utils.cpp
 
 CMakeFiles/cpp.dir/src/utils/utils.cpp.i: cmake_force
@@ -277,6 +325,8 @@ CMakeFiles/cpp.dir/src/utils/utils.cpp.o.provides.build: CMakeFiles/cpp.dir/src/
 cpp_OBJECTS = \
 "CMakeFiles/cpp.dir/main.cpp.o" \
 "CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o" \
+"CMakeFiles/cpp.dir/generate_dag_plan.cpp.o" \
+"CMakeFiles/cpp.dir/c_generate_dag_plan.c.o" \
 "CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o" \
 "CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o" \
 "CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o" \
@@ -290,6 +340,8 @@ cpp_EXTERNAL_OBJECTS =
 
 cpp: CMakeFiles/cpp.dir/main.cpp.o
 cpp: CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o
+cpp: CMakeFiles/cpp.dir/generate_dag_plan.cpp.o
+cpp: CMakeFiles/cpp.dir/c_generate_dag_plan.c.o
 cpp: CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o
 cpp: CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o
 cpp: CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o
@@ -301,6 +353,7 @@ cpp: CMakeFiles/cpp.dir/build.make
 cpp: /usr/local/lib/libLLVMSupport.a
 cpp: /usr/local/lib/libLLVMCore.a
 cpp: /usr/local/lib/libLLVMIRReader.a
+cpp: libgenerate.so
 cpp: /usr/local/lib/libLLVMAsmParser.a
 cpp: /usr/local/lib/libLLVMBitReader.a
 cpp: /usr/local/lib/libLLVMCore.a
@@ -308,7 +361,7 @@ cpp: /usr/local/lib/libLLVMBinaryFormat.a
 cpp: /usr/local/lib/libLLVMSupport.a
 cpp: /usr/local/lib/libLLVMDemangle.a
 cpp: CMakeFiles/cpp.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/sabir/projects/blaze/cpp/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable cpp"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cpp.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -318,6 +371,8 @@ CMakeFiles/cpp.dir/build: cpp
 
 CMakeFiles/cpp.dir/requires: CMakeFiles/cpp.dir/main.cpp.o.requires
 CMakeFiles/cpp.dir/requires: CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o.requires
+CMakeFiles/cpp.dir/requires: CMakeFiles/cpp.dir/generate_dag_plan.cpp.o.requires
+CMakeFiles/cpp.dir/requires: CMakeFiles/cpp.dir/c_generate_dag_plan.c.o.requires
 CMakeFiles/cpp.dir/requires: CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o.requires
 CMakeFiles/cpp.dir/requires: CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o.requires
 CMakeFiles/cpp.dir/requires: CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o.requires

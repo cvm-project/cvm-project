@@ -1,6 +1,7 @@
 import re
 from json import JSONEncoder
 
+from blaze.c_executer import execute
 from numba import typeof
 
 from blaze.utils import numba_to_c_types
@@ -153,11 +154,12 @@ class RDD(object):
 
         self.writeDAG(dagdict[DAG], 0)
         # write to file
-        fp = open('dag.json', 'w')
-        json.dump(dagdict, fp=fp, cls=RDDEncoder)
-        # print(json.dumps(dagdict, cls=RDDEncoder))
+        # fp = open('dag.json', 'w')
+        # json.dump(dagdict, fp=fp, cls=RDDEncoder)
+        dagStr = json.dumps(dagdict, cls=RDDEncoder)
 
         # unleash the C beast
+        execute(dagStr)
 
     def map(self, map_func):
         return Map(self, map_func)

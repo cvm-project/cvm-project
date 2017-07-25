@@ -11,9 +11,11 @@
 
 using namespace std;
 typedef double tuple_0;
-typedef tuple<double, double> tuple_1;
+typedef tuple<double, double, double> tuple_1;
 
-extern "C" {tuple_1 map_operator_function_0(tuple_0);}
+extern "C" {
+tuple_1 map_operator_function_0(tuple_0);
+}
 
 namespace impl {
     template<typename Function, typename... Types, size_t... Indexes>
@@ -34,10 +36,10 @@ auto call(const Function &f, const Type &t) {
 }
 
 
-void execute() {
+extern "C" void execute() {
 	
 /**RangeSourceOperator**/
-	auto op_0 = makeRangeSourceOperator<tuple_0>(1.000000, 10.000000, 1.200000);
+	auto op_0 = makeRangeSourceOperator<tuple_0>(1.000000, 12000.000000, 1.200000);
 	
 	
 /**MapOperator**/

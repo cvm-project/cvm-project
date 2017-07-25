@@ -1,10 +1,4 @@
-#include <utility>
-#include <cstddef>
-#include <tuple>
-#include <iostream>
-#include "code_gen/generate_code.h"
-
-#include "src/dag/DAGCreation.hpp"
+extern "C" int generate_dag_plan(char*);
 
 //
 //struct small_tuple{
@@ -25,8 +19,8 @@
 //
 int main(int argc, char **argv) {
     //get the dag string as an argument
-    DAG *dag = parse_dag("[]");
-    generate_code(dag);
+    char* test = (char *) '{\n  "action": "count",\n  "dag": [\n    {\n      "id": 0,\n      "predecessors": [],\n      "op": "range_source",\n      "from": 1,\n      "to": 10,\n      "step": 1.2,\n      "output_type": "double"\n    },\n    {\n      "id": 1,\n      "predecessors": [\n        0\n      ],\n      "op": "map",\n      "func": "define { double, double } @\\"cfunc._ZN8__main__8func$242Ed\\"(double %.1) local_unnamed_addr #1 {\\nentry:\\n  %.15.i = fadd double %.1, 1.000000e+00\\n  %.27.i = fmul double %.1, 1.000000e+01\\n  %.15.fca.0.insert = insertvalue { double, double } undef, double %.15.i, 0\\n  %.15.fca.1.insert = insertvalue { double, double } %.15.fca.0.insert, double %.27.i, 1\\n  ret { double, double } %.15.fca.1.insert\\n}\\n\\n",\n      "output_type": "(double, double)"\n    }\n  ]\n}';
+    generate_dag_plan(test);
     //compile the code to some object file
 
     //return

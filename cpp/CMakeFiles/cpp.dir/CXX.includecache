@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/sabir/projects/blaze/cpp/main.cpp
+/home/sabir/projects/blaze/cpp/generate_dag_plan.cpp
 utility
 -
 cstddef
@@ -17,8 +17,16 @@ iostream
 -
 code_gen/generate_code.h
 /home/sabir/projects/blaze/cpp/code_gen/generate_code.h
-src/dag/DAGCreation.hpp
-/home/sabir/projects/blaze/cpp/src/dag/DAGCreation.hpp
+dag/DAGCreation.hpp
+/home/sabir/projects/blaze/cpp/dag/DAGCreation.hpp
+string
+-
+fstream
+-
+streambuf
+-
+
+/home/sabir/projects/blaze/cpp/main.cpp
 
 /home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h
 unordered_map
@@ -267,6 +275,18 @@ src/dag/iostream
 src/dag/DAGCollection.h
 DAGOperator.h
 src/dag/DAGOperator.h
+
+src/dag/DAGCreation.hpp
+iostream
+-
+unordered_map
+-
+DAGOperator.h
+src/dag/DAGOperator.h
+DAG.h
+src/dag/DAG.h
+utils/constants.h
+src/dag/utils/constants.h
 
 src/dag/DAGFilter.h
 operators/Operator.h

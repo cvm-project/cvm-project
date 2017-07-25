@@ -41,6 +41,7 @@ public:
 
         ofstream out(GEN_DIR + "execute.cpp");
         out << final_code;
+        out.close();
     }
 
 
@@ -117,7 +118,7 @@ public:
 private:
 
 
-    const string GEN_DIR = "gen/";
+    const string GEN_DIR = "cpp/gen/";
     const string LLVM_FUNC_DIR = "functions_llvm/";
     const std::string TUPLE_NAME = "tuple_";
     size_t tupleCounter = -1;
@@ -273,7 +274,7 @@ private:
     }
 
     void emitFuncDecl() {
-        appendLineBodyNoCol("void execute() {");
+        appendLineBodyNoCol("extern \"C\" void execute() {");
         tabInd++;
     }
 
@@ -301,7 +302,9 @@ private:
 
     void storeLLVMCode(string ir, string opName) {
         //the local.. string is not llvm-3.7 compatible:
-        ir = string_replace(ir, "local_unnamed_addr #1 ", "");
+        regex reg1("local_unnamed_addr #.? ");
+        ir = regex_replace(ir, reg1, "");
+//        ir = string_replace(ir, "local_unnamed_addr #1 ", "");
         //replace the func name with our
         string funcName = opName.append(getNextLLVMFuncName());
         regex reg("@.*\".*\"");

@@ -20,8 +20,11 @@ all: execute
 %.bc: %.ll
 	$(AS) $^ -o $@
 
+c_execute.o: c_execute.c
+	$(CC) -c -O3 $^ -o $@ -fPIC
 
-execute: $(UDF_OBJECTS) $(OBJECTS)
+
+execute: $(UDF_OBJECTS) $(OBJECTS) c_execute.o
 	$(CC) -flto $^ -o $@.so -lstdc++ -shared
 
 #%.asm: %
