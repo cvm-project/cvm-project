@@ -23,8 +23,7 @@ public:
     void start_visit(DAGOperator *op) {
         addGenIncludes();
         emitHelpers();
-
-        emitFuncDecl();
+        tabInd++;
         op->accept(*this);
         emitFuncEnd();
 
@@ -35,6 +34,7 @@ public:
                 + "using namespace std;\n"
                 + writeTupleDefs() + "\n"
                 + writeLLVMFuncDecls() + "\n"
+                + writeFuncDecl() + "\n";
                 + body;
 
         cout << final_code;
@@ -273,19 +273,16 @@ private:
         appendLineBodyNoCol();
     }
 
-    void emitFuncDecl() {
-        appendLineBodyNoCol("extern \"C\" void execute() {");
-        tabInd++;
-    }
-
     void emitFuncEnd() {
-
+        appendLineBody("auto result = new vector<" + getCurrentTupleName() + ">()");
         appendLineBody(getCurrentOperatorName() + ".open()");
         appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() + ".next()) {");
         tabInd++;
         appendLineBody("cout << to_string(res.value) << endl");
+        appendLineBody("result.push_back(res.value)");
         tabInd--;
         appendLineBodyNoCol("}");
+        appendLineBody("return result.data();");
         tabInd--;
         appendLineBodyNoCol("}");
     }
@@ -346,6 +343,10 @@ private:
                 " * Auto-generated execution plan\n"
                 " */\n";
 
+    }
+
+    string writeFuncDecl() {
+        return ("extern \"C\" *" + getCurrentTupleName() + " execute() {");
     }
 
     string writeIncludes() {

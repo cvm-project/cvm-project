@@ -17,6 +17,8 @@ from numba.typing import signature
 from numba.typing.ctypes_utils import to_ctypes
 from numba.types import Tuple, UniTuple, NoneType, intc, float32
 
+from blaze.utils import get_type_size
+
 # types larger than this are classiefied as "MEMORY" in amd64 ABI
 MINIMAL_TYPE_SIZE = 16
 
@@ -96,19 +98,6 @@ def replace_unituple(type_):
     elif isinstance(type_, (list, tuple)):
         out = tuple(map(lambda t: replace_unituple(t), type_))
     return out
-
-
-def get_type_size(type_):
-    size = 0
-    try:
-        size = type_.bitwidth / 8
-    except AttributeError:
-        if isinstance(type_, Tuple):
-            for child_type in type_.types:
-                size += get_type_size(child_type)
-        elif isinstance(type_, UniTuple):
-            size = get_type_size(type_.dtype) * type_.count
-    return size
 
 
 def make_tuple(child_types):

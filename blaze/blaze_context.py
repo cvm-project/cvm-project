@@ -1,4 +1,4 @@
-from blaze.rdd import TextSource, CollectionSource, RangeSource, GeneratorSource
+from blaze.rdd import TextSource, CollectionSource, RangeSource, GeneratorSource, NumpyArraySource
 
 
 def text_file(path):
@@ -15,3 +15,7 @@ def range_(from_, to, step=1):
 
 def generator(func):
     return GeneratorSource(func)
+
+
+def numpy_array(array):
+    return NumpyArraySource(array)

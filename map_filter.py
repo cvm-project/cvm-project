@@ -1,10 +1,13 @@
 import os
 from blaze.blaze_context import *
+import numpy as np
 
 # sys.path.insert(0, "/home/sabir/projects/")
+from numba import njit
 
-# input = [(1, 2, 3, 4), (5, 6, 7, 8)]
-data = range_(1, 12000, 1.2)
+# input = [(1, 2.0), (5, 6)]
+# data = numpy_array(np.array(input, dtype="i4,f4"))
+data = range_(0, 10, 1)
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
 # os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
@@ -21,7 +24,7 @@ def func(a):
 w = data.map(func)
 
 # w = data.map(lambda w: (w, w * 2)).filter(lambda t: t[0] % 2 == 0 and t[1] % 3 == 0)
-w.count()
+w.collect()
 # print(w.count())
 
 
@@ -49,10 +52,10 @@ w.count()
 #
 # @njit()
 # def caller(a):
-#     return a + 338 + callee(a)
+#     return [i for i in a]
 #
 #
-# caller(1)
+# caller([1,2,3])
 # # # f([1, 2, 3])
 # # # # print(f(2.0))
 # # # # print(f(1 << 700))

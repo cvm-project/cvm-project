@@ -1,6 +1,10 @@
+import json
+
 from cffi import FFI
-import random
 from sys import exit, platform
+import numpy as np
+
+from blaze.utils import *
 
 ffi = FFI()
 cpp_dir = "cpp/"
@@ -15,7 +19,7 @@ def load_cffi(header, lib_path):
     cdef_from_file = None
     try:
         with open(header, 'r') as libtestcffi_header:
-            cdef_from_file = libtestcffi_header.read()  # .replace('\n', '')
+            cdef_from_file = libtestcffi_header.read()
     except FileNotFoundError:
         print('Unable to find "%s"' % header)
         exit(2)
@@ -34,14 +38,29 @@ def load_cffi(header, lib_path):
         lib_extension = '.so'
     return ffi.dlopen(lib_path + lib_extension)
 
-
-def execute(dag):
+def execute(dag_dict):
+    dagStr = json.dumps(dag_dict, cls=RDDEncoder)
     # call the libgenerate.so/generate_dag_plan
-    # the execution plan is now in executor.so
+    # the execution plan is then in executor.so
     generatorCFFI = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib)
-    dag_c = ffi.new('char[]', dag.encode('utf-8'))
-    generatorCFFI.c_generate_dag_plan(dag_c)
+    dag_c = ffi.new('char[]', dagStr.encode('utf-8'))
+    # generatorCFFI.c_generate_dag_plan(dag_c)
     # call executor.so, the return should be the address with the result
     executerCFFI = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib)
-    executerCFFI.c_execute()
-    pass
+    res = executerCFFI.c_execute()
+    return wrap_result(res, dag_dict[ACTION], dag_dict['dag'][-1]['output_type'])
+
+
+
+def wrap_result(res, action, type_):
+    if action == "collect":
+        buffer_size = res.size * get_type_size(type_)
+        c_buffer = ffi.buffer(res.data, buffer_size)
+
+        np_arr = np.ctypeslib.as_array(res.data, shape=(res.size, 3))
+        # np_arr = np.frombuffer(c_buffer, dtype=numba_type_to_dtype(type_))
+        ret = np.array(res.data)
+        print(ret[0])
+        return ret
+    elif action == "count":
+        return res

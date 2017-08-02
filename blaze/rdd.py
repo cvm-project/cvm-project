@@ -1,39 +1,14 @@
 import re
 from json import JSONEncoder
 
-from blaze.c_executer import execute
+from blaze.c_executor import execute
 from numba import typeof
 
-from blaze.utils import numba_to_c_types
-import json
+from blaze.utils import *
 import numba
 import numba.types as types
 from numba.types.containers import *
 from blaze.libs.numba.llvm_ir import cfunc
-
-DEBUG = False
-
-ACTION = 'action'
-DAG = 'dag'
-ID = 'id'
-OP = 'op'
-FUNC = 'func'
-PREDS = 'predecessors'
-FROM = 'from'
-TO = 'to'
-STEP = 'step'
-VALUES = 'values'
-OUTPUT_TYPE = 'output_type'
-FILTER = 'filter'
-MAP = 'map'
-FLAT_MAP = 'flat_map'
-
-
-class RDDEncoder(JSONEncoder):
-    def default(self, o):
-        if isinstance(o, numba.types.Type):
-            return o.name
-        return JSONEncoder.default(self, o)
 
 
 def cleanRDDs(rdd):
@@ -78,6 +53,7 @@ def replace_unituple(type_):
         out = tuple(map(lambda t: replace_unituple(t), type_))
     return out
 
+
 def get_llvm_ir_and_output_type(func, input_type=None):
     print("old input type: " + str(input_type))
     input_type = replace_unituple(input_type)
@@ -103,7 +79,7 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     m = re.search('define [^\n\r]* @"cfunc.*\n\n', code, re.DOTALL)
     code_string = m.group(0)
 
-    return code_string, numba_to_c_types(output_type)
+    return code_string, output_type
 
 
 def get_llvm_ir_output_type_generator(func):
@@ -151,15 +127,11 @@ class RDD(object):
         dagdict[DAG] = []
 
         cleanRDDs(self)
-
         self.writeDAG(dagdict[DAG], 0)
         # write to file
         # fp = open('dag.json', 'w')
         # json.dump(dagdict, fp=fp, cls=RDDEncoder)
-        dagStr = json.dumps(dagdict, cls=RDDEncoder)
-
-        # unleash the C beast
-        execute(dagStr)
+        execute(dagdict)
 
     def map(self, map_func):
         return Map(self, map_func)
@@ -215,7 +187,7 @@ class Map(PipeRDD):
         dic = self.dic
         dic[OP] = MAP
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
-        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 
@@ -228,7 +200,7 @@ class Filter(PipeRDD):
         dic[OP] = FILTER
         dic[FUNC], _ = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
         self.output_type = self.parents[0].output_type
-        dic[OUTPUT_TYPE] =numba_to_c_types(self.output_type)
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 
@@ -240,7 +212,7 @@ class FlatMap(PipeRDD):
         dic = self.dic
         dic[OP] = FLAT_MAP
         dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
-        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 
@@ -289,7 +261,7 @@ class Join(ShuffleRDD):
         # (K, V), (K, W) => (K, (V, W))
 
         self.output_type = self.compute_output_type()
-        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 
@@ -329,8 +301,20 @@ class CollectionSource(RDD):
         dic = self.dic
         dic[OP] = 'collection_source'
         dic[VALUES] = self.values
-        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
+        dic[OUTPUT_TYPE] = self.output_type
 
+        return cur_index
+
+
+class NumpyArraySource(RDD):
+    def __init__(self, array):
+        super(NumpyArraySource, self).__init__()
+        self.output_type = numba.typeof(tuple([i for i in array[0]]))
+        self.size = array.size
+        print(self.output_type)
+
+    def writeDAG(self, daglist, index):
+        cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)
         return cur_index
 
 
@@ -351,7 +335,7 @@ class RangeSource(RDD):
         dic[FROM] = self.from_
         dic[TO] = self.to
         dic[STEP] = self.step
-        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 
@@ -367,5 +351,5 @@ class GeneratorSource(RDD):
         dic = self.dic
         dic[OP] = 'generator_source'
         dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
-        dic[OUTPUT_TYPE] = numba_to_c_types(self.output_type)
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
