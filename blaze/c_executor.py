@@ -38,6 +38,7 @@ def load_cffi(header, lib_path):
         lib_extension = '.so'
     return ffi.dlopen(lib_path + lib_extension)
 
+
 def execute(dag_dict):
     dagStr = json.dumps(dag_dict, cls=RDDEncoder)
     # call the libgenerate.so/generate_dag_plan
@@ -48,19 +49,15 @@ def execute(dag_dict):
     # call executor.so, the return should be the address with the result
     executerCFFI = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib)
     res = executerCFFI.c_execute()
-    return wrap_result(res, dag_dict[ACTION], dag_dict['dag'][-1]['output_type'])
-
-
+    res = ffi.gc(res, executerCFFI.free_result)
+    # return wrap_result(res, dag_dict[ACTION], dag_dict['dag'][-1]['output_type'])
+    return
 
 def wrap_result(res, action, type_):
     if action == "collect":
         buffer_size = res.size * get_type_size(type_)
         c_buffer = ffi.buffer(res.data, buffer_size)
-
-        np_arr = np.ctypeslib.as_array(res.data, shape=(res.size, 3))
-        # np_arr = np.frombuffer(c_buffer, dtype=numba_type_to_dtype(type_))
-        ret = np.array(res.data)
-        print(ret[0])
-        return ret
+        np_arr = np.frombuffer(c_buffer, dtype=numba_type_to_dtype(type_))
+        return np_arr
     elif action == "count":
         return res

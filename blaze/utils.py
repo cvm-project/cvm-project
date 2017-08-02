@@ -57,7 +57,7 @@ NumpyTypeMap = {
     'float32': 'f4',
     'float64': 'f8',
     'int32': 'i4',
-    'int64': 'i8',
+    'int64': "i8",
     'boolean': 'b1',
     'bool_': 'b1',
 }
@@ -67,10 +67,11 @@ def numba_type_to_dtype(type_):
     if isinstance(type_, nb_types.Tuple):
         types = []
         for t in type_.types:
-            types += numba_type_to_dtype(t)
+            w = numba_type_to_dtype(t)
+            types.append(w)
         return ",".join(types)
     else:
-        return NumpyTypeMap[type_]
+        return NumpyTypeMap[type_.name]
 
 
 def get_type_size(type_):
