@@ -7,5 +7,5 @@
 
 void generate_code(DAG *dag){
     CodeGenVisitor visitor;
-    visitor.start_visit(dag->sink);
+    visitor.start_visit(dag);
 }

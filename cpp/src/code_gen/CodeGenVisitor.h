@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <regex>
 #include "utils/DAGVisitor.h"
+#include "dag/DAG.h"
 #include "utils/utils.h"
 #include <fstream>
 #include <sys/stat.h>
@@ -20,11 +21,12 @@ using namespace std;
 class CodeGenVisitor : public DAGVisitor {
 public:
 
-    void start_visit(DAGOperator *op) {
+    void start_visit(DAG *dag) {
         addGenIncludes();
+        emitFuncDecl(dag->action);
         tabInd++;
-        op->accept(*this);
-        emitFuncEnd();
+        dag->sink->accept(*this);
+        emitFuncEnd(dag->action);
 
         string final_code;
         final_code +=
@@ -34,19 +36,84 @@ public:
                 + writeTupleDefs() + "\n"
                 + writeLLVMFuncDecls() + "\n"
                 + writeHelpers() + "\n"
-                + writeFuncDecl() + "\n"
                 + body;
-
-//        cout << final_code;
 
         //write out execute.cpp
         ofstream out(GEN_DIR + "execute.cpp");
         out << final_code;
         out.close();
 
-        //write out c_execute.c
-        //write out c_execute.h
+        write_c_execute();
 
+        write_c_executeh();
+
+        writeMakefile();
+
+    }
+
+    void write_c_execute() {
+        ofstream out(GEN_DIR + "c_execute.c");
+        out << "#include \"c_execute.h\"\n"
+                "\n"
+                "result_type *execute();\n"
+                "\n"
+                "void free_result(result_type *ptr);\n"
+                "\n"
+                "\n"
+                "result_type *c_execute() { return execute(); }\n"
+                "\n"
+                "void c_free_result(result_type *ptr) { return free_result(ptr); }";
+        out.close();
+    }
+
+    void write_c_executeh(){
+        ofstream out(GEN_DIR + "c_execute.h");
+        out << resultTypeDef << "\n"
+                "result_type *c_execute();\n"
+                "\n"
+                "void free_result(result_type *);";
+        out.close();
+    }
+
+    void writeMakefile(){
+        ofstream out(GEN_DIR + "Makefile");
+        out << "CC = clang-3.7\n"
+                "AS = llvm-as-3.7\n"
+                "\n"
+                "SOURCES = execute.cpp $(wildcard ../src/operators/*.cpp)\n"
+                "INC = -I ../src/ -I functions_llvm -I ../src/utils/\n"
+                "UDF_SOURCES = $(wildcard functions_llvm/*.ll)\n"
+                "\n"
+                "OBJECTS = $(SOURCES:.cpp=.bc)\n"
+                "UDF_OBJECTS = $(UDF_SOURCES:.ll=.bc)\n"
+                "\n"
+                "\n"
+                "all: execute\n"
+                "\n"
+                "\n"
+                ".PRECIOUS: %.ll\n"
+                "\n"
+                "%.ll: %.cpp\n"
+                "\t$(CC) -S -O3 -emit-llvm $^ -std=c++14  $(INC) -o $@\n"
+                "\n"
+                "%.bc: %.ll\n"
+                "\t$(AS) $^ -o $@\n"
+                "\n"
+                "c_execute.o: c_execute.c\n"
+                "\t$(CC) -c -O3 $^ -o $@ -fPIC\n"
+                "\n"
+                "\n"
+                "execute: $(UDF_OBJECTS) $(OBJECTS) c_execute.o\n"
+                "\t$(CC) -flto $^ -o $@.so -lstdc++ -shared\n"
+                "\n"
+                "#%.asm: %\n"
+                "#\tobjdump -D $^ > $@\n"
+                "\n"
+                "clean:\n"
+                "\trm -f *.bc *.ll execute *.asm functions_llvm/*.bc\n"
+                "\n"
+                ".PHONY: clean";
+        out.close();
     }
 
 
@@ -67,7 +134,7 @@ public:
         DAGVisitor::visit(op);
 
         string operatorName = "MapOperator";
-        emitOperatorComment(operatorName);
+        emitComment(operatorName);
         string tType = emitTupleType(op->output_type);
         string opName = getNextOperatorName();
         operatorNameMap.emplace(op->id, make_pair(opName, tType));
@@ -85,7 +152,7 @@ public:
         DAGVisitor::visit(op);
 
         string operatorName = "RangeSourceOperator";
-        emitOperatorComment(operatorName);
+        emitComment(operatorName);
 
         string tType = emitTupleType(op->output_type);
         string opName = getNextOperatorName();
@@ -100,7 +167,7 @@ public:
 
     void visit(DAGFilter *op) {
         string operatorName = "FilterOperator";
-        emitOperatorComment(operatorName);
+        emitComment(operatorName);
 
         DAGVisitor::visit(op);
         string tType = emitTupleType(op->output_type);
@@ -267,7 +334,7 @@ private:
                 "    }\n"
                 "\n"
                 "}  // namespace impl\n"
-                "\n"
+                "\n\n"
                 "template<typename Function, typename... Types>\n"
                 "auto call(const Function &f, const std::tuple<Types...> &t) {\n"
                 "    return impl::call_impl(f, t, std::index_sequence_for<Types...>());\n"
@@ -280,31 +347,54 @@ private:
                 "\n\n";
     }
 
-    void emitFuncEnd() {
-        appendLineBody("    size_t allocatedSize = 2");
-        appendLineBody("size_t resSize = 0");
-        appendLineBody(getCurrentTupleName() + "     *result = (" + getCurrentTupleName() + " *) malloc(sizeof("
-                       + getCurrentTupleName() + ") * allocatedSize))");
-        appendLineBodyNoCol("    while (auto res = " + getCurrentOperatorName() + ".next()) {");
-        tabInd++;
-        appendLineBodyNoCol("        if (allocatedSize <= resSize) {");
-        tabInd++;
-        appendLineBody("allocatedSize *= 2");
-        appendLineBody("result = (" + getCurrentTupleName() + "*) realloc(result, sizeof(" + getCurrentTupleName() + ") * allocatedSize)");
+    void emitFuncEnd(string action) {
+        if (action == "count") {
+            emitComment("counting the result");
+            appendLineBody("size_t tuple_count = 0");
+            appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() + ".next()) {");
+            tabInd++;
+            appendLineBody("tuple_count++");
+            tabInd--;
+            appendLineBodyNoCol("}");
+            appendLineBody("return tuple_count");
+        } else if (action == "collect") {
+            emitComment("copying the result");
+            appendLineBody("size_t allocatedSize = 2");
+            appendLineBody("size_t resSize = 0");
+            appendLineBody(getCurrentTupleName() + " *result = (" + getCurrentTupleName() + " *) malloc(sizeof("
+                           + getCurrentTupleName() + ") * allocatedSize))");
+            appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() + ".next()) {");
+            tabInd++;
+            appendLineBodyNoCol("if (allocatedSize <= resSize) {");
+            tabInd++;
+            appendLineBody("allocatedSize *= 2");
+            appendLineBody("result = (" + getCurrentTupleName() + "*) realloc(result, sizeof(" + getCurrentTupleName() +
+                           ") * allocatedSize)");
+            tabInd--;
+            appendLineBodyNoCol("}");
+            appendLineBody("result[resSize] = res.value");
+            appendLineBody("resSize++");
+            tabInd--;
+            appendLineBodyNoCol("}");
+            appendLineBody("result_type *ret = (result_type *) malloc(sizeof(result_type))");
+            appendLineBody("ret->data = result");
+            appendLineBody("ret->size = resSize");
+            appendLineBody("return ret");
+        }
         tabInd--;
         appendLineBodyNoCol("}");
-        appendLineBody("result[resSize] = res.value");
-        appendLineBody("resSize++");
-        tabInd--;
+
+        appendLineBodyNoCol("void free_result(result_type *ptr) {\n"
+                                    "    free(ptr->data);\n"
+                                    "    free(ptr);\n"
+                                    "    DEBUG_PRINT(\"freeing the result memory\");\n"
+                                    "}");
         appendLineBodyNoCol("}");
-        appendLineBody("result_type *ret = (result_type *) malloc(sizeof(result_type))");
-        appendLineBody("ret->data = result");
-                "    ret->data = result;\n"
-                "    ret->size = resSize;\nreturn ret");
     }
 
-    void emitOperatorComment(string opName) {
-        appendLineBodyNoCol("\n/**" + opName + "**/");
+    void emitComment(string opName) {
+        appendLineBodyNoCol("");
+        appendLineBodyNoCol("/**" + opName + "**/");
     }
 
     string parseTupleType(string &type) {
@@ -361,8 +451,12 @@ private:
 
     }
 
-    string writeFuncDecl() {
-        return ("extern \"C\" " + getCurrentTupleName() + " *execute() {");
+    void emitFuncDecl(string action) {
+        if (action == "collect") {
+            appendLineBodyNoCol("extern \"C\" { " + getCurrentTupleName() + " *execute() {");
+        } else if (action == "count") {
+            appendLineBodyNoCol("extern \"C\" { size_t execute() {");
+        }
     }
 
     string writeIncludes() {

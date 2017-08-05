@@ -1,3 +1,4 @@
+import json
 import re
 from json import JSONEncoder
 
@@ -129,8 +130,8 @@ class RDD(object):
         cleanRDDs(self)
         self.writeDAG(dagdict[DAG], 0)
         # write to file
-        # fp = open('dag.json', 'w')
-        # json.dump(dagdict, fp=fp, cls=RDDEncoder)
+        fp = open('dag.json', 'w')
+        json.dump(dagdict, fp=fp, cls=RDDEncoder)
         res = execute(dagdict)
         return res
 

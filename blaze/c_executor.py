@@ -9,7 +9,7 @@ from blaze.rdd_result import NumpyResult
 
 ffi = FFI()
 cpp_dir = "cpp/"
-gen_dir = "cpp/gen/"
+gen_dir = "gen/"
 gen_header_file = "c_generate_dag_plan.h"
 executer_header_file = "c_execute.h"
 generate_lib = "libgenerate"
@@ -46,7 +46,7 @@ def execute(dag_dict):
     # the execution plan is then in executor.so
     generatorCFFI = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib)
     dag_c = ffi.new('char[]', dagStr.encode('utf-8'))
-    # generatorCFFI.c_generate_dag_plan(dag_c)
+    generatorCFFI.c_generate_dag_plan(dag_c)
     # call executor.so, the return should be the address with the result
     executerCFFI = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib)
     res = executerCFFI.c_execute()

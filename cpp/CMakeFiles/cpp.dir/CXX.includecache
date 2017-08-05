@@ -37,6 +37,8 @@ regex
 -
 utils/DAGVisitor.h
 /home/sabir/projects/blaze/cpp/src/code_gen/utils/DAGVisitor.h
+dag/DAG.h
+/home/sabir/projects/blaze/cpp/src/code_gen/dag/DAG.h
 utils/utils.h
 /home/sabir/projects/blaze/cpp/src/code_gen/utils/utils.h
 fstream
@@ -245,6 +247,8 @@ regex
 -
 utils/DAGVisitor.h
 src/code_gen/utils/DAGVisitor.h
+dag/DAG.h
+src/code_gen/dag/DAG.h
 utils/utils.h
 src/code_gen/utils/utils.h
 fstream
