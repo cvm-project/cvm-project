@@ -21,3 +21,10 @@ class RDDCollectionResult:
     def __iter__(self):
         self.iter = self._numpy_array.__iter__()
         return self.iter
+
+
+# empty wrapper over built-in type numpy array
+# with this we are able to keep the cffi reference to the memory
+# inside the object in an attribute
+class NumpyResult(np.ndarray):
+    pass

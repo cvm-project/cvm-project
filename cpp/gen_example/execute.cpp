@@ -2,33 +2,90 @@
  * Auto-generated execution plan
  */
 
+#include "operators/MapOperator.h"
+#include "operators/RangeSourceOperator.h"
+#include "utils/tuple_to_string.cpp"
+#include "utils/debug_print.h"
+#include "tuples.h"
 #include <tuple>
 #include <vector>
 
-#include "operators/Operator.h"
-#include "operators/CollectionSourceOperator.h"
-#include "operators/MapOperator.h"
-#include "functions/MapFunction0.hpp"
-#include "utils/tuple_to_string.cpp"
-
 using namespace std;
 
-void execute() {
 
-    typedef tuple<long, long, long, long> t0;
+extern "C" {
+tuple_1 map_operator_function_0(tuple_0);
+}
 
-    std::vector<t0> v1;
-    v1.push_back(t0(1, 2, 3, 4));
-    v1.push_back(t0(5, 6, 7, 8));
-    /**COLLECTION SOURCE **/
-    auto op1 = makeCollectionSourceOperator<t0>();
-    op1.values = v1;
-
-    typedef tuple<long, long> t1;
-    auto op2 = makeMapOperator<t1>(&op1, MapFunction0());
-
-    op2.open();
-    while (auto res = op2.next()) {
-        cout << to_string(res.value) << endl;
+namespace impl {
+    template<typename Function, typename... Types, size_t... Indexes>
+    auto call_impl(const Function &f, const std::tuple<Types...> &t,
+                   const std::integer_sequence<size_t, Indexes...> &) {
+        return f(std::get<Indexes>(t)...);
     }
+
+}  // namespace impl
+
+template<typename Function, typename... Types>
+auto call(const Function &f, const std::tuple<Types...> &t) {
+    return impl::call_impl(f, t, std::index_sequence_for<Types...>());
+}
+
+template<typename Function, typename Type>
+auto call(const Function &f, const Type &t) {
+    return f(t);
+}
+
+
+extern "C" {
+result_type *execute() {
+
+/**RangeSourceOperator**/
+    auto op_0 = makeRangeSourceOperator<tuple_0>(0, 10, 1);
+
+
+/**MapOperator**/
+    class mapOperatorFunction0 {
+    public:
+        auto operator()(tuple_0 t) {
+            return call(map_operator_function_0, t);
+        }
+    };
+    auto op_1 = makeMapOperator<tuple_1>(&op_0, mapOperatorFunction0());
+
+    op_1.open();
+
+    size_t allocatedSize = 2;
+    size_t resSize = 0;
+    tuple_1 *result = (tuple_1 *) malloc(sizeof(tuple_1) * allocatedSize);
+    while (auto res = op_1.next()) {
+        if (allocatedSize <= resSize) {
+            allocatedSize *= 2;
+            result = (tuple_1 *) realloc(result, sizeof(tuple_1) * allocatedSize);
+        }
+        result[resSize] = res.value;
+        resSize++;
+    }
+    result_type *ret = (result_type *) malloc(sizeof(result_type));
+    ret->data = result;
+    ret->size = resSize;
+    DEBUG_PRINT("returning the result");
+//    DEBUG_PRINT(ret->data[0].v1);
+//    DEBUG_PRINT(ret->data[0].v2);
+//    DEBUG_PRINT(ret->data[0].v3);
+//    DEBUG_PRINT(ret->data[1].v1);
+//    DEBUG_PRINT(ret->data[1].v2);
+//    DEBUG_PRINT(ret->data[1].v3);
+//    DEBUG_PRINT(ret->data[2].v1);
+//    DEBUG_PRINT(ret->data[2].v2);
+//    DEBUG_PRINT(ret->data[2].v3);
+    return ret;
+}
+
+void free_result(result_type *ptr) {
+    free(ptr->data);
+    free(ptr);
+    DEBUG_PRINT("freeing the result memory");
+}
+
 }

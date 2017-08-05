@@ -6,6 +6,7 @@
 #define CPP_OPERATOR_H
 #include <libs/optional.h>
 #include "utils/debug_print.h"
+#include "utils/tuple_to_string.h"
 
 
 #define INLINE __attribute__((always_inline))

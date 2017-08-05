@@ -38,6 +38,6 @@ std::string to_string(const std::tuple<T...> &tup, integer_sequence<std::size_t,
 }
 
 template<typename... T>
-std::string to_string(const std::tuple<T...> &tup) {
+std::string tuple_to_string(const std::tuple<T...> &tup) {
     return to_string(tup, gen_indices<sizeof...(T)>{});
 }

@@ -24,8 +24,10 @@ public:
 
     INLINE Optional<Tuple> next() {
         if (auto ret = upstream->next()) {
-            DEBUG_PRINT(std::get<0>(ret.value));
-            return mapFunction(ret);
+            auto meres = mapFunction(ret);
+            DEBUG_PRINT(meres.v1);
+            return meres;
+
         }
         return {};
     }

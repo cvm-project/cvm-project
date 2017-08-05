@@ -24,7 +24,7 @@ def func(a):
 w = data.map(func)
 
 # w = data.map(lambda w: (w, w * 2)).filter(lambda t: t[0] % 2 == 0 and t[1] % 3 == 0)
-w.collect()
+res = w.collect()
 # print(w.count())
 
 

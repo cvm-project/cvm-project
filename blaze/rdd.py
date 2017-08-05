@@ -131,7 +131,8 @@ class RDD(object):
         # write to file
         # fp = open('dag.json', 'w')
         # json.dump(dagdict, fp=fp, cls=RDDEncoder)
-        execute(dagdict)
+        res = execute(dagdict)
+        return res
 
     def map(self, map_func):
         return Map(self, map_func)
@@ -149,7 +150,8 @@ class RDD(object):
         return Join(self, other)
 
     def collect(self):
-        self.startDAG("collect")
+        res = self.startDAG("collect")
+        return res
 
     def count(self):
         self.startDAG("count")
@@ -311,7 +313,6 @@ class NumpyArraySource(RDD):
         super(NumpyArraySource, self).__init__()
         self.output_type = numba.typeof(tuple([i for i in array[0]]))
         self.size = array.size
-        print(self.output_type)
 
     def writeDAG(self, daglist, index):
         cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)

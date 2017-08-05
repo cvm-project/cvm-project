@@ -22,7 +22,6 @@ public:
 
     void start_visit(DAGOperator *op) {
         addGenIncludes();
-        emitHelpers();
         tabInd++;
         op->accept(*this);
         emitFuncEnd();
@@ -34,14 +33,20 @@ public:
                 + "using namespace std;\n"
                 + writeTupleDefs() + "\n"
                 + writeLLVMFuncDecls() + "\n"
-                + writeFuncDecl() + "\n";
+                + writeHelpers() + "\n"
+                + writeFuncDecl() + "\n"
                 + body;
 
-        cout << final_code;
+//        cout << final_code;
 
+        //write out execute.cpp
         ofstream out(GEN_DIR + "execute.cpp");
         out << final_code;
         out.close();
+
+        //write out c_execute.c
+        //write out c_execute.h
+
     }
 
 
@@ -111,14 +116,11 @@ public:
         appendLineBodyNoCol();
     };
 
-//    void visit(DAGJoin *) {};
-
-
 
 private:
 
 
-    const string GEN_DIR = "cpp/gen/";
+    const string GEN_DIR = "gen/";
     const string LLVM_FUNC_DIR = "functions_llvm/";
     const std::string TUPLE_NAME = "tuple_";
     size_t tupleCounter = -1;
@@ -143,6 +145,11 @@ private:
     size_t tabInd = 0;
 
     string body;
+
+    string lastTupleType;
+    string lastTupleTypeLLVM;
+    string resultTypeDef;
+
 
     string getCurrentLLVMFuncName() {
         string res;
@@ -219,6 +226,7 @@ private:
     }
 
     string emitTupleType(string type) {
+        lastTupleTypeLLVM = type;
         string line("typedef ");
         string tName = getNextTupleName();
         line.append(parseTupleType(type))
@@ -250,41 +258,49 @@ private:
         llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + inputType + ");");
     }
 
-    void emitHelpers() {
-        appendLineBodyNoCol("namespace impl {\n"
-                                    "    template<typename Function, typename... Types, size_t... Indexes>\n"
-                                    "    auto call_impl(const Function &f, const std::tuple<Types...> &t,\n"
-                                    "                   const std::integer_sequence<size_t, Indexes...> &) {\n"
-                                    "        return f(std::get<Indexes>(t)...);\n"
-                                    "    }\n"
-                                    "\n"
-                                    "}  // namespace impl\n"
-                                    "\n"
-                                    "template<typename Function, typename... Types>\n"
-                                    "auto call(const Function &f, const std::tuple<Types...> &t) {\n"
-                                    "    return impl::call_impl(f, t, std::index_sequence_for<Types...>());\n"
-                                    "}"
-                                    "\n"
-                                    "template<typename Function, typename Type>\n"
-                                    "auto call(const Function &f, const Type &t) {\n"
-                                    "    return f(t);\n"
-                                    "}"
-                                    "\n");
-        appendLineBodyNoCol();
+    string writeHelpers() {
+        return "namespace impl {\n"
+                "    template<typename Function, typename... Types, size_t... Indexes>\n"
+                "    auto call_impl(const Function &f, const std::tuple<Types...> &t,\n"
+                "                   const std::integer_sequence<size_t, Indexes...> &) {\n"
+                "        return f(std::get<Indexes>(t)...);\n"
+                "    }\n"
+                "\n"
+                "}  // namespace impl\n"
+                "\n"
+                "template<typename Function, typename... Types>\n"
+                "auto call(const Function &f, const std::tuple<Types...> &t) {\n"
+                "    return impl::call_impl(f, t, std::index_sequence_for<Types...>());\n"
+                "}"
+                "\n"
+                "template<typename Function, typename Type>\n"
+                "auto call(const Function &f, const Type &t) {\n"
+                "    return f(t);\n"
+                "}"
+                "\n\n";
     }
 
     void emitFuncEnd() {
-        appendLineBody("auto result = new vector<" + getCurrentTupleName() + ">()");
-        appendLineBody(getCurrentOperatorName() + ".open()");
-        appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() + ".next()) {");
+        appendLineBody("    size_t allocatedSize = 2");
+        appendLineBody("size_t resSize = 0");
+        appendLineBody(getCurrentTupleName() + "     *result = (" + getCurrentTupleName() + " *) malloc(sizeof("
+                       + getCurrentTupleName() + ") * allocatedSize))");
+        appendLineBodyNoCol("    while (auto res = " + getCurrentOperatorName() + ".next()) {");
         tabInd++;
-        appendLineBody("cout << to_string(res.value) << endl");
-        appendLineBody("result.push_back(res.value)");
+        appendLineBodyNoCol("        if (allocatedSize <= resSize) {");
+        tabInd++;
+        appendLineBody("allocatedSize *= 2");
+        appendLineBody("result = (" + getCurrentTupleName() + "*) realloc(result, sizeof(" + getCurrentTupleName() + ") * allocatedSize)");
         tabInd--;
         appendLineBodyNoCol("}");
-        appendLineBody("return result.data();");
+        appendLineBody("result[resSize] = res.value");
+        appendLineBody("resSize++");
         tabInd--;
         appendLineBodyNoCol("}");
+        appendLineBody("result_type *ret = (result_type *) malloc(sizeof(result_type))");
+        appendLineBody("ret->data = result");
+                "    ret->data = result;\n"
+                "    ret->size = resSize;\nreturn ret");
     }
 
     void emitOperatorComment(string opName) {
@@ -346,7 +362,7 @@ private:
     }
 
     string writeFuncDecl() {
-        return ("extern \"C\" *" + getCurrentTupleName() + " execute() {");
+        return ("extern \"C\" " + getCurrentTupleName() + " *execute() {");
     }
 
     string writeIncludes() {
@@ -362,11 +378,29 @@ private:
 
     string writeTupleDefs() {
         string ret;
-        for (auto def : tupleTypeDefs) {
-            ret.append(def)
+        size_t len = tupleTypeDefs.size();
+        for (size_t i = 0; i < len - 1; i++) {
+            ret.append(tupleTypeDefs[i])
                     .append(";\n");
         }
-        return ret;
+        //the last one should be transformed to a struct
+        DEBUG_PRINT(lastTupleTypeLLVM);
+        lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, "(", "");
+        lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, ")", "");
+        lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, " ", "");
+        vector<string> types = split_string(lastTupleTypeLLVM, ",");
+        resultTypeDef = "typedef struct {\n";
+        string varName = "v";
+        for (size_t i = 0; i < types.size(); i++) {
+            resultTypeDef += "\t" + types[i] + " " + varName + to_string(i) + ";\n";
+        }
+        resultTypeDef += "} " + getCurrentTupleName() + ";\n\n";
+
+        resultTypeDef += "typedef struct {\n "
+                                 "\tunsigned int size;\n"
+                                 "\t" + getCurrentTupleName() + " *data;\n"
+                                 "} result_type;\n";
+        return ret + resultTypeDef;
     }
 
     string writeLLVMFuncDecls() {
