@@ -19,8 +19,6 @@ public:
 
     void accept(DAGVisitor &v);
 
-private:
-    nlohmann::basic_json<> values;
 };
 
 

@@ -21,15 +21,13 @@ extern "C" int generate_dag_plan(char*);
 int main(int argc, char **argv) {
     //get the dag string as an argument
     std::string test = "{\n"
-            "  \"action\": \"count\",\n"
+            "  \"action\": \"collect\",\n"
             "  \"dag\": [\n"
             "    {\n"
             "      \"id\": 0,\n"
             "      \"predecessors\": [],\n"
-            "      \"op\": \"range_source\",\n"
-            "      \"from\": 1,\n"
-            "      \"to\": 10,\n"
-            "      \"step\": 1.2,\n"
+            "      \"op\": \"collection_source\",\n"
+            "      \"size\": 10,\n"
             "      \"output_type\": \"double\"\n"
             "    },\n"
             "    {\n"

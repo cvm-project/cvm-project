@@ -21,9 +21,10 @@ using namespace std;
 class CodeGenVisitor : public DAGVisitor {
 public:
 
+    CodeGenVisitor() : genDir(get_lib_path() + "cpp/gen/") {}
+
     void start_visit(DAG *dag) {
         addGenIncludes();
-        emitFuncDecl(dag->action);
         tabInd++;
         dag->sink->accept(*this);
         emitFuncEnd(dag->action);
@@ -33,99 +34,37 @@ public:
                 writeHeader() + "\n"
                 + writeIncludes() + "\n"
                 + "using namespace std;\n"
-                + writeTupleDefs() + "\n"
+                + writeTupleDefs(dag->action) + "\n"
                 + writeLLVMFuncDecls() + "\n"
                 + writeHelpers() + "\n"
+                + writeFuncDecl() + "\n"
                 + body;
 
-        //write out execute.cpp
-        ofstream out(GEN_DIR + "execute.cpp");
-        out << final_code;
-        out.close();
+        write_execute(final_code);
 
-        write_c_execute();
+        write_c_execute(dag->action);
 
-        write_c_executeh();
+        write_c_executeh(dag->action);
 
         writeMakefile();
 
     }
 
-    void write_c_execute() {
-        ofstream out(GEN_DIR + "c_execute.c");
-        out << "#include \"c_execute.h\"\n"
-                "\n"
-                "result_type *execute();\n"
-                "\n"
-                "void free_result(result_type *ptr);\n"
-                "\n"
-                "\n"
-                "result_type *c_execute() { return execute(); }\n"
-                "\n"
-                "void c_free_result(result_type *ptr) { return free_result(ptr); }";
-        out.close();
-    }
-
-    void write_c_executeh(){
-        ofstream out(GEN_DIR + "c_execute.h");
-        out << resultTypeDef << "\n"
-                "result_type *c_execute();\n"
-                "\n"
-                "void free_result(result_type *);";
-        out.close();
-    }
-
-    void writeMakefile(){
-        ofstream out(GEN_DIR + "Makefile");
-        out << "CC = clang-3.7\n"
-                "AS = llvm-as-3.7\n"
-                "\n"
-                "SOURCES = execute.cpp $(wildcard ../src/operators/*.cpp)\n"
-                "INC = -I ../src/ -I functions_llvm -I ../src/utils/\n"
-                "UDF_SOURCES = $(wildcard functions_llvm/*.ll)\n"
-                "\n"
-                "OBJECTS = $(SOURCES:.cpp=.bc)\n"
-                "UDF_OBJECTS = $(UDF_SOURCES:.ll=.bc)\n"
-                "\n"
-                "\n"
-                "all: execute\n"
-                "\n"
-                "\n"
-                ".PRECIOUS: %.ll\n"
-                "\n"
-                "%.ll: %.cpp\n"
-                "\t$(CC) -S -O3 -emit-llvm $^ -std=c++14  $(INC) -o $@\n"
-                "\n"
-                "%.bc: %.ll\n"
-                "\t$(AS) $^ -o $@\n"
-                "\n"
-                "c_execute.o: c_execute.c\n"
-                "\t$(CC) -c -O3 $^ -o $@ -fPIC\n"
-                "\n"
-                "\n"
-                "execute: $(UDF_OBJECTS) $(OBJECTS) c_execute.o\n"
-                "\t$(CC) -flto $^ -o $@.so -lstdc++ -shared\n"
-                "\n"
-                "#%.asm: %\n"
-                "#\tobjdump -D $^ > $@\n"
-                "\n"
-                "clean:\n"
-                "\trm -f *.bc *.ll execute *.asm functions_llvm/*.bc\n"
-                "\n"
-                ".PHONY: clean";
-        out.close();
-    }
-
-
     void visit(DAGCollection *op) {
         DAGVisitor::visit(op);
-        string tType = emitTupleType(op->output_type);
+
+        string operatorName = "CollectionSource";
+        emitComment(operatorName);
+
+        string tType = generateTupleType(op->output_type);
         string opName = getNextOperatorName();
         operatorNameMap.emplace(op->id, make_pair(opName, tType));
 
         includes.insert("\"operators/CollectionSourceOperator.h\"");
-
-        emitOperatorMake("CollectionSourceOperator", op, opName);
+        pair<string, string> inputNamePair = getNextInputName();
+        emitOperatorMake("CollectionSourceOperator", op, opName, "",
+                         "(" + tType + "*)" + inputNamePair.first + ", " + inputNamePair.second);
+        inputNames.push_back(inputNamePair);
         appendLineBodyNoCol();
     }
 
@@ -135,7 +74,7 @@ public:
 
         string operatorName = "MapOperator";
         emitComment(operatorName);
-        string tType = emitTupleType(op->output_type);
+        string tType = generateTupleType(op->output_type);
         string opName = getNextOperatorName();
         operatorNameMap.emplace(op->id, make_pair(opName, tType));
 
@@ -154,7 +93,7 @@ public:
         string operatorName = "RangeSourceOperator";
         emitComment(operatorName);
 
-        string tType = emitTupleType(op->output_type);
+        string tType = generateTupleType(op->output_type);
         string opName = getNextOperatorName();
         operatorNameMap.emplace(op->id, make_pair(opName, tType));
 
@@ -166,18 +105,18 @@ public:
     };
 
     void visit(DAGFilter *op) {
+        DAGVisitor::visit(op);
         string operatorName = "FilterOperator";
         emitComment(operatorName);
 
-        DAGVisitor::visit(op);
-        string tType = emitTupleType(op->output_type);
+        string tType = generateTupleType(op->output_type);
         string opName = getNextOperatorName();
         operatorNameMap.emplace(op->id, make_pair(opName, tType));
 
         includes.insert("\"operators/FilterOperator.h\"");
 
         storeLLVMCode(op->llvm_ir, "filter");
-        emitLLVMFunctionWrapper(op, "filter");
+        emitLLVMFunctionWrapper(op, "filter", true);
 
         emitOperatorMake(operatorName, op, opName, "filter");
         appendLineBodyNoCol();
@@ -187,7 +126,7 @@ public:
 private:
 
 
-    const string GEN_DIR = "gen/";
+    string genDir;
     const string LLVM_FUNC_DIR = "functions_llvm/";
     const std::string TUPLE_NAME = "tuple_";
     size_t tupleCounter = -1;
@@ -207,6 +146,8 @@ private:
 
     vector<string> tupleTypeDefs;
 
+    vector<pair<string, string>> inputNames;
+
     set<string> includes;
 
     size_t tabInd = 0;
@@ -215,8 +156,25 @@ private:
 
     string lastTupleType;
     string lastTupleTypeLLVM;
+
     string resultTypeDef;
 
+    string executeFuncReturn = "result_type";
+    string executeFuncParams;
+
+    const string INPUT_NAME = "input_";
+    const string INPUT_NAME_SIZE = "input_size_";
+    size_t inputNameCounter = -1;
+
+
+    auto getCurrentInputNamePair() {
+        return make_pair(INPUT_NAME + to_string(inputNameCounter), INPUT_NAME_SIZE + to_string(inputNameCounter));
+    }
+
+    pair<string, string> getNextInputName() {
+        inputNameCounter++;
+        return getCurrentInputNamePair();
+    }
 
     string getCurrentLLVMFuncName() {
         string res;
@@ -292,7 +250,7 @@ private:
         appendLineBody(line);
     }
 
-    string emitTupleType(string type) {
+    string generateTupleType(string type) {
         lastTupleTypeLLVM = type;
         string line("typedef ");
         string tName = getNextTupleName();
@@ -303,7 +261,7 @@ private:
         return tName;
     }
 
-    void emitLLVMFunctionWrapper(DAGOperator *op, string opName) {
+    void emitLLVMFunctionWrapper(DAGOperator *op, string opName, bool returnsBool = false) {
         string llvmFuncName = opName + getCurrentLLVMFuncName();
         string className = snake_to_camel_string(llvmFuncName);
         appendLineBodyNoCol("class " + className + " {");
@@ -322,7 +280,13 @@ private:
         tabInd--;
         appendLineBodyNoCol("};");
 
-        llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + inputType + ");");
+        string flatInputType = string_replace(op->predecessors[0]->output_type, "(", "");
+        flatInputType = string_replace(flatInputType, ")", "");
+        if (returnsBool) {
+            llvmFuncDecls.push_back("bool " + llvmFuncName + "(" + flatInputType + ");");
+        } else {
+            llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + flatInputType + ");");
+        }
     }
 
     string writeHelpers() {
@@ -338,7 +302,7 @@ private:
                 "template<typename Function, typename... Types>\n"
                 "auto call(const Function &f, const std::tuple<Types...> &t) {\n"
                 "    return impl::call_impl(f, t, std::index_sequence_for<Types...>());\n"
-                "}"
+                "}\n"
                 "\n"
                 "template<typename Function, typename Type>\n"
                 "auto call(const Function &f, const Type &t) {\n"
@@ -350,19 +314,25 @@ private:
     void emitFuncEnd(string action) {
         if (action == "count") {
             emitComment("counting the result");
-            appendLineBody("size_t tuple_count = 0");
+            appendLineBody(getCurrentOperatorName() + ".open()");
+            appendLineBody("result_type tuple_count = 0");
             appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() + ".next()) {");
             tabInd++;
             appendLineBody("tuple_count++");
             tabInd--;
             appendLineBodyNoCol("}");
+            appendLineBody(getCurrentOperatorName() + ".close()");
+            appendLineBody("DEBUG_PRINT(tuple_count)");
             appendLineBody("return tuple_count");
+            tabInd--;
+            appendLineBodyNoCol("}");
         } else if (action == "collect") {
             emitComment("copying the result");
+            appendLineBody(getCurrentOperatorName() + ".open()");
             appendLineBody("size_t allocatedSize = 2");
             appendLineBody("size_t resSize = 0");
             appendLineBody(getCurrentTupleName() + " *result = (" + getCurrentTupleName() + " *) malloc(sizeof("
-                           + getCurrentTupleName() + ") * allocatedSize))");
+                           + getCurrentTupleName() + ") * allocatedSize)");
             appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() + ".next()) {");
             tabInd++;
             appendLineBodyNoCol("if (allocatedSize <= resSize) {");
@@ -376,19 +346,27 @@ private:
             appendLineBody("resSize++");
             tabInd--;
             appendLineBodyNoCol("}");
-            appendLineBody("result_type *ret = (result_type *) malloc(sizeof(result_type))");
+            appendLineBody(getCurrentOperatorName() + ".close()");
+            appendLineBody("result_type ret = (result_type) malloc(sizeof(result_struct))");
             appendLineBody("ret->data = result");
             appendLineBody("ret->size = resSize");
             appendLineBody("return ret");
-        }
-        tabInd--;
-        appendLineBodyNoCol("}");
 
-        appendLineBodyNoCol("void free_result(result_type *ptr) {\n"
-                                    "    free(ptr->data);\n"
-                                    "    free(ptr);\n"
-                                    "    DEBUG_PRINT(\"freeing the result memory\");\n"
-                                    "}");
+            tabInd--;
+            appendLineBodyNoCol("}");
+
+            appendLineBodyNoCol("void free_result(result_type ptr) {\n"
+                                        "    DEBUG_PRINT(\"freeing the result memory\");\n"
+                                        "    if (ptr != NULL && ptr->data != NULL) {\n"
+                                        "        free(ptr->data);\n"
+                                        "        ptr->data = NULL;\n"
+                                        "    }\n"
+                                        "    if (ptr != NULL) {\n"
+                                        "        free(ptr);\n"
+                                        "    }\n"
+                                        "    ptr = NULL;\n"
+                                        "}");
+        }
         appendLineBodyNoCol("}");
     }
 
@@ -414,12 +392,12 @@ private:
         ir = regex_replace(ir, reg, "@\"" + funcName + "\"");
         //write code to the gen dir
         if (DUMP_FILES) {
-            const int dirErr = system(("mkdir -p " + GEN_DIR + LLVM_FUNC_DIR).c_str());
+            const int dirErr = system(("mkdir -p " + genDir + LLVM_FUNC_DIR).c_str());
             if (0 != dirErr) {
                 cerr << ("Error creating directory!") << endl;
                 exit(1);
             }
-            string path = GEN_DIR + LLVM_FUNC_DIR + funcName + ".ll";
+            string path = genDir + LLVM_FUNC_DIR + funcName + ".ll";
             ofstream out(path);
             out << ir;
             out.close();
@@ -451,12 +429,16 @@ private:
 
     }
 
-    void emitFuncDecl(string action) {
-        if (action == "collect") {
-            appendLineBodyNoCol("extern \"C\" { " + getCurrentTupleName() + " *execute() {");
-        } else if (action == "count") {
-            appendLineBodyNoCol("extern \"C\" { size_t execute() {");
+    string writeFuncDecl() {
+        executeFuncParams = "";
+        for (auto inputPair : inputNames) {
+            executeFuncParams += "void *" + inputPair.first + ", unsigned long " + inputPair.second + ", ";
         }
+        if (executeFuncParams != "") {
+            executeFuncParams.pop_back();
+            executeFuncParams.pop_back();
+        }
+        return "extern \"C\" { " + executeFuncReturn + " execute(" + executeFuncParams + ") {";
     }
 
     string writeIncludes() {
@@ -470,30 +452,50 @@ private:
         return ret;
     }
 
-    string writeTupleDefs() {
+    string writeTupleDefs(string action) {
         string ret;
-        size_t len = tupleTypeDefs.size();
-        for (size_t i = 0; i < len - 1; i++) {
-            ret.append(tupleTypeDefs[i])
-                    .append(";\n");
-        }
-        //the last one should be transformed to a struct
-        DEBUG_PRINT(lastTupleTypeLLVM);
-        lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, "(", "");
-        lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, ")", "");
-        lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, " ", "");
-        vector<string> types = split_string(lastTupleTypeLLVM, ",");
-        resultTypeDef = "typedef struct {\n";
-        string varName = "v";
-        for (size_t i = 0; i < types.size(); i++) {
-            resultTypeDef += "\t" + types[i] + " " + varName + to_string(i) + ";\n";
-        }
-        resultTypeDef += "} " + getCurrentTupleName() + ";\n\n";
+        if (action == "collect") {
 
-        resultTypeDef += "typedef struct {\n "
-                                 "\tunsigned int size;\n"
-                                 "\t" + getCurrentTupleName() + " *data;\n"
-                                 "} result_type;\n";
+            //the last one should be transformed to a struct, unless it is the source
+            if (getCurrentTupleName().find("_0") != std::string::npos) {
+                size_t len = tupleTypeDefs.size();
+                for (size_t i = 0; i < len; i++) {
+                    ret.append(tupleTypeDefs[i])
+                            .append(";\n");
+                }
+                resultTypeDef = "";
+                resultTypeDef += ret;
+                ret = "";
+            } else {
+                size_t len = tupleTypeDefs.size();
+                for (size_t i = 0; i < len - 1; i++) {
+                    ret.append(tupleTypeDefs[i])
+                            .append(";\n");
+                }
+                lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, "(", "");
+                lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, ")", "");
+                lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, " ", "");
+                vector<string> types = split_string(lastTupleTypeLLVM, ",");
+                resultTypeDef = "typedef struct {\n";
+                string varName = "v";
+                for (size_t i = 0; i < types.size(); i++) {
+                    resultTypeDef += "\t" + types[i] + " " + varName + to_string(i) + ";\n";
+                }
+                resultTypeDef += "} " + getCurrentTupleName() + ";\n\n";
+            }
+            resultTypeDef += "typedef struct {\n "
+                                     "\tunsigned long size;\n"
+                                     "\t" + getCurrentTupleName() + " *data;\n"
+                                     "} result_struct;\n";
+            resultTypeDef += "typedef result_struct* result_type;\n";
+        } else if (action == "count") {
+            size_t len = tupleTypeDefs.size();
+            for (size_t i = 0; i < len; i++) {
+                ret.append(tupleTypeDefs[i])
+                        .append(";\n");
+            }
+            resultTypeDef = "typedef unsigned long result_type;\n";
+        }
         return ret + resultTypeDef;
     }
 
@@ -502,14 +504,98 @@ private:
         ret.append("extern \"C\" {\n");
         tabInd++;
         for (auto def : llvmFuncDecls) {
-            ret.append(def);
+            ret.append(def + "\n");
         }
         tabInd--;
-        ret.append("\n}");
-        ret.append("\n");
+        ret.append("}\n");
         return ret;
 
     }
+
+
+    void write_execute(string final_code) {
+        ofstream out(genDir + "execute.cpp");
+        out << final_code;
+        out.close();
+    }
+
+    void write_c_execute(string action) {
+        ofstream out(genDir + "c_execute.c");
+        string funcParamNames = "";
+        for (auto param : inputNames) {
+            funcParamNames += param.first + ", " + param.second + ", ";
+        }
+        if (funcParamNames != "") {
+            funcParamNames.pop_back();
+            funcParamNames.pop_back();
+        }
+        out << "#include \"c_execute.h\"\n"
+                       "\n"
+                       "" + executeFuncReturn + " execute(" + executeFuncParams + ");\n"
+                       "\n"
+                       "" + executeFuncReturn + " c_execute(" + executeFuncParams + ") { return execute(" +
+               funcParamNames + "); }\n";
+        if (action == "collect") {
+            out << "void free_result(" + executeFuncReturn + " ptr);\n"
+                    "\n"
+                    "void c_free_result(" + executeFuncReturn + " ptr) { return free_result(ptr); }";
+        }
+        out.close();
+    }
+
+    void write_c_executeh(string action) {
+        ofstream out(genDir + "c_execute.h");
+        out << resultTypeDef << "\n"
+                                        "" + executeFuncReturn + " c_execute(" + executeFuncParams + ");\n";
+        if (action == "collect") {
+            out << "\n"
+                           "void free_result(" + executeFuncReturn + ");";
+        }
+        out.close();
+    }
+
+    void writeMakefile() {
+        ofstream out(genDir + "Makefile");
+        out << "CC = clang-3.7\n"
+                "AS = llvm-as-3.7\n"
+                "\n"
+                "SOURCES = execute.cpp $(wildcard ../src/operators/*.cpp)\n"
+                "INC = -I ../src/ -I functions_llvm -I ../src/utils/\n"
+                "UDF_SOURCES = $(wildcard functions_llvm/*.ll)\n"
+                "\n"
+                "OBJECTS = $(SOURCES:.cpp=.bc)\n"
+                "UDF_OBJECTS = $(UDF_SOURCES:.ll=.bc)\n"
+                "\n"
+                "\n"
+                "all: execute\n"
+                "\n"
+                "\n"
+                ".PRECIOUS: %.ll\n"
+                "\n"
+                "%.ll: %.cpp\n"
+                "\t$(CC) -S -O3 -emit-llvm $^ -std=c++14  $(INC) -o $@\n"
+                "\n"
+                "%.bc: %.ll\n"
+                "\t$(AS) $^ -o $@\n"
+                "\n"
+                "c_execute.o: c_execute.c\n"
+                "\t$(CC) -c -O3 $^ -o $@ -fPIC\n"
+                "\n"
+                "\n"
+                "execute: $(UDF_OBJECTS) $(OBJECTS) c_execute.o\n"
+                "\t$(CC) -flto $^ -o $@.so -lstdc++ -shared\n"
+                "\n"
+                "#%.asm: %\n"
+                "#\tobjdump -D $^ > $@\n"
+                "\n"
+                "clean:\n"
+                "\trm -f *.bc *.ll execute *.asm functions_llvm/*.bc\n"
+                "\n"
+                ".PHONY: clean";
+        out.close();
+    }
+
+
 };
 
 

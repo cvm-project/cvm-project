@@ -37,6 +37,54 @@
 					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="generate">
+				<Option output="/home/sabir/projects/blaze/cpp/libgenerate.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sabir/projects/blaze/cpp"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/sabir/projects/blaze/cpp/src"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 generate"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="generate/fast">
+				<Option output="/home/sabir/projects/blaze/cpp/libgenerate.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/sabir/projects/blaze/cpp"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/sabir/projects/blaze/cpp/src"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/c++/5"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/5"/>
+					<Add directory="/usr/include/c++/5/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 generate/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/sabir/projects/blaze/cpp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 			<Target title="cpp">
 				<Option output="/home/sabir/projects/blaze/cpp/cpp" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/home/sabir/projects/blaze/cpp"/>
@@ -87,66 +135,87 @@
 			</Target>
 		</Build>
 		<Unit filename="/home/sabir/projects/blaze/cpp/c_generate_dag_plan.c">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/c_generate_dag_plan.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/generate_dag_plan.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/generate_dag_plan.hpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/main.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/code_gen/generate_code.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/code_gen/generate_code.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCollection.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCollection.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCreation.hpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGFilter.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGFilter.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGJoin.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGJoin.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGMap.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGMap.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/utils/utils.cpp">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/utils/utils.h">
+			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/CMakeLists.txt">

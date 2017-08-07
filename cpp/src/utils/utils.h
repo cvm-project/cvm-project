@@ -14,5 +14,6 @@ string snake_to_camel_string(string str);
 
 string string_replace(string str, string from, string to);
 vector<string> split_string(string s, string delimiter);
+string get_lib_path();
 
 #endif //CPP_UTILS_H

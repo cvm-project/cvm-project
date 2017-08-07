@@ -1,13 +1,20 @@
 import os
 from blaze.blaze_context import *
 import numpy as np
+import random
 
 # sys.path.insert(0, "/home/sabir/projects/")
 from numba import njit
 
-# input = [(1, 2.0), (5, 6)]
-# data = numpy_array(np.array(input, dtype="i4,f4"))
-data = range_(0, 10, 1)
+input = [(1, 2.3), (5, 6.2)]
+# input = [(r, random.randint(0, 1000)) for r in range(1, 70)]
+# input = np.array(input, dtype="i8")
+bc = BlazeContext
+data = bc.collection(input)
+
+
+# data = collection(input)
+
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
 # os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
@@ -17,15 +24,16 @@ data = range_(0, 10, 1)
 # os.environ["NUMBA_DUMP_LLVM"] = '1'
 
 def func(a):
-    return (a + 1, a * 300, a / 20)
+    return a + 1, a * 300
 
 
 # func = lambda t: t[3]
-w = data.map(func)
+# print(input)
+w = data.map(lambda t: t[0])
 
 # w = data.map(lambda w: (w, w * 2)).filter(lambda t: t[0] % 2 == 0 and t[1] % 3 == 0)
-res = w.count()
-# print(w.count())
+res = w.collect()
+print(res)
 
 #
 # f(1, 2)

@@ -1,15 +1,15 @@
 import json
 import re
-from json import JSONEncoder
 
 from blaze.c_executor import execute
-from numba import typeof
 
 from blaze.utils import *
+from blaze.libs.numba.llvm_ir import cfunc
+from blaze.constants import *
+
 import numba
 import numba.types as types
 from numba.types.containers import *
-from blaze.libs.numba.llvm_ir import cfunc
 
 
 def cleanRDDs(rdd):
@@ -70,9 +70,9 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     # #     # file.write('\n')
     output_type = dec_func.nopython_signatures[0].return_type
 
-    print("old output type" + str(output_type))
+    # print("old output type" + str(output_type))
     output_type = replace_unituple(output_type)
-    print("new output type" + str(output_type))
+    # print("new output type" + str(output_type))
 
     cfunc_code = cfunc(output_type(input_type))(func)
     code = cfunc_code.inspect_llvm()
@@ -130,8 +130,8 @@ class RDD(object):
         cleanRDDs(self)
         self.writeDAG(dagdict[DAG], 0)
         # write to file
-        fp = open('dag.json', 'w')
-        json.dump(dagdict, fp=fp, cls=RDDEncoder)
+        # fp = open('dag.json', 'w')
+        # json.dump(dagdict, fp=fp, cls=RDDEncoder)
         res = execute(dagdict)
         return res
 
@@ -155,7 +155,7 @@ class RDD(object):
         return res
 
     def count(self):
-        self.startDAG("count")
+        return self.startDAG("count")
 
     def accept(self, visitor):
 
@@ -291,11 +291,19 @@ class TextSource(RDD):
 
 
 class CollectionSource(RDD):
+    """
+    passed collection is copied into a numpy array
+    a reference to the array is stored in this instance
+    to prevent freeing input memory before the end of computation
+    """
+
     def __init__(self, values):
         assert values, "Empty collection not allowed"
         super(CollectionSource, self).__init__()
-        self.values = values
-        self.output_type = numba.typeof(values[0])
+        self.output_type = replace_unituple(numba.typeof(values[0]))
+        self.array = np.array(values, dtype=numba_type_to_dtype(self.output_type))
+        self.data_ptr = self.array.__array_interface__['data'][0]
+        self.size = self.array.size
 
     def writeDAG(self, daglist, index):
         if self.dic:
@@ -303,8 +311,9 @@ class CollectionSource(RDD):
         cur_index = super(CollectionSource, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'collection_source'
-        dic[VALUES] = self.values
         dic[OUTPUT_TYPE] = self.output_type
+        dic[DATA_PTR] = self.data_ptr
+        dic[DATA_SIZE] = self.size
 
         return cur_index
 
@@ -312,11 +321,24 @@ class CollectionSource(RDD):
 class NumpyArraySource(RDD):
     def __init__(self, array):
         super(NumpyArraySource, self).__init__()
-        self.output_type = numba.typeof(tuple([i for i in array[0]]))
+        try:
+            self.output_type = replace_unituple(typeof(tuple(array[0])))
+        except TypeError:  # scalar type
+            self.output_type = typeof(array[0])
         self.size = array.size
+        self.data_ptr = array.__array_interface__['data'][0]
+        # TODO we probably have to keep a reference to the np array
+        # until the end of the execution to prevent gc
 
     def writeDAG(self, daglist, index):
+        if self.dic:
+            return self.dic[ID]
         cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)
+        dic = self.dic
+        dic[OP] = 'collection_source'
+        dic[DATA_PTR] = self.data_ptr
+        dic[DATA_SIZE] = self.size
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 

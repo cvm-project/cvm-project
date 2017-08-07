@@ -3,6 +3,7 @@
 //
 
 #include <algorithm>
+#include <iostream>
 #include "utils.h"
 
 string snake_to_camel_string(string str) {
@@ -11,11 +12,11 @@ string snake_to_camel_string(string str) {
 
     camelString = str;
 
-    for (size_t x = 0; x < camelString.length()-1; x++) {
+    for (size_t x = 0; x < camelString.length() - 1; x++) {
         if (camelString[x] == '_') {
 //            tempString = camelString.substr(x + 1, 1);
 //            transform(tempString.begin(), tempString.end(), tempString.begin(), toupper);
-            char nextC = camelString[x+1];
+            char nextC = camelString[x + 1];
             nextC = (char) (nextC > 65 ? nextC - 32 : nextC);
             camelString.erase(x, 2);
             camelString.insert(x, 1, nextC);
@@ -40,7 +41,7 @@ string string_replace(string str, string from, string to) {
     return str;
 }
 
-vector<string> split_string(string s, string delimiter){
+vector<string> split_string(string s, string delimiter) {
     vector<string> list;
     size_t pos = 0;
     string token;
@@ -51,4 +52,11 @@ vector<string> split_string(string s, string delimiter){
     }
     list.push_back(s);
     return list;
+}
+
+string get_lib_path() {
+    const char *blazePath;
+    if (!(blazePath = std::getenv("BLAZEPATH")))
+        std::cerr << "BLAZEPATH is not defined, set it to your blaze installation path\n";
+    return string(blazePath);
 }

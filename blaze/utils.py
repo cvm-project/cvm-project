@@ -4,21 +4,10 @@ from json import JSONEncoder
 import numba
 
 import numba.types as nb_types
+import numpy as np
+import sys
 
-ACTION = 'action'
-DAG = 'dag'
-ID = 'id'
-OP = 'op'
-FUNC = 'func'
-PREDS = 'predecessors'
-FROM = 'from'
-TO = 'to'
-STEP = 'step'
-VALUES = 'values'
-OUTPUT_TYPE = 'output_type'
-FILTER = 'filter'
-MAP = 'map'
-FLAT_MAP = 'flat_map'
+from numba import typeof
 
 
 def mean(l):
@@ -53,15 +42,23 @@ def numba_to_c_types(numba_type):
     return numba_type
 
 
-NumpyTypeMap = {
+numpyDtypeMap = {
     'float32': 'f4',
     'float64': 'f8',
     'int32': 'i4',
-    'int64': "i8",
+    'int64': 'i8',
     'boolean': 'b1',
     'bool_': 'b1',
 }
 
+
+# dtypeNumbaMap = {
+#     'f4': 'float32',
+#     'f8': 'float64',
+#     'i4': 'int32',
+#     'i8': 'int64',
+#     'b1': 'boolean',
+# }
 
 def numba_type_to_dtype(type_):
     if isinstance(type_, nb_types.Tuple):
@@ -71,7 +68,20 @@ def numba_type_to_dtype(type_):
             types.append(w)
         return ",".join(types)
     else:
-        return NumpyTypeMap[type_.name]
+        return numpyDtypeMap[type_.name]
+
+
+def dtype_to_numba(type_):
+    if type_.fields:
+        # composite type
+        types = []
+        for _, v in type_.fields.items():
+            w = dtype_to_numba(v[0])
+            types.append(w)
+        return "(" + ",".join(types) + ")"
+    else:
+        return typeof(type_.name)
+        # return type_.name
 
 
 def get_type_size(type_):
@@ -92,3 +102,7 @@ class RDDEncoder(JSONEncoder):
         if isinstance(o, numba.types.Type):
             return numba_to_c_types(o.name)
         return JSONEncoder.default(self, o)
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)

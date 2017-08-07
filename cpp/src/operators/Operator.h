@@ -15,6 +15,7 @@ class Operator {
 public:
     virtual void printName()=0;
     virtual void open()=0;
+    virtual void close()=0;
 };
 
 #endif //CPP_OPERATOR_H

@@ -9,17 +9,39 @@
 #include <iostream>
 #include "Operator.h"
 
-template<class Upstream, class Tuple>
+template<class Upstream, class Tuple, class Function>
 class FilterOperator : public Operator {
 public:
     Upstream *upstream;
+    Function function;
 
-    FilterOperator(Upstream *upstream1) : upstream(*upstream1) {}
+    FilterOperator(Upstream *upstream1, Function func) : upstream(upstream1), function(func) {}
+
 
     void printName() {
         std::cout << "filter op\n";
         upstream->printName();
     }
+
+    INLINE Optional<Tuple> next() {
+        while (auto ret = upstream->next()) {
+            if (function(ret)) {
+                return ret;
+            }
+        }
+        return {};
+    }
+
+    INLINE void open() { upstream->open(); }
+
+    INLINE void close() { upstream->close(); }
+
+};
+
+
+template<class Tuple, class Upstream, class Function>
+FilterOperator<Upstream, Tuple, Function> makeFilterOperator(Upstream *upstream, Function func) {
+    return FilterOperator<Upstream, Tuple, Function>(upstream, func);
 };
 
 

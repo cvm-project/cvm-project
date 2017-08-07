@@ -14,31 +14,38 @@
 template<class Tuple>
 class CollectionSourceOperator : public Operator {
 public:
+
+    CollectionSourceOperator(Tuple *vals, size_t size) : values(vals), size(size) {}
+
     void printName() {
         std::cout << "collection op\n";
     }
 
     void open() {
-        it = values.begin();
+        index = 0;
     }
 
     Optional<Tuple> next() {
-        if (it != values.end()) {
-            auto r = *it;
-            it++;
+        if (index < size) {
+            auto r = values[index];
+            index++;
             return r;
         }
         return {};
     }
 
-    std::vector<Tuple> values;
+    void close() {
+    }
+
 private:
-    typename std::vector<Tuple>::iterator it;
+    size_t size;
+    size_t index;
+    Tuple *values;
 };
 
 template<class Tuple>
-CollectionSourceOperator<Tuple> makeCollectionSourceOperator() {
-    return CollectionSourceOperator<Tuple>();
+CollectionSourceOperator<Tuple> makeCollectionSourceOperator(Tuple *data_ptr, size_t size) {
+    return CollectionSourceOperator<Tuple>(data_ptr, size);
 };
 
 #endif //CPP_COLLECTIONSOURCEOPERATOR_H

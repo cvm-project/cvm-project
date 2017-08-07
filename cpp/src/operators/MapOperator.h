@@ -7,6 +7,7 @@
 
 
 #include <iostream>
+#include "utils/tuple_to_string.h"
 #include "Operator.h"
 
 template<class Upstream, class Tuple, class MapFunction>
@@ -25,15 +26,16 @@ public:
     INLINE Optional<Tuple> next() {
         if (auto ret = upstream->next()) {
             auto meres = mapFunction(ret);
-            DEBUG_PRINT(meres.v1);
+            DEBUG_PRINT(to_string(ret.value));
+            DEBUG_PRINT(meres.v0);
             return meres;
-
         }
         return {};
     }
 
-    void open() { upstream->open(); }
+    INLINE void open() { upstream->open(); }
 
+    INLINE void close() {upstream->close();}
 };
 
 template<class Tuple, class Upstream, class MapFunction>
