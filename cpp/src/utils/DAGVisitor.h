@@ -11,6 +11,7 @@
 #include "dag/DAGMap.h"
 #include "dag/DAGRange.h"
 #include "dag/DAGOperator.h"
+#include "dag/DAGReduce.h"
 
 class DAGVisitor {
 public:
@@ -20,32 +21,37 @@ public:
     }
 
     virtual void visit(DAGOperator *op) {
-        std::cout << "visiting undefined op" << std::endl;
+        DEBUG_PRINT("visiting undefined op");
         visitPredecessors(op);
     }
 
     virtual void visit(DAGCollection *op) {
-        std::cout << "visiting collection" << std::endl;
+        DEBUG_PRINT("visiting collection");
         visitPredecessors(op);
     }
 
     virtual void visit(DAGRange *op) {
-        std::cout << "visiting range" << std::endl;
+        DEBUG_PRINT("visiting range");
         visitPredecessors(op);
     }
 
     virtual void visit(DAGFilter *op) {
-        std::cout << "visiting filter" << std::endl;
+        DEBUG_PRINT("visiting filter");
         visitPredecessors(op);
     }
 
     virtual void visit(DAGJoin *op) {
-        std::cout << "visiting join" << std::endl;
+        DEBUG_PRINT("visiting join");
         visitPredecessors(op);
     }
 
     virtual void visit(DAGMap *op) {
-        std::cout << "visiting map" << std::endl;
+        DEBUG_PRINT("visiting map");
+        visitPredecessors(op);
+    }
+
+    virtual void visit(DAGReduce *op) {
+        DEBUG_PRINT("visiting reduce");
         visitPredecessors(op);
     }
 

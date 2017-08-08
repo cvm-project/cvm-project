@@ -5,9 +5,11 @@
 #include "DAGRange.h"
 #include "DAGCollection.h"
 #include "DAGMap.h"
+#include "DAGReduce.h"
 #include "DAGJoin.h"
 #include "../libs/json.hpp"
 #include "DAGFilter.h"
+#include <stdexcept>
 
 
 using namespace std;
@@ -28,6 +30,7 @@ void load_operators() {
     opMap.emplace(COLLECTION, &DAGCollection::make_dag_operator);
     opMap.emplace(MAP, &DAGMap::make_dag_operator);
     opMap.emplace(JOIN, &DAGJoin::make_dag_operator);
+    opMap.emplace(REDUCE, &DAGReduce::make_dag_operator);
 }
 
 DAG *parse(std::stringstream *istream) {
@@ -89,7 +92,7 @@ DAG *parse(std::stringstream *istream) {
 
 DAGOperator *get_operator(std::string opName) {
     if (!opMap.count(opName)) {
-        cerr << "operator " << opName << " could not be found" << endl;
+        throw std::invalid_argument( "operator " + opName + " could not be found" );
     }
     return opMap[opName]();
 }

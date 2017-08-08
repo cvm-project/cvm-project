@@ -210,6 +210,14 @@
 			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGReduce.cpp">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGReduce.h">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/utils/utils.cpp">
 			<Option target="generate"/>
 			<Option target="cpp"/>

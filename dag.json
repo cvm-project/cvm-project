@@ -1,1 +1,0 @@
-{"action": "collect", "dag": [{"id": 0, "predecessors": [], "op": "collection_source", "output_type": "(long, long)", "data_ptr": 20550800, "data_size": 69}, {"id": 1, "predecessors": [0], "op": "map", "func": "define i64 @\"cfunc._ZN8__main__16$3clambda$3e$242E5TupleIxxE\"(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n", "output_type": "long"}]}

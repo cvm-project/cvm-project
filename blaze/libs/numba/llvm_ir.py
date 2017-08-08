@@ -17,7 +17,7 @@ from numba.typing import signature
 from numba.typing.ctypes_utils import to_ctypes
 from numba.types import Tuple, UniTuple, NoneType, intc, float32
 
-from blaze.utils import get_type_size
+from blaze.utils import get_type_size, replace_unituple
 
 # types larger than this are classiefied as "MEMORY" in amd64 ABI
 MINIMAL_TYPE_SIZE = 16
@@ -77,35 +77,6 @@ class _CFuncCompiler(_FunctionCompiler):
         if flags.force_pyobject:
             raise NotImplementedError("object mode not allowed in C callbacks")
         return flags
-
-
-def replace_unituple(type_):
-    out = type_
-    if isinstance(type_, Tuple):
-        child_types = []
-        for child_type in type_.types:
-            child_types.append(replace_unituple(child_type))
-        out = Tuple([])
-        out.types = tuple(child_types)
-        out.name = "(%s)" % ', '.join(str(i) for i in child_types)
-        out.count = len(child_types)
-    elif isinstance(type_, UniTuple):
-        type_type = Tuple([])
-        type_type.types = (replace_unituple(type_.dtype),) * type_.count
-        type_type.count = type_.count
-        type_type.name = "(%s)" % ', '.join(str(i) for i in type_type.types)
-        out = type_type
-    elif isinstance(type_, (list, tuple)):
-        out = tuple(map(lambda t: replace_unituple(t), type_))
-    return out
-
-
-def make_tuple(child_types):
-    out = Tuple([])
-    out.types = tuple(child_types)
-    out.name = "(%s)" % ', '.join(str(i) for i in child_types)
-    out.count = len(child_types)
-    return out
 
 
 class CFunc(object):

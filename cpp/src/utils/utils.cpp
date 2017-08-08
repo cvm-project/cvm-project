@@ -14,8 +14,6 @@ string snake_to_camel_string(string str) {
 
     for (size_t x = 0; x < camelString.length() - 1; x++) {
         if (camelString[x] == '_') {
-//            tempString = camelString.substr(x + 1, 1);
-//            transform(tempString.begin(), tempString.end(), tempString.begin(), toupper);
             char nextC = camelString[x + 1];
             nextC = (char) (nextC > 65 ? nextC - 32 : nextC);
             camelString.erase(x, 2);

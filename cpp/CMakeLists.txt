@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(SOURCE_FILES main.cpp src/code_gen/generate_code.cpp generate_dag_plan.cpp c_generate_dag_plan.c
         src/dag/DAGCreation.cpp
         src/dag/DAGMap.cpp src/dag/DAGCollection.cpp src/dag/DAGRange.cpp src/dag/DAGFilter.cpp src/dag/DAGJoin.cpp
+        src/dag/DAGReduce.cpp
         src/utils/utils.cpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 

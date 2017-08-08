@@ -24,6 +24,8 @@ public:
     CodeGenVisitor() : genDir(get_lib_path() + "cpp/gen/") {}
 
     void start_visit(DAG *dag) {
+
+        makeDirectory();
         addGenIncludes();
         tabInd++;
         dag->sink->accept(*this);
@@ -36,7 +38,7 @@ public:
                 + "using namespace std;\n"
                 + writeTupleDefs(dag->action) + "\n"
                 + writeLLVMFuncDecls() + "\n"
-                + writeHelpers() + "\n"
+                //                + writeHelpers() + "\n"
                 + writeFuncDecl() + "\n"
                 + body;
 
@@ -51,69 +53,93 @@ public:
     }
 
     void visit(DAGCollection *op) {
-        DAGVisitor::visit(op);
 
-        string operatorName = "CollectionSource";
+        string operatorName = "CollectionSourceOperator";
+        DAGVisitor::visit(op);
         emitComment(operatorName);
 
-        string tType = generateTupleType(op->output_type);
         string opName = getNextOperatorName();
-        operatorNameMap.emplace(op->id, make_pair(opName, tType));
+        auto tType = generateTupleType(op->output_type);
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType.first, tType.second));
 
-        includes.insert("\"operators/CollectionSourceOperator.h\"");
+        includes.insert("\"operators/" + operatorName + ".h\"");
         pair<string, string> inputNamePair = getNextInputName();
-        emitOperatorMake("CollectionSourceOperator", op, opName, "",
-                         "(" + tType + "*)" + inputNamePair.first + ", " + inputNamePair.second);
+        emitOperatorMake(operatorName, op, opName, "",
+                         "(" + tType.first + "*)" + inputNamePair.first + ", " + inputNamePair.second);
         inputNames.push_back(inputNamePair);
         appendLineBodyNoCol();
     }
 
     void visit(DAGMap *op) {
 
-        DAGVisitor::visit(op);
-
         string operatorName = "MapOperator";
+        DAGVisitor::visit(op);
         emitComment(operatorName);
-        string tType = generateTupleType(op->output_type);
-        string opName = getNextOperatorName();
-        operatorNameMap.emplace(op->id, make_pair(opName, tType));
 
-        includes.insert("\"operators/MapOperator.h\"");
+        string opName = getNextOperatorName();
+
+        auto tType = generateTupleType(op->output_type);
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType.first, tType.second));
+
+        includes.insert("\"operators/" + operatorName + ".h\"");
 
         storeLLVMCode(op->llvm_ir, "map");
         emitLLVMFunctionWrapper(op, "map");
 
-        emitOperatorMake("MapOperator", op, opName, "map");
+        emitOperatorMake(operatorName, op, opName, "map");
+        appendLineBodyNoCol();
+    }
+
+    void visit(DAGReduce *op) {
+
+        string operatorName = "ReduceOperator";
+
+        DAGVisitor::visit(op);
+        emitComment(operatorName);
+
+        string opName = getNextOperatorName();
+
+        auto tType = get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+        auto typeSize = get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType, typeSize));
+
+        includes.insert("\"operators/" + operatorName + ".h\"");
+
+        storeLLVMCode(op->llvm_ir, "reduce");
+        emitLLVMFunctionWrapperBinaryArgs(op, "reduce");
+
+        emitOperatorMake(operatorName, op, opName, "reduce");
         appendLineBodyNoCol();
     }
 
     void visit(DAGRange *op) {
-        DAGVisitor::visit(op);
+        string operatorName = "FilterOperator";
 
-        string operatorName = "RangeSourceOperator";
+        DAGVisitor::visit(op);
         emitComment(operatorName);
 
-        string tType = generateTupleType(op->output_type);
         string opName = getNextOperatorName();
-        operatorNameMap.emplace(op->id, make_pair(opName, tType));
+        auto tType = generateTupleType(op->output_type);
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType.first, tType.second));
 
-        includes.insert("\"operators/RangeSourceOperator.h\"");
+        includes.insert("\"operators/" + operatorName + ".h\"");
 
         string args = op->from + ", " + op->to + ", " + op->step;
-        emitOperatorMake("RangeSourceOperator", op, opName, "", args);
+        emitOperatorMake(operatorName, op, opName, "", args);
         appendLineBodyNoCol();
     };
 
     void visit(DAGFilter *op) {
-        DAGVisitor::visit(op);
         string operatorName = "FilterOperator";
+
+        DAGVisitor::visit(op);
         emitComment(operatorName);
 
-        string tType = generateTupleType(op->output_type);
         string opName = getNextOperatorName();
-        operatorNameMap.emplace(op->id, make_pair(opName, tType));
+        auto tType = operatorNameTupleTypeMap[op->predecessors[0]->id];
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, get<1>(tType), get<2>(tType)));
 
-        includes.insert("\"operators/FilterOperator.h\"");
+        includes.insert("\"operators/" + operatorName + ".h\"");
 
         storeLLVMCode(op->llvm_ir, "filter");
         emitLLVMFunctionWrapper(op, "filter", true);
@@ -126,7 +152,7 @@ public:
 private:
 
 
-    string genDir;
+    const string genDir;
     const string LLVM_FUNC_DIR = "functions_llvm/";
     const std::string TUPLE_NAME = "tuple_";
     size_t tupleCounter = -1;
@@ -140,7 +166,7 @@ private:
     string LLVMFuncName = "_operator_function_";
     size_t LLVMFuncNameCounter = -1;
 
-    unordered_map<size_t, pair<string, string>> operatorNameMap;
+    unordered_map<size_t, tuple<string, string, size_t>> operatorNameTupleTypeMap;
 
     vector<string> llvmFuncDecls;
 
@@ -224,7 +250,7 @@ private:
         string argList;
         for (auto it = op->predecessors.begin(); it < op->predecessors.end(); it++) {
 
-            argList.append("&" + operatorNameMap[(*it)->id].first);
+            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
             if (it != (--op->predecessors.end())) {
                 argList.append(", ");
             }
@@ -250,15 +276,25 @@ private:
         appendLineBody(line);
     }
 
-    string generateTupleType(string type) {
-        lastTupleTypeLLVM = type;
-        string line("typedef ");
+    /***
+     * generate a struct type
+     * returns the tuple type name(e.g tuple_0) and the number of fields in this tuple
+     */
+    pair<string, size_t> generateTupleType(const string &type) {
         string tName = getNextTupleName();
-        line.append(parseTupleType(type))
-                .append(" ")
-                .append(tName);
+        string type_ = type;
+        type_ = string_replace(type_, "(", "");
+        type_ = string_replace(type_, ")", "");
+        type_ = string_replace(type_, " ", "");
+        vector<string> types = split_string(type_, ",");
+        string line("typedef struct {\n");
+        string varName = "v";
+        for (size_t i = 0; i < types.size(); i++) {
+            line += "\t" + types[i] + " " + varName + to_string(i) + ";\n";
+        }
+        line += "} " + tName + ";\n\n";
         tupleTypeDefs.push_back(line);
-        return tName;
+        return make_pair(tName, types.size());
     }
 
     void emitLLVMFunctionWrapper(DAGOperator *op, string opName, bool returnsBool = false) {
@@ -267,14 +303,23 @@ private:
         appendLineBodyNoCol("class " + className + " {");
         appendLineBodyNoCol("public:");
         tabInd++;
-        string inputType = operatorNameMap[op->predecessors[0]->id].second;
-        string retType = operatorNameMap[op->id].second;
+        string inputType = get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+        string retType = get<1>(operatorNameTupleTypeMap[op->id]);
         appendLineBodyNoCol(string("auto operator()(")
                                     .append(inputType)
                                     .append(" t) {")
         );
         tabInd++;
-        appendLineBody("return call(" + llvmFuncName + ", t)");
+        string args = "";
+        string varName = "v";
+        for (size_t i = 0; i < get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]); i++) {
+            args += "t." + varName + to_string(i) + ", ";
+        }
+        if (args != "") {
+            args.pop_back();
+            args.pop_back();
+        }
+        appendLineBody("return " + llvmFuncName + "(" + args + ")");
         tabInd--;
         appendLineBodyNoCol("}");
         tabInd--;
@@ -287,6 +332,47 @@ private:
         } else {
             llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + flatInputType + ");");
         }
+    }
+
+    /**
+     * functions which take two arguments of the same type (e.g. reduce)
+     */
+    void emitLLVMFunctionWrapperBinaryArgs(DAGOperator *op, string opName) {
+        string llvmFuncName = opName + getCurrentLLVMFuncName();
+        string className = snake_to_camel_string(llvmFuncName);
+        appendLineBodyNoCol("class " + className + " {");
+        appendLineBodyNoCol("public:");
+        tabInd++;
+        string inputType = get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+        string retType = get<1>(operatorNameTupleTypeMap[op->id]);
+        appendLineBodyNoCol(string("auto operator()(")
+                                    .append(inputType + " t0, ")
+                                    .append(inputType + " t1) {")
+        );
+        tabInd++;
+        string args = "";
+        string varName = "v";
+        for (size_t i = 0; i < get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]); i++) {
+            args += "t0." + varName + to_string(i) + ", ";
+        }
+
+        for (size_t i = 0; i < get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]); i++) {
+            args += "t1." + varName + to_string(i) + ", ";
+        }
+
+        if (args != "") {
+            args.pop_back();
+            args.pop_back();
+        }
+        appendLineBody("return " + llvmFuncName + "(" + args + ")");
+        tabInd--;
+        appendLineBodyNoCol("}");
+        tabInd--;
+        appendLineBodyNoCol("};");
+
+        string flatInputType = string_replace(op->predecessors[0]->output_type, "(", "");
+        flatInputType = string_replace(flatInputType, ")", "");
+        llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + flatInputType + ", " + flatInputType + ");");
     }
 
     string writeHelpers() {
@@ -322,8 +408,17 @@ private:
             tabInd--;
             appendLineBodyNoCol("}");
             appendLineBody(getCurrentOperatorName() + ".close()");
-            appendLineBody("DEBUG_PRINT(tuple_count)");
             appendLineBody("return tuple_count");
+            tabInd--;
+            appendLineBodyNoCol("}");
+        } else if (action == "reduce") {
+            emitComment("reduce");
+            appendLineBody(getCurrentOperatorName() + ".open()");
+            appendLineBody("auto res = " + getCurrentOperatorName() + ".next()");
+            appendLineBody(getCurrentOperatorName() + ".close()");
+            appendLineBody("result_type ret = (result_type) malloc(sizeof(" + getCurrentTupleName() + "))");
+            appendLineBody("*ret = res");
+            appendLineBody("return ret");
             tabInd--;
             appendLineBodyNoCol("}");
         } else if (action == "collect") {
@@ -381,6 +476,17 @@ private:
         return type;
     }
 
+    void makeDirectory() {
+
+        if (DUMP_FILES) {
+            const int dirErr = system(("mkdir -p " + genDir + LLVM_FUNC_DIR).c_str());
+            if (0 != dirErr) {
+                cerr << ("Error creating gen directory!") << endl;
+                exit(1);
+            }
+        }
+    }
+
     void storeLLVMCode(string ir, string opName) {
         //the local.. string is not llvm-3.7 compatible:
         regex reg1("local_unnamed_addr #.? ");
@@ -392,11 +498,6 @@ private:
         ir = regex_replace(ir, reg, "@\"" + funcName + "\"");
         //write code to the gen dir
         if (DUMP_FILES) {
-            const int dirErr = system(("mkdir -p " + genDir + LLVM_FUNC_DIR).c_str());
-            if (0 != dirErr) {
-                cerr << ("Error creating directory!") << endl;
-                exit(1);
-            }
             string path = genDir + LLVM_FUNC_DIR + funcName + ".ll";
             ofstream out(path);
             out << ir;
@@ -456,34 +557,12 @@ private:
         string ret;
         if (action == "collect") {
 
-            //the last one should be transformed to a struct, unless it is the source
-            if (getCurrentTupleName().find("_0") != std::string::npos) {
-                size_t len = tupleTypeDefs.size();
-                for (size_t i = 0; i < len; i++) {
-                    ret.append(tupleTypeDefs[i])
-                            .append(";\n");
-                }
-                resultTypeDef = "";
-                resultTypeDef += ret;
-                ret = "";
-            } else {
-                size_t len = tupleTypeDefs.size();
-                for (size_t i = 0; i < len - 1; i++) {
-                    ret.append(tupleTypeDefs[i])
-                            .append(";\n");
-                }
-                lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, "(", "");
-                lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, ")", "");
-                lastTupleTypeLLVM = string_replace(lastTupleTypeLLVM, " ", "");
-                vector<string> types = split_string(lastTupleTypeLLVM, ",");
-                resultTypeDef = "typedef struct {\n";
-                string varName = "v";
-                for (size_t i = 0; i < types.size(); i++) {
-                    resultTypeDef += "\t" + types[i] + " " + varName + to_string(i) + ";\n";
-                }
-                resultTypeDef += "} " + getCurrentTupleName() + ";\n\n";
+            size_t len = tupleTypeDefs.size();
+            for (size_t i = 0; i < len - 1; i++) {
+                ret.append(tupleTypeDefs[i]);
             }
-            resultTypeDef += "typedef struct {\n "
+            resultTypeDef = tupleTypeDefs[len - 1];
+            resultTypeDef += "\ntypedef struct {\n "
                                      "\tunsigned long size;\n"
                                      "\t" + getCurrentTupleName() + " *data;\n"
                                      "} result_struct;\n";
@@ -495,6 +574,14 @@ private:
                         .append(";\n");
             }
             resultTypeDef = "typedef unsigned long result_type;\n";
+        } else if (action == "reduce") {
+            size_t len = tupleTypeDefs.size();
+            for (size_t i = 0; i < len - 1; i++) {
+                ret.append(tupleTypeDefs[i])
+                        .append(";\n");
+            }
+            resultTypeDef = tupleTypeDefs[len - 1];
+            resultTypeDef += "typedef " + getCurrentTupleName() + "* result_type;\n";
         }
         return ret + resultTypeDef;
     }
@@ -538,7 +625,7 @@ private:
         if (action == "collect") {
             out << "void free_result(" + executeFuncReturn + " ptr);\n"
                     "\n"
-                    "void c_free_result(" + executeFuncReturn + " ptr) { return free_result(ptr); }";
+                    "void c_free_result(" + executeFuncReturn + " ptr) { free_result(ptr); }";
         }
         out.close();
     }
@@ -549,7 +636,7 @@ private:
                                         "" + executeFuncReturn + " c_execute(" + executeFuncParams + ");\n";
         if (action == "collect") {
             out << "\n"
-                           "void free_result(" + executeFuncReturn + ");";
+                           "void c_free_result(" + executeFuncReturn + ");";
         }
         out.close();
     }

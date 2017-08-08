@@ -1,4 +1,3 @@
-
 ACTION = 'action'
 DAG = 'dag'
 ID = 'id'
@@ -15,3 +14,6 @@ OUTPUT_TYPE = 'output_type'
 FILTER = 'filter'
 MAP = 'map'
 FLAT_MAP = 'flat_map'
+REDUCE = 'reduce'
+REDUCEBYKEY = 'reduce_by_key'
+JOIN = 'join'

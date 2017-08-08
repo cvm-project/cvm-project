@@ -4,6 +4,7 @@
 
 #ifndef CPP_OPERATOR_H
 #define CPP_OPERATOR_H
+
 #include <libs/optional.h>
 #include "utils/debug_print.h"
 #include "utils/tuple_to_string.h"
@@ -14,7 +15,9 @@
 class Operator {
 public:
     virtual void printName()=0;
+
     virtual void open()=0;
+
     virtual void close()=0;
 };
 

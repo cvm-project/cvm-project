@@ -436,6 +436,36 @@ src/dag/DAGRange.cpp.s:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.s
 .PHONY : src/dag/DAGRange.cpp.s
 
+src/dag/DAGReduce.o: src/dag/DAGReduce.cpp.o
+
+.PHONY : src/dag/DAGReduce.o
+
+# target to build an object file
+src/dag/DAGReduce.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGReduce.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o
+.PHONY : src/dag/DAGReduce.cpp.o
+
+src/dag/DAGReduce.i: src/dag/DAGReduce.cpp.i
+
+.PHONY : src/dag/DAGReduce.i
+
+# target to preprocess a source file
+src/dag/DAGReduce.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGReduce.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.i
+.PHONY : src/dag/DAGReduce.cpp.i
+
+src/dag/DAGReduce.s: src/dag/DAGReduce.cpp.s
+
+.PHONY : src/dag/DAGReduce.s
+
+# target to generate assembly for a file
+src/dag/DAGReduce.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGReduce.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.s
+.PHONY : src/dag/DAGReduce.cpp.s
+
 src/utils/utils.o: src/utils/utils.cpp.o
 
 .PHONY : src/utils/utils.o
@@ -506,6 +536,9 @@ help:
 	@echo "... src/dag/DAGRange.o"
 	@echo "... src/dag/DAGRange.i"
 	@echo "... src/dag/DAGRange.s"
+	@echo "... src/dag/DAGReduce.o"
+	@echo "... src/dag/DAGReduce.i"
+	@echo "... src/dag/DAGReduce.s"
 	@echo "... src/utils/utils.o"
 	@echo "... src/utils/utils.i"
 	@echo "... src/utils/utils.s"

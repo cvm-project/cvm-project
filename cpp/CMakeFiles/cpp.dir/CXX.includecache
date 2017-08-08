@@ -81,12 +81,16 @@ DAGCollection.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGCollection.h
 DAGMap.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGMap.h
+DAGReduce.h
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduce.h
 DAGJoin.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGJoin.h
 ../libs/json.hpp
 /home/sabir/projects/blaze/cpp/src/libs/json.hpp
 DAGFilter.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGFilter.h
+stdexcept
+-
 
 /home/sabir/projects/blaze/cpp/src/dag/DAGCreation.hpp
 iostream
@@ -165,6 +169,20 @@ DAGOperator.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
 string
 -
+
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduce.cpp
+utils/DAGVisitor.h
+/home/sabir/projects/blaze/cpp/src/dag/utils/DAGVisitor.h
+DAGReduce.h
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduce.h
+
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduce.h
+operators/Operator.h
+/home/sabir/projects/blaze/cpp/src/dag/operators/Operator.h
+operators/ReduceOperator.h
+/home/sabir/projects/blaze/cpp/src/dag/operators/ReduceOperator.h
+DAGOperator.h
+/home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
 
 /home/sabir/projects/blaze/cpp/src/libs/json.hpp
 algorithm
@@ -326,6 +344,14 @@ src/dag/DAGOperator.h
 string
 -
 
+src/dag/DAGReduce.h
+operators/Operator.h
+src/dag/operators/Operator.h
+operators/ReduceOperator.h
+src/dag/operators/ReduceOperator.h
+DAGOperator.h
+src/dag/DAGOperator.h
+
 src/libs/json.hpp
 algorithm
 -
@@ -400,6 +426,14 @@ src/operators/utils/debug_print.h
 utils/tuple_to_string.h
 src/operators/utils/tuple_to_string.h
 
+src/operators/ReduceOperator.h
+iostream
+-
+Operator.h
+src/operators/Operator.h
+stdexcept
+-
+
 src/utils/DAGVisitor.h
 dag/DAGCollection.h
 src/utils/dag/DAGCollection.h
@@ -413,6 +447,8 @@ dag/DAGRange.h
 src/utils/dag/DAGRange.h
 dag/DAGOperator.h
 src/utils/dag/DAGOperator.h
+dag/DAGReduce.h
+src/utils/dag/DAGReduce.h
 
 src/utils/constants.h
 

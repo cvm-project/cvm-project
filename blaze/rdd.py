@@ -2,6 +2,7 @@ import json
 import re
 
 from blaze.c_executor import execute
+from blaze.config import DUMP_DAG
 
 from blaze.utils import *
 from blaze.libs.numba.llvm_ir import cfunc
@@ -36,32 +37,16 @@ def numba_abi_to_llvm_abi(type_):
     return out
 
 
-def replace_unituple(type_):
-    out = type_
-    if isinstance(type_, Tuple):
-        type_type = type(type_)
-        child_types = []
-        for child_type in type_.types:
-            child_types.append(replace_unituple(child_type))
-        out = type_type(child_types)
-    elif isinstance(type_, UniTuple):
-        type_type = Tuple([])
-        type_type.types = (replace_unituple(type_.dtype),) * type_.count
-        type_type.count = type_.count
-        type_type.name = "(%s)" % ', '.join(str(i) for i in type_type.types)
-        out = type_type
-    elif isinstance(type_, (list, tuple)):
-        out = tuple(map(lambda t: replace_unituple(t), type_))
-    return out
-
-
 def get_llvm_ir_and_output_type(func, input_type=None):
     print("old input type: " + str(input_type))
     input_type = replace_unituple(input_type)
     print("new input type: " + str(input_type))
 
     # get the output type with njit
-    dec_func = numba.njit((input_type,))(func)
+    if isinstance(input_type, list):
+        dec_func = numba.njit(tuple(input_type))(func)
+    else:
+        dec_func = numba.njit((input_type,))(func)
     # llvm = dec_func.inspect_llvm()
     # for k, v in llvm.items():
     #     # print(str(v))
@@ -74,7 +59,10 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     output_type = replace_unituple(output_type)
     # print("new output type" + str(output_type))
 
-    cfunc_code = cfunc(output_type(input_type))(func)
+    if isinstance(input_type, list):
+        cfunc_code = cfunc(output_type(*input_type))(func)
+    else:
+        cfunc_code = cfunc(output_type(input_type))(func)
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
     m = re.search('define [^\n\r]* @"cfunc.*\n\n', code, re.DOTALL)
@@ -130,8 +118,9 @@ class RDD(object):
         cleanRDDs(self)
         self.writeDAG(dagdict[DAG], 0)
         # write to file
-        # fp = open('dag.json', 'w')
-        # json.dump(dagdict, fp=fp, cls=RDDEncoder)
+        if DUMP_DAG:
+            fp = open(getBlazePath() + 'dag.json', 'w')
+            json.dump(dagdict, fp=fp, cls=RDDEncoder)
         res = execute(dagdict)
         return res
 
@@ -145,7 +134,7 @@ class RDD(object):
         return FlatMap(self, func)
 
     def reduce(self, func):
-        return Reduce(self, func)
+        return Reduce(self, func).startDAG("reduce")
 
     def join(self, other):
         return Join(self, other)
@@ -220,6 +209,9 @@ class FlatMap(PipeRDD):
 
 
 class Join(ShuffleRDD):
+    """
+    the first element in a tuple is the key
+    """
     def __init__(self, left, right):
         super(Join, self).__init__(parent=left)
         self.parents.append(right)
@@ -263,24 +255,37 @@ class Join(ShuffleRDD):
         # dic[FUNC] = 'function code join'
         # (K, V), (K, W) => (K, (V, W))
 
-        self.output_type = self.compute_output_type()
+        self.output_type = replace_unituple(self.compute_output_type())
         dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 
 class Reduce(ShuffleRDD):
+    """
+    binary function must be commutative and associative
+    the return value type should be the same as its arguments
+    the input cannot be empty
+    """
+
     def __init__(self, parent, func):
         super(Reduce, self).__init__(parent)
         self.func = func
+
+    def computeInputType(self):
+        # repeat the input type two times
+        return [self.parents[0].output_type, self.parents[0].output_type]
 
     def writeDAG(self, daglist, index):
         if self.dic:
             return self.dic[ID]
         cur_index = super(Reduce, self).writeDAG(daglist, index)
         dic = self.dic
-        dic[OP] = 'reduce'
-        dic[FUNC] = 'function code reduce'
-
+        dic[OP] = REDUCE
+        input_type = self.computeInputType()
+        dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, input_type)
+        assert self.output_type == self.parents[
+            0].output_type, "The reduce function must return the same type as its arguments"
+        dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 
 
@@ -327,8 +332,9 @@ class NumpyArraySource(RDD):
             self.output_type = typeof(array[0])
         self.size = array.size
         self.data_ptr = array.__array_interface__['data'][0]
-        # TODO we probably have to keep a reference to the np array
+        # keep a reference to the np array
         # until the end of the execution to prevent gc
+        self.array = array
 
     def writeDAG(self, daglist, index):
         if self.dic:

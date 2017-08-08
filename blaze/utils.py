@@ -1,10 +1,10 @@
+import os
 import time
 from json import JSONEncoder
 
 import numba
 
 import numba.types as nb_types
-import numpy as np
 import sys
 
 from numba import typeof
@@ -106,3 +106,44 @@ class RDDEncoder(JSONEncoder):
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
+
+def make_tuple(child_types):
+    out = nb_types.Tuple([])
+    out.types = tuple(child_types)
+    out.name = "(%s)" % ', '.join(str(i) for i in child_types)
+    out.count = len(child_types)
+    return out
+
+
+def replace_unituple(type_):
+    out = type_
+    if isinstance(type_, nb_types.Tuple):
+        child_types = []
+        for child_type in type_.types:
+            child_types.append(replace_unituple(child_type))
+        out = nb_types.Tuple([])
+        out.types = tuple(child_types)
+        out.name = "(%s)" % ', '.join(str(i) for i in child_types)
+        out.count = len(child_types)
+    elif isinstance(type_, nb_types.UniTuple):
+        type_type = nb_types.Tuple([])
+        type_type.types = (replace_unituple(type_.dtype),) * type_.count
+        type_type.count = type_.count
+        type_type.name = "(%s)" % ', '.join(str(i) for i in type_type.types)
+        out = type_type
+    elif isinstance(type_, tuple):
+        out = tuple(map(lambda t: replace_unituple(t), type_))
+    elif isinstance(type_, list):
+        out = list(map(lambda t: replace_unituple(t), type_))
+    return out
+
+
+def getBlazePath():
+    blaze_path = ""
+    try:
+        blaze_path = os.environ['BLAZEPATH']
+    except KeyError:
+        eprint("BLAZEPATH is not defined, set it to your blaze installation path")
+        exit(1)
+    return blaze_path

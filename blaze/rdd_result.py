@@ -1,30 +1,10 @@
 import numpy as np
 
 
-class RDDCollectionResult:
-    def __init__(self, vals):
-        assert isinstance(vals, np.ndarray)
-        self._numpy_array = vals
-
-    def __str__(self):
-        return str(self.as_list())
-
-    def as_list(self):
-        return self._numpy_array.tolist()
-
-    def as_numpy_array(self):
-        return self._numpy_array
-
-    def next(self):
-        return self.iter.next()
-
-    def __iter__(self):
-        self.iter = self._numpy_array.__iter__()
-        return self.iter
-
-
 # empty wrapper over built-in type numpy array
-# with this we are able to keep the cffi reference to the memory
+# with this we are able to keep the cffi memory reference
 # inside the object in an attribute
 class NumpyResult(np.ndarray):
-    pass
+
+    def __del__(self):
+        print("freeing numpy array")

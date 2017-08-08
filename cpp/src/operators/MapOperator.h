@@ -26,8 +26,6 @@ public:
     INLINE Optional<Tuple> next() {
         if (auto ret = upstream->next()) {
             auto meres = mapFunction(ret);
-            DEBUG_PRINT(to_string(ret.value));
-            DEBUG_PRINT(meres.v0);
             return meres;
         }
         return {};

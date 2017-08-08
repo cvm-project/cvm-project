@@ -1,17 +1,20 @@
 import unittest
 
 from blaze.blaze_context import BlazeContext
+from functools import reduce
 
 
 class TestJoin(unittest.TestCase):
     def test_overlap(self):
         bc = BlazeContext()
-        data1 = bc.collection(range(0, 100)).map(lambda v: (v, 1))
-        data2 = bc.collection(range(50, 150)).map(lambda v: (v, 1))
+        input1 = [(r, r * 10) for r in range(10)]
+        input2 = [(r, r * 10) for r in range(5, 15)]
+        data1 = bc.collection(input1)
+        data2 = bc.collection(input2)
 
-        joined = data1.join(data2).map(lambda v: v[0])
+        joined = data1.join(data2)
         res = joined.collect()
-        self.assertEqual(res, list(range(50, 100)))
+        self.assertEqual(res, [(r, (r * 10, r * 10)) for r in range(5, 10)])
 
 
 class TestFilter(unittest.TestCase):
@@ -50,16 +53,31 @@ class TestFlatMap(unittest.TestCase):
         self.assertEqual(res, [0 for i in range(0, 10)])
 
 
+class TestReduce(unittest.TestCase):
+    def test_reduce_sum(self):
+        bc = BlazeContext()
+        input = range(0, 10)
+        d = bc.collection(input).reduce(lambda t1, t2: t1 + t2)
+        self.assertEqual(d, sum(input))
+
+    def test_reduce_tuple(self):
+        bc = BlazeContext()
+        input = [(r, r * 10) for r in range(0, 10)]
+        res = bc.collection(input).reduce(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1]))
+        self.assertTupleEqual(res, (sum(map(lambda t: t[0], input)), sum(map(lambda t: t[1], input))))
+
+
 class TestIntegration(unittest.TestCase):
     def test_map_filter_map(self):
         bc = BlazeContext()
+        input_ = range(0, 10)
         mapF1 = lambda w: (w, w * 3)
         filtF1 = lambda w: w[0] % 2 == 0
         mapF2 = lambda w: w[0]
-        d = bc.collection(range(0, 10)).map(mapF1).map(mapF2)
-        # d = bc.collection(range(0, 10)).map(mapF1).filter(filtF1)
+        # d = bc.collection(range(0, 10)).map(mapF1).map(mapF2)
+        d = bc.collection(input_).map(mapF1).filter(filtF1).map(mapF2)
         res = d.collect()
-        self.assertListEqual(list(res), list(map(mapF2, filter(filtF1, map(mapF1, range(0, 10))))))
+        self.assertListEqual(list(res), list(map(mapF2, filter(filtF1, map(mapF1, input_)))))
 
     def test_map_filter_flat_map_filter_flat_map(self):
         bc = BlazeContext()
