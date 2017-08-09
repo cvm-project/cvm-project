@@ -8,13 +8,14 @@ class TestJoin(unittest.TestCase):
     def test_overlap(self):
         bc = BlazeContext()
         input1 = [(r, r * 10) for r in range(10)]
-        input2 = [(r, r * 10) for r in range(5, 15)]
+        input2 = [(r, r * 13, r + 100) for r in range(5, 15)]
         data1 = bc.collection(input1)
         data2 = bc.collection(input2)
 
         joined = data1.join(data2)
         res = joined.collect()
-        self.assertEqual(res, [(r, (r * 10, r * 10)) for r in range(5, 10)])
+        truth = [(r, r * 10, r * 13, r + 100) for r in range(5, 10)]
+        self.assertListEqual([tuple(r) for r in res], truth)
 
 
 class TestFilter(unittest.TestCase):
@@ -34,9 +35,9 @@ class TestFilter(unittest.TestCase):
 class TestMap(unittest.TestCase):
     def test_map_collect(self):
         bc = BlazeContext
-        d = bc.collection(range(0, 10)).map(lambda t: (t, t * 10))
+        d = bc.collection(range(0, 10)).map(lambda t: (t, (t, t * 10)))
         res = d.collect()
-        self.assertListEqual([(t[0], t[1]) for t in res], [(t, t * 10) for t in range(0, 10)])
+        self.assertListEqual([(t[0], t[1], t[2]) for t in res], [(t, t, t * 10) for t in range(0, 10)])
 
     def test_map_count(self):
         bc = BlazeContext

@@ -6,9 +6,19 @@
 #define CPP_JOINOPERATOR_H
 
 #include <iostream>
+#include <unordered_map>
 #include "Operator.h"
 
-template<class Upstream1, class Upstream2, class Tuple>
+using std::vector;
+
+/**
+ * for input tuples (K, V) and (K, W) returns (K, V, W)
+ * returns every combination in case of repeating keys
+ *
+ * Current implementation builds map on the first input operator
+ *
+ */
+template<class Upstream1, class Upstream2, class Tuple, class KeyType, class ValueType1, class ValueType2>
 class JoinOperator : public Operator {
 public:
     Upstream1 *upstream1;
@@ -22,46 +32,95 @@ public:
         upstream2->printName();
     }
 
-
-    void INLINE Open() override final {
-        left_upstream_operator_->Open();
-        right_upstream_operator_->Open();
-        auto tuple_res = left_upstream_operator_->Next();
-        while (tuple_res.second == tuple_flag::valid) {
-            ht.emplace(tuple_res.first.key, tuple_res.first.value);
-            tuple_res = left_upstream_operator_->Next();
-        }
-    }
-
     Optional<Tuple> INLINE next() {
-        auto tuple_res = right_upstream_operator_->Next();
-        while (tuple_res.second == tuple_flag::valid) {
-            if (ht.count(tuple_res.first.key)) {
-                return std::make_pair(tuple_res.first, tuple_flag::valid);
-            }
-            tuple_res = right_upstream_operator_->Next();
+        if (intermediateTuples.size() > 0) {
+            auto res = intermediateTuples.back();
+            intermediateTuples.pop_back();
+            return res;
         }
-
-        return std::make_pair(data::Tuple{0, 0}, tuple_flag::invalid);
+        if (auto ret = upstream2->next()) {
+            auto key = getKey(ret.value);
+            if (ht.count(key)) {
+                for (auto t : ht[key]) {
+                    //build a tuple for every combination
+                    intermediateTuples.push_back(buildResult(key, t, getValue2(ret.value)));
+                }
+                return next();
+            }
+        }
+        return {};
     }
 
-    void open() {
+    void INLINE open() {
         upstream1->open();
         upstream2->open();
+        while (auto ret = upstream1->next()) {
+            if (ht.count(getKey(ret.value)) > 0) {
+                ht[getKey(ret.value)].push_back(getValue1(ret.value));
+            }
+            else {
+                vector<ValueType1> values;
+                values.push_back(getValue1(ret.value));
+                ht.emplace(getKey(ret.value), values);
+            }
+        }
     }
 
-    void close() {
+    void INLINE close() {
         upstream1->close();
         upstream2->close();
     }
+
 private:
-    std::unordered_map<uint32_t, uint32_t> ht;
+
+    struct hash {
+        size_t operator()(const KeyType x) const {
+            return std::hash<long>()(*((long *) (&x)));
+        }
+    };
+
+    struct pred {
+        bool operator()(const KeyType x, const KeyType y) const {
+            return *((long *) (&x)) == *((long *) (&y));
+        }
+    };
+
+    std::unordered_map<KeyType, std::vector<ValueType1>, hash, pred> ht;
+    vector<Tuple> intermediateTuples;
+
+    template<class UpstreamTuple>
+    const KeyType getKey(UpstreamTuple t) {
+        return *(const_cast<KeyType *>((KeyType *) (&t)));
+    }
+
+    template<class UpstreamTuple>
+    ValueType1 getValue1(UpstreamTuple t) {
+        DEBUG_PRINT(*((long *) (((char *) &t) + sizeof(KeyType))));
+        return *((ValueType1 *) (((char *) &t) + sizeof(KeyType)));
+    }
+
+    template<class UpstreamTuple>
+    ValueType2 getValue2(UpstreamTuple t) {
+        DEBUG_PRINT(*((long *) (((char *) &t) + sizeof(KeyType))));
+//        DEBUG_PRINT((*((ValueType2 *) (((long* )(&t))  + sizeof(KeyType)))).v0);
+        return *((ValueType2 *) (((char *) &t) + sizeof(KeyType)));
+    }
+
+    Tuple buildResult(KeyType key, ValueType1 val1, ValueType2 val2) {
+        Tuple res;
+        char *resp = (char *) &res;
+        *((KeyType *) resp) = key;
+        *((ValueType1 *) (resp + sizeof(KeyType))) = val1;
+        *((ValueType2 *) (resp + sizeof(KeyType) + sizeof(ValueType1))) = val2;
+        return res;
+    }
 };
 
 
-template<class Upstream1, class Upstream2, class Tuple>
-JoinOperator<Upstream1, Upstream2, Tuple> makeJoinOperator(Upstream1 *upstream1, Upstream2 *upstream2) {
-    return JoinOperator<Upstream1, Upstream2, Tuple>(upstream1, upstream2);
+template<class Tuple, class KeyType, class ValueType1, class ValueType2, class Upstream1, class Upstream2>
+JoinOperator<Upstream1, Upstream2, Tuple, KeyType, ValueType1, ValueType2>
+makeJoinOperator(Upstream1 *upstream1, Upstream2 *upstream2) {
+    return JoinOperator<Upstream1, Upstream2, Tuple, KeyType, ValueType1, ValueType2>(upstream1, upstream2);
 };
 
 

@@ -55,11 +55,20 @@ def execute(dag_dict):
     generator_cffi.c_generate_dag_plan(dag_c)
 
     executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib, ffi)
-    if dag_dict['dag'][0][OP] == 'array_source' or 'collection_source':
-        data_ptr = ffi.cast("void*", dag_dict['dag'][0][DATA_PTR])
-        res = executor_cffi.c_execute(data_ptr, dag_dict['dag'][0][DATA_SIZE])
-    else:
-        res = executor_cffi.c_execute()
+    args = []
+    for op in dag_dict['dag']:
+        if op[OP] == 'collection_source':
+            data_ptr = ffi.cast("void*", op[DATA_PTR])
+            size = op[DATA_SIZE]
+            args.append(data_ptr)
+            args.append(size)
+    # if dag_dict['dag'][0][OP] == 'collection_source':
+    #     data_ptr = ffi.cast("void*", dag_dict['dag'][0][DATA_PTR])
+    #     res = executor_cffi.c_execute(data_ptr, dag_dict['dag'][0][DATA_SIZE])
+    # else:
+    #     res = executor_cffi.c_execute()
+
+    res = executor_cffi.c_execute(*args)
 
     if dag_dict[ACTION] == 'collect':
         # add a free function to the gc on the result object
@@ -76,7 +85,7 @@ def wrap_result(res, action, type_, ffi):
     if action == "collect":
         buffer_size = res.size * get_type_size(type_)
         c_buffer = ffi.buffer(res.data, buffer_size)
-        np_arr = np.frombuffer(c_buffer, dtype=numba_type_to_dtype(type_), count=res.size)
+        np_arr = np.frombuffer(c_buffer, dtype=str(type_).replace("(", "").replace(")", ""), count=res.size)
         np_arr = np_arr.view(NumpyResult)
         np_arr.ptr = res
         return np_arr

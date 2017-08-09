@@ -15,31 +15,11 @@ from numba.dispatcher import _FunctionCompiler
 from numba.targets import registry
 from numba.typing import signature
 from numba.typing.ctypes_utils import to_ctypes
-from numba.types import Tuple, UniTuple, NoneType, intc, float32
 
-from blaze.utils import get_type_size, replace_unituple
+from blaze.utils import get_type_size, replace_unituple, flatten
 
 # types larger than this are classiefied as "MEMORY" in amd64 ABI
 MINIMAL_TYPE_SIZE = 16
-
-
-def flatten(iterable):
-    """
-    Flatten nested iterable of (tuple, list).
-    """
-
-    def rec(iterable):
-        for i in iterable:
-            if isinstance(i, (tuple, list)):
-                for j in rec(i):
-                    yield j
-            elif isinstance(i, (UniTuple, Tuple)):
-                for j in rec(i.types):
-                    yield j
-            else:
-                yield i
-
-    return tuple(rec(iterable))
 
 
 def cfunc(sig, locals={}, cache=False, **options):

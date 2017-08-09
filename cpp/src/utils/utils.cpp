@@ -32,9 +32,8 @@ string string_replace(string str, string from, string to) {
         index = str.find(from, index);
         if (index == std::string::npos) break;
 
-        /* Make the replacement. */
         str.replace(index, from.size(), to);
-        index += from.size();
+        index += to.size();
     }
     return str;
 }

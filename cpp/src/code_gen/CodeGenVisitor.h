@@ -37,6 +37,7 @@ public:
                 + writeIncludes() + "\n"
                 + "using namespace std;\n"
                 + writeTupleDefs(dag->action) + "\n"
+                + writeJoinTupleDefs() + "\n"
                 + writeLLVMFuncDecls() + "\n"
                 //                + writeHelpers() + "\n"
                 + writeFuncDecl() + "\n"
@@ -72,8 +73,8 @@ public:
 
     void visit(DAGMap *op) {
 
-        string operatorName = "MapOperator";
         DAGVisitor::visit(op);
+        string operatorName = "MapOperator";
         emitComment(operatorName);
 
         string opName = getNextOperatorName();
@@ -149,11 +150,35 @@ public:
     };
 
 
+    void visit(DAGJoin *op) {
+        DAGVisitor::visit(op);
+        string operatorName = "JoinOperator";
+        emitComment(operatorName);
+
+        string opName = getNextOperatorName();
+        auto tType = generateTupleType(op->output_type);
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType.first, tType.second));
+
+        //add join k1, v1, v2 tuple types
+        join_type_counter++;
+
+        generateJoinKeyValueTypes(op);
+
+        includes.insert("\"operators/" + operatorName + ".h\"");
+
+        emitJoinMake(opName, op);
+        appendLineBodyNoCol();
+    };
+
+
 private:
 
 
     const string genDir;
     const string LLVM_FUNC_DIR = "functions_llvm/";
+
+    string body;
+
     const std::string TUPLE_NAME = "tuple_";
     size_t tupleCounter = -1;
 
@@ -166,19 +191,25 @@ private:
     string LLVMFuncName = "_operator_function_";
     size_t LLVMFuncNameCounter = -1;
 
+    string JOIN_KEY_NAME = "join_key_";
+    string JOIN_VALUE1_NAME = "join_value_0_";
+    string JOIN_VALUE2_NAME = "join_value_1_";
+    size_t join_type_counter = -1;
+
+
     unordered_map<size_t, tuple<string, string, size_t>> operatorNameTupleTypeMap;
 
     vector<string> llvmFuncDecls;
 
     vector<string> tupleTypeDefs;
 
+    vector<string> joinKeyValuesTypeDefs;
+
     vector<pair<string, string>> inputNames;
 
     set<string> includes;
 
     size_t tabInd = 0;
-
-    string body;
 
     string lastTupleType;
     string lastTupleTypeLLVM;
@@ -191,7 +222,6 @@ private:
     const string INPUT_NAME = "input_";
     const string INPUT_NAME_SIZE = "input_size_";
     size_t inputNameCounter = -1;
-
 
     auto getCurrentInputNamePair() {
         return make_pair(INPUT_NAME + to_string(inputNameCounter), INPUT_NAME_SIZE + to_string(inputNameCounter));
@@ -212,6 +242,27 @@ private:
     string getNextLLVMFuncName() {
         LLVMFuncNameCounter++;
         return getCurrentLLVMFuncName();
+    }
+
+    string getCurrentJoinKeyName() {
+        string res;
+        res.append(JOIN_KEY_NAME)
+                .append(to_string(join_type_counter));
+        return res;
+    }
+
+    string getCurrentJoinValue1Name() {
+        string res;
+        res.append(JOIN_VALUE1_NAME)
+                .append(to_string(join_type_counter));
+        return res;
+    }
+
+    string getCurrentJoinValue2Name() {
+        string res;
+        res.append(JOIN_VALUE2_NAME)
+                .append(to_string(join_type_counter));
+        return res;
     }
 
     string getCurrentTupleName() {
@@ -276,6 +327,32 @@ private:
         appendLineBody(line);
     }
 
+    void emitJoinMake(string opVarName, DAGJoin *op) {
+        string line("auto ");
+        line.append(opVarName)
+                .append(" = make")
+                .append("JoinOperator")
+                .append("<")
+                .append(getCurrentTupleName() + ", " +
+                        getCurrentJoinKeyName() + ", " +
+                        getCurrentJoinValue1Name() + ", " +
+                        getCurrentJoinValue2Name())
+                .append(">(");
+
+        string argList;
+        for (auto it = op->predecessors.begin(); it < op->predecessors.end(); it++) {
+
+            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
+            if (it != (--op->predecessors.end())) {
+                argList.append(", ");
+            }
+        }
+
+        line.append(argList);
+        line.append(")");
+        appendLineBody(line);
+    }
+
     /***
      * generate a struct type
      * returns the tuple type name(e.g tuple_0) and the number of fields in this tuple
@@ -293,6 +370,7 @@ private:
             line += "\t" + types[i] + " " + varName + to_string(i) + ";\n";
         }
         line += "} " + tName + ";\n\n";
+
         tupleTypeDefs.push_back(line);
         return make_pair(tName, types.size());
     }
@@ -329,7 +407,8 @@ private:
         flatInputType = string_replace(flatInputType, ")", "");
         if (returnsBool) {
             llvmFuncDecls.push_back("bool " + llvmFuncName + "(" + flatInputType + ");");
-        } else {
+        }
+        else {
             llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + flatInputType + ");");
         }
     }
@@ -375,27 +454,27 @@ private:
         llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + flatInputType + ", " + flatInputType + ");");
     }
 
-    string writeHelpers() {
-        return "namespace impl {\n"
-                "    template<typename Function, typename... Types, size_t... Indexes>\n"
-                "    auto call_impl(const Function &f, const std::tuple<Types...> &t,\n"
-                "                   const std::integer_sequence<size_t, Indexes...> &) {\n"
-                "        return f(std::get<Indexes>(t)...);\n"
-                "    }\n"
-                "\n"
-                "}  // namespace impl\n"
-                "\n\n"
-                "template<typename Function, typename... Types>\n"
-                "auto call(const Function &f, const std::tuple<Types...> &t) {\n"
-                "    return impl::call_impl(f, t, std::index_sequence_for<Types...>());\n"
-                "}\n"
-                "\n"
-                "template<typename Function, typename Type>\n"
-                "auto call(const Function &f, const Type &t) {\n"
-                "    return f(t);\n"
-                "}"
-                "\n\n";
-    }
+//    string writeHelpers() {
+//        return "namespace impl {\n"
+//                "    template<typename Function, typename... Types, size_t... Indexes>\n"
+//                "    auto call_impl(const Function &f, const std::tuple<Types...> &t,\n"
+//                "                   const std::integer_sequence<size_t, Indexes...> &) {\n"
+//                "        return f(std::get<Indexes>(t)...);\n"
+//                "    }\n"
+//                "\n"
+//                "}  // namespace impl\n"
+//                "\n\n"
+//                "template<typename Function, typename... Types>\n"
+//                "auto call(const Function &f, const std::tuple<Types...> &t) {\n"
+//                "    return impl::call_impl(f, t, std::index_sequence_for<Types...>());\n"
+//                "}\n"
+//                "\n"
+//                "template<typename Function, typename Type>\n"
+//                "auto call(const Function &f, const Type &t) {\n"
+//                "    return f(t);\n"
+//                "}"
+//                "\n\n";
+//    }
 
     void emitFuncEnd(string action) {
         if (action == "count") {
@@ -411,7 +490,8 @@ private:
             appendLineBody("return tuple_count");
             tabInd--;
             appendLineBodyNoCol("}");
-        } else if (action == "reduce") {
+        }
+        else if (action == "reduce") {
             emitComment("reduce");
             appendLineBody(getCurrentOperatorName() + ".open()");
             appendLineBody("auto res = " + getCurrentOperatorName() + ".next()");
@@ -421,8 +501,9 @@ private:
             appendLineBody("return ret");
             tabInd--;
             appendLineBodyNoCol("}");
-        } else if (action == "collect") {
-            emitComment("copying the result");
+        }
+        else if (action == "collect") {
+            emitComment("collecting the result");
             appendLineBody(getCurrentOperatorName() + ".open()");
             appendLineBody("size_t allocatedSize = 2");
             appendLineBody("size_t resSize = 0");
@@ -465,9 +546,91 @@ private:
         appendLineBodyNoCol("}");
     }
 
+    /**
+     *
+     * generate Key, Value1, Value2 struct types
+     * for current join
+     */
+    void generateJoinKeyValueTypes(DAGJoin *op) {
+        string up1Type = op->predecessors[0]->output_type;
+        string up2Type = op->predecessors[1]->output_type;
+
+        //key1 type
+        string keyName = getCurrentJoinKeyName();
+        vector<string> keyTypes;
+        if (up1Type.find("((") == 0) {
+            //key is a tuple
+            regex reg("((.*)");
+            std::smatch m;
+            regex_search(up1Type, m, reg);
+            string typesStr;
+            for (auto x:m) typesStr = x;
+            typesStr = string_replace(typesStr, "(", " ");
+            typesStr = string_replace(typesStr, ")", " ");
+            typesStr = string_replace(typesStr, " ", "");
+            keyTypes = split_string(typesStr, ",");
+        }
+        else {
+            //key is the first element
+            string typesStr = string_replace(up1Type, "(", " ");
+            typesStr = string_replace(typesStr, ")", " ");
+            typesStr = string_replace(typesStr, " ", "");
+            keyTypes.push_back(split_string(typesStr, ",")[0]);
+        }
+        string line("typedef struct {\n");
+        string varName = "v";
+        for (size_t i = 0; i < keyTypes.size(); i++) {
+            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + ";\n";
+        }
+        line += "} " + keyName + ";\n\n";
+
+        //up1 type
+        vector<string> up1Types;
+        if (up1Type.find("((") == 0) {
+            //TODO
+        }
+        else {
+            string typesStr = string_replace(up1Type, "(", " ");
+            typesStr = string_replace(typesStr, ")", " ");
+            typesStr = string_replace(typesStr, " ", "");
+            up1Types = split_string(typesStr, ",");
+            up1Types = vector<string>(up1Types.begin() + 1, up1Types.end());
+            line += "typedef struct {\n";
+
+            for (size_t i = 0; i < up1Types.size(); i++) {
+                line += "\t" + up1Types[i] + " " + varName + to_string(i) + ";\n";
+            }
+            line += "} " + getCurrentJoinValue1Name() + ";\n\n";
+        }
+
+        //up2 type
+        vector<string> up2Types;
+        if (up2Type.find("((") == 0) {
+            //TODO
+        }
+        else {
+            string typesStr = string_replace(up2Type, "(", " ");
+            typesStr = string_replace(typesStr, ")", " ");
+            typesStr = string_replace(typesStr, " ", "");
+            up2Types = split_string(typesStr, ",");
+            up2Types = vector<string>(up2Types.begin() + 1, up2Types.end());
+            line += "typedef struct {\n";
+
+            for (size_t i = 0; i < up2Types.size(); i++) {
+                line += "\t" + up2Types[i] + " " + varName + to_string(i) + ";\n";
+            }
+            line += "} " + getCurrentJoinValue2Name() + ";\n\n";
+        }
+
+        joinKeyValuesTypeDefs.push_back(line);
+    }
+
+    string genComment(string com) {
+        return "\n/**" + com + "**/\n";
+    }
+
     void emitComment(string opName) {
-        appendLineBodyNoCol("");
-        appendLineBodyNoCol("/**" + opName + "**/");
+        appendLineBodyNoCol(genComment(opName));
     }
 
     string parseTupleType(string &type) {
@@ -530,6 +693,15 @@ private:
 
     }
 
+    string writeJoinTupleDefs() {
+        string line = "";
+        line += genComment("join key value definitions");
+        for (auto tupleDef : joinKeyValuesTypeDefs) {
+            line += tupleDef;
+        }
+        return line;
+    }
+
     string writeFuncDecl() {
         executeFuncParams = "";
         for (auto inputPair : inputNames) {
@@ -555,6 +727,7 @@ private:
 
     string writeTupleDefs(string action) {
         string ret;
+        ret.append(genComment("tuple definitions"));
         if (action == "collect") {
 
             size_t len = tupleTypeDefs.size();
@@ -567,14 +740,16 @@ private:
                                      "\t" + getCurrentTupleName() + " *data;\n"
                                      "} result_struct;\n";
             resultTypeDef += "typedef result_struct* result_type;\n";
-        } else if (action == "count") {
+        }
+        else if (action == "count") {
             size_t len = tupleTypeDefs.size();
             for (size_t i = 0; i < len; i++) {
                 ret.append(tupleTypeDefs[i])
                         .append(";\n");
             }
             resultTypeDef = "typedef unsigned long result_type;\n";
-        } else if (action == "reduce") {
+        }
+        else if (action == "reduce") {
             size_t len = tupleTypeDefs.size();
             for (size_t i = 0; i < len - 1; i++) {
                 ret.append(tupleTypeDefs[i])

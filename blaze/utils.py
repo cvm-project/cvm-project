@@ -147,3 +147,22 @@ def getBlazePath():
         eprint("BLAZEPATH is not defined, set it to your blaze installation path")
         exit(1)
     return blaze_path
+
+
+def flatten(iterable):
+    """
+    Flatten nested iterable of (tuple, list).
+    """
+
+    def rec(iterable):
+        for i in iterable:
+            if isinstance(i, (tuple, list)):
+                for j in rec(i):
+                    yield j
+            elif isinstance(i, (nb_types.UniTuple, nb_types.Tuple)):
+                for j in rec(i.types):
+                    yield j
+            else:
+                yield i
+
+    return tuple(rec(iterable))

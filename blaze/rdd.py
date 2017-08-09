@@ -47,17 +47,11 @@ def get_llvm_ir_and_output_type(func, input_type=None):
         dec_func = numba.njit(tuple(input_type))(func)
     else:
         dec_func = numba.njit((input_type,))(func)
-    # llvm = dec_func.inspect_llvm()
-    # for k, v in llvm.items():
-    #     # print(str(v))
-    #     pass
-    # # # file.write(v)
-    # #     # file.write('\n')
     output_type = dec_func.nopython_signatures[0].return_type
 
-    # print("old output type" + str(output_type))
+    print("old output type" + str(output_type))
     output_type = replace_unituple(output_type)
-    # print("new output type" + str(output_type))
+    print("new output type" + str(output_type))
 
     if isinstance(input_type, list):
         cfunc_code = cfunc(output_type(*input_type))(func)
