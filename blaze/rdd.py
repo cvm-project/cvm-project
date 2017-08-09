@@ -38,9 +38,9 @@ def numba_abi_to_llvm_abi(type_):
 
 
 def get_llvm_ir_and_output_type(func, input_type=None):
-    print("old input type: " + str(input_type))
+    # print("old input type: " + str(input_type))
     input_type = replace_unituple(input_type)
-    print("new input type: " + str(input_type))
+    # print("new input type: " + str(input_type))
 
     # get the output type with njit
     if isinstance(input_type, list):
@@ -49,9 +49,9 @@ def get_llvm_ir_and_output_type(func, input_type=None):
         dec_func = numba.njit((input_type,))(func)
     output_type = dec_func.nopython_signatures[0].return_type
 
-    print("old output type" + str(output_type))
+    # print("old output type" + str(output_type))
     output_type = replace_unituple(output_type)
-    print("new output type" + str(output_type))
+    # print("new output type" + str(output_type))
 
     if isinstance(input_type, list):
         cfunc_code = cfunc(output_type(*input_type))(func)

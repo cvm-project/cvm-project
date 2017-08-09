@@ -38,7 +38,7 @@ public:
             intermediateTuples.pop_back();
             return res;
         }
-        if (auto ret = upstream2->next()) {
+        while (auto ret = upstream2->next()) {
             auto key = getKey(ret.value);
             if (ht.count(key)) {
                 for (auto t : ht[key]) {
@@ -95,14 +95,11 @@ private:
 
     template<class UpstreamTuple>
     ValueType1 getValue1(UpstreamTuple t) {
-        DEBUG_PRINT(*((long *) (((char *) &t) + sizeof(KeyType))));
         return *((ValueType1 *) (((char *) &t) + sizeof(KeyType)));
     }
 
     template<class UpstreamTuple>
     ValueType2 getValue2(UpstreamTuple t) {
-        DEBUG_PRINT(*((long *) (((char *) &t) + sizeof(KeyType))));
-//        DEBUG_PRINT((*((ValueType2 *) (((long* )(&t))  + sizeof(KeyType)))).v0);
         return *((ValueType2 *) (((char *) &t) + sizeof(KeyType)));
     }
 

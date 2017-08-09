@@ -12,9 +12,9 @@ set(SOURCE_FILES main.cpp src/code_gen/generate_code.cpp generate_dag_plan.cpp c
         src/dag/DAGMap.cpp src/dag/DAGCollection.cpp src/dag/DAGRange.cpp src/dag/DAGFilter.cpp src/dag/DAGJoin.cpp
         src/dag/DAGReduce.cpp
         src/utils/utils.cpp)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS_RELEASE} -O0 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -march=native")
 
 add_definitions(${LLVM_DEFINITIONS})
 include_directories(src/ ${LLVM_INCLUDE_DIRS})
