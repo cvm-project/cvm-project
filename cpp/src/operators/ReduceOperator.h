@@ -9,6 +9,7 @@
 #include <iostream>
 #include "Operator.h"
 #include <stdexcept>
+#include "utils/timing.c"
 
 template<class Upstream, class Tuple, class Function>
 class ReduceOperator : public Operator {
@@ -25,9 +26,12 @@ public:
     }
 
     INLINE Optional<Tuple> next() {
+        TICK1
         while (auto ret = upstream->next()) {
             acc = function(acc, ret);
         }
+        TOCK1
+        std::cout<<"reduce loop " << DIFF1 << std::endl;
         return acc;
     }
 

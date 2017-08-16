@@ -29,6 +29,19 @@ class TestJoin(unittest.TestCase):
         truth = [(1, 3, 22, 33), (1, 2, 22, 33), (1, 3, 44, 55), (1, 2, 44, 55), (2, 6, 33, 44), (2, 4, 33, 44)]
         self.assertListEqual([tuple(r) for r in res], truth)
 
+    def test_count(self):
+        bc = BlazeContext()
+        input1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
+        data1 = bc.collection(input1)
+        data2 = bc.collection(input2)
+
+        joined = data1.join(data2)
+        res = joined.count()
+        truth = 6
+        self.assertEqual(res, truth)
+
+
 class TestFilter(unittest.TestCase):
     def test_filter_collect(self):
         bc = BlazeContext()

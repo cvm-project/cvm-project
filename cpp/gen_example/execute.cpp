@@ -22,12 +22,12 @@ typedef struct {
 } result_type;
 
 extern "C" {
-tuple_1 map_operator_function_0(tuple_0);
+INLINE tuple_1 map_operator_function_0(tuple_0);
 }
 
 namespace impl {
     template<typename Function, typename... Types, size_t... Indexes>
-    auto call_impl(const Function &f, const std::tuple<Types...> &t,
+    INLINE auto call_impl(const Function &f, const std::tuple<Types...> &t,
                    const std::integer_sequence<size_t, Indexes...> &) {
         return f(std::get<Indexes>(t)...);
     }

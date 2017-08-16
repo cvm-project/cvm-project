@@ -6,8 +6,6 @@
 #define CPP_DAGREDUCE_H
 
 
-#include "operators/Operator.h"
-#include "operators/ReduceOperator.h"
 #include "DAGOperator.h"
 
 class DAGReduce : public DAGOperator {

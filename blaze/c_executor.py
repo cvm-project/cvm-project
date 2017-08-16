@@ -10,6 +10,7 @@ from blaze.utils import *
 from blaze.constants import *
 from blaze.rdd_result import NumpyResult
 from numba.types import Tuple
+from blaze.benchmarks.timer import Timer
 
 BLAZE_PATH = getBlazePath()
 cpp_dir = BLAZE_PATH + "cpp/"
@@ -48,10 +49,10 @@ def execute(dag_dict):
     ffi = FFI()
     dag_str = json.dumps(dag_dict, cls=RDDEncoder)
 
-    # call the libgenerate.so/generate_dag_plan
-    # the execution plan is then in executor.so
     generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
     dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
+
+    # timer = Timer()
     generator_cffi.c_generate_dag_plan(dag_c)
 
     executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib, ffi)
@@ -62,11 +63,6 @@ def execute(dag_dict):
             size = op[DATA_SIZE]
             args.append(data_ptr)
             args.append(size)
-    # if dag_dict['dag'][0][OP] == 'collection_source':
-    #     data_ptr = ffi.cast("void*", dag_dict['dag'][0][DATA_PTR])
-    #     res = executor_cffi.c_execute(data_ptr, dag_dict['dag'][0][DATA_SIZE])
-    # else:
-    #     res = executor_cffi.c_execute()
 
     res = executor_cffi.c_execute(*args)
 

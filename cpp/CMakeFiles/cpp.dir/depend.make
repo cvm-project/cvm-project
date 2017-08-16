@@ -21,7 +21,6 @@ CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/utils/constants.h
 CMakeFiles/cpp.dir/generate_dag_plan.cpp.o: src/utils/debug_print.h
@@ -46,7 +45,6 @@ CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o: src/utils/tuple_to_string.h
@@ -65,7 +63,6 @@ CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o: src/utils/tuple_to_string.h
@@ -86,7 +83,6 @@ CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/utils/constants.h
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o: src/utils/tuple_to_string.h
@@ -104,7 +100,6 @@ CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o: src/utils/tuple_to_string.h
@@ -124,7 +119,6 @@ CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o: src/utils/tuple_to_string.h
@@ -144,7 +138,6 @@ CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o: src/utils/tuple_to_string.h
@@ -164,7 +157,6 @@ CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/utils/constants.h
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o: src/utils/debug_print.h
@@ -185,7 +177,6 @@ CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/libs/json.hpp
 CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/libs/optional.h
 CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/operators/FilterOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/operators/Operator.h
-CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/operators/ReduceOperator.h
 CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/utils/DAGVisitor.h
 CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o: src/utils/tuple_to_string.h

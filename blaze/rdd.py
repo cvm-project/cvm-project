@@ -59,8 +59,9 @@ def get_llvm_ir_and_output_type(func, input_type=None):
         cfunc_code = cfunc(output_type(input_type))(func)
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
-    m = re.search('define [^\n\r]* @"cfunc.*\n\n', code, re.DOTALL)
+    m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
     code_string = m.group(0)
+    code_string = re.sub("attributes.*}", "", code_string)
 
     return code_string, output_type
 
@@ -324,7 +325,8 @@ class NumpyArraySource(RDD):
             self.output_type = replace_unituple(typeof(tuple(array[0])))
         except TypeError:  # scalar type
             self.output_type = typeof(array[0])
-        self.size = array.size
+        # self.size = array.shape[0]
+        self.size = array.shape[0]
         self.data_ptr = array.__array_interface__['data'][0]
         # keep a reference to the np array
         # until the end of the execution to prevent gc

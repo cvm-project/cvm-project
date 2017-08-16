@@ -32,10 +32,12 @@ public:
         upstream2->printName();
     }
 
-    Optional<Tuple> INLINE next() {
+    Optional<Tuple> INLINE next(intermediateTuples) {
         if (intermediateTuples.size() > 0) {
             auto res = intermediateTuples.back();
             intermediateTuples.pop_back();
+            //build result tuple here
+            //from iterator to the ht value vector
             return res;
         }
         while (auto ret = upstream2->next()) {
@@ -88,18 +90,19 @@ private:
     std::unordered_map<KeyType, std::vector<ValueType1>, hash, pred> ht;
     vector<Tuple> intermediateTuples;
 
+    //inline, pass as reference
     template<class UpstreamTuple>
-    const KeyType getKey(UpstreamTuple t) {
+    static constexpr KeyType getKey(UpstreamTuple t) {
         return *(const_cast<KeyType *>((KeyType *) (&t)));
     }
 
     template<class UpstreamTuple>
-    ValueType1 getValue1(UpstreamTuple t) {
+    static constexpr ValueType1 getValue1(UpstreamTuple t) {
         return *((ValueType1 *) (((char *) &t) + sizeof(KeyType)));
     }
 
     template<class UpstreamTuple>
-    ValueType2 getValue2(UpstreamTuple t) {
+    static constexpr ValueType2 getValue2(UpstreamTuple t) {
         return *((ValueType2 *) (((char *) &t) + sizeof(KeyType)));
     }
 

@@ -27,16 +27,10 @@ int generate_dag_plan(char *dagstr) {
     DAG *dag = parse_dag(std::string(dagstr));
     generate_code(dag);
 
-    //compile the code to some object file
     //call make in the subdir
+    //compile the code into shared lib
     exec(("cd " + get_lib_path() + "cpp/gen && make -j").c_str());
-    //return
 
-    //in python call the execute() function
-
-    //which should return a pointer to the result
-    //which should be interpreted as specified by the user
-    //e.g. list or an integer(if the action is count)
     return 0;
 }
 }

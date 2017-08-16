@@ -22,7 +22,6 @@ CMakeFiles/cpp.dir/generate_dag_plan.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/constants.h
  src/utils/debug_print.h
@@ -47,7 +46,6 @@ CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
  src/utils/tuple_to_string.h
@@ -66,7 +64,6 @@ CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
  src/utils/tuple_to_string.h
@@ -87,7 +84,6 @@ CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/constants.h
  src/utils/debug_print.h
  src/utils/tuple_to_string.h
@@ -105,7 +101,6 @@ CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
  src/utils/tuple_to_string.h
@@ -125,7 +120,6 @@ CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
  src/utils/tuple_to_string.h
@@ -145,7 +139,6 @@ CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
  src/utils/tuple_to_string.h
@@ -165,7 +158,6 @@ CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/constants.h
  src/utils/debug_print.h
@@ -186,7 +178,6 @@ CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o
  src/libs/optional.h
  src/operators/FilterOperator.h
  src/operators/Operator.h
- src/operators/ReduceOperator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
  src/utils/tuple_to_string.h
