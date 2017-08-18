@@ -49,8 +49,6 @@ public:
 
         write_c_executeh(dag->action);
 
-        writeMakefile();
-
     }
 
     void visit(DAGCollection *op) {
@@ -477,6 +475,7 @@ private:
 //    }
 
     void emitFuncEnd(string action) {
+//        appendLineBodyNoCol("TICK1");
         if (action == "count") {
             emitComment("counting the result");
             appendLineBody(getCurrentOperatorName() + ".open()");
@@ -487,6 +486,9 @@ private:
             tabInd--;
             appendLineBodyNoCol("}");
             appendLineBody(getCurrentOperatorName() + ".close()");
+
+//            appendLineBodyNoCol("TOCK1");
+
             appendLineBody("return tuple_count");
             tabInd--;
             appendLineBodyNoCol("}");
@@ -496,6 +498,8 @@ private:
             appendLineBody(getCurrentOperatorName() + ".open()");
             appendLineBody("auto res = " + getCurrentOperatorName() + ".next()");
             appendLineBody(getCurrentOperatorName() + ".close()");
+//            appendLineBodyNoCol("TOCK1");
+//            appendLineBody("std::cout << \"outer loop time: \"<<DIFF1 << std::endl");
             appendLineBody("result_type ret = (result_type) malloc(sizeof(" + getCurrentTupleName() + "))");
             appendLineBody("*ret = res");
             appendLineBody("return ret");
@@ -532,7 +536,6 @@ private:
             appendLineBodyNoCol("}");
 
             appendLineBodyNoCol("void free_result(result_type ptr) {\n"
-                                        "    DEBUG_PRINT(\"freeing the result memory\");\n"
                                         "    if (ptr != NULL && ptr->data != NULL) {\n"
                                         "        free(ptr->data);\n"
                                         "        ptr->data = NULL;\n"
@@ -681,9 +684,7 @@ private:
     }
 
     void addGenIncludes() {
-        includes.insert("<tuple>");
         includes.insert("<vector>");
-        includes.insert("\"utils/tuple_to_string.cpp\"");
     }
 
     string writeHeader() {
@@ -813,47 +814,6 @@ private:
             out << "\n"
                            "void c_free_result(" + executeFuncReturn + ");";
         }
-        out.close();
-    }
-
-    void writeMakefile() {
-        ofstream out(genDir + "Makefile");
-        out << "CC = clang-3.7\n"
-                "AS = llvm-as-3.7\n"
-                "\n"
-                "SOURCES = execute.cpp $(wildcard ../src/operators/*.cpp)\n"
-                "INC = -I ../src/ -I functions_llvm -I ../src/utils/\n"
-                "UDF_SOURCES = $(wildcard functions_llvm/*.ll)\n"
-                "\n"
-                "OBJECTS = $(SOURCES:.cpp=.bc)\n"
-                "UDF_OBJECTS = $(UDF_SOURCES:.ll=.bc)\n"
-                "\n"
-                "\n"
-                "all: execute\n"
-                "\n"
-                "\n"
-                ".PRECIOUS: %.ll\n"
-                "\n"
-                "%.ll: %.cpp\n"
-                "\t$(CC) -S -O3 -emit-llvm $^ -std=c++14  $(INC) -o $@ -march=native\n"
-                "\n"
-                "%.bc: %.ll\n"
-                "\t$(AS) $^ -o $@\n"
-                "\n"
-                "c_execute.o: c_execute.c\n"
-                "\t$(CC) -c -O3 $^ -o $@ -fPIC -march=native\n"
-                "\n"
-                "\n"
-                "execute: $(UDF_OBJECTS) $(OBJECTS) c_execute.o\n"
-                "\t$(CC) -flto $^ -o $@.so -lstdc++ -shared\n"
-                "\n"
-                "#%.asm: %\n"
-                "#\tobjdump -D $^ > $@\n"
-                "\n"
-                "clean:\n"
-                "\trm -f *.bc *.ll execute *.asm functions_llvm/*.bc\n"
-                "\n"
-                ".PHONY: clean";
         out.close();
     }
 

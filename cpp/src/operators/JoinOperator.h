@@ -5,9 +5,11 @@
 #ifndef CPP_JOINOPERATOR_H
 #define CPP_JOINOPERATOR_H
 
-#include <iostream>
 #include <unordered_map>
 #include "Operator.h"
+#include <vector>
+//#include <iostream>
+//#include "utils/timing.cpp"
 
 using std::vector;
 
@@ -26,27 +28,21 @@ public:
 
     JoinOperator(Upstream1 *upstream1, Upstream2 *upstream2) : upstream1(upstream1), upstream2(upstream2) {};
 
-    void printName() {
-        std::cout << "join op\n";
-        upstream1->printName();
-        upstream2->printName();
-    }
-
-    Optional<Tuple> INLINE next(intermediateTuples) {
-        if (intermediateTuples.size() > 0) {
-            auto res = intermediateTuples.back();
-            intermediateTuples.pop_back();
+    Optional<Tuple> INLINE next() {
+        if (intermediateTuples  != iteratorEnd) {
+            auto res = *intermediateTuples;
+            intermediateTuples++;
             //build result tuple here
             //from iterator to the ht value vector
-            return res;
+            return buildResult(lastKey, res, lastUpstream2);
         }
         while (auto ret = upstream2->next()) {
             auto key = getKey(ret.value);
             if (ht.count(key)) {
-                for (auto t : ht[key]) {
-                    //build a tuple for every combination
-                    intermediateTuples.push_back(buildResult(key, t, getValue2(ret.value)));
-                }
+                intermediateTuples = ht[key].begin();
+                iteratorEnd = ht[key].end();
+                lastUpstream2 = getValue2(ret.value);
+                lastKey = key;
                 return next();
             }
         }
@@ -88,25 +84,27 @@ private:
     };
 
     std::unordered_map<KeyType, std::vector<ValueType1>, hash, pred> ht;
-    vector<Tuple> intermediateTuples;
+    ValueType2 lastUpstream2;
+    KeyType lastKey;
+    typename std::vector<ValueType1>::iterator intermediateTuples;
+    typename std::vector<ValueType1>::iterator iteratorEnd;
 
-    //inline, pass as reference
     template<class UpstreamTuple>
-    static constexpr KeyType getKey(UpstreamTuple t) {
+    INLINE static constexpr KeyType getKey(UpstreamTuple t) {
         return *(const_cast<KeyType *>((KeyType *) (&t)));
     }
 
     template<class UpstreamTuple>
-    static constexpr ValueType1 getValue1(UpstreamTuple t) {
+    INLINE static constexpr ValueType1 getValue1(UpstreamTuple &t) {
         return *((ValueType1 *) (((char *) &t) + sizeof(KeyType)));
     }
 
     template<class UpstreamTuple>
-    static constexpr ValueType2 getValue2(UpstreamTuple t) {
+    INLINE static constexpr ValueType2 getValue2(UpstreamTuple &t) {
         return *((ValueType2 *) (((char *) &t) + sizeof(KeyType)));
     }
 
-    Tuple buildResult(KeyType key, ValueType1 val1, ValueType2 val2) {
+    INLINE static Tuple buildResult(KeyType &key, ValueType1 &val1, ValueType2 &val2) {
         Tuple res;
         char *resp = (char *) &res;
         *((KeyType *) resp) = key;
@@ -119,7 +117,7 @@ private:
 
 template<class Tuple, class KeyType, class ValueType1, class ValueType2, class Upstream1, class Upstream2>
 JoinOperator<Upstream1, Upstream2, Tuple, KeyType, ValueType1, ValueType2>
-makeJoinOperator(Upstream1 *upstream1, Upstream2 *upstream2) {
+INLINE makeJoinOperator(Upstream1 *upstream1, Upstream2 *upstream2) {
     return JoinOperator<Upstream1, Upstream2, Tuple, KeyType, ValueType1, ValueType2>(upstream1, upstream2);
 };
 

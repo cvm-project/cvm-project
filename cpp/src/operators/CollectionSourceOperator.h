@@ -5,21 +5,13 @@
 #ifndef CPP_COLLECTIONSOURCEOPERATOR_H
 #define CPP_COLLECTIONSOURCEOPERATOR_H
 
-
-#include <iostream>
 #include "Operator.h"
-#include "vector"
-#include "dag/DAGCollection.h"
 
 template<class Tuple>
 class CollectionSourceOperator : public Operator {
 public:
 
     CollectionSourceOperator(Tuple *vals, size_t size) : values(vals), size(size) {}
-
-    void printName() {
-        std::cout << "collection op\n";
-    }
 
     void open() {
         index = 0;

@@ -5,9 +5,6 @@
 #ifndef CPP_OPTIONAL_H
 #define CPP_OPTIONAL_H
 
-#include <tuple>
-
-using std::tuple;
 
 template<typename T>
 class Optional {

@@ -3,6 +3,7 @@
 #include <tuple>
 #include <iostream>
 #include "code_gen/generate_code.h"
+#include "src/utils/timing.cpp"
 
 #include "dag/DAGCreation.hpp"
 
@@ -24,12 +25,17 @@ extern "C" {
 int generate_dag_plan(char *dagstr) {
 
     exec(("rm -r -f " + get_lib_path() + "cpp/gen").c_str());
+
     DAG *dag = parse_dag(std::string(dagstr));
+
     generate_code(dag);
 
     //call make in the subdir
     //compile the code into shared lib
-    exec(("cd " + get_lib_path() + "cpp/gen && make -j").c_str());
+    TICK1
+    exec(("cd " + get_lib_path() + "cpp && cd gen && make -f ../src/utils/Makefile -j").c_str());
+    TOCK1
+    std::cout << "call make " << DIFF1 << std::endl;
 
     return 0;
 }

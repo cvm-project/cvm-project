@@ -5,16 +5,14 @@
 #ifndef CPP_OPERATOR_H
 #define CPP_OPERATOR_H
 
-#include <libs/optional.h>
-#include "utils/debug_print.h"
-#include "utils/tuple_to_string.h"
+#include "libs/optional.h"
+#include <stdlib.h> //size_t def
 
 
 #define INLINE __attribute__((always_inline))
 
 class Operator {
 public:
-    virtual void printName()=0;
 
     virtual void open()=0;
 

@@ -1,7 +1,6 @@
 import os
 import math
 from functools import reduce
-from random import randint
 import numpy as np
 import sys
 
@@ -10,7 +9,7 @@ sys.path.insert(0, "/home/sabir/projects/blaze")
 from blaze.blaze_context import BlazeContext
 from blaze.benchmarks.timer import timer
 
-MAX = 1 << 28
+MAX = 1 << 18
 
 
 def bench_sum():
@@ -45,14 +44,16 @@ def bench_join():
     dag = inRDD1.join(inRDD2)
 
     def run():
-        return dag.count()
+        return dag.collect()
 
     return run
 
 
-# sum
-t_sum = timer(bench_sum())
-print("time sum " + str(t_sum))
+t_sum = timer(bench_join(), 1)
+print("time join " + str(t_sum))
+
+# t_sum = timer(bench_sum(), 1)
+# print("time sum " + str(t_sum))
 
 
 # map_filter

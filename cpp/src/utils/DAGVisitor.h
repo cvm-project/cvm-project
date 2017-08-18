@@ -12,6 +12,7 @@
 #include "dag/DAGRange.h"
 #include "dag/DAGOperator.h"
 #include "dag/DAGReduce.h"
+#include "utils/debug_print.h"
 
 class DAGVisitor {
 public:

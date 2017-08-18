@@ -6,10 +6,8 @@
 #define CPP_REDUCEOPERATOR_H
 
 
-#include <iostream>
 #include "Operator.h"
-#include <stdexcept>
-#include "utils/timing.c"
+//#include <stdexcept>
 
 template<class Upstream, class Tuple, class Function>
 class ReduceOperator : public Operator {
@@ -19,19 +17,10 @@ public:
 
     ReduceOperator(Upstream *upstream1, Function func) : upstream(upstream1), function(func) {}
 
-
-    void printName() {
-        std::cout << "reduce op\n";
-        upstream->printName();
-    }
-
     INLINE Optional<Tuple> next() {
-        TICK1
         while (auto ret = upstream->next()) {
             acc = function(acc, ret);
         }
-        TOCK1
-        std::cout<<"reduce loop " << DIFF1 << std::endl;
         return acc;
     }
 
@@ -41,7 +30,7 @@ public:
         if (auto ret = upstream->next()) {
             acc = ret;
         } else {
-            throw std::logic_error("Cannot apply reduce on empty input");
+//            throw std::logic_error("Cannot apply reduce on empty input");
         }
     }
 

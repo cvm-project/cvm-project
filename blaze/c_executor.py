@@ -47,13 +47,14 @@ def load_cffi(header, lib_path, ffi):
 
 def execute(dag_dict):
     ffi = FFI()
+    timer = Timer()
+
     dag_str = json.dumps(dag_dict, cls=RDDEncoder)
 
     generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
     dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
 
-    # timer = Timer()
-    generator_cffi.c_generate_dag_plan(dag_c)
+    # generator_cffi.c_generate_dag_plan(dag_c)
 
     executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib, ffi)
     args = []
@@ -64,7 +65,10 @@ def execute(dag_dict):
             args.append(data_ptr)
             args.append(size)
 
+    timer.start()
     res = executor_cffi.c_execute(*args)
+    timer.end()
+    print("executing " + str(timer.diff()))
 
     if dag_dict[ACTION] == 'collect':
         # add a free function to the gc on the result object
