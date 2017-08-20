@@ -7,6 +7,7 @@
 #define FLAT_MAP "flat_map"
 #define JOIN "join"
 #define REDUCE "reduce"
+#define REDUCEBYKEY "reduce_by_key"
 #define RANGE "range_source"
 #define COLLECTION "collection_source"
 const std::string DAG_OP_RANGE = "range_source";

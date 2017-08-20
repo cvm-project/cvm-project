@@ -33,7 +33,7 @@ int generate_dag_plan(char *dagstr) {
     //call make in the subdir
     //compile the code into shared lib
     TICK1
-    exec(("cd " + get_lib_path() + "cpp && cd gen && make -f ../src/utils/Makefile -j").c_str());
+    exec(("cd " + get_lib_path() + "cpp/gen && make -f ../src/utils/Makefile -j").c_str());
     TOCK1
     std::cout << "call make " << DIFF1 << std::endl;
 

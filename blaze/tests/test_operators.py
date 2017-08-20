@@ -1,7 +1,10 @@
+import random
 import unittest
+from functools import reduce
 
 from blaze.blaze_context import BlazeContext
-from functools import reduce
+from itertools import groupby
+from operator import itemgetter
 
 
 class TestJoin(unittest.TestCase):
@@ -26,7 +29,7 @@ class TestJoin(unittest.TestCase):
 
         joined = data1.join(data2)
         res = joined.collect()
-        truth = [(1, 3, 22, 33), (1, 2, 22, 33), (1, 3, 44, 55), (1, 2, 44, 55), (2, 6, 33, 44), (2, 4, 33, 44)]
+        truth = [(1, 2, 22, 33), (1, 3, 22, 33), (1, 2, 44, 55), (1, 3, 44, 55), (2, 4, 33, 44), (2, 6, 33, 44)]
         self.assertListEqual([tuple(r) for r in res], truth)
 
     def test_count(self):
@@ -90,6 +93,15 @@ class TestReduce(unittest.TestCase):
         input = [(r, r * 10) for r in range(0, 10)]
         res = bc.collection(input).reduce(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1]))
         self.assertTupleEqual(res, (sum(map(lambda t: t[0], input)), sum(map(lambda t: t[1], input))))
+
+
+class TestReduceByKey(unittest.TestCase):
+    def test_reduce_by_key_count(self):
+        bc = BlazeContext()
+        input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
+        d = bc.collection(input_).reduce_by_key(lambda t1, t2: t1 + t2).collect()
+        truth = {(0, 2), (1, 3)}
+        self.assertSetEqual(set(tuple(t) for t in d), truth)
 
 
 class TestIntegration(unittest.TestCase):

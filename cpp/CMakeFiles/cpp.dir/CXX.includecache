@@ -87,12 +87,10 @@ DAGReduce.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGReduce.h
 DAGJoin.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGJoin.h
-../libs/json.hpp
-/home/sabir/projects/blaze/cpp/src/libs/json.hpp
 DAGFilter.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGFilter.h
-stdexcept
--
+DAGReduceByKey.h
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.h
 
 /home/sabir/projects/blaze/cpp/src/dag/DAGCreation.hpp
 iostream
@@ -111,14 +109,8 @@ utils/DAGVisitor.h
 /home/sabir/projects/blaze/cpp/src/dag/utils/DAGVisitor.h
 
 /home/sabir/projects/blaze/cpp/src/dag/DAGFilter.h
-operators/Operator.h
-/home/sabir/projects/blaze/cpp/src/dag/operators/Operator.h
-operators/FilterOperator.h
-/home/sabir/projects/blaze/cpp/src/dag/operators/FilterOperator.h
 DAGOperator.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
-typeinfo
--
 
 /home/sabir/projects/blaze/cpp/src/dag/DAGJoin.cpp
 DAGJoin.h
@@ -145,11 +137,7 @@ DAGOperator.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
 
 /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
-operators/Operator.h
-/home/sabir/projects/blaze/cpp/src/dag/operators/Operator.h
 cstddef
--
-iostream
 -
 vector
 -
@@ -182,61 +170,15 @@ DAGReduce.h
 DAGOperator.h
 /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
 
-/home/sabir/projects/blaze/cpp/src/libs/json.hpp
-algorithm
--
-array
--
-cassert
--
-cctype
--
-ciso646
--
-cmath
--
-cstddef
--
-cstdint
--
-cstdlib
--
-cstring
--
-forward_list
--
-functional
--
-initializer_list
--
-iomanip
--
-iostream
--
-iterator
--
-limits
--
-locale
--
-map
--
-memory
--
-numeric
--
-sstream
--
-stdexcept
--
-string
--
-type_traits
--
-utility
--
-vector
--
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.cpp
+DAGReduceByKey.h
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.h
+utils/DAGVisitor.h
+/home/sabir/projects/blaze/cpp/src/dag/utils/DAGVisitor.h
+
+/home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.h
+DAGOperator.h
+/home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
 
 /home/sabir/projects/blaze/cpp/src/utils/timing.cpp
 stdio.h
@@ -309,14 +251,8 @@ utils/constants.h
 src/dag/utils/constants.h
 
 src/dag/DAGFilter.h
-operators/Operator.h
-src/dag/operators/Operator.h
-operators/FilterOperator.h
-src/dag/operators/FilterOperator.h
 DAGOperator.h
 src/dag/DAGOperator.h
-typeinfo
--
 
 src/dag/DAGJoin.h
 iostream
@@ -331,11 +267,7 @@ DAGOperator.h
 src/dag/DAGOperator.h
 
 src/dag/DAGOperator.h
-operators/Operator.h
-src/dag/operators/Operator.h
 cstddef
--
-iostream
 -
 vector
 -
@@ -349,6 +281,10 @@ string
 -
 
 src/dag/DAGReduce.h
+DAGOperator.h
+src/dag/DAGOperator.h
+
+src/dag/DAGReduceByKey.h
 DAGOperator.h
 src/dag/DAGOperator.h
 
@@ -408,20 +344,6 @@ utility
 vector
 -
 
-src/libs/optional.h
-
-src/operators/FilterOperator.h
-iostream
--
-Operator.h
-src/operators/Operator.h
-
-src/operators/Operator.h
-libs/optional.h
-src/operators/libs/optional.h
-stdlib.h
--
-
 src/utils/DAGVisitor.h
 dag/DAGCollection.h
 src/utils/dag/DAGCollection.h
@@ -437,6 +359,8 @@ dag/DAGOperator.h
 src/utils/dag/DAGOperator.h
 dag/DAGReduce.h
 src/utils/dag/DAGReduce.h
+dag/DAGReduceByKey.h
+src/utils/dag/DAGReduceByKey.h
 utils/debug_print.h
 src/utils/utils/debug_print.h
 

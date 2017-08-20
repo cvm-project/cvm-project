@@ -13,11 +13,11 @@ public:
 
     CollectionSourceOperator(Tuple *vals, size_t size) : values(vals), size(size) {}
 
-    void open() {
+    INLINE void open() {
         index = 0;
     }
 
-    Optional<Tuple> next() {
+    INLINE Optional<Tuple> next() {
         if (index < size) {
             auto r = values[index];
             index++;
@@ -26,7 +26,7 @@ public:
         return {};
     }
 
-    void close() {
+    INLINE void close() {
     }
 
 private:

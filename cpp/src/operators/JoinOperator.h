@@ -72,14 +72,21 @@ public:
 private:
 
     struct hash {
-        size_t operator()(const KeyType x) const {
-            return std::hash<long>()(*((long *) (&x)));
+        size_t operator()(const KeyType &x) const {
+            const std::string str =
+                    std::string(reinterpret_cast<const std::string::value_type *>( &x ), sizeof(KeyType));
+            return std::hash<std::string>()(str);
         }
     };
 
     struct pred {
-        bool operator()(const KeyType x, const KeyType y) const {
-            return *((long *) (&x)) == *((long *) (&y));
+        bool operator()(const KeyType x1, const KeyType x2) const {
+
+            const std::string str1 =
+                    std::string(reinterpret_cast<const std::string::value_type *>( &x1 ), sizeof(KeyType));
+            const std::string str2 =
+                    std::string(reinterpret_cast<const std::string::value_type *>( &x2 ), sizeof(KeyType));
+            return str1 == str2;
         }
     };
 
@@ -90,7 +97,7 @@ private:
     typename std::vector<ValueType1>::iterator iteratorEnd;
 
     template<class UpstreamTuple>
-    INLINE static constexpr KeyType getKey(UpstreamTuple t) {
+    INLINE static constexpr KeyType getKey(UpstreamTuple &t) {
         return *(const_cast<KeyType *>((KeyType *) (&t)));
     }
 

@@ -35,11 +35,9 @@ public:
         final_code +=
                 writeHeader() + "\n"
                 + writeIncludes() + "\n"
-                + "using namespace std;\n"
+                //                + "using namespace std;\n"
                 + writeTupleDefs(dag->action) + "\n"
-                + writeJoinTupleDefs() + "\n"
                 + writeLLVMFuncDecls() + "\n"
-                //                + writeHelpers() + "\n"
                 + writeFuncDecl() + "\n"
                 + body;
 
@@ -105,7 +103,8 @@ public:
         includes.insert("\"operators/" + operatorName + ".h\"");
 
         storeLLVMCode(op->llvm_ir, "reduce");
-        emitLLVMFunctionWrapperBinaryArgs(op, "reduce");
+        emitLLVMFunctionWrapperBinaryArgs(op, "reduce", get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]),
+                                          get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]));
 
         emitOperatorMake(operatorName, op, opName, "reduce");
         appendLineBodyNoCol();
@@ -169,6 +168,32 @@ public:
     };
 
 
+    void visit(DAGReduceByKey *op) {
+        DEBUG_PRINT("reduce by key called");
+        DAGVisitor::visit(op);
+        string operatorName = "ReduceByKeyOperator";
+        emitComment(operatorName);
+
+        string opName = getNextOperatorName();
+        auto tType = generateTupleType(op->output_type);
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType.first, tType.second));
+
+        //add reducebykey key and value tuple types
+        reduce_by_key_type_counter++;
+
+        generateReduceByKeyKeyValueTypes(op);
+
+        storeLLVMCode(op->llvm_ir, "reduce_by_key");
+        //assume the key is a scalar type
+        emitLLVMFunctionWrapperBinaryArgs(op, "reduce_by_key", getCurrentReduceByKeyValueName(),
+                                          get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]) - 1, true);
+
+        includes.insert("\"operators/" + operatorName + ".h\"");
+
+        emitReduceByKeyMake(opName, op);
+        appendLineBodyNoCol();
+    };
+
 private:
 
 
@@ -195,13 +220,20 @@ private:
     size_t join_type_counter = -1;
 
 
+    string REDUCE_BY_KEY_KEY_NAME = "reduce_by_key_key_";
+    string REDUCE_BY_KEY_VALUE_NAME = "reduce_by_key_value_";
+    size_t reduce_by_key_type_counter = -1;
+
+
     unordered_map<size_t, tuple<string, string, size_t>> operatorNameTupleTypeMap;
 
     vector<string> llvmFuncDecls;
 
     vector<string> tupleTypeDefs;
 
-    vector<string> joinKeyValuesTypeDefs;
+//    vector<string> joinKeyValuesTypeDefs;
+
+    vector<string> reduceByKeyKeyValuesTypeDefs;
 
     vector<pair<string, string>> inputNames;
 
@@ -260,6 +292,20 @@ private:
         string res;
         res.append(JOIN_VALUE2_NAME)
                 .append(to_string(join_type_counter));
+        return res;
+    }
+
+    string getCurrentReduceByKeyKeyName() {
+        string res;
+        res.append(REDUCE_BY_KEY_KEY_NAME)
+                .append(to_string(reduce_by_key_type_counter));
+        return res;
+    }
+
+    string getCurrentReduceByKeyValueName() {
+        string res;
+        res.append(REDUCE_BY_KEY_VALUE_NAME)
+                .append(to_string(reduce_by_key_type_counter));
         return res;
     }
 
@@ -351,6 +397,32 @@ private:
         appendLineBody(line);
     }
 
+    void emitReduceByKeyMake(string opVarName, DAGReduceByKey *op) {
+        string line("auto ");
+        line.append(opVarName)
+                .append(" = make")
+                .append("ReduceByKeyOperator")
+                .append("<")
+                .append(getCurrentTupleName() + ", " +
+                        getCurrentReduceByKeyKeyName() + ", " +
+                        getCurrentReduceByKeyValueName())
+                .append(">(");
+
+        string argList;
+        for (auto it = op->predecessors.begin(); it < op->predecessors.end(); it++) {
+
+            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
+            argList.append(", ");
+        }
+
+        argList.append("reduceByKey" + snake_to_camel_string(getCurrentLLVMFuncName()))
+                .append("()");
+
+        line.append(argList);
+        line.append(")");
+        appendLineBody(line);
+    }
+
     /***
      * generate a struct type
      * returns the tuple type name(e.g tuple_0) and the number of fields in this tuple
@@ -370,6 +442,7 @@ private:
         line += "} " + tName + ";\n\n";
 
         tupleTypeDefs.push_back(line);
+        resultTypeDef = line;
         return make_pair(tName, types.size());
     }
 
@@ -414,13 +487,13 @@ private:
     /**
      * functions which take two arguments of the same type (e.g. reduce)
      */
-    void emitLLVMFunctionWrapperBinaryArgs(DAGOperator *op, string opName) {
+    void emitLLVMFunctionWrapperBinaryArgs(DAGOperator *op, string opName, string inputType, size_t inputSize,
+                                           bool reduce_by_key = false) {
         string llvmFuncName = opName + getCurrentLLVMFuncName();
         string className = snake_to_camel_string(llvmFuncName);
         appendLineBodyNoCol("class " + className + " {");
         appendLineBodyNoCol("public:");
         tabInd++;
-        string inputType = get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
         string retType = get<1>(operatorNameTupleTypeMap[op->id]);
         appendLineBodyNoCol(string("auto operator()(")
                                     .append(inputType + " t0, ")
@@ -429,11 +502,11 @@ private:
         tabInd++;
         string args = "";
         string varName = "v";
-        for (size_t i = 0; i < get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]); i++) {
+        for (size_t i = 0; i < inputSize; i++) {
             args += "t0." + varName + to_string(i) + ", ";
         }
 
-        for (size_t i = 0; i < get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]); i++) {
+        for (size_t i = 0; i < inputSize; i++) {
             args += "t1." + varName + to_string(i) + ", ";
         }
 
@@ -446,33 +519,19 @@ private:
         appendLineBodyNoCol("}");
         tabInd--;
         appendLineBodyNoCol("};");
-
-        string flatInputType = string_replace(op->predecessors[0]->output_type, "(", "");
-        flatInputType = string_replace(flatInputType, ")", "");
-        llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + flatInputType + ", " + flatInputType + ");");
+        if (reduce_by_key) {
+            string flatInputType = string_replace(op->predecessors[0]->output_type, "(", "");
+            flatInputType = string_replace(flatInputType, ")", "");
+            regex reg(".*,");
+            flatInputType = regex_replace(flatInputType, reg, "");
+            llvmFuncDecls.push_back(inputType + " " + llvmFuncName + "(" + flatInputType + ", " + flatInputType + ");");
+        }
+        else {
+            string flatInputType = string_replace(op->predecessors[0]->output_type, "(", "");
+            flatInputType = string_replace(flatInputType, ")", "");
+            llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" + flatInputType + ", " + flatInputType + ");");
+        }
     }
-
-//    string writeHelpers() {
-//        return "namespace impl {\n"
-//                "    template<typename Function, typename... Types, size_t... Indexes>\n"
-//                "    auto call_impl(const Function &f, const std::tuple<Types...> &t,\n"
-//                "                   const std::integer_sequence<size_t, Indexes...> &) {\n"
-//                "        return f(std::get<Indexes>(t)...);\n"
-//                "    }\n"
-//                "\n"
-//                "}  // namespace impl\n"
-//                "\n\n"
-//                "template<typename Function, typename... Types>\n"
-//                "auto call(const Function &f, const std::tuple<Types...> &t) {\n"
-//                "    return impl::call_impl(f, t, std::index_sequence_for<Types...>());\n"
-//                "}\n"
-//                "\n"
-//                "template<typename Function, typename Type>\n"
-//                "auto call(const Function &f, const Type &t) {\n"
-//                "    return f(t);\n"
-//                "}"
-//                "\n\n";
-//    }
 
     void emitFuncEnd(string action) {
 //        appendLineBodyNoCol("TICK1");
@@ -550,7 +609,6 @@ private:
     }
 
     /**
-     *
      * generate Key, Value1, Value2 struct types
      * for current join
      */
@@ -590,7 +648,7 @@ private:
         //up1 type
         vector<string> up1Types;
         if (up1Type.find("((") == 0) {
-            //TODO
+            //assume for now the key is a scalar type
         }
         else {
             string typesStr = string_replace(up1Type, "(", " ");
@@ -609,7 +667,7 @@ private:
         //up2 type
         vector<string> up2Types;
         if (up2Type.find("((") == 0) {
-            //TODO
+            //assume for now the key is a scalar type
         }
         else {
             string typesStr = string_replace(up2Type, "(", " ");
@@ -625,7 +683,65 @@ private:
             line += "} " + getCurrentJoinValue2Name() + ";\n\n";
         }
 
-        joinKeyValuesTypeDefs.push_back(line);
+        tupleTypeDefs.push_back(line);
+    }
+
+    /**
+     * generate Key and Value struct types
+     * for current reduce by key
+     */
+    void generateReduceByKeyKeyValueTypes(DAGReduceByKey *op) {
+        string upType = op->predecessors[0]->output_type;
+
+        //key type
+        string keyName = getCurrentReduceByKeyKeyName();
+        vector<string> keyTypes;
+        if (upType.find("((") == 0) {
+            //key is a tuple
+            regex reg("((.*)");
+            std::smatch m;
+            regex_search(upType, m, reg);
+            string typesStr;
+            for (auto x:m) typesStr = x;
+            typesStr = string_replace(typesStr, "(", " ");
+            typesStr = string_replace(typesStr, ")", " ");
+            typesStr = string_replace(typesStr, " ", "");
+            keyTypes = split_string(typesStr, ",");
+        }
+        else {
+            //key is the first element
+            string typesStr = string_replace(upType, "(", " ");
+            typesStr = string_replace(typesStr, ")", " ");
+            typesStr = string_replace(typesStr, " ", "");
+            keyTypes.push_back(split_string(typesStr, ",")[0]);
+        }
+        string line("typedef struct {\n");
+        string varName = "v";
+        for (size_t i = 0; i < keyTypes.size(); i++) {
+            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + ";\n";
+        }
+        line += "} " + keyName + ";\n\n";
+
+        //upstream type
+        vector<string> upTypes;
+        if (upType.find("((") == 0) {
+            //assume for now the key is a scalar type
+        }
+        else {
+            string typesStr = string_replace(upType, "(", " ");
+            typesStr = string_replace(typesStr, ")", " ");
+            typesStr = string_replace(typesStr, " ", "");
+            upTypes = split_string(typesStr, ",");
+            upTypes = vector<string>(upTypes.begin() + 1, upTypes.end());
+            line += "typedef struct {\n";
+
+            for (size_t i = 0; i < upTypes.size(); i++) {
+                line += "\t" + upTypes[i] + " " + varName + to_string(i) + ";\n";
+            }
+            line += "} " + getCurrentReduceByKeyValueName() + ";\n\n";
+        }
+
+        tupleTypeDefs.push_back(line);
     }
 
     string genComment(string com) {
@@ -684,7 +800,7 @@ private:
     }
 
     void addGenIncludes() {
-        includes.insert("<vector>");
+//        includes.insert("<vector>");
     }
 
     string writeHeader() {
@@ -694,14 +810,14 @@ private:
 
     }
 
-    string writeJoinTupleDefs() {
-        string line = "";
-        line += genComment("join key value definitions");
-        for (auto tupleDef : joinKeyValuesTypeDefs) {
-            line += tupleDef;
-        }
-        return line;
-    }
+//    string writeJoinTupleDefs() {
+//        string line = "";
+//        line += genComment("join key value definitions");
+//        for (auto tupleDef : joinKeyValuesTypeDefs) {
+//            line += tupleDef;
+//        }
+//        return line;
+//    }
 
     string writeFuncDecl() {
         executeFuncParams = "";
@@ -728,19 +844,19 @@ private:
 
     string writeTupleDefs(string action) {
         string ret;
+        string resultWrapper;
         ret.append(genComment("tuple definitions"));
         if (action == "collect") {
 
             size_t len = tupleTypeDefs.size();
-            for (size_t i = 0; i < len - 1; i++) {
+            for (size_t i = 0; i < len; i++) {
                 ret.append(tupleTypeDefs[i]);
             }
-            resultTypeDef = tupleTypeDefs[len - 1];
-            resultTypeDef += "\ntypedef struct {\n "
-                                     "\tunsigned long size;\n"
-                                     "\t" + getCurrentTupleName() + " *data;\n"
-                                     "} result_struct;\n";
-            resultTypeDef += "typedef result_struct* result_type;\n";
+            resultWrapper = "\ntypedef struct {\n "
+                                    "\tunsigned long size;\n"
+                                    "\t" + getCurrentTupleName() + " *data;\n"
+                                    "} result_struct;\n"
+                                    "typedef result_struct* result_type;\n";
         }
         else if (action == "count") {
             size_t len = tupleTypeDefs.size();
@@ -748,18 +864,18 @@ private:
                 ret.append(tupleTypeDefs[i])
                         .append(";\n");
             }
-            resultTypeDef = "typedef unsigned long result_type;\n";
+            resultWrapper = "typedef unsigned long result_type;\n";
         }
         else if (action == "reduce") {
             size_t len = tupleTypeDefs.size();
-            for (size_t i = 0; i < len - 1; i++) {
+            for (size_t i = 0; i < len; i++) {
                 ret.append(tupleTypeDefs[i])
                         .append(";\n");
-            }
-            resultTypeDef = tupleTypeDefs[len - 1];
-            resultTypeDef += "typedef " + getCurrentTupleName() + "* result_type;\n";
+            };
+            resultWrapper = "typedef " + getCurrentTupleName() + "* result_type;\n";
         }
-        return ret + resultTypeDef;
+        resultTypeDef += resultWrapper;
+        return ret + resultWrapper;
     }
 
     string writeLLVMFuncDecls() {

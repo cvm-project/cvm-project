@@ -466,6 +466,36 @@ src/dag/DAGReduce.cpp.s:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.s
 .PHONY : src/dag/DAGReduce.cpp.s
 
+src/dag/DAGReduceByKey.o: src/dag/DAGReduceByKey.cpp.o
+
+.PHONY : src/dag/DAGReduceByKey.o
+
+# target to build an object file
+src/dag/DAGReduceByKey.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGReduceByKey.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduceByKey.cpp.o
+.PHONY : src/dag/DAGReduceByKey.cpp.o
+
+src/dag/DAGReduceByKey.i: src/dag/DAGReduceByKey.cpp.i
+
+.PHONY : src/dag/DAGReduceByKey.i
+
+# target to preprocess a source file
+src/dag/DAGReduceByKey.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGReduceByKey.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduceByKey.cpp.i
+.PHONY : src/dag/DAGReduceByKey.cpp.i
+
+src/dag/DAGReduceByKey.s: src/dag/DAGReduceByKey.cpp.s
+
+.PHONY : src/dag/DAGReduceByKey.s
+
+# target to generate assembly for a file
+src/dag/DAGReduceByKey.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGReduceByKey.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduceByKey.cpp.s
+.PHONY : src/dag/DAGReduceByKey.cpp.s
+
 src/utils/utils.o: src/utils/utils.cpp.o
 
 .PHONY : src/utils/utils.o
@@ -539,6 +569,9 @@ help:
 	@echo "... src/dag/DAGReduce.o"
 	@echo "... src/dag/DAGReduce.i"
 	@echo "... src/dag/DAGReduce.s"
+	@echo "... src/dag/DAGReduceByKey.o"
+	@echo "... src/dag/DAGReduceByKey.i"
+	@echo "... src/dag/DAGReduceByKey.s"
 	@echo "... src/utils/utils.o"
 	@echo "... src/utils/utils.i"
 	@echo "... src/utils/utils.s"

@@ -7,9 +7,8 @@
 #include "DAGMap.h"
 #include "DAGReduce.h"
 #include "DAGJoin.h"
-#include "../libs/json.hpp"
 #include "DAGFilter.h"
-#include <stdexcept>
+#include "DAGReduceByKey.h"
 
 
 using namespace std;
@@ -31,6 +30,7 @@ void load_operators() {
     opMap.emplace(MAP, &DAGMap::make_dag_operator);
     opMap.emplace(JOIN, &DAGJoin::make_dag_operator);
     opMap.emplace(REDUCE, &DAGReduce::make_dag_operator);
+    opMap.emplace(REDUCEBYKEY, &DAGReduceByKey::make_dag_operator);
 }
 
 DAG *parse(std::stringstream *istream) {

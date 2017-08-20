@@ -1,5 +1,4 @@
-CC = clang-3.7
-#FLAGS = -O3 -std=c++14 -lstdc++ -march=native -v -ffast-math
+CC = clang
 FLAGS = -O3 -std=c++14 -lstdc++ -ffast-math
 all: main
 

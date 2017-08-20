@@ -12,6 +12,7 @@
 #include "dag/DAGRange.h"
 #include "dag/DAGOperator.h"
 #include "dag/DAGReduce.h"
+#include "dag/DAGReduceByKey.h"
 #include "utils/debug_print.h"
 
 class DAGVisitor {
@@ -53,6 +54,11 @@ public:
 
     virtual void visit(DAGReduce *op) {
         DEBUG_PRINT("visiting reduce");
+        visitPredecessors(op);
+    }
+
+    virtual void visit(DAGReduceByKey *op) {
+        DEBUG_PRINT("visiting reduce_by_key");
         visitPredecessors(op);
     }
 

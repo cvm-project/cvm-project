@@ -6,7 +6,6 @@
 #define CPP_FILTEROPERATOR_H
 
 
-#include <iostream>
 #include "Operator.h"
 
 template<class Upstream, class Tuple, class Function>
@@ -17,11 +16,6 @@ public:
 
     FilterOperator(Upstream *upstream1, Function func) : upstream(upstream1), function(func) {}
 
-
-    void printName() {
-        std::cout << "filter op\n";
-        upstream->printName();
-    }
 
     INLINE Optional<Tuple> next() {
         while (auto ret = upstream->next()) {

@@ -5,9 +5,6 @@
 #ifndef CPP_MAPOPERATOR_H
 #define CPP_MAPOPERATOR_H
 
-
-#include <iostream>
-#include "utils/tuple_to_string.h"
 #include "Operator.h"
 
 template<class Upstream, class Tuple, class MapFunction>
@@ -17,11 +14,6 @@ public:
     MapFunction mapFunction;
 
     MapOperator(Upstream *upstream1, MapFunction mapFunction) : upstream(upstream1), mapFunction(mapFunction) {}
-
-    void printName() {
-        upstream->printName();
-        std::cout << "map op\n";
-    }
 
     INLINE Optional<Tuple> next() {
         if (auto ret = upstream->next()) {

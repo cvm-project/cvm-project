@@ -114,8 +114,8 @@ class RDD(object):
         self.writeDAG(dagdict[DAG], 0)
         # write to file
         if DUMP_DAG:
-            fp = open(getBlazePath() + 'dag.json', 'w')
-            json.dump(dagdict, fp=fp, cls=RDDEncoder)
+            with open(getBlazePath() + 'dag.json', 'w') as fp:
+                json.dump(dagdict, fp=fp, cls=RDDEncoder)
         res = execute(dagdict)
         return res
 
@@ -127,6 +127,9 @@ class RDD(object):
 
     def flat_map(self, func):
         return FlatMap(self, func)
+
+    def reduce_by_key(self, func):
+        return ReduceByKey(self, func)
 
     def reduce(self, func):
         return Reduce(self, func).startDAG("reduce")
@@ -207,6 +210,7 @@ class Join(ShuffleRDD):
     """
     the first element in a tuple is the key
     """
+
     def __init__(self, left, right):
         super(Join, self).__init__(parent=left)
         self.parents.append(right)
@@ -238,8 +242,7 @@ class Join(ShuffleRDD):
                 output1.insert(0, key_type)
                 return Tuple(output1)
             else:
-                output1 += output2
-                return Tuple([key_type, Tuple(output1)])
+                return Tuple([key_type, Tuple(output1 + output2)])
 
     def writeDAG(self, daglist, index):
         if self.dic:
@@ -280,6 +283,34 @@ class Reduce(ShuffleRDD):
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, input_type)
         assert self.output_type == self.parents[
             0].output_type, "The reduce function must return the same type as its arguments"
+        dic[OUTPUT_TYPE] = self.output_type
+        return cur_index
+
+
+class ReduceByKey(ShuffleRDD):
+    """
+    binary function must be commutative and associative
+    the return value type should be the same as its arguments
+    the input cannot be empty
+    """
+
+    def __init__(self, parent, func):
+        super(ReduceByKey, self).__init__(parent)
+        self.func = func
+
+    def compute_input_type(self):
+        # repeat the input type two times minus the key
+        return [self.parents[0].output_type[1], self.parents[0].output_type[1]]
+
+    def writeDAG(self, daglist, index):
+        if self.dic:
+            return self.dic[ID]
+        cur_index = super(ReduceByKey, self).writeDAG(daglist, index)
+        dic = self.dic
+        dic[OP] = REDUCEBYKEY
+        input_type = self.compute_input_type()
+        dic[FUNC], _ = get_llvm_ir_and_output_type(self.func, input_type)
+        self.output_type = self.parents[0].output_type
         dic[OUTPUT_TYPE] = self.output_type
         return cur_index
 

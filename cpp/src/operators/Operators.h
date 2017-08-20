@@ -7,6 +7,7 @@
 #include "MapOperator.h"
 #include "Operator.h"
 #include "RangeSourceOperator.h"
+#include "ReduceByKeyOperator.h"
 #include "ReduceOperator.h"
 
 #endif

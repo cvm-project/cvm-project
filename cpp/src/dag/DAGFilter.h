@@ -5,11 +5,7 @@
 #ifndef CPP_DAGFILTER_H
 #define CPP_DAGFILTER_H
 
-
-#include "operators/Operator.h"
-#include "operators/FilterOperator.h"
 #include "DAGOperator.h"
-#include <typeinfo>
 
 class DAGFilter : public DAGOperator {
 
@@ -24,7 +20,6 @@ public:
 
     void accept(DAGVisitor &v);
 
-    DAGFilter *getThis(){return this;}
 };
 
 

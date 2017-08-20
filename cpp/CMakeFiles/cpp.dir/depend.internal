@@ -19,10 +19,8 @@ CMakeFiles/cpp.dir/generate_dag_plan.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/DAGVisitor.h
  src/utils/constants.h
  src/utils/debug_print.h
@@ -42,10 +40,8 @@ CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
  src/utils/utils.h
@@ -59,10 +55,8 @@ CMakeFiles/cpp.dir/src/dag/DAGCollection.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o
@@ -76,11 +70,8 @@ CMakeFiles/cpp.dir/src/dag/DAGCreation.cpp.o
  /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
  /home/sabir/projects/blaze/cpp/src/dag/DAGRange.h
  /home/sabir/projects/blaze/cpp/src/dag/DAGReduce.h
- /home/sabir/projects/blaze/cpp/src/libs/json.hpp
+ /home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/constants.h
 CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o
  /home/sabir/projects/blaze/cpp/src/dag/DAGFilter.cpp
@@ -92,10 +83,8 @@ CMakeFiles/cpp.dir/src/dag/DAGFilter.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o
@@ -110,10 +99,8 @@ CMakeFiles/cpp.dir/src/dag/DAGJoin.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o
@@ -128,10 +115,8 @@ CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o
@@ -146,10 +131,8 @@ CMakeFiles/cpp.dir/src/dag/DAGRange.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
  src/utils/DAGVisitor.h
  src/utils/constants.h
  src/utils/debug_print.h
@@ -165,10 +148,24 @@ CMakeFiles/cpp.dir/src/dag/DAGReduce.cpp.o
  src/dag/DAGOperator.h
  src/dag/DAGRange.h
  src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
  src/libs/json.hpp
- src/libs/optional.h
- src/operators/FilterOperator.h
- src/operators/Operator.h
+ src/utils/DAGVisitor.h
+ src/utils/debug_print.h
+CMakeFiles/cpp.dir/src/dag/DAGReduceByKey.cpp.o
+ /home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h
+ /home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.cpp
+ /home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.h
+ src/config.h
+ src/dag/DAGCollection.h
+ src/dag/DAGFilter.h
+ src/dag/DAGJoin.h
+ src/dag/DAGMap.h
+ src/dag/DAGOperator.h
+ src/dag/DAGRange.h
+ src/dag/DAGReduce.h
+ src/dag/DAGReduceByKey.h
+ src/libs/json.hpp
  src/utils/DAGVisitor.h
  src/utils/debug_print.h
 CMakeFiles/cpp.dir/src/utils/utils.cpp.o
