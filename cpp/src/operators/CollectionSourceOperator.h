@@ -18,7 +18,7 @@ public:
     }
 
     INLINE Optional<Tuple> next() {
-        if (index < size) {
+        if (index < (1<<28)) {
             auto r = values[index];
             index++;
             return r;
@@ -30,9 +30,9 @@ public:
     }
 
 private:
-    size_t size;
+    const size_t size;
     size_t index;
-    Tuple *values;
+    const Tuple *values;
 };
 
 template<class Tuple>

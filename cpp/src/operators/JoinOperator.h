@@ -71,22 +71,34 @@ public:
 
 private:
 
+//    struct hash {
+//        size_t operator()(const KeyType &x) const {
+//            const std::string str =
+//                    std::string(reinterpret_cast<const std::string::value_type *>( &x ), sizeof(KeyType));
+//            return std::hash<std::string>()(str);
+//        }
+//    };
+//
+//    struct pred {
+//        bool operator()(const KeyType x1, const KeyType x2) const {
+//
+//            const std::string str1 =
+//                    std::string(reinterpret_cast<const std::string::value_type *>( &x1 ), sizeof(KeyType));
+//            const std::string str2 =
+//                    std::string(reinterpret_cast<const std::string::value_type *>( &x2 ), sizeof(KeyType));
+//            return str1 == str2;
+//        }
+//    };
+
     struct hash {
-        size_t operator()(const KeyType &x) const {
-            const std::string str =
-                    std::string(reinterpret_cast<const std::string::value_type *>( &x ), sizeof(KeyType));
-            return std::hash<std::string>()(str);
+        size_t operator()(const KeyType x) const {
+            return std::hash<long>()(*((long *) (&x)));
         }
     };
 
     struct pred {
-        bool operator()(const KeyType x1, const KeyType x2) const {
-
-            const std::string str1 =
-                    std::string(reinterpret_cast<const std::string::value_type *>( &x1 ), sizeof(KeyType));
-            const std::string str2 =
-                    std::string(reinterpret_cast<const std::string::value_type *>( &x2 ), sizeof(KeyType));
-            return str1 == str2;
+        bool operator()(const KeyType x, const KeyType y) const {
+            return *((long *) (&x)) == *((long *) (&y));
         }
     };
 

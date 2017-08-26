@@ -15,7 +15,7 @@
 
 using namespace llvm;
 
-class Parser {
+class LLVMParser {
 public:
     void parse();
 

@@ -1,8 +1,8 @@
 CC = clang
-FLAGS = -O3 -ffast-math -flto
+FLAGS = -O3  -flto -ffast-math
 
 SOURCES = execute.cpp
-INC = -I ../src/ -I functions_llvm
+INC = -I ../src/
 UDF_SOURCES = $(wildcard functions_llvm/*.ll)
 PCH = -include-pch ../src/operators/Operators.h.gch
 
@@ -14,7 +14,7 @@ all: execute.so
 .PRECIOUS: %.ll
 
 %.o: %.cpp
-	ms-time $(CC) -c $^ $(INC) -o $@ $(FLAGS) -std=c++14 $(PCH)
+	ms-time $(CC) -c $^ $(INC) -o $@ $(FLAGS) -std=c++14
 
 %.o: %.ll
 	$(CC) -c $^ -o $@ $(FLAGS)
@@ -28,6 +28,10 @@ execute.so: $(UDF_OBJECTS) $(OBJECTS) c_execute.o
 
 execute.s: execute.so
 	objdump -D $^ > $@
+
+execute.ll: execute.cpp
+	$(CC) $^ -o $@ -S -emit-llvm $(FLAGS) $(INC) -std=c++14
+
 
 clean:
 	rm -f *.bc execute *.asm functions_llvm/*.bc *.o *.so

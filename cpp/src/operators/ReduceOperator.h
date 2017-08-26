@@ -7,7 +7,7 @@
 
 
 #include "Operator.h"
-#include "utils/timing.cpp"
+#include "utils/timing.h"
 #include <stdexcept>
 #include <iostream>
 
@@ -15,17 +15,13 @@ template<class Upstream, class Tuple, class Function>
 class ReduceOperator : public Operator {
 public:
     Upstream *upstream;
-    Function function;
 
     ReduceOperator(Upstream *upstream1, Function func) : upstream(upstream1), function(func) {}
 
     INLINE Optional<Tuple> next() {
-        TICK1
         while (auto ret = upstream->next()) {
             acc = function(acc, ret);
         }
-        TOCK1
-        std::cout << "outer loop reduce" << DIFF1 << std::endl;
         return acc;
     }
 
@@ -43,6 +39,7 @@ public:
 
 private:
     Tuple acc;
+    Function function;
 };
 
 template<class Tuple, class Upstream, class Function>

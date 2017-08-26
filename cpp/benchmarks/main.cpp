@@ -3,30 +3,29 @@
 #include <cmath>
 #include <vector>
 #include <unordered_map>
-#include "../src/utils/timing.cpp"
+#include "utils/timing.h"
 
 
-#define MAX 1l<<18
+#define MAX 1l<<28
 using namespace std;
-using std::chrono::high_resolution_clock;
-using std::chrono::milliseconds;
-using std::chrono::duration_cast;
 
-double add(double a, double b) {
-    return a + b;
-}
+double my_add(double, double);
 
 double simple_sum(double *array) {
     TICK1
     double acc = 0;
     for (size_t j = 0; j < 1; j++) {
         for (size_t i = 0; i < MAX; i++) {
-            acc += array[i];
+            acc = my_add(acc, array[i]);
         }
     }
     TOCK1
-    std::cout << DIFF1 << std::endl;
+    std::cout << "outer loop sum " << DIFF1 << std::endl;
     return acc;
+}
+
+double my_add(double a, double b) {
+    return a + b;
 }
 
 double unrolled_sum(double *array) {
@@ -80,14 +79,18 @@ result_struct1 map_filter(double *array) {
     return {resSize, result};
 }
 
+tuple_1 map_1(double a){
+    return {a, a*3+7};
+}
+
 result_struct1 map(double *array) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    tuple_1 *result = (tuple_1 *) malloc(sizeof(tuple_1) * MAX);
+    tuple_1 *result = (tuple_1 *) malloc(sizeof(tuple_1) * allocatedSize);
 
     for (size_t i = 0; i < MAX; i++) {
-        tuple_1 t1 = {array[i], array[i] * 3 + 7};
+        tuple_1 t1 = map_1(array[i]);
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
             result = (tuple_1 *) realloc(result, sizeof(tuple_1) * allocatedSize);
@@ -97,7 +100,7 @@ result_struct1 map(double *array) {
 
     }
     TOCK1
-    std::cout << DIFF1 << " outer loop \n";
+    std::cout << DIFF1 << " outer loop map \n";
 
     return {resSize, result};
 }
@@ -262,40 +265,87 @@ result_struct map_filter_join(long *array1, tuple_3 *array2) {
 }
 
 
+struct tuple_5 {
+    long v0;
+    long v1;
+};
+
+struct result_struct_rbk {
+    size_t size;
+    tuple_5 *data;
+};
+
+result_struct_rbk map_reduce_by_key(long *array) {
+
+    //build ht
+    TICK1
+    std::unordered_map<long, long> ht;
+    for (size_t i = 0; i < MAX; i++) {
+        tuple_5 mapped = {array[i], 1};
+        auto key = mapped.v0;
+        auto it = ht.find(key);
+        if (it != ht.end()) {
+            auto t = it->second;
+            it->second = t + mapped.v1;
+        }
+        else {
+            ht.emplace(key, mapped.v1);
+        }
+    }
+
+
+    size_t allocatedSize = 2;
+    size_t resSize = 0;
+    tuple_5 *result = (tuple_5 *) malloc(sizeof(tuple_4) * allocatedSize);
+
+    for (auto it = ht.begin(); it != ht.end(); it++) {
+        tuple_5 r = {it->first, it->second};
+        if (allocatedSize <= resSize) {
+            allocatedSize *= 2;
+            result = (tuple_5 *) realloc(result, sizeof(tuple_5) * allocatedSize);
+        }
+        result[resSize] = r;
+        resSize++;
+    }
+    result_struct_rbk ret;
+    ret.data = result;
+    ret.size = resSize;
+    TOCK1
+    std::cout << DIFF1 << " group by \n";
+    return ret;
+}
+
 
 int main() {
 
-    srand (time(NULL));
+    srand(time(NULL));
     double *array = new double[MAX];
     for (size_t i = 0; i < MAX; i++) {
         array[i] = (double) rand() / RAND_MAX;
     }
 
-    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 //    auto res = simple_sum(array);
-//    cout << "result is " << res << endl;
+//    cout << "sum result is " << res << endl;
 //
-//    res = unrolled_sum(array);
-//    cout << "result is " << res << endl;
-//
-//    free(array);
-    high_resolution_clock::time_point t2 = high_resolution_clock::now();
 //
 //    std::cout << res << std::endl;
-    auto duration = duration_cast<milliseconds>(t2 - t1).count();
 //    std::cout << duration << " simple sum\n";
-//
-//    t1 = high_resolution_clock::now();
-//
-//    t2 = high_resolution_clock::now();
-//
+
 //    std::cout << res << std::endl;
 //    duration = duration_cast<milliseconds>(t2 - t1).count();
 //    std::cout << duration << " unrolled sum\n";
 
-//    t1 = high_resolution_clock::now();
-//    auto res = map(array);
-//    t2 = high_resolution_clock::now();
+    auto res = map(array);
+//    free(array);
+    std::cout << (res.data)[rand() % res.size].v0 << " " << (res.data)[rand() % res.size].v1 << " "
+              << std::endl;
+
+//    srand(time(NULL));
+//    long *array_rbk = new long[MAX];
+//    for (size_t i = 0; i < MAX; i++) {
+//        array_rbk[i] = rand() % 100;
+//    }
+//    auto res = map_reduce_by_key(array_rbk);
 //    free(array);
 //    std::cout << (res.data)[rand() % res.size].v0 << " " << (res.data)[rand() % res.size].v1 << " "
 //              << std::endl;
@@ -337,24 +387,25 @@ int main() {
 //    free(array1);
 //    free(array2);
 
-    long *array1 = new long[MAX];
-    for (size_t i = 0; i < MAX; i++) {
-        array1[i] = rand() % 1000;
-    }
-
-    tuple_3 *array2 = new tuple_3[len2];
-    for (size_t i = 0; i < len2; i++) {
-        array2[i] = {rand() % 1000, rand() % 1000};
-    }
-////
-    TICK1
-    auto res = map_filter_join(array1, array2);
-    TOCK1
+//    long *array1 = new long[MAX];
+//    for (size_t i = 0; i < MAX; i++) {
+//        array1[i] = rand() % 1000;
+//    }
 //
-    std::cout << (res.data)[rand() % res.size].v0 << " " << (res.data)[rand() % res.size].v1 << " "
-              << (res.data)[rand() % res.size].v2 << std::endl;
-    std::cout << DIFF1 << " whole join\n";
-    free(array1);
-    free(array2);
+//    tuple_3 *array2 = new tuple_3[len2];
+//    for (size_t i = 0; i < len2; i++) {
+//        array2[i] = {rand() % 1000, rand() % 1000};
+//    }
+//////
+//    TICK1
+//    auto res = map_filter_join(array1, array2);
+//    TOCK1
+////
+//    std::cout << (res.data)[rand() % res.size].v0 << " " << (res.data)[rand() % res.size].v1 << " "
+//              << (res.data)[rand() % res.size].v2 << std::endl;
+//    std::cout << DIFF1 << " whole join\n";
+//    free(array1);
+//    free(array2);
+    free(array);
     return 0;
 }

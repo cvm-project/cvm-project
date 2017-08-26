@@ -44,9 +44,9 @@ def get_llvm_ir_and_output_type(func, input_type=None):
 
     # get the output type with njit
     if isinstance(input_type, list):
-        dec_func = numba.njit(tuple(input_type))(func)
+        dec_func = numba.njit(tuple(input_type), fastmath=True)(func)
     else:
-        dec_func = numba.njit((input_type,))(func)
+        dec_func = numba.njit((input_type,), fastmath=True)(func)
     output_type = dec_func.nopython_signatures[0].return_type
 
     # print("old output type" + str(output_type))
@@ -54,9 +54,9 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     # print("new output type" + str(output_type))
 
     if isinstance(input_type, list):
-        cfunc_code = cfunc(output_type(*input_type))(func)
+        cfunc_code = cfunc(output_type(*input_type), fastmath=True)(func)
     else:
-        cfunc_code = cfunc(output_type(input_type))(func)
+        cfunc_code = cfunc(output_type(input_type), fastmath=True)(func)
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
     m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)

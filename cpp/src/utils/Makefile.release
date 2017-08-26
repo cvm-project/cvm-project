@@ -24,7 +24,7 @@ c_execute.bc: c_execute.c
 
 
 execute: $(UDF_OBJECTS) $(OBJECTS) c_execute.bc
-	 ms-time $(CC)  $^ -o $@.so -shared -lstdc++ $(FLAGS) -v
+	 $(CC)  $^ -o $@.so -shared -lstdc++ $(FLAGS) -v
 
 #%.asm: %
 #	objdump -D $^ > $@

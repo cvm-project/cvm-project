@@ -9,7 +9,7 @@ sys.path.insert(0, "/home/sabir/projects/blaze")
 from blaze.blaze_context import BlazeContext
 from blaze.benchmarks.timer import timer
 
-MAX = 1 << 26
+MAX = 1 << 28
 
 
 def bench_sum():
@@ -90,7 +90,7 @@ def bench_map_filter_join():
 
 def bench_reduce_by_key():
     bc = BlazeContext()
-    input_ = np.random.randint(0, 100, MAX)
+    input_ = np.random.randint(0, 10, MAX)
     dag = bc.numpy_array(input_)
 
     def run():
@@ -99,8 +99,8 @@ def bench_reduce_by_key():
     return run
 
 
-t = timer(bench_reduce_by_key(), 1)
-print("time reduce_by_key " + str(t))
+t = timer(bench_map(), 1)
+print("time map " + str(t))
 
 # t_sum = timer(bench_sum(), 1)
 # print("time sum " + str(t_sum))

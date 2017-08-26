@@ -2,9 +2,9 @@
 // Created by sabir on 18.07.17.
 //
 
-#include "Parser.h"
+#include "LLVMParser.h"
 
-void Parser::parse() {
+void LLVMParser::parse() {
     const char *ir = "define { i64, double } @\"cfunc._ZN8__main__16$3clambda$3e$242Ex\"(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = sitofp i64 %.1 to double\n  %.15.i = fadd double %.14.i, 1.000000e+00\n  %.15.fca.0.insert = insertvalue { i64, double } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, double } %.15.fca.0.insert, double %.15.i, 1\n  ret { i64, double } %.15.fca.1.insert\n}\n\n";
 
     // Parse the input LLVM IR file into a module.
