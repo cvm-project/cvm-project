@@ -4,22 +4,14 @@
 #include <iostream>
 #include "code_gen/generate_code.h"
 #include "utils/timing.h"
+#include "IR_analyzer/SchemaInference.h"
 
 #include "dag/DAGCreation.hpp"
+#include "utils/printDAG.h"
+#include "optimize/Optimizer.h"
+#include "utils/utils.h"
 
 
-std::string exec(const char *cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) throw std::runtime_error("popen() failed!");
-    while (!feof(pipe.get())) {
-        if (fgets(buffer.data(), 128, pipe.get()) != nullptr) {
-            result += buffer.data();
-        }
-    }
-    return result;
-}
 
 extern "C" {
 int generate_dag_plan(char *dagstr) {
@@ -27,7 +19,16 @@ int generate_dag_plan(char *dagstr) {
     exec(("rm -r -f " + get_lib_path() + "cpp/gen").c_str());
 
     DAG *dag = parse_dag(std::string(dagstr));
-
+    //scheme inference
+//    printDAG(dag);
+    SchemaInference si;
+    si.start_visit(dag);
+    printDAG(dag);
+    //optimize
+    Optimizer opt;
+    opt.run(dag);
+    printDAG(dag);
+    //generate code
     generate_code(dag);
 
     //call make in the subdir
@@ -35,7 +36,7 @@ int generate_dag_plan(char *dagstr) {
     exec(("cd " + get_lib_path() + "cpp/gen && make -f ../src/utils/Makefile -j").c_str());
     TOCK1
     std::cout << "call make " << DIFF1 << std::endl;
-
+    delete (dag);
     return 0;
 }
 }

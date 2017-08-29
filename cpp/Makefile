@@ -226,6 +226,36 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/IR_analyzer/LLVMParser.o: src/IR_analyzer/LLVMParser.cpp.o
+
+.PHONY : src/IR_analyzer/LLVMParser.o
+
+# target to build an object file
+src/IR_analyzer/LLVMParser.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/IR_analyzer/LLVMParser.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/IR_analyzer/LLVMParser.cpp.o
+.PHONY : src/IR_analyzer/LLVMParser.cpp.o
+
+src/IR_analyzer/LLVMParser.i: src/IR_analyzer/LLVMParser.cpp.i
+
+.PHONY : src/IR_analyzer/LLVMParser.i
+
+# target to preprocess a source file
+src/IR_analyzer/LLVMParser.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/IR_analyzer/LLVMParser.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/IR_analyzer/LLVMParser.cpp.i
+.PHONY : src/IR_analyzer/LLVMParser.cpp.i
+
+src/IR_analyzer/LLVMParser.s: src/IR_analyzer/LLVMParser.cpp.s
+
+.PHONY : src/IR_analyzer/LLVMParser.s
+
+# target to generate assembly for a file
+src/IR_analyzer/LLVMParser.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/IR_analyzer/LLVMParser.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/IR_analyzer/LLVMParser.cpp.s
+.PHONY : src/IR_analyzer/LLVMParser.cpp.s
+
 src/code_gen/generate_code.o: src/code_gen/generate_code.cpp.o
 
 .PHONY : src/code_gen/generate_code.o
@@ -255,6 +285,36 @@ src/code_gen/generate_code.cpp.s:
 	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/code_gen/generate_code.cpp.s
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/code_gen/generate_code.cpp.s
 .PHONY : src/code_gen/generate_code.cpp.s
+
+src/dag/Column.o: src/dag/Column.cpp.o
+
+.PHONY : src/dag/Column.o
+
+# target to build an object file
+src/dag/Column.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/Column.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/Column.cpp.o
+.PHONY : src/dag/Column.cpp.o
+
+src/dag/Column.i: src/dag/Column.cpp.i
+
+.PHONY : src/dag/Column.i
+
+# target to preprocess a source file
+src/dag/Column.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/Column.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/Column.cpp.i
+.PHONY : src/dag/Column.cpp.i
+
+src/dag/Column.s: src/dag/Column.cpp.s
+
+.PHONY : src/dag/Column.s
+
+# target to generate assembly for a file
+src/dag/Column.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/Column.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/Column.cpp.s
+.PHONY : src/dag/Column.cpp.s
 
 src/dag/DAGCollection.o: src/dag/DAGCollection.cpp.o
 
@@ -406,6 +466,36 @@ src/dag/DAGMap.cpp.s:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGMap.cpp.s
 .PHONY : src/dag/DAGMap.cpp.s
 
+src/dag/DAGOperator.o: src/dag/DAGOperator.cpp.o
+
+.PHONY : src/dag/DAGOperator.o
+
+# target to build an object file
+src/dag/DAGOperator.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGOperator.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGOperator.cpp.o
+.PHONY : src/dag/DAGOperator.cpp.o
+
+src/dag/DAGOperator.i: src/dag/DAGOperator.cpp.i
+
+.PHONY : src/dag/DAGOperator.i
+
+# target to preprocess a source file
+src/dag/DAGOperator.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGOperator.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGOperator.cpp.i
+.PHONY : src/dag/DAGOperator.cpp.i
+
+src/dag/DAGOperator.s: src/dag/DAGOperator.cpp.s
+
+.PHONY : src/dag/DAGOperator.s
+
+# target to generate assembly for a file
+src/dag/DAGOperator.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGOperator.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGOperator.cpp.s
+.PHONY : src/dag/DAGOperator.cpp.s
+
 src/dag/DAGRange.o: src/dag/DAGRange.cpp.o
 
 .PHONY : src/dag/DAGRange.o
@@ -496,6 +586,66 @@ src/dag/DAGReduceByKey.cpp.s:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGReduceByKey.cpp.s
 .PHONY : src/dag/DAGReduceByKey.cpp.s
 
+src/optimize/Optimizer.o: src/optimize/Optimizer.cpp.o
+
+.PHONY : src/optimize/Optimizer.o
+
+# target to build an object file
+src/optimize/Optimizer.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/optimize/Optimizer.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/optimize/Optimizer.cpp.o
+.PHONY : src/optimize/Optimizer.cpp.o
+
+src/optimize/Optimizer.i: src/optimize/Optimizer.cpp.i
+
+.PHONY : src/optimize/Optimizer.i
+
+# target to preprocess a source file
+src/optimize/Optimizer.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/optimize/Optimizer.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/optimize/Optimizer.cpp.i
+.PHONY : src/optimize/Optimizer.cpp.i
+
+src/optimize/Optimizer.s: src/optimize/Optimizer.cpp.s
+
+.PHONY : src/optimize/Optimizer.s
+
+# target to generate assembly for a file
+src/optimize/Optimizer.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/optimize/Optimizer.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/optimize/Optimizer.cpp.s
+.PHONY : src/optimize/Optimizer.cpp.s
+
+src/optimize/SimplePredicateMoveAround.o: src/optimize/SimplePredicateMoveAround.cpp.o
+
+.PHONY : src/optimize/SimplePredicateMoveAround.o
+
+# target to build an object file
+src/optimize/SimplePredicateMoveAround.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/optimize/SimplePredicateMoveAround.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/optimize/SimplePredicateMoveAround.cpp.o
+.PHONY : src/optimize/SimplePredicateMoveAround.cpp.o
+
+src/optimize/SimplePredicateMoveAround.i: src/optimize/SimplePredicateMoveAround.cpp.i
+
+.PHONY : src/optimize/SimplePredicateMoveAround.i
+
+# target to preprocess a source file
+src/optimize/SimplePredicateMoveAround.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/optimize/SimplePredicateMoveAround.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/optimize/SimplePredicateMoveAround.cpp.i
+.PHONY : src/optimize/SimplePredicateMoveAround.cpp.i
+
+src/optimize/SimplePredicateMoveAround.s: src/optimize/SimplePredicateMoveAround.cpp.s
+
+.PHONY : src/optimize/SimplePredicateMoveAround.s
+
+# target to generate assembly for a file
+src/optimize/SimplePredicateMoveAround.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/optimize/SimplePredicateMoveAround.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/optimize/SimplePredicateMoveAround.cpp.s
+.PHONY : src/optimize/SimplePredicateMoveAround.cpp.s
+
 src/utils/utils.o: src/utils/utils.cpp.o
 
 .PHONY : src/utils/utils.o
@@ -545,9 +695,15 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... src/IR_analyzer/LLVMParser.o"
+	@echo "... src/IR_analyzer/LLVMParser.i"
+	@echo "... src/IR_analyzer/LLVMParser.s"
 	@echo "... src/code_gen/generate_code.o"
 	@echo "... src/code_gen/generate_code.i"
 	@echo "... src/code_gen/generate_code.s"
+	@echo "... src/dag/Column.o"
+	@echo "... src/dag/Column.i"
+	@echo "... src/dag/Column.s"
 	@echo "... src/dag/DAGCollection.o"
 	@echo "... src/dag/DAGCollection.i"
 	@echo "... src/dag/DAGCollection.s"
@@ -563,6 +719,9 @@ help:
 	@echo "... src/dag/DAGMap.o"
 	@echo "... src/dag/DAGMap.i"
 	@echo "... src/dag/DAGMap.s"
+	@echo "... src/dag/DAGOperator.o"
+	@echo "... src/dag/DAGOperator.i"
+	@echo "... src/dag/DAGOperator.s"
 	@echo "... src/dag/DAGRange.o"
 	@echo "... src/dag/DAGRange.i"
 	@echo "... src/dag/DAGRange.s"
@@ -572,6 +731,12 @@ help:
 	@echo "... src/dag/DAGReduceByKey.o"
 	@echo "... src/dag/DAGReduceByKey.i"
 	@echo "... src/dag/DAGReduceByKey.s"
+	@echo "... src/optimize/Optimizer.o"
+	@echo "... src/optimize/Optimizer.i"
+	@echo "... src/optimize/Optimizer.s"
+	@echo "... src/optimize/SimplePredicateMoveAround.o"
+	@echo "... src/optimize/SimplePredicateMoveAround.i"
+	@echo "... src/optimize/SimplePredicateMoveAround.s"
 	@echo "... src/utils/utils.o"
 	@echo "... src/utils/utils.i"
 	@echo "... src/utils/utils.s"

@@ -54,7 +54,7 @@ def execute(dag_dict):
     generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
     dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
 
-    # generator_cffi.c_generate_dag_plan(dag_c)
+    generator_cffi.c_generate_dag_plan(dag_c)
 
     executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib, ffi)
     args = []

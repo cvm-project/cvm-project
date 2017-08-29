@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <regex>
 #include "utils/DAGVisitor.h"
+#include "config.h"
 #include "dag/DAG.h"
 #include "utils/utils.h"
 #include <fstream>

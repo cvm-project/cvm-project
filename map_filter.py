@@ -6,43 +6,17 @@ import random
 # sys.path.insert(0, "/home/sabir/projects/")
 from numba import njit
 
-# input = [(1, 2), (5, 6.2)]
+input_ = [(1, 2), (5, 4)]
 
 
-# data = collection(input)
+def func(t):
+    return t[0], t[0] + 3, t[0] * 10
 
 
-# os.environ["NUMBA_DUMP_IR"] = '1'
-# os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
-# os.environ["NUMBA_DUMP_OPTIMIZED"] = '1'
-
-
-# os.environ["NUMBA_DUMP_LLVM"] = '1'
-
-def func(a):
-    return a + 1, a * 300
-
-
-# func = lambda t: t[3]
-# print(input)
-
-
-# w = data.map(lambda w: (w, w * 2)).filter(lambda t: t[0] % 2 == 0 and t[1] % 3 == 0)
-
-import time
-def scope():
-# input = [(r, r) for r in range(1, 10000000)]
-    input = np.ones(500000000)
-    bc = BlazeContext
-    data = bc.numpy_array(input)
-    w = data.map(lambda t: t)
-    res = w.collect()
-    print(res)
-
-scope()
-
-time.sleep(5)
-print("after")
+bc = BlazeContext()
+data2 = bc.collection([(1, 33), (0, 0)]).map(lambda t: (t[0]*3, t[0])).filter(lambda t: t[1] > -1).map(lambda t: (t[1], t[0]))
+print(bc.collection(input_).map(func).filter(lambda t: t[0] == 1).join(data2).collect())
+# bc.collection(input_).map(func).reduce_by_key(lambda t1, t2: (t1[0] + t2[0], t1[1])).collect()
 #
 # f(1, 2)
 # with open('/home/sabir/add.ll', 'w') as file:

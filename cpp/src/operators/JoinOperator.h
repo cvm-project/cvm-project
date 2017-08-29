@@ -9,7 +9,7 @@
 #include "Operator.h"
 #include <vector>
 //#include <iostream>
-//#include "utils/timing.cpp"
+#include "utils/debug_print.h"
 
 using std::vector;
 
@@ -29,7 +29,7 @@ public:
     JoinOperator(Upstream1 *upstream1, Upstream2 *upstream2) : upstream1(upstream1), upstream2(upstream2) {};
 
     Optional<Tuple> INLINE next() {
-        if (intermediateTuples  != iteratorEnd) {
+        if (intermediateTuples != iteratorEnd) {
             auto res = *intermediateTuples;
             intermediateTuples++;
             //build result tuple here
@@ -52,6 +52,9 @@ public:
     void INLINE open() {
         upstream1->open();
         upstream2->open();
+        if (!ht.empty()) {
+            return;
+        }
         while (auto ret = upstream1->next()) {
             if (ht.count(getKey(ret.value)) > 0) {
                 ht[getKey(ret.value)].push_back(getValue1(ret.value));

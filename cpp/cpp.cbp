@@ -154,11 +154,27 @@
 			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/IR_analyzer/LLVMParser.cpp">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/IR_analyzer/LLVMParser.h">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/code_gen/generate_code.cpp">
 			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/code_gen/generate_code.h">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/Column.cpp">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/Column.h">
 			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
@@ -202,6 +218,14 @@
 			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGOperator.cpp">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGRange.cpp">
 			<Option target="generate"/>
 			<Option target="cpp"/>
@@ -223,6 +247,22 @@
 			<Option target="cpp"/>
 		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.h">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/optimize/Optimizer.cpp">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/optimize/Optimizer.h">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/optimize/SimplePredicateMoveAround.cpp">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/optimize/SimplePredicateMoveAround.h">
 			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>

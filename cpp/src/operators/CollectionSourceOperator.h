@@ -18,7 +18,7 @@ public:
     }
 
     INLINE Optional<Tuple> next() {
-        if (index < (1<<28)) {
+        if (index < size) {
             auto r = values[index];
             index++;
             return r;

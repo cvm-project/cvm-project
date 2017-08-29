@@ -4,6 +4,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <array>
+#include <memory>
 #include "utils.h"
 
 string snake_to_camel_string(string str) {
@@ -56,4 +58,17 @@ string get_lib_path() {
     if (!(blazePath = std::getenv("BLAZEPATH")))
         std::cerr << "BLAZEPATH is not defined, set it to your blaze installation path\n";
     return string(blazePath);
+}
+
+std::string exec(const char *cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) throw std::runtime_error("popen() failed!");
+    while (!feof(pipe.get())) {
+        if (fgets(buffer.data(), 128, pipe.get()) != nullptr) {
+            result += buffer.data();
+        }
+    }
+    return result;
 }

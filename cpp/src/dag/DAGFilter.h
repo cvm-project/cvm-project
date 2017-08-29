@@ -7,6 +7,8 @@
 
 #include "DAGOperator.h"
 
+class DAGVisitor;
+
 class DAGFilter : public DAGOperator {
 
 public:
@@ -20,8 +22,21 @@ public:
 
     void accept(DAGVisitor &v);
 
-};
+    std::string get_name() {
+        return "Filter_" + to_string(id);
+    }
 
+    DAGFilter *copy() {
+        DAGFilter *filt = new DAGFilter;
+        filt->fields = fields;
+        filt->read_set = read_set;
+        filt->llvm_ir = llvm_ir;
+        filt->output_type = output_type;
+        filt->id = ++DAGOperator::lastOperatorIndex;
+        return filt;
+    }
+
+};
 
 
 #endif //CPP_DAGFILTER_H

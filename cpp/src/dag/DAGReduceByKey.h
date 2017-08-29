@@ -6,6 +6,7 @@
 #define CPP_DAGREDUCEBYKEY_H
 
 #include "DAGOperator.h"
+class DAGVisitor;
 
 class DAGReduceByKey : public DAGOperator {
 public:
@@ -16,6 +17,9 @@ public:
 
     void accept(DAGVisitor &v);
 
+    std::string get_name() {
+        return "ReduceByKey_" + to_string(id);
+    }
 };
 
 

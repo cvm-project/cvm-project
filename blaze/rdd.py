@@ -62,7 +62,6 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
     code_string = m.group(0)
     code_string = re.sub("attributes.*}", "", code_string)
-
     return code_string, output_type
 
 
@@ -290,7 +289,7 @@ class Reduce(ShuffleRDD):
 class ReduceByKey(ShuffleRDD):
     """
     binary function must be commutative and associative
-    the return value type should be the same as its arguments
+    the return value type should be the same as its arguments minus the key
     the input cannot be empty
     """
 
@@ -300,7 +299,7 @@ class ReduceByKey(ShuffleRDD):
 
     def compute_input_type(self):
         # repeat the input type two times minus the key
-        return [self.parents[0].output_type[1], self.parents[0].output_type[1]]
+        return [make_tuple(self.parents[0].output_type[1:]), make_tuple(self.parents[0].output_type[1:])]
 
     def writeDAG(self, daglist, index):
         if self.dic:

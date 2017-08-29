@@ -33,51 +33,63 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="SchemaInference.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/optimize/SchemaInference.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SchemaInference.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/optimize/SchemaInference.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="2" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="generate_dag_plan.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/generate_dag_plan.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="23" column="12" lean-forward="true" selection-start-line="23" selection-start-column="12" selection-end-line="23" selection-end-column="12" />
+            <state relative-caret-position="396">
+              <caret line="30" column="10" lean-forward="true" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CMakeLists.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="250">
+              <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LLVMParser.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/IR_analyzer/LLVMParser.cpp">
+      <file leaf-file-name="MapOperator.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/operators/MapOperator.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="13" column="4" lean-forward="false" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="execute.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gen/execute.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="612">
+              <caret line="59" column="1" lean-forward="false" selection-start-line="59" selection-start-column="1" selection-end-line="59" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Optimizer.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/optimize/Optimizer.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="144">
+              <caret line="9" column="12" lean-forward="false" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Optimizer.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/optimize/Optimizer.h">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
-              <caret line="0" column="2" lean-forward="false" selection-start-line="0" selection-start-column="2" selection-end-line="7" selection-end-column="33" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LLVMParser.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/IR_analyzer/LLVMParser.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="22" lean-forward="false" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -87,21 +99,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>dagreduc</find>
-      <find>join</find>
-      <find>Join</find>
-      <find>resultTypeDef</find>
-      <find>llvmwr</find>
-      <find>rg</find>
-      <find>re</find>
-      <find>reg</find>
-      <find>add</find>
-      <find>my_add</find>
-      <find>rax</find>
-      <find>map_operator</find>
-      <find>#9</find>
-      <find>map_op</find>
-      <find>r14</find>
       <find>map</find>
       <find>main</find>
       <find>_Z3mapPd</find>
@@ -117,9 +114,23 @@
       <find>source</find>
       <find>collec</find>
       <find>execute</find>
+      <find>virtual</find>
+      <find>agdisc_t</find>
+      <find>Agdisc_t</find>
+      <find>edgeLabel</find>
+      <find>outStr</find>
+      <find>regex</find>
+      <find>\&quot;</find>
+      <find>operator==</find>
+      <find>operator=</find>
+      <find>\n</find>
+      <find>getorinsertFunction</find>
+      <find>ArgsTy</find>
+      <find>Function(FunctionType</find>
+      <find>static</find>
+      <find>string</find>
     </findStrings>
     <replaceStrings>
-      <replace>&quot;</replace>
       <replace>#define</replace>
       <replace>double</replace>
       <replace>float</replace>
@@ -134,61 +145,64 @@
       <replace>.o</replace>
       <replace>CPP_REDUCEBYKEYOPERATOR_H</replace>
       <replace>CPP_DAGREDUCEBYKEY_H</replace>
+      <replace>outStr</replace>
+      <replace>colOut</replace>
+      <replace>&quot;</replace>
     </replaceStrings>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_1.ll" />
-        <option value="$PROJECT_DIR$/src/utils/debug_print.h" />
-        <option value="$PROJECT_DIR$/src/config.h" />
-        <option value="$PROJECT_DIR$/gen/c_execute.h" />
-        <option value="$PROJECT_DIR$/src/dag/DAGReduce.h" />
-        <option value="$PROJECT_DIR$/gen_example/execute.cpp" />
-        <option value="$PROJECT_DIR$/sum.cpp" />
-        <option value="$PROJECT_DIR$/sum.ll" />
-        <option value="$PROJECT_DIR$/gen_example/Makefile" />
-        <option value="$PROJECT_DIR$/src/utils/timing.c" />
-        <option value="$PROJECT_DIR$/src/utils/timing.cpp" />
-        <option value="$PROJECT_DIR$/gen/test.log" />
-        <option value="$PROJECT_DIR$/src/libs/optional.h" />
-        <option value="$PROJECT_DIR$/src/operators/merge_headers.sh" />
-        <option value="$PROJECT_DIR$/src/operators/Operator.h" />
-        <option value="$PROJECT_DIR$/gen/Makefile" />
-        <option value="$PROJECT_DIR$/src/operators/Operators.h" />
-        <option value="$PROJECT_DIR$/analyze/map_diassembly_execute.s" />
-        <option value="$PROJECT_DIR$/src/operators/FilterOperator.h" />
-        <option value="$PROJECT_DIR$/src/dag/DAGReduceByKey.cpp" />
-        <option value="$PROJECT_DIR$/src/dag/DAGReduceByKey.h" />
-        <option value="$PROJECT_DIR$/src/dag/DAGFilter.h" />
-        <option value="$PROJECT_DIR$/src/dag/DAGOperator.h" />
-        <option value="$PROJECT_DIR$/src/utils/DAGVisitor.h" />
-        <option value="$PROJECT_DIR$/src/utils/constants.h" />
-        <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/src/dag/DAGCreation.cpp" />
-        <option value="$PROJECT_DIR$/src/dag/DAGOperator.cpp" />
-        <option value="$PROJECT_DIR$/src/code_gen/CodeGenVisitor.h" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/src/operators/JoinOperator.h" />
-        <option value="$PROJECT_DIR$/src/operators/ReduceByKeyOperator.h" />
-        <option value="$PROJECT_DIR$/src/utils/Makefile.release" />
-        <option value="$PROJECT_DIR$/src/operators/ReduceOperator.h" />
-        <option value="$PROJECT_DIR$/benchmarks/main.ll" />
-        <option value="$PROJECT_DIR$/gen/functions_llvm/reduce_operator_function_0.ll" />
-        <option value="$PROJECT_DIR$/src/utils/Makefile" />
-        <option value="$PROJECT_DIR$/benchmarks/Makefile" />
-        <option value="$PROJECT_DIR$/benchmarks/main.s" />
-        <option value="$PROJECT_DIR$/benchmarks/main.cpp" />
-        <option value="$PROJECT_DIR$/gen/functions_llvm/map_operator_function_0.ll" />
-        <option value="$PROJECT_DIR$/gen/execute.s" />
-        <option value="$PROJECT_DIR$/src/operators/MapOperator.h" />
-        <option value="$PROJECT_DIR$/src/operators/CollectionSourceOperator.h" />
-        <option value="$PROJECT_DIR$/gen/execute.ll" />
-        <option value="$PROJECT_DIR$/gen/execute.cpp" />
-        <option value="$PROJECT_DIR$/src/IR_analyzer/Parser.cpp" />
-        <option value="$PROJECT_DIR$/src/IR_analyzer/LLVMParser.cpp" />
-        <option value="$PROJECT_DIR$/src/IR_analyzer/LLVMParser.h" />
         <option value="$PROJECT_DIR$/src/optimize/SchemaInference.h" />
+        <option value="$PROJECT_DIR$/src/dag/TupleVar.h" />
+        <option value="$PROJECT_DIR$/src/utils/DAGVisitor.h" />
+        <option value="$PROJECT_DIR$/src/config.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGCreation.hpp" />
+        <option value="$PROJECT_DIR$/src/code_gen/CodeGenVisitor.h" />
+        <option value="$PROJECT_DIR$/src/utils/utils.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGCollection.cpp" />
+        <option value="$PROJECT_DIR$/src/dag/DAGCollection.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGJoin.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGReduceByKey.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGReduce.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGRange.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGMap.h" />
+        <option value="$PROJECT_DIR$/testing/SchemaInference.cpp" />
+        <option value="$PROJECT_DIR$/testing/Makefile" />
+        <option value="$PROJECT_DIR$/testing/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/testing/LLVMParser.cpp" />
+        <option value="$PROJECT_DIR$/main.cpp" />
+        <option value="$PROJECT_DIR$/src/dag/TupleField.h" />
+        <option value="$PROJECT_DIR$/src/dag/Column.h" />
+        <option value="$PROJECT_DIR$/src/dag/Column.cpp" />
+        <option value="$PROJECT_DIR$/src/optimize/Optimizer.cpp" />
+        <option value="$PROJECT_DIR$/src/optimize/Optimizer.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAG.h" />
+        <option value="$PROJECT_DIR$/src/optimize/SimplePredicateMoveAround.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGFilter.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGCreation.cpp" />
+        <option value="$PROJECT_DIR$/src/dag/DAGOperator.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGOperator.cpp" />
+        <option value="$PROJECT_DIR$/src/utils/printDAG.h" />
+        <option value="$PROJECT_DIR$/testing.ll" />
+        <option value="$PROJECT_DIR$/src/optimize/SimplePredicateMoveAround.cpp" />
+        <option value="$PROJECT_DIR$/src/IR_analyzer/SchemaInference.h" />
+        <option value="$PROJECT_DIR$/src/utils/utils.cpp" />
+        <option value="$PROJECT_DIR$/src/utils/c_type_to_llvm.cpp" />
+        <option value="$PROJECT_DIR$/src/IR_analyzer/LLVMParser.h" />
+        <option value="$PROJECT_DIR$/src/utils/c_type_to_llvm.h" />
+        <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_0.ll" />
+        <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_1.ll" />
+        <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_3.ll" />
+        <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_4.ll" />
+        <option value="$PROJECT_DIR$/gen/execute.cpp" />
+        <option value="$PROJECT_DIR$/src/utils/debug_print.h" />
+        <option value="$PROJECT_DIR$/src/utils/Makefile" />
+        <option value="$PROJECT_DIR$/src/operators/CollectionSourceOperator.h" />
+        <option value="$PROJECT_DIR$/src/operators/JoinOperator.h" />
+        <option value="$PROJECT_DIR$/src/IR_analyzer/LLVMParser.cpp" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/src/operators/MapOperator.h" />
         <option value="$PROJECT_DIR$/generate_dag_plan.cpp" />
       </list>
     </option>
@@ -237,7 +251,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="testing" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -254,10 +268,6 @@
               <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="IR_analyzer" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -269,25 +279,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="gen" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cpp" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cpp" />
+              <option name="myItemId" value="src" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="gen" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="functions_llvm" />
+              <option name="myItemId" value="optimize" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -305,44 +301,31 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cpp" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cpp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="analyze" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C/C++" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/gen_example/execute_nested.ll" />
-    <property name="SearchEverywhereHistoryKey" value="col&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;mapop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h&#10;exec&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;main.c&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/benchmarks/main.cpp&#10;colle&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;map&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h&#10;main&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/benchmarks/main.cpp&#10;reduce&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceOperator.h&#10;join&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;red&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceByKeyOperator.h&#10;redu&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceByKeyOperator.h&#10;utils/m&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;exe&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;make&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;cmak&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;code&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;utils/ma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;reduceb&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceByKeyOperator.h&#10;dagre&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGReduceByKey.cpp&#10;main.cpp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/main.cpp&#10;ex&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;codege&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;coll&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;main.s&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/benchmarks/main.s&#10;filter&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/FilterOperator.h&#10;reduc&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceOperator.h&#10;co&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;execute.s&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.s&#10;utils/M&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;gene&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;genera&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/generate_code.cpp&#10;operators&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/Operators.h&#10;xe&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;gen_&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/generate_code.cpp&#10;operator&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/Operator.h&#10;re&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceOperator.h&#10;tim&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/timing.c&#10;deb&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/debug_print.h&#10;con&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/config.h&#10;cma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;gen&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;mai&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/main.cpp&#10;cm&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;opti&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/libs/optional.h&#10;ge&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;optio&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/libs/optional.h&#10;fi&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/FilterOperator.h&#10;filterOp&#9;null&#9;null&#10;codeg&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;dag&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp" />
+    <property name="settings.editor.selected.configurable" value="com.github.itechbear.clion.cpplint.Option" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/testing/testing" />
+    <property name="SearchEverywhereHistoryKey" value="exe&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;mapop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h&#10;cma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;llvm&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/LLVMParser.cpp&#10;collec&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;FILTEROPER&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/FilterOperator.h&#10;utils/ma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;join&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;tes&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/testing.ll&#10;test&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/testing.ll&#10;utils&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/utils.cpp&#10;function.cp&#9;FILE&#9;file:///home/sabir/projects/llvm/llvm/lib/IR/Function.cpp&#10;module.cpp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/libs/llvm/IR/Module.cpp&#10;cm&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;dagc&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;dagop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h&#10;dagfi&#9;null&#9;null&#10;dag&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAG.h&#10;dagJ&#9;null&#9;null&#10;dagcrea&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;dag.&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAG.h&#10;tupl&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/TupleField.h&#10;sch&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/SchemaInference.h&#10;main&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/main.cpp&#10;sche&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/SchemaInference.h&#10;llvmparser.cpp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/LLVMParser.cpp&#10;value&#9;null&#9;null&#10;instru&#9;FILE&#9;file:///usr/local/include/llvm/IR/Instruction.h&#10;t&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/testing.ll&#10;user.&#9;FILE&#9;file:///home/sabir/projects/llvm/llvm/lib/IR/User.cpp&#10;code&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;codege&#9;null&#9;null&#10;codeg&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/libs/llvm/CodeGen/CodeGen.cpp&#10;llvmp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/LLVMParser.cpp&#10;col&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/Column.h&#10;print&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/printDAG.h&#10;dagcreat&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;dagma&#9;null&#9;null&#10;dagF&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGFilter.h&#10;dagcoll&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCollection.h&#10;dagcol&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCollection.cpp&#10;con&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/config.h&#10;column&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/Column.cpp&#10;deb&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/debug_print.h&#10;cmak&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;dagOp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h&#10;exec&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;main.c&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/benchmarks/main.cpp&#10;colle&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;map&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/gen_example/execute_nested.ll" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/dag" />
+      <recent name="$PROJECT_DIR$/gen_example" />
+      <recent name="$PROJECT_DIR$/gen" />
+      <recent name="$PROJECT_DIR$/src/operators" />
+      <recent name="$PROJECT_DIR$/src/utils" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/testing" />
       <recent name="$PROJECT_DIR$/src/utils" />
       <recent name="$PROJECT_DIR$/gen" />
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/src/libs" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/gen_example" />
-      <recent name="$PROJECT_DIR$/gen" />
-      <recent name="$PROJECT_DIR$/src/dag" />
-      <recent name="$PROJECT_DIR$/src/operators" />
-      <recent name="$PROJECT_DIR$/src/utils" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -357,19 +340,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Release">
-    <configuration default="false" name="clean" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
-      <makefile filename="$PROJECT_DIR$/gen/Makefile" target="clean" workingDirectory="">
-        <envs />
-      </makefile>
-      <method />
-    </configuration>
-    <configuration default="false" name="execute" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
-      <makefile filename="$PROJECT_DIR$/gen/Makefile" target="execute" workingDirectory="">
-        <envs />
-      </makefile>
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Application.generate">
     <configuration default="false" name="%.bc" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/gen/Makefile" target="%.bc" workingDirectory="">
         <envs />
@@ -389,6 +360,18 @@
     </configuration>
     <configuration default="false" name="execute.s" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/src/utils/Makefile" target="execute.s" workingDirectory="">
+        <envs />
+      </makefile>
+      <method />
+    </configuration>
+    <configuration default="false" name="llvmparser" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/testing/Makefile" target="llvmparser" workingDirectory="">
+        <envs />
+      </makefile>
+      <method />
+    </configuration>
+    <configuration default="false" name="all" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/testing/Makefile" target="all" workingDirectory="">
         <envs />
       </makefile>
       <method />
@@ -562,19 +545,19 @@
       <item index="0" class="java.lang.String" itemvalue="Application.Release" />
       <item index="1" class="java.lang.String" itemvalue="Application.Debug" />
       <item index="2" class="java.lang.String" itemvalue="Application.generate" />
-      <item index="3" class="java.lang.String" itemvalue="Makefile.clean" />
-      <item index="4" class="java.lang.String" itemvalue="Makefile.execute" />
-      <item index="5" class="java.lang.String" itemvalue="Makefile.%.bc" />
-      <item index="6" class="java.lang.String" itemvalue="Bash.merge_headers.sh" />
-      <item index="7" class="java.lang.String" itemvalue="Makefile.execute.s" />
+      <item index="3" class="java.lang.String" itemvalue="Makefile.%.bc" />
+      <item index="4" class="java.lang.String" itemvalue="Bash.merge_headers.sh" />
+      <item index="5" class="java.lang.String" itemvalue="Makefile.execute.s" />
+      <item index="6" class="java.lang.String" itemvalue="Makefile.llvmparser" />
+      <item index="7" class="java.lang.String" itemvalue="Makefile.all" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Makefile.execute.s" />
-        <item index="1" class="java.lang.String" itemvalue="Bash.merge_headers.sh" />
-        <item index="2" class="java.lang.String" itemvalue="Makefile.%.bc" />
-        <item index="3" class="java.lang.String" itemvalue="Makefile.execute" />
-        <item index="4" class="java.lang.String" itemvalue="Makefile.clean" />
+        <item index="0" class="java.lang.String" itemvalue="Makefile.all" />
+        <item index="1" class="java.lang.String" itemvalue="Makefile.llvmparser" />
+        <item index="2" class="java.lang.String" itemvalue="Makefile.execute.s" />
+        <item index="3" class="java.lang.String" itemvalue="Bash.merge_headers.sh" />
+        <item index="4" class="java.lang.String" itemvalue="Makefile.%.bc" />
       </list>
     </recent_temporary>
   </component>
@@ -643,12 +626,14 @@
       <workItem from="1503382927592" duration="10793000" />
       <workItem from="1503492821110" duration="205000" />
       <workItem from="1503493497295" duration="12617000" />
-      <workItem from="1503741617365" duration="2658000" />
+      <workItem from="1503741617365" duration="9202000" />
+      <workItem from="1503826431312" duration="6996000" />
+      <workItem from="1503833950650" duration="71823000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="526876000" />
+    <option name="totallyTimeSpent" value="612239000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -663,47 +648,26 @@
     <frame x="-1" y="-11" width="1602" height="912" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34942085" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32820514" sideWeight="0.488417" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30641025" sideWeight="0.17696267" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30897436" sideWeight="0.49227798" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3448718" sideWeight="0.8114543" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32820514" sideWeight="0.72265124" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30897436" sideWeight="0.510296" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30897436" sideWeight="0.48970398" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24967825" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36153847" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3030888" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24967825" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36153847" sideWeight="0.497426" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3448718" sideWeight="0.8230373" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
-    <layout-to-restore>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3448718" sideWeight="0.8230373" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32820514" sideWeight="0.488417" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30641025" sideWeight="0.17696267" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30897436" sideWeight="0.49227798" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32689834" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24967825" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36153847" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -722,341 +686,430 @@
           <option name="timeStamp" value="127" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="130" />
+      <option name="time" value="195" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGFilter.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/DAGVisitor.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-507">
-          <caret line="14" column="30" lean-forward="false" selection-start-line="14" selection-start-column="30" selection-end-line="14" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGCreation.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/constants.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="23" lean-forward="false" selection-start-line="8" selection-start-column="23" selection-end-line="8" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="26" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGRange.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGReduceByKey.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="13" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGReduce.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGReduce.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-108">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGOperator.cpp" />
     <entry file="file://$PROJECT_DIR$/src/dag/DAGOperator.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="24" lean-forward="false" selection-start-line="9" selection-start-column="24" selection-end-line="9" selection-end-column="24" />
+        <state relative-caret-position="359">
+          <caret line="25" column="35" lean-forward="false" selection-start-line="25" selection-start-column="18" selection-end-line="25" selection-end-column="35" />
+          <folding>
+            <element signature="e#93#111#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGReduceByKey.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/c++/5/bits/basic_string.h">
+    <entry file="file:///usr/local/include/graphviz/cgraph.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="170">
-          <caret line="5314" column="2" lean-forward="false" selection-start-line="5314" selection-start-column="2" selection-end-line="5314" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/Operators.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_example/c_execute.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="22" lean-forward="false" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_example/c_execute.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="14" lean-forward="true" selection-start-line="0" selection-start-column="14" selection-end-line="0" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/c_execute.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/code_gen/CodeGenVisitor.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="350">
-          <caret line="526" column="45" lean-forward="false" selection-start-line="526" selection-start-column="45" selection-end-line="526" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="28" column="46" lean-forward="false" selection-start-line="28" selection-start-column="46" selection-end-line="28" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGCreation.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="49" column="0" lean-forward="false" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_1.ll" />
-    <entry file="file://$PROJECT_DIR$/src/operators/JoinOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1836">
-          <caret line="102" column="6" lean-forward="false" selection-start-line="102" selection-start-column="6" selection-end-line="102" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/ReduceByKeyOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="70" column="12" lean-forward="false" selection-start-line="70" selection-start-column="12" selection-end-line="70" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/analyze/map_diassembly_execute.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="1470" column="54" lean-forward="false" selection-start-line="1470" selection-start-column="42" selection-end-line="1470" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/Makefile.release">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="26" column="5" lean-forward="false" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/stdlib.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="479" column="13" lean-forward="false" selection-start-line="479" selection-start-column="13" selection-end-line="479" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="577">
-          <caret line="36" column="45" lean-forward="false" selection-start-line="36" selection-start-column="45" selection-end-line="36" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/reduce_operator_function_0.ll" />
-    <entry file="file://$PROJECT_DIR$/src/utils/timing.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/ReduceOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="25" column="5" lean-forward="false" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/Operator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="11" column="45" lean-forward="true" selection-start-line="11" selection-start-column="15" selection-end-line="11" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="32" column="59" lean-forward="false" selection-start-line="32" selection-start-column="59" selection-end-line="32" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/benchmarks/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="21" lean-forward="true" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/analyze/map_diassembly_main.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="186">
-          <caret line="640" column="58" lean-forward="false" selection-start-line="640" selection-start-column="55" selection-end-line="640" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/benchmarks/main.ll">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="3056" column="13" lean-forward="false" selection-start-line="3056" selection-start-column="0" selection-end-line="3056" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/benchmarks/main.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="471" column="22" lean-forward="false" selection-start-line="471" selection-start-column="19" selection-end-line="471" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/map_operator_function_0.ll">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/benchmarks/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="81" column="24" lean-forward="true" selection-start-line="81" selection-start-column="24" selection-end-line="82" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/execute_nested.ll" />
-    <entry file="file://$PROJECT_DIR$/gen/execute.s" />
-    <entry file="file://$PROJECT_DIR$/gen_example/execute.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-723">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_example/execute_nested.ll">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="93" column="63" lean-forward="false" selection-start-line="93" selection-start-column="63" selection-end-line="93" selection-end-column="98" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/MapOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="19" column="28" lean-forward="false" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/CollectionSourceOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="4" column="38" lean-forward="true" selection-start-line="4" selection-start-column="38" selection-end-line="4" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/execute.ll">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1708">
-          <caret line="67" column="29" lean-forward="true" selection-start-line="67" selection-start-column="29" selection-end-line="67" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/execute.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="54" column="15" lean-forward="true" selection-start-line="54" selection-start-column="15" selection-end-line="54" selection-end-column="15" />
+          <caret line="354" column="11" lean-forward="false" selection-start-line="354" selection-start-column="11" selection-end-line="354" selection-end-column="11" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/optimize/SchemaInference.cpp">
+    <entry file="file://$PROJECT_DIR$/src/utils/printDAG.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="429">
+          <caret line="58" column="0" lean-forward="true" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/DAGOperator.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="42" lean-forward="false" selection-start-line="6" selection-start-column="42" selection-end-line="6" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../llvm/llvm/lib/IR/Function.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-462">
+          <caret line="223" column="25" lean-forward="true" selection-start-line="223" selection-start-column="25" selection-end-line="223" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/libs/llvm/IR/Module.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="83">
+          <caret line="145" column="11" lean-forward="true" selection-start-line="145" selection-start-column="11" selection-end-line="145" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/IR/LLVMContext.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="101">
+          <caret line="35" column="16" lean-forward="true" selection-start-line="35" selection-start-column="16" selection-end-line="35" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/IR_analyzer/SchemaInference.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-505">
+          <caret line="87" column="30" lean-forward="true" selection-start-line="87" selection-start-column="30" selection-end-line="88" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/IR/DerivedTypes.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="102" column="6" lean-forward="false" selection-start-line="102" selection-start-column="6" selection-end-line="102" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/IR/Type.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="395" column="15" lean-forward="false" selection-start-line="395" selection-start-column="15" selection-end-line="395" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/c++/5/bits/stl_vector.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="212" column="2" lean-forward="true" selection-start-line="212" selection-start-column="2" selection-end-line="212" selection-end-column="2" />
+          <folding>
+            <element signature="e#6783#6837#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/ADT/ArrayRef.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-55">
+          <caret line="66" column="17" lean-forward="false" selection-start-line="66" selection-start-column="17" selection-end-line="66" selection-end-column="17" />
+          <folding>
+            <element signature="e#2770#2782#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/utils.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="74" column="0" lean-forward="false" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/IR_analyzer/LLVMParser.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="22" lean-forward="false" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+        <state relative-caret-position="180">
+          <caret line="43" column="15" lean-forward="false" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="15" />
+          <folding>
+            <element signature="e#83#100#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/IR/GlobalValue.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="395">
+          <caret line="59" column="4" lean-forward="true" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/IR/Function.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-370">
+          <caret line="119" column="2" lean-forward="false" selection-start-line="119" selection-start-column="2" selection-end-line="119" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/Transforms/Utils/ValueMapper.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="25" column="48" lean-forward="false" selection-start-line="25" selection-start-column="48" selection-end-line="25" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/Transforms/Utils/Cloning.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="142" column="51" lean-forward="false" selection-start-line="142" selection-start-column="23" selection-end-line="142" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/ADT/SmallVector.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3448">
+          <caret line="336" column="0" lean-forward="true" selection-start-line="336" selection-start-column="0" selection-end-line="336" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/IR/Module.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-10">
+          <caret line="767" column="4" lean-forward="false" selection-start-line="767" selection-start-column="4" selection-end-line="767" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/ADT/ilist.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="341" column="7" lean-forward="false" selection-start-line="341" selection-start-column="7" selection-end-line="341" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/c_type_to_llvm.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding>
+            <element signature="e#40#57#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/benchmarks/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="16" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/include/llvm/Support/raw_ostream.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="462" column="6" lean-forward="false" selection-start-line="462" selection-start-column="6" selection-end-line="462" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="24" column="0" lean-forward="true" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmake-build-debug/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-738">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmake-build-release/CMakeFiles/progress.marks">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmake-build-release/CMakeFiles/Makefile2">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="181">
+          <caret line="83" column="30" lean-forward="true" selection-start-line="83" selection-start-column="30" selection-end-line="83" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmake-build-release/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="19" column="19" lean-forward="true" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_0.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_1.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_3.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_4.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/map_operator_function_2.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="20" lean-forward="false" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/map_operator_function_5.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/map_operator_function_6.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="0" lean-forward="false" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/debug_print.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="40" lean-forward="true" selection-start-line="5" selection-start-column="40" selection-end-line="5" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="16" column="56" lean-forward="false" selection-start-line="16" selection-start-column="56" selection-end-line="16" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operators/FilterOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="20" column="45" lean-forward="false" selection-start-line="20" selection-start-column="45" selection-end-line="20" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operators/CollectionSourceOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="13" column="22" lean-forward="false" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operators/JoinOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="29" column="0" lean-forward="false" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/IR_analyzer/LLVMParser.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="2" lean-forward="false" selection-start-line="0" selection-start-column="2" selection-end-line="7" selection-end-column="33" />
+        <state relative-caret-position="1078">
+          <caret line="213" column="21" lean-forward="false" selection-start-line="213" selection-start-column="21" selection-end-line="213" selection-end-column="21" />
+          <folding>
+            <element signature="e#40#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/optimize/SimplePredicateMoveAround.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="718">
+          <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/optimize/SchemaInference.h">
+    <entry file="file://$PROJECT_DIR$/src/operators/MapOperator.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="2" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
+        <state relative-caret-position="126">
+          <caret line="13" column="4" lean-forward="false" selection-start-line="13" selection-start-column="4" selection-end-line="13" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/optimize/Optimizer.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="9" column="12" lean-forward="false" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/execute.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="59" column="1" lean-forward="false" selection-start-line="59" selection-start-column="1" selection-end-line="59" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/optimize/Optimizer.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/generate_dag_plan.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="23" column="12" lean-forward="true" selection-start-line="23" selection-start-column="12" selection-end-line="23" selection-end-column="12" />
-          <folding />
+        <state relative-caret-position="396">
+          <caret line="30" column="10" lean-forward="true" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -116,11 +116,6 @@ class TestIntegration(unittest.TestCase):
         res = d.collect()
         self.assertListEqual(list(res), list(map(mapF2, filter(filtF1, map(mapF1, input_)))))
 
-    def test_map_filter_flat_map_filter_flat_map(self):
-        bc = BlazeContext()
-        d = bc.collection(range(0, 10)).map(lambda w: w * 3).filter(lambda w: w % 2 == 0).flat_map(
-            lambda w: [0]).filter(lambda w: w % 3).flat_map(lambda w: [0])
-        d.collect()
 
 
 if __name__ == '__main__':

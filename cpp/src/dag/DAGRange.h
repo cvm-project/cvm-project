@@ -8,6 +8,7 @@
 #include "DAGOperator.h"
 #include <string>
 
+class DAGVisitor;
 using std::string;
 
 class DAGRange : public DAGOperator {
@@ -23,6 +24,12 @@ public:
     string from;
     string to;
     string step = "1";
+
+
+
+    std::string get_name() {
+        return "Range_" + to_string(id);
+    }
 };
 
 

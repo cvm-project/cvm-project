@@ -9,10 +9,18 @@
 #include "DAGOperator.h"
 #include "iostream"
 
+/**
+ * destructor responsible for freeing the columns and the dag operators
+ */
 class DAG {
 public:
     DAGOperator *sink;
     std::string action;
+
+    ~DAG(){
+        Column::delete_columns();
+        delete(sink);
+    }
 };
 
 

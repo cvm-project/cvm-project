@@ -13,8 +13,8 @@ public:
         return new DAGCollection;
     };
 
-    DAGCollection *getThis(){
-        return this;
+    std::string get_name() {
+        return "Collection_" + to_string(id);
     }
 
     void accept(DAGVisitor &v);

@@ -8,6 +8,7 @@
 #include <iostream>
 #include "DAGOperator.h"
 
+class DAGVisitor;
 class DAGMap : public DAGOperator {
 public:
     static const std::string DAG_OP_NAME;
@@ -17,6 +18,10 @@ public:
     };
 
     void accept(DAGVisitor &v);
+
+    std::string get_name() {
+        return "Map_" + to_string(id);
+    }
 
 };
 

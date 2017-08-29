@@ -18,6 +18,10 @@ public:
 
     void accept(DAGVisitor &v);
 
+    std::string get_name() {
+        return "Join_" + to_string(id);
+    }
+
 };
 
 

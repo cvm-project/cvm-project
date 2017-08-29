@@ -2,7 +2,7 @@ CC = clang
 FLAGS = -O3  -flto -ffast-math
 
 SOURCES = execute.cpp
-INC = -I ../src/
+INC = -I ../src/ -I ../src/utils/
 UDF_SOURCES = $(wildcard functions_llvm/*.ll)
 PCH = -include-pch ../src/operators/Operators.h.gch
 
