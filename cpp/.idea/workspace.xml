@@ -48,8 +48,8 @@
       <file leaf-file-name="CollectionSourceOperator.h" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/operators/CollectionSourceOperator.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="35" column="23" lean-forward="true" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
+            <state relative-caret-position="198">
+              <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
               <folding>
                 <element signature="e#169#206#0" expanded="true" />
               </folding>
@@ -212,7 +212,7 @@
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1" />
+    <option name="x" value="1599" />
     <option name="y" value="-11" />
     <option name="width" value="1602" />
     <option name="height" value="912" />
@@ -674,12 +674,12 @@
       <workItem from="1503833950650" duration="71879000" />
       <workItem from="1504434625619" duration="6021000" />
       <workItem from="1504449719478" duration="4916000" />
-      <workItem from="1504530242109" duration="19883000" />
+      <workItem from="1504530242109" duration="20104000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="643115000" />
+    <option name="totallyTimeSpent" value="643336000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -691,7 +691,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="-11" width="1602" height="912" extended-state="6" />
+    <frame x="1599" y="-11" width="1602" height="912" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31595883" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -1134,8 +1134,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/operators/CollectionSourceOperator.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="35" column="23" lean-forward="true" selection-start-line="35" selection-start-column="23" selection-end-line="35" selection-end-column="23" />
+        <state relative-caret-position="198">
+          <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
           <folding>
             <element signature="e#169#206#0" expanded="true" />
           </folding>
