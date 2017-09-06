@@ -7,8 +7,8 @@ class BlazeContext:
         return TextSource(path)
 
     @staticmethod
-    def collection(values):
-        return CollectionSource(values)
+    def collection(values, add_index=False):
+        return CollectionSource(values, add_index)
 
     @staticmethod
     def range_(from_, to, step=1):
@@ -19,5 +19,5 @@ class BlazeContext:
         return GeneratorSource(func)
 
     @staticmethod
-    def numpy_array(array):
-        return NumpyArraySource(array)
+    def numpy_array(array, add_index=False):
+        return NumpyArraySource(array, add_index)

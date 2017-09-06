@@ -9,6 +9,7 @@
 
 class DAGCollection : public DAGOperator {
 public:
+    bool add_index = false;
     static DAGOperator *make_dag_operator() {
         return new DAGCollection;
     };
@@ -18,7 +19,7 @@ public:
     }
 
     void accept(DAGVisitor &v);
-
+    void parse_json(nlohmann::json);
 };
 
 

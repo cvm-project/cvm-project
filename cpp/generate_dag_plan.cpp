@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <tuple>
 #include <iostream>
+#include <cstring>
 #include "code_gen/generate_code.h"
 #include "utils/timing.h"
 #include "IR_analyzer/SchemaInference.h"
@@ -20,7 +21,7 @@ int generate_dag_plan(char *dagstr) {
 
     DAG *dag = parse_dag(std::string(dagstr));
     //scheme inference
-//    printDAG(dag);
+    printDAG(dag);
     SchemaInference si;
     si.start_visit(dag);
     printDAG(dag);

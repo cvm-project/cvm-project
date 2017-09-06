@@ -53,10 +53,11 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     output_type = replace_unituple(output_type)
     # print("new output type" + str(output_type))
 
-    if isinstance(input_type, list):
-        cfunc_code = cfunc(output_type(*input_type), fastmath=True)(func)
-    else:
-        cfunc_code = cfunc(output_type(input_type), fastmath=True)(func)
+    input_type = dec_func.nopython_signatures[0].args
+    # if isinstance(input_type, list):
+    #     cfunc_code = cfunc(output_type(*input_type), fastmath=True)(func)
+    # else:
+    cfunc_code = cfunc(output_type(*input_type), fastmath=True)(func)
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
     m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
@@ -135,6 +136,9 @@ class RDD(object):
 
     def join(self, other):
         return Join(self, other)
+
+    def cartesian(self, other):
+        return Cartesian(self, other)
 
     def collect(self):
         res = self.startDAG("collect")
@@ -257,6 +261,30 @@ class Join(ShuffleRDD):
         return cur_index
 
 
+class Cartesian(ShuffleRDD):
+    def __init__(self, left, right):
+        super(Cartesian, self).__init__(parent=left)
+        self.parents.append(right)
+
+    def compute_output_type(self):
+        p1 = make_tuple(self.parents[0].output_type) if len(self.parents[0].output_type) == 1 else self.parents[
+            0].output_type
+        p2 = make_tuple(self.parents[1].output_type) if len(self.parents[1].output_type) == 1 else self.parents[
+            1].output_type
+        return [p1, p2]
+
+    def writeDAG(self, daglist, index):
+        if self.dic:
+            return self.dic[ID]
+        cur_index = super(Cartesian, self).writeDAG(daglist, index)
+        dic = self.dic
+        dic[OP] = 'cartesian'
+
+        self.output_type = replace_unituple(self.compute_output_type())
+        dic[OUTPUT_TYPE] = self.output_type
+        return cur_index
+
+
 class Reduce(ShuffleRDD):
     """
     binary function must be commutative and associative
@@ -299,7 +327,19 @@ class ReduceByKey(ShuffleRDD):
 
     def compute_input_type(self):
         # repeat the input type two times minus the key
-        return [make_tuple(self.parents[0].output_type[1:]), make_tuple(self.parents[0].output_type[1:])]
+        par_type = self.parents[0].output_type
+        if isinstance(par_type, Tuple):
+            if par_type.count == 2:
+                type_1 = par_type[0][1:]
+                type_2 = par_type[1]
+                return [(make_tuple(flatten([type_1, type_2]))), make_tuple(flatten([type_1, type_2]))]
+            elif par_type.count == 3:
+                type_1 = par_type[1]
+                type_2 = par_type[2:]
+                return [(make_tuple(flatten([type_1, type_2]))), make_tuple(flatten([type_1, type_2]))]
+            else:
+                return [make_tuple(par_type[1:])]
+        return [self.parents[0].output_type[1], self.parents[0].output_type[1]]
 
     def writeDAG(self, daglist, index):
         if self.dic:
@@ -327,13 +367,17 @@ class CollectionSource(RDD):
     to prevent freeing input memory before the end of computation
     """
 
-    def __init__(self, values):
+    def __init__(self, values, add_index=False):
         assert values, "Empty collection not allowed"
         super(CollectionSource, self).__init__()
-        self.output_type = replace_unituple(numba.typeof(values[0]))
+        if add_index:
+            self.output_type = replace_unituple(numba.Tuple([numba.typeof(1), numba.typeof(values[0])]))
+        else:
+            self.output_type = replace_unituple(numba.typeof(values[0]))
         self.array = np.array(values, dtype=numba_type_to_dtype(self.output_type))
         self.data_ptr = self.array.__array_interface__['data'][0]
         self.size = self.array.size
+        self.add_index = add_index
 
     def writeDAG(self, daglist, index):
         if self.dic:
@@ -344,23 +388,29 @@ class CollectionSource(RDD):
         dic[OUTPUT_TYPE] = self.output_type
         dic[DATA_PTR] = self.data_ptr
         dic[DATA_SIZE] = self.size
+        dic[ADD_INDEX] = self.add_index
 
         return cur_index
 
 
 class NumpyArraySource(RDD):
-    def __init__(self, array):
+    def __init__(self, array, add_index=False):
         super(NumpyArraySource, self).__init__()
+
         try:
             self.output_type = replace_unituple(typeof(tuple(array[0])))
         except TypeError:  # scalar type
             self.output_type = typeof(array[0])
+
+        if add_index:
+            self.output_type = replace_unituple(Tuple(flatten([numba.typeof(1), self.output_type])))
         # self.size = array.shape[0]
         self.size = array.shape[0]
         self.data_ptr = array.__array_interface__['data'][0]
         # keep a reference to the np array
         # until the end of the execution to prevent gc
         self.array = array
+        self.add_index = add_index
 
     def writeDAG(self, daglist, index):
         if self.dic:
@@ -371,6 +421,7 @@ class NumpyArraySource(RDD):
         dic[DATA_PTR] = self.data_ptr
         dic[DATA_SIZE] = self.size
         dic[OUTPUT_TYPE] = self.output_type
+        dic[ADD_INDEX] = self.add_index
         return cur_index
 
 

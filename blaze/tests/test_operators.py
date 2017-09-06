@@ -3,8 +3,6 @@ import unittest
 from functools import reduce
 
 from blaze.blaze_context import BlazeContext
-from itertools import groupby
-from operator import itemgetter
 
 
 class TestJoin(unittest.TestCase):
@@ -46,17 +44,17 @@ class TestJoin(unittest.TestCase):
 
 
 class TestFilter(unittest.TestCase):
-    def test_filter_collect(self):
-        bc = BlazeContext()
-        d = bc.collection(range(0, 10)).filter(lambda w: w % 2 == 0)
-        res = d.collect()
-        self.assertListEqual(list(res), list(filter(lambda w: w % 2 == 0, range(0, 10))))
-
     def test_filter_count(self):
         bc = BlazeContext()
         d = bc.collection(range(0, 10)).filter(lambda w: w % 2 == 0)
         res = d.count()
         self.assertEqual(res, len(list(filter(lambda w: w % 2 == 0, range(0, 10)))))
+
+    def test_filter_collect(self):
+        bc = BlazeContext()
+        d = bc.collection(range(0, 10)).filter(lambda w: w % 2 == 0)
+        res = d.collect()
+        self.assertListEqual(list(res), list(filter(lambda w: w % 2 == 0, range(0, 10))))
 
 
 class TestMap(unittest.TestCase):
@@ -73,12 +71,12 @@ class TestMap(unittest.TestCase):
         self.assertEqual(res, 10)
 
 
-class TestFlatMap(unittest.TestCase):
-    def test_flat_map(self):
-        bc = BlazeContext()
-        d = bc.collection(range(0, 10)).flat_map(lambda w: [0])
-        res = d.collect()
-        self.assertEqual(res, [0 for i in range(0, 10)])
+# class TestFlatMap(unittest.TestCase):
+#     def test_flat_map(self):
+#         bc = BlazeContext()
+#         d = bc.collection(range(0, 10)).flat_map(lambda w: [0])
+#         res = d.collect()
+#         self.assertEqual(res, [0 for i in range(0, 10)])
 
 
 class TestReduce(unittest.TestCase):
@@ -96,12 +94,46 @@ class TestReduce(unittest.TestCase):
 
 
 class TestReduceByKey(unittest.TestCase):
-    def test_reduce_by_key_count(self):
+    def test_reduce_by_key(self):
         bc = BlazeContext()
         input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
         d = bc.collection(input_).reduce_by_key(lambda t1, t2: t1 + t2).collect()
         truth = {(0, 2), (1, 3)}
         self.assertSetEqual(set(tuple(t) for t in d), truth)
+
+    def test_reduce_by_key_tuple(self):
+        bc = BlazeContext()
+        input_ = [(0, 1, 2), (1, 1, 2), (1, 1, 2), (0, 1, 2), (1, 1, 2)]
+        d = bc.collection(input_).reduce_by_key(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).collect()
+        truth = {(0, 2, 4), (1, 3, 6)}
+        self.assertSetEqual(set(tuple(t) for t in d), truth)
+
+
+class TestCartesian(unittest.TestCase):
+    def test_count(self):
+        bc = BlazeContext()
+        input1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
+        data1 = bc.collection(input1)
+        data2 = bc.collection(input2)
+
+        joined = data1.cartesian(data2)
+        res = joined.count()
+        truth = 20
+        self.assertEqual(res, truth)
+
+    def test_collect(self):
+        bc = BlazeContext()
+        input1 = [(1, 2), (1, 3)]
+        input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77)]
+        data1 = bc.collection(input1)
+        data2 = bc.collection(input2)
+
+        joined = data1.cartesian(data2)
+        res = joined.collect()
+        truth = {(1, 2, 1, 22, 33), (1, 2, 1, 44, 55), (1, 2, 8, 66, 77), (1, 3, 1, 22, 33), (1, 3, 1, 44, 55),
+                 (1, 3, 8, 66, 77)}
+        self.assertSetEqual(set(tuple(t) for t in res), truth)
 
 
 class TestIntegration(unittest.TestCase):
@@ -115,7 +147,6 @@ class TestIntegration(unittest.TestCase):
         d = bc.collection(input_).map(mapF1).filter(filtF1).map(mapF2)
         res = d.collect()
         self.assertListEqual(list(res), list(map(mapF2, filter(filtF1, map(mapF1, input_)))))
-
 
 
 if __name__ == '__main__':

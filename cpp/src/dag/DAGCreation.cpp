@@ -9,7 +9,7 @@
 #include "DAGJoin.h"
 #include "DAGFilter.h"
 #include "DAGReduceByKey.h"
-#include "TupleField.h"
+#include "DAGCartesian.h"
 #include "utils/utils.h"
 
 
@@ -33,6 +33,7 @@ void load_operators() {
     opMap.emplace(JOIN, &DAGJoin::make_dag_operator);
     opMap.emplace(REDUCE, &DAGReduce::make_dag_operator);
     opMap.emplace(REDUCEBYKEY, &DAGReduceByKey::make_dag_operator);
+    opMap.emplace(CARTESIAN, &DAGCartesian::make_dag_operator);
 }
 
 DAG *parse(std::stringstream *istream) {

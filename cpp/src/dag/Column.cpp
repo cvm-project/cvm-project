@@ -26,9 +26,11 @@ Column *Column::makeColumn() {
 }
 
 void Column::delete_columns() {
+
     for (auto c : Column::all_columns) {
         delete (c);
     }
+    Column::all_columns.clear();
 }
 
 vector<TupleField *> Column::getFields() {

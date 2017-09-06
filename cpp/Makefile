@@ -316,6 +316,36 @@ src/dag/Column.cpp.s:
 	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/Column.cpp.s
 .PHONY : src/dag/Column.cpp.s
 
+src/dag/DAGCartesian.o: src/dag/DAGCartesian.cpp.o
+
+.PHONY : src/dag/DAGCartesian.o
+
+# target to build an object file
+src/dag/DAGCartesian.cpp.o:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGCartesian.cpp.o
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCartesian.cpp.o
+.PHONY : src/dag/DAGCartesian.cpp.o
+
+src/dag/DAGCartesian.i: src/dag/DAGCartesian.cpp.i
+
+.PHONY : src/dag/DAGCartesian.i
+
+# target to preprocess a source file
+src/dag/DAGCartesian.cpp.i:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGCartesian.cpp.i
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCartesian.cpp.i
+.PHONY : src/dag/DAGCartesian.cpp.i
+
+src/dag/DAGCartesian.s: src/dag/DAGCartesian.cpp.s
+
+.PHONY : src/dag/DAGCartesian.s
+
+# target to generate assembly for a file
+src/dag/DAGCartesian.cpp.s:
+	$(MAKE) -f CMakeFiles/generate.dir/build.make CMakeFiles/generate.dir/src/dag/DAGCartesian.cpp.s
+	$(MAKE) -f CMakeFiles/cpp.dir/build.make CMakeFiles/cpp.dir/src/dag/DAGCartesian.cpp.s
+.PHONY : src/dag/DAGCartesian.cpp.s
+
 src/dag/DAGCollection.o: src/dag/DAGCollection.cpp.o
 
 .PHONY : src/dag/DAGCollection.o
@@ -704,6 +734,9 @@ help:
 	@echo "... src/dag/Column.o"
 	@echo "... src/dag/Column.i"
 	@echo "... src/dag/Column.s"
+	@echo "... src/dag/DAGCartesian.o"
+	@echo "... src/dag/DAGCartesian.i"
+	@echo "... src/dag/DAGCartesian.s"
 	@echo "... src/dag/DAGCollection.o"
 	@echo "... src/dag/DAGCollection.i"
 	@echo "... src/dag/DAGCollection.s"

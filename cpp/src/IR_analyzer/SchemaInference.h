@@ -59,6 +59,21 @@ public:
         }
     }
 
+    void visit(DAGCartesian *op) {
+        DEBUG_PRINT("schema inference cartesian");
+        visitPredecessors(op);
+
+        //copy output columns from the predecessors
+        for (size_t i = 0; i < op->predecessors[0]->fields.size(); i++) {
+            Column *col = op->predecessors[0]->fields[i].column;
+            op->fields[i].column = col;
+        }
+        for (size_t i = 0; i < op->predecessors[1]->fields.size(); i++) {
+            Column *col = op->predecessors[1]->fields[i].column;
+            op->fields[i + op->predecessors[0]->fields.size()].column = col;
+        }
+    }
+
     void visit(DAGJoin *op) {
         DEBUG_PRINT("visiting join");
         visitPredecessors(op);
@@ -130,6 +145,8 @@ public:
         //keep the key column
         DAGOperator *pred = op->predecessors[0];
         op->fields[0].column = pred->fields[0].column;
+        //TODO add read, dead sets
+        //TODO add key to the read set
 
         //generate a new column for every output
         for (size_t i = 1; i < op->fields.size(); i++) {

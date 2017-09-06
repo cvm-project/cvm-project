@@ -169,8 +169,23 @@ public:
     };
 
 
+    void visit(DAGCartesian *op) {
+        DAGVisitor::visit(op);
+        string operatorName = "CartesianOperator";
+        emitComment(operatorName);
+
+        string opName = getNextOperatorName();
+        auto tType = generateTupleType(op->output_type);
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType.first, tType.second));
+
+        includes.insert("\"operators/" + operatorName + ".h\"");
+
+        emitCartesianMake(opName, op);
+        appendLineBodyNoCol();
+    };
+
+
     void visit(DAGReduceByKey *op) {
-        DEBUG_PRINT("reduce by key called");
         DAGVisitor::visit(op);
         string operatorName = "ReduceByKeyOperator";
         emitComment(operatorName);
@@ -398,6 +413,33 @@ private:
         appendLineBody(line);
     }
 
+
+    void emitCartesianMake(string opVarName, DAGCartesian *op) {
+        string line("auto ");
+        string pred2Tuple = get<1>(operatorNameTupleTypeMap[op->predecessors[1]->id]);
+        line.append(opVarName)
+                .append(" = make")
+                .append("CartesianOperator")
+                .append("<")
+                .append(getCurrentTupleName() + ", " +
+                        pred2Tuple)
+                .append(">(");
+
+        string argList;
+        for (auto it = op->predecessors.begin(); it < op->predecessors.end(); it++) {
+
+            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
+            if (it != (--op->predecessors.end())) {
+                argList.append(", ");
+            }
+        }
+
+        line.append(argList);
+        line.append(")");
+        appendLineBody(line);
+    }
+
+
     void emitReduceByKeyMake(string opVarName, DAGReduceByKey *op) {
         string line("auto ");
         line.append(opVarName)
@@ -521,10 +563,13 @@ private:
         tabInd--;
         appendLineBodyNoCol("};");
         if (reduce_by_key) {
-            string flatInputType = string_replace(op->predecessors[0]->output_type, "(", "");
-            flatInputType = string_replace(flatInputType, ")", "");
-            regex reg(".*,");
-            flatInputType = regex_replace(flatInputType, reg, "");
+            string flatInputType = "";
+            for (size_t i = 1; i < op->predecessors[0]->fields.size(); i++) {
+                auto t = op->predecessors[0]->fields[i];
+                flatInputType += t.type + ", ";
+            }
+            flatInputType.pop_back();
+            flatInputType.pop_back();
             llvmFuncDecls.push_back(inputType + " " + llvmFuncName + "(" + flatInputType + ", " + flatInputType + ");");
         }
         else {

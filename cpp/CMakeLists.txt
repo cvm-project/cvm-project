@@ -14,7 +14,7 @@ set(SOURCE_FILES main.cpp src/code_gen/generate_code.cpp generate_dag_plan.cpp c
         src/dag/DAGCreation.cpp
         src/dag/DAGOperator.cpp
         src/dag/DAGMap.cpp src/dag/DAGCollection.cpp src/dag/DAGRange.cpp src/dag/DAGFilter.cpp src/dag/DAGJoin.cpp
-        src/dag/DAGReduce.cpp src/dag/DAGReduceByKey.cpp
+        src/dag/DAGReduce.cpp src/dag/DAGReduceByKey.cpp src/dag/DAGCartesian.cpp
         src/utils/utils.cpp)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
 

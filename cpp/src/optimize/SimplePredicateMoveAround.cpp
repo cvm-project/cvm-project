@@ -31,18 +31,20 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
 
                     if (currentOp->successors.size() > 0) {
                         currentOp->successors[0] = filt;
+                        DAGOperator *succ = filt->successors[0];
+
+                        ptrdiff_t index = distance(succ->predecessors.begin(),
+                                                   find(succ->predecessors.begin(),
+                                                        succ->predecessors.end(), currentOp));
+                        succ->predecessors[index] = filt;
                     }
                     else {
+                        //currentOp must be the sink
+                        //reassign sink to the filter
+                        dag->sink = filt;
                         currentOp->successors.push_back(filt);
-                        filt->successors.resize(1);
                     }
 
-                    DAGOperator *succ = filt->successors[0];
-
-                    ptrdiff_t index = distance(succ->predecessors.begin(),
-                                               find(succ->predecessors.begin(),
-                                                    succ->predecessors.end(), currentOp));
-                    succ->predecessors[index] = filt;
 
 
                     //change the llvm ir signature
@@ -70,14 +72,15 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
 void SimplePredicateMoveAround::visit(DAGFilter *op) {
     DAGVisitor::visit(op);
     DAGFilter *filt = op->copy();
+    DAGOperator *pred = op->predecessors[0];
 
     //connect the predecessors and successors
     //if this is the sink, reassign the sink
     if (op->successors.size() == 0) {
-        dag->sink = op->predecessors[0];
+        pred->successors.clear();
+        dag->sink = pred;
     }
     else {
-        DAGOperator *pred = op->predecessors[0];
         DAGOperator *succ = op->successors[0];
         pred->successors[0] = succ;
 

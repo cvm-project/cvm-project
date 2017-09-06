@@ -6,8 +6,9 @@
 #define CPP_COLLECTIONSOURCEOPERATOR_H
 
 #include "Operator.h"
+#include <cstring>
 
-template<class Tuple>
+template<class Tuple, bool add_index = false>
 class CollectionSourceOperator : public Operator {
 public:
 
@@ -19,7 +20,7 @@ public:
 
     INLINE Optional<Tuple> next() {
         if (index < size) {
-            auto r = values[index];
+            Tuple r = build_result();
             index++;
             return r;
         }
@@ -32,7 +33,21 @@ public:
 private:
     const size_t size;
     size_t index;
-    const Tuple *values;
+    const void *values;
+
+    INLINE Tuple build_result() {
+        Tuple res;
+        char *resp = (char *) &res;
+        if (add_index) {
+            size_t tuple_size = sizeof(Tuple) - sizeof(size_t);
+            *((size_t *) resp) = index;
+            memcpy(resp + sizeof(size_t), (char*)values + tuple_size * index, tuple_size);
+        }
+        else {
+            *((Tuple *) resp) = ((Tuple *) values)[index];
+        }
+        return res;
+    }
 };
 
 template<class Tuple>

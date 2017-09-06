@@ -127,11 +127,19 @@ def replace_unituple(type_):
         out.name = "(%s)" % ', '.join(str(i) for i in child_types)
         out.count = len(child_types)
     elif isinstance(type_, nb_types.UniTuple):
-        type_type = nb_types.Tuple([])
-        type_type.types = (replace_unituple(type_.dtype),) * type_.count
-        type_type.count = type_.count
-        type_type.name = "(%s)" % ', '.join(str(i) for i in type_type.types)
-        out = type_type
+        # type_type = nb_types.Tuple([])
+        # type_type.types = (replace_unituple(type_.dtype),) * type_.count
+        # type_type.count = type_.count
+        # type_type.name = "(%s)" % ', '.join(str(i) for i in type_type.types)
+        # out = type_type
+        child_types = []
+        for child_type in type_.types:
+            child_types.append(replace_unituple(child_type))
+        out = nb_types.Tuple([])
+        out.types = tuple(child_types)
+        out.name = "(%s)" % ', '.join(str(i) for i in child_types)
+        out.count = len(child_types)
+
     elif isinstance(type_, tuple):
         out = tuple(map(lambda t: replace_unituple(t), type_))
     elif isinstance(type_, list):

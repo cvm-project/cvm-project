@@ -178,6 +178,14 @@
 			<Option target="generate"/>
 			<Option target="cpp"/>
 		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCartesian.cpp">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
+		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCartesian.h">
+			<Option target="generate"/>
+			<Option target="cpp"/>
+		</Unit>
 		<Unit filename="/home/sabir/projects/blaze/cpp/src/dag/DAGCollection.cpp">
 			<Option target="generate"/>
 			<Option target="cpp"/>
