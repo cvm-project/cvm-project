@@ -2,7 +2,23 @@ import random
 import unittest
 from functools import reduce
 
+import numpy
+
 from blaze.blaze_context import BlazeContext
+
+
+class TestCollection(unittest.TestCase):
+    def test_index(self):
+        bc = BlazeContext()
+        res = bc.collection([i ** 2 for i in range(10)], add_index=True).collect()
+        res = [tuple(r) for r in res]
+        self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
+
+    def test_index_array(self):
+        bc = BlazeContext()
+        res = bc.numpy_array(numpy.array([i ** 2 for i in range(10)]), add_index=True).collect()
+        res = [tuple(r) for r in res]
+        self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
 
 
 class TestJoin(unittest.TestCase):
@@ -147,6 +163,12 @@ class TestIntegration(unittest.TestCase):
         d = bc.collection(input_).map(mapF1).filter(filtF1).map(mapF2)
         res = d.collect()
         self.assertListEqual(list(res), list(map(mapF2, filter(filtF1, map(mapF1, input_)))))
+
+    def test_map_filter_join(self):
+        bc = BlazeContext()
+        input_ = [(1, 2), (5, 4)]
+        data2 = bc.collection([(1, 33), (0, 0)]).map(lambda t: (t[0], t[0] * 3)).filter(lambda t: t[0] > -1)
+        print(bc.collection(input_).map(lambda t: (t[0], t[1] * 10)).filter(lambda t: t[0] == 1).join(data2).collect())
 
 
 if __name__ == '__main__':

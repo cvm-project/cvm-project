@@ -63,7 +63,7 @@ public:
         includes.insert("\"operators/" + operatorName + ".h\"");
         pair<string, string> inputNamePair = getNextInputName();
         emitOperatorMake(operatorName, op, opName, "",
-                         "(" + tType.first + "*)" + inputNamePair.first + ", " + inputNamePair.second);
+                         "(" + tType.first + "*)" + inputNamePair.first + ", " + inputNamePair.second, op->add_index);
         inputNames.push_back(inputNamePair);
         appendLineBodyNoCol();
     }
@@ -350,13 +350,17 @@ private:
     }
 
     void emitOperatorMake(string opClass, DAGOperator *op, string opVarName, string opName = "",
-                          string extraArgs = "") {
+                          string extraArgs = "", bool add_boolean_template = false) {
         string line("auto ");
         line.append(opVarName)
                 .append(" = make")
                 .append(opClass)
                 .append("<")
-                .append(getCurrentTupleName()).append(">(");
+                .append(getCurrentTupleName());
+        if (add_boolean_template){
+            line.append(", true");
+        }
+        line.append(">(");
 
         string argList;
         for (auto it = op->predecessors.begin(); it < op->predecessors.end(); it++) {
@@ -742,25 +746,25 @@ private:
         //key type
         string keyName = getCurrentReduceByKeyKeyName();
         vector<string> keyTypes;
-        if (upType.find("((") == 0) {
-            //key is a tuple
-            regex reg("((.*)");
-            std::smatch m;
-            regex_search(upType, m, reg);
-            string typesStr;
-            for (auto x:m) typesStr = x;
-            typesStr = string_replace(typesStr, "(", " ");
-            typesStr = string_replace(typesStr, ")", " ");
-            typesStr = string_replace(typesStr, " ", "");
-            keyTypes = split_string(typesStr, ",");
-        }
-        else {
-            //key is the first element
-            string typesStr = string_replace(upType, "(", " ");
-            typesStr = string_replace(typesStr, ")", " ");
-            typesStr = string_replace(typesStr, " ", "");
-            keyTypes.push_back(split_string(typesStr, ",")[0]);
-        }
+//        if (upType.find("((") == 0) {
+//            //key is a tuple
+//            regex reg("((.*)");
+//            std::smatch m;
+//            regex_search(upType, m, reg);
+//            string typesStr;
+//            for (auto x:m) typesStr = x;
+//            typesStr = string_replace(typesStr, "(", " ");
+//            typesStr = string_replace(typesStr, ")", " ");
+//            typesStr = string_replace(typesStr, " ", "");
+//            keyTypes = split_string(typesStr, ",");
+//        }
+//        else {
+        //key is the first element
+        string typesStr = string_replace(upType, "(", " ");
+        typesStr = string_replace(typesStr, ")", " ");
+        typesStr = string_replace(typesStr, " ", "");
+        keyTypes.push_back(split_string(typesStr, ",")[0]);
+//        }
         string line("typedef struct {\n");
         string varName = "v";
         for (size_t i = 0; i < keyTypes.size(); i++) {

@@ -19,7 +19,7 @@ public:
     }
 
     void visit(DAGCollection *op) {
-        DEBUG_PRINT("visiting collection");
+        DEBUG_PRINT("schema inference visiting collection");
         visitPredecessors(op);
         //for every output produce a new column
         for (size_t i = 0; i < op->fields.size(); i++) {
@@ -31,7 +31,7 @@ public:
     }
 
     void visit(DAGRange *op) {
-        DEBUG_PRINT("visiting range");
+        DEBUG_PRINT("schema inference visiting range");
         visitPredecessors(op);
 
         //for every output produce a new column
@@ -44,7 +44,7 @@ public:
     }
 
     void visit(DAGFilter *op) {
-        DEBUG_PRINT("visiting filter");
+        DEBUG_PRINT("schema inference visiting filter");
         visitPredecessors(op);
 
         LLVMParser parser(op->llvm_ir);
@@ -75,7 +75,7 @@ public:
     }
 
     void visit(DAGJoin *op) {
-        DEBUG_PRINT("visiting join");
+        DEBUG_PRINT("schema inference visiting join");
         visitPredecessors(op);
 
         DAGOperator *left = op->predecessors[0];
@@ -99,7 +99,7 @@ public:
     }
 
     void visit(DAGMap *op) {
-        DEBUG_PRINT("visiting map");
+        DEBUG_PRINT("schema inference visiting map");
         visitPredecessors(op);
         LLVMParser parser(op->llvm_ir);
 
@@ -133,23 +133,32 @@ public:
         }
     }
 
-    void visit(DAGReduce *op) {
-        DEBUG_PRINT("visiting reduce");
-        visitPredecessors(op);
-    }
-
     void visit(DAGReduceByKey *op) {
-        DEBUG_PRINT("visiting reduce_by_key");
+        DEBUG_PRINT("schema inference visiting reduce_by_key");
         visitPredecessors(op);
 
         //keep the key column
         DAGOperator *pred = op->predecessors[0];
         op->fields[0].column = pred->fields[0].column;
-        //TODO add read, dead sets
-        //TODO add key to the read set
+        //add key to the read set
+        op->read_set.insert(op->fields[0].column);
 
-        //generate a new column for every output
+        LLVMParser parser(op->llvm_ir);
+
         for (size_t i = 1; i < op->fields.size(); i++) {
+            //check which of the columns are read from the second input
+
+            size_t arg_pos = i + op->fields.size() - 2;
+            auto arg = op->predecessors[0]->fields[i];
+            if (parser.is_argument_read(arg_pos)) {
+                op->read_set.insert(arg.column);
+            }
+            else {
+                //add to the dead set
+                op->dead_set.insert(arg);
+            }
+
+            //generate a new column for every output
             Column *c = Column::makeColumn();
             c->addField(&(op->fields[i]));
             //add all cols to the write set

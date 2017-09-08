@@ -50,9 +50,9 @@ private:
     }
 };
 
-template<class Tuple>
-CollectionSourceOperator<Tuple> makeCollectionSourceOperator(Tuple *data_ptr, size_t size) {
-    return CollectionSourceOperator<Tuple>(data_ptr, size);
+template<class Tuple, bool add_index = false>
+CollectionSourceOperator<Tuple, add_index> makeCollectionSourceOperator(Tuple *data_ptr, size_t size) {
+    return CollectionSourceOperator<Tuple, add_index>(data_ptr, size);
 };
 
 #endif //CPP_COLLECTIONSOURCEOPERATOR_H

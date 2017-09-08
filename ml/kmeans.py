@@ -1,5 +1,6 @@
 from math import sqrt
 
+import sys
 from six import string_types
 from sklearn.metrics import euclidean_distances
 from sklearn.utils import check_random_state
@@ -44,62 +45,65 @@ class KMeans():
     def fit(self, X, y=None):
         n_cols = len(X[0])
         bc = BlazeContext()
-        centroids = bc.numpy_array(_init_centroids(X, self.n_clusters, random_state=self.random_state), add_index=True)
+        old_centroids = _init_centroids(X, self.n_clusters, random_state=self.random_state)
+        centroids = bc.numpy_array(old_centroids, add_index=True)
+        old_centroids = centroids.collect()
+        self.tol = _tolerance(X, self.tol)
         in_ = bc.numpy_array(X, add_index=True)
-        tol = _tolerance(X, self.tol)
 
         def reduce_1(t1, t2):
-            point = t1[:n_cols]
-            old_centre = t1[n_cols:]
+            point = t1[0][:]
+            old_centre = t1[1]
+            old_dist = t1[2]
 
-            old_dist = 0
-
-            for j in range(n_cols):
-                _x1 = point[j]
-                _x2 = old_centre[1:][j+1]
-                old_dist += (_x1 - _x2) ** 2
-            new_centre = t2[n_cols:]
+            new_centre = t2[1]
 
             new_dist = 0
             for i in range(n_cols):
                 _x1 = point[i]
-                _x2 = new_centre[1:][i + 1]
+                _x2 = new_centre[1:][i]
                 new_dist += (_x1 - _x2) ** 2
             if new_dist < old_dist:
-                return point, new_centre
+                return point, new_centre, new_dist
             else:
-                return point, old_centre
+                return point, old_centre, old_dist
 
         def reduce_2(t1, t2):
-            sum = t1[0]
-            mean_c = t1[1:]
-            new_point = t2[1:]
-            for j in range(n_cols):
-                mean_c[j] = mean_c[j] + new_point[j]
-            return sum + t2[0], mean_c
+            sum = t1[1][0]
+            mean_c = t1[0][:]
+            new_point = t2[1][1:]
+            # for j in range(n_cols):
+            #     mean_c[j] += new_point[j]
+            return mean_c[0] + new_point[0], mean_c[1] + new_point[1], sum + t2[1][0], t2[1][1:]
+
+        def map_1(t):
+            s = t[1][0]
+            return t[0][0], t[0][1] / s, t[0][2] / s
 
         for i in range(self.max_iter):
-            # old_centroids = centroids
             res = centroids.cartesian(in_)
             # put points first to reduce on them
-            res = res.map(lambda t1, t2: (t2, t1))
+            res = res.map(lambda t1, t2: (t2, t1, sys.maxsize))
             # for every point compute the closest centroid (E step)
 
-            # use better version for grouped input in_
+            # TODO use better version for grouped input in_
             res = res.reduce_by_key(reduce_1)
             # put centres first to reduce on them,
-            # replace the point index with the accumulator
-            res = res.map(lambda *t: (t[0][0], 1, t[0][1:]))
+            # use the point index as the accumulator
+            res = res.map(lambda *t: (t[1], t[0]))
             # reassign each centroid to the mean
             res = res.reduce_by_key(reduce_2)
             # project the new centroids
-            centroids = res.map(lambda *t: t[1:n_cols + 1] / t[0])
+            centroids = res.map(map_1)
             # # compute error
-            dif = old_centroids - centroids
-            er = np.dot(dif, dif)
+            new_centroids = centroids.collect()
+            er = 0
+            for j in range(self.n_clusters):
+                er += sum([(a - b) ** 2 for a, b in zip(list(new_centroids[j])[1:], list(old_centroids[j])[1:])])
             if er < self.tol:
                 break
-        self.centroids = centroids.collect()
+            old_centroids = new_centroids
+
 
 
 def _k_init(X, n_clusters, x_squared_norms, random_state, n_local_trials=None):

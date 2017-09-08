@@ -21,14 +21,14 @@ int generate_dag_plan(char *dagstr) {
 
     DAG *dag = parse_dag(std::string(dagstr));
     //scheme inference
-    printDAG(dag);
+//    printDAG(dag);
     SchemaInference si;
     si.start_visit(dag);
-    printDAG(dag);
+//    printDAG(dag);
     //optimize
     Optimizer opt;
     opt.run(dag);
-    printDAG(dag);
+//    printDAG(dag);
     //generate code
     generate_code(dag);
 

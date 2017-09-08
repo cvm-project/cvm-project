@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from ml.kmeans import KMeans
 
 n_features = 2
-n_samples = 2000
+n_samples = 200
 n_clusters = 10
 
 n_init = 1
@@ -42,3 +42,6 @@ def bench_kmeans():
 
 t = timer(bench_kmeans(), 1)
 print("time kmeans  " + str(t))
+#
+# t = timer(bench_sklearn_kmeans(), 1)
+# print("time sklearn kmeans  " + str(t))

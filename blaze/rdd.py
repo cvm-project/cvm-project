@@ -180,7 +180,7 @@ class Map(PipeRDD):
         dic = self.dic
         dic[OP] = MAP
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
@@ -193,7 +193,7 @@ class Filter(PipeRDD):
         dic[OP] = FILTER
         dic[FUNC], _ = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
         self.output_type = self.parents[0].output_type
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
@@ -205,7 +205,7 @@ class FlatMap(PipeRDD):
         dic = self.dic
         dic[OP] = FLAT_MAP
         dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
@@ -281,7 +281,7 @@ class Cartesian(ShuffleRDD):
         dic[OP] = 'cartesian'
 
         self.output_type = replace_unituple(self.compute_output_type())
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
@@ -310,7 +310,7 @@ class Reduce(ShuffleRDD):
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, input_type)
         assert self.output_type == self.parents[
             0].output_type, "The reduce function must return the same type as its arguments"
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
@@ -325,21 +325,26 @@ class ReduceByKey(ShuffleRDD):
         super(ReduceByKey, self).__init__(parent)
         self.func = func
 
-    def compute_input_type(self):
+    def _compute_input_type(self):
         # repeat the input type two times minus the key
         par_type = self.parents[0].output_type
-        if isinstance(par_type, Tuple):
-            if par_type.count == 2:
-                type_1 = par_type[0][1:]
-                type_2 = par_type[1]
-                return [(make_tuple(flatten([type_1, type_2]))), make_tuple(flatten([type_1, type_2]))]
-            elif par_type.count == 3:
-                type_1 = par_type[1]
-                type_2 = par_type[2:]
-                return [(make_tuple(flatten([type_1, type_2]))), make_tuple(flatten([type_1, type_2]))]
-            else:
-                return [make_tuple(par_type[1:])]
-        return [self.parents[0].output_type[1], self.parents[0].output_type[1]]
+
+        def remove_key(type_):
+            try:
+                t = type_[0]
+                if isinstance(t, BaseTuple):
+                    r = remove_key(type_[0])
+                    type_ = make_tuple([r] + list(type_[1:]))
+                else:
+                    type_ = make_tuple(type_[1:])
+            except TypeError:
+                pass
+            return type_
+
+        par_type = remove_key(par_type)
+        if len(par_type) == 1:
+            return [par_type[1], par_type[1]]
+        return [par_type, par_type]
 
     def writeDAG(self, daglist, index):
         if self.dic:
@@ -347,10 +352,10 @@ class ReduceByKey(ShuffleRDD):
         cur_index = super(ReduceByKey, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = REDUCEBYKEY
-        input_type = self.compute_input_type()
+        input_type = self._compute_input_type()
         dic[FUNC], _ = get_llvm_ir_and_output_type(self.func, input_type)
         self.output_type = self.parents[0].output_type
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
@@ -370,11 +375,10 @@ class CollectionSource(RDD):
     def __init__(self, values, add_index=False):
         assert values, "Empty collection not allowed"
         super(CollectionSource, self).__init__()
-        if add_index:
-            self.output_type = replace_unituple(numba.Tuple([numba.typeof(1), numba.typeof(values[0])]))
-        else:
-            self.output_type = replace_unituple(numba.typeof(values[0]))
+        self.output_type = replace_unituple(numba.typeof(values[0]))
         self.array = np.array(values, dtype=numba_type_to_dtype(self.output_type))
+        if add_index:
+            self.output_type = replace_unituple(Tuple(flatten([numba.typeof(1), self.output_type])))
         self.data_ptr = self.array.__array_interface__['data'][0]
         self.size = self.array.size
         self.add_index = add_index
@@ -385,7 +389,7 @@ class CollectionSource(RDD):
         cur_index = super(CollectionSource, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'collection_source'
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         dic[DATA_PTR] = self.data_ptr
         dic[DATA_SIZE] = self.size
         dic[ADD_INDEX] = self.add_index
@@ -420,7 +424,7 @@ class NumpyArraySource(RDD):
         dic[OP] = 'collection_source'
         dic[DATA_PTR] = self.data_ptr
         dic[DATA_SIZE] = self.size
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         dic[ADD_INDEX] = self.add_index
         return cur_index
 
