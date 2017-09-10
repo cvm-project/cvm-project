@@ -157,13 +157,13 @@ def getBlazePath():
     return blaze_path
 
 
-def flatten(iterable):
+def flatten(iterable_):
     """
     Flatten nested iterable of (tuple, list).
     """
 
-    def rec(iterable):
-        for i in iterable:
+    def rec(iterable__):
+        for i in iterable__:
             if isinstance(i, (tuple, list)):
                 for j in rec(i):
                     yield j
@@ -173,4 +173,6 @@ def flatten(iterable):
             else:
                 yield i
 
-    return tuple(rec(iterable))
+    if not isinstance(iterable_, (tuple, list, nb_types.UniTuple, nb_types.Tuple)):
+        return (iterable_,)
+    return tuple(rec(iterable_))

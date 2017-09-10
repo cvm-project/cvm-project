@@ -12,6 +12,7 @@ import numpy as np
 import scipy.sparse as sp
 
 from blaze.blaze_context import BlazeContext
+from numba import njit
 
 
 def _euclidian(x1, x2):
@@ -41,6 +42,7 @@ class KMeans():
         self.dist_func = numba.njit(dist_func)
         self.tol = 1e-4
         self.random_state = random_state
+        self.cluster_centers_ = []
 
     def fit(self, X, y=None):
         n_cols = len(X[0])
@@ -76,34 +78,56 @@ class KMeans():
             #     mean_c[j] += new_point[j]
             return mean_c[0] + new_point[0], mean_c[1] + new_point[1], sum + t2[1][0], t2[1][1:]
 
+        @njit
+        def gen(l):
+            for i in l:
+                yield i
+
         def map_1(t):
             s = t[1][0]
+            # center = t[0][1:]
+            # my = gen(center)
+            # res = (a / 1 for a in [1,2])
+            # return t[0][0], res
             return t[0][0], t[0][1] / s, t[0][2] / s
 
+        def map_0(t1, t2):
+            return t2, t1, sys.maxsize
+
         for i in range(self.max_iter):
-            res = centroids.cartesian(in_)
+            cart = centroids.cartesian(in_)
             # put points first to reduce on them
-            res = res.map(lambda t1, t2: (t2, t1, sys.maxsize))
+            cart = cart.map(map_0)
             # for every point compute the closest centroid (E step)
 
-            # TODO use better version for grouped input in_
-            res = res.reduce_by_key(reduce_1)
+            # TODO use better version for grouped input
+            pnt_center = cart.reduce_by_key(reduce_1)
             # put centres first to reduce on them,
             # use the point index as the accumulator
-            res = res.map(lambda *t: (t[1], t[0]))
+            centr_pnt = pnt_center.map(lambda *t: (t[1], t[0]))
             # reassign each centroid to the mean
-            res = res.reduce_by_key(reduce_2)
+            centr_pnt = centr_pnt.reduce_by_key(reduce_2)
             # project the new centroids
-            centroids = res.map(map_1)
+            centroids = centr_pnt.map(map_1)
             # # compute error
             new_centroids = centroids.collect()
             er = 0
             for j in range(self.n_clusters):
                 er += sum([(a - b) ** 2 for a, b in zip(list(new_centroids[j])[1:], list(old_centroids[j])[1:])])
+            old_centroids = new_centroids
             if er < self.tol:
                 break
-            old_centroids = new_centroids
 
+        # compute labels and inertia
+        cart = bc.numpy_array(old_centroids).cartesian(in_)
+        # put points first to reduce on them
+        cart = cart.map(map_0)
+        # for every point compute the closest centroid (E step)
+        pnt_center_distance = cart.reduce_by_key(reduce_1).collect()
+
+
+        self.cluster_centers_ = old_centroids
+        # self.inertia_ = np.sum((X - centers[labels]) ** 2, dtype=np.float64)
 
 
 def _k_init(X, n_clusters, x_squared_norms, random_state, n_local_trials=None):

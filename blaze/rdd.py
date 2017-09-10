@@ -343,7 +343,7 @@ class ReduceByKey(ShuffleRDD):
 
         par_type = remove_key(par_type)
         if len(par_type) == 1:
-            return [par_type[1], par_type[1]]
+            return [par_type[0], par_type[0]]
         return [par_type, par_type]
 
     def writeDAG(self, daglist, index):

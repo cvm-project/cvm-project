@@ -24,7 +24,7 @@ c_execute.o: c_execute.c
 
 
 execute.so: $(UDF_OBJECTS) $(OBJECTS) c_execute.o
-	 ms-time $(CC)  $^ -o $@ -shared -lstdc++ $(FLAGS)
+	 ms-time $(CC)  $^ -o execute${LIB_ID}.so -shared -lstdc++ $(FLAGS)
 
 execute.s: execute.so
 	objdump -D $^ > $@

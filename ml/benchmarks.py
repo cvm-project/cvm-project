@@ -23,7 +23,8 @@ x, y = make_blobs(n_samples, n_features, n_clusters, random_state=random_state)
 def bench_sklearn_kmeans():
     classifier = sk_KMeans(n_clusters, n_init=n_init, max_iter=max_iter, random_state=random_state)
     classifier.fit(x)
-    print ("error: " + str(classifier.inertia_))
+    print("error: " + str(classifier.inertia_))
+    print("centroids: " + str(classifier.cluster_centers_))
 
     def run():
         return classifier.fit(x)
@@ -33,6 +34,8 @@ def bench_sklearn_kmeans():
 
 def bench_kmeans():
     classifier = KMeans(n_clusters, n_init=n_init, max_iter=max_iter)
+    classifier.fit(x)
+    print("centroids: " + str(classifier.cluster_centers_))
 
     def run():
         return classifier.fit(x)
@@ -42,6 +45,6 @@ def bench_kmeans():
 
 t = timer(bench_kmeans(), 1)
 print("time kmeans  " + str(t))
-#
-# t = timer(bench_sklearn_kmeans(), 1)
-# print("time sklearn kmeans  " + str(t))
+
+t = timer(bench_sklearn_kmeans(), 1)
+print("time sklearn kmeans  " + str(t))

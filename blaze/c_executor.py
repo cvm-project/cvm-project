@@ -1,10 +1,9 @@
 import json
 
-import cffi
+import gc
 from cffi import FFI
 from sys import exit, platform
 import numpy as np
-import os
 
 from blaze.utils import *
 from blaze.constants import *
@@ -19,6 +18,9 @@ gen_header_file = "c_generate_dag_plan.h"
 executer_header_file = "c_execute.h"
 generate_lib = "libgenerate"
 execute_lib = "execute"
+
+# static counter used to differentiate share lib versions
+lib_counter = 0
 
 
 def load_cffi(header, lib_path, ffi):
@@ -42,21 +44,24 @@ def load_cffi(header, lib_path, ffi):
         lib_extension = '.dll'
     else:
         lib_extension = '.so'
-    return ffi.dlopen(lib_path + lib_extension)
+    return ffi.dlopen(lib_path + lib_extension, flags=ffi.RTLD_LOCAL)
 
 
 def execute(dag_dict):
     ffi = FFI()
     timer = Timer()
+    global lib_counter
 
     dag_str = json.dumps(dag_dict, cls=RDDEncoder)
 
     generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
     dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
+    # counter_c = ffi.new('', dag_str.encode('utf-8'))
 
-    generator_cffi.c_generate_dag_plan(dag_c)
+    generator_cffi.c_generate_dag_plan(dag_c, lib_counter)
 
-    executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib, ffi)
+    executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib + str(lib_counter), ffi)
+    lib_counter += 1
     args = []
     for op in dag_dict['dag']:
         if op[OP] == 'collection_source':
@@ -73,6 +78,7 @@ def execute(dag_dict):
     if dag_dict[ACTION] == 'collect':
         # add a free function to the gc on the result object
         res = ffi.gc(res, executor_cffi.c_free_result)
+        pass
     res = wrap_result(res, dag_dict[ACTION], dag_dict['dag'][-1]['output_type'], ffi)
 
     if dag_dict[ACTION] == 'collect':
@@ -93,6 +99,9 @@ def wrap_result(res, action, type_, ffi):
         buffer_size = 1 * get_type_size(type_)
         c_buffer = ffi.buffer(res, buffer_size)
         np_arr = np.frombuffer(c_buffer, dtype=numba_type_to_dtype(type_))
-        return tuple(np_arr[0]) if isinstance(type_, Tuple) else np_arr[0]
+        try:
+            return tuple(np_arr[0]) if isinstance(type_, Tuple) else np_arr[0]
+        except TypeError:
+            return np_arr
     else:
         return res

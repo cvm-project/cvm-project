@@ -19,6 +19,7 @@ public:
     }
 
     INLINE Optional<Tuple> next() {
+        DEBUG_PRINT("SUKAAAA");
         if (index < size) {
             Tuple r = build_result();
             index++;

@@ -10,7 +10,6 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "utils/debug_print.h"
 
 using std::vector;
 
@@ -34,9 +33,11 @@ public:
                 return buildResult(t1.value, currentTuple.value);
             }
         }
+//        DEBUG_PRINT("wtf");
         currentTuple = upstream2->next();
         if (currentTuple) {
             //reset up1
+//            DEBUG_PRINT("shit is real");
             upstream1->close();
             upstream1->open();
             return next();
@@ -45,6 +46,7 @@ public:
     }
 
     void INLINE open() {
+        DEBUG_PRINT("wtf");
         upstream1->open();
         upstream2->open();
         currentTuple = upstream2->next();
