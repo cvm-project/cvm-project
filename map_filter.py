@@ -6,13 +6,14 @@ import random
 # sys.path.insert(0, "/home/sabir/projects/")
 from numba import njit
 
-input_ = [(1, 2), (5, 4)]
+input_ = [(1, 2.0), (5, 4.0)]
 
 
 def func(t1, t2):
     return t1 + t2
 
 
+ar = np.array(input_, dtype="int,float")
 # bc = BlazeContext()
 #
 # print(bc.collection(input_).map(lambda *t: (t[0:2], t[1:])).collect())

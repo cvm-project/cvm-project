@@ -63,6 +63,9 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
     code_string = m.group(0)
     code_string = re.sub("attributes.*}", "", code_string)
+
+    # make the function name not unique
+    code_string = re.sub("@.*\".*\"", "@\"cfuncnotuniquename\"", code_string)
     return code_string, output_type
 
 
@@ -116,8 +119,16 @@ class RDD(object):
         if DUMP_DAG:
             with open(getBlazePath() + 'dag.json', 'w') as fp:
                 json.dump(dagdict, fp=fp, cls=RDDEncoder)
-        res = execute(dagdict)
+        res = execute(dagdict, self)
         return res
+
+    def get_hash(self):
+        hash_ = []
+        hash_.append(type(self).__name__)
+        hash_.append(tuple(self.output_type))
+        for pred in self.parents:
+            hash_ += pred.get_hash()
+        return hash_
 
     def map(self, map_func):
         return Map(self, map_func)
@@ -141,8 +152,7 @@ class RDD(object):
         return Cartesian(self, other)
 
     def collect(self):
-        res = self.startDAG("collect")
-        return res
+        return self.startDAG("collect")
 
     def count(self):
         return self.startDAG("count")
@@ -396,6 +406,10 @@ class CollectionSource(RDD):
 
         return cur_index
 
+    def get_hash(self):
+        hash_ = super(CollectionSource, self).get_hash()
+        hash_.append(self.add_index)
+
 
 class NumpyArraySource(RDD):
     def __init__(self, array, add_index=False):
@@ -427,6 +441,11 @@ class NumpyArraySource(RDD):
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         dic[ADD_INDEX] = self.add_index
         return cur_index
+
+    def get_hash(self):
+        hash_ = super(NumpyArraySource, self).get_hash()
+        hash_.append(self.add_index)
+        return hash_
 
 
 class RangeSource(RDD):

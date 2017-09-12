@@ -11,7 +11,6 @@
 #include "utils/printDAG.h"
 #include "optimize/Optimizer.h"
 #include "utils/utils.h"
-#include <dlfcn.h>
 
 
 extern "C" {
@@ -36,15 +35,9 @@ int generate_dag_plan(char *dagstr,  unsigned long counter) {
     TICK1
     exec(("cd " + get_lib_path() + "cpp/gen && make LIB_ID=" + to_string(counter) + " -f ../src/utils/Makefile -j").c_str());
     TOCK1
-    std::cout << "call make " << DIFF1 << std::endl;
+//    std::cout << "call make " << DIFF1 << std::endl;
     delete (dag);
     return 0;
 }
 
-int close_library(void *handle1) {
-    auto handle = dlopen("/home/sabir/projects/blaze/cpp/gen/execute.so", RTLD_LAZY);
-
-    std::cout << "HANDLE " << handle << std::endl;
-    return dlclose(handle);
-}
 }

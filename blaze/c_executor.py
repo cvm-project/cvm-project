@@ -21,6 +21,7 @@ execute_lib = "execute"
 
 # static counter used to differentiate share lib versions
 lib_counter = 0
+dag_cache = {}
 
 
 def load_cffi(header, lib_path, ffi):
@@ -44,24 +45,13 @@ def load_cffi(header, lib_path, ffi):
         lib_extension = '.dll'
     else:
         lib_extension = '.so'
-    return ffi.dlopen(lib_path + lib_extension, flags=ffi.RTLD_LOCAL)
+    return ffi.dlopen(lib_path + lib_extension)
 
 
-def execute(dag_dict):
-    ffi = FFI()
-    timer = Timer()
+def execute(dag_dict, sink):
     global lib_counter
 
-    dag_str = json.dumps(dag_dict, cls=RDDEncoder)
-
-    generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
-    dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
-    # counter_c = ffi.new('', dag_str.encode('utf-8'))
-
-    generator_cffi.c_generate_dag_plan(dag_c, lib_counter)
-
-    executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib + str(lib_counter), ffi)
-    lib_counter += 1
+    ffi = FFI()
     args = []
     for op in dag_dict['dag']:
         if op[OP] == 'collection_source':
@@ -69,6 +59,20 @@ def execute(dag_dict):
             size = op[DATA_SIZE]
             args.append(data_ptr)
             args.append(size)
+
+    hash_ = tuple(sink.get_hash())
+    executor_cffi = dag_cache.get(hash_, None)
+    if not executor_cffi:
+        dag_str = json.dumps(dag_dict, cls=RDDEncoder)
+        generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
+        dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
+        # counter_c = ffi.new('', dag_str.encode('utf-8'))
+        generator_cffi.c_generate_dag_plan(dag_c, lib_counter)
+        executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib + str(lib_counter), ffi)
+        lib_counter += 1
+        dag_cache[hash_] = executor_cffi
+
+    timer = Timer()
 
     timer.start()
     res = executor_cffi.c_execute(*args)

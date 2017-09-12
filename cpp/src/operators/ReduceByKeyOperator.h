@@ -42,7 +42,6 @@ public:
      * reduce in place
      */
     void INLINE open() {
-        TICK1
         upstream->open();
         while (auto ret = upstream->next()) {
             auto key = getKey(ret.value);
@@ -56,8 +55,6 @@ public:
             }
         }
         tupleIterator = ht.begin();
-        TOCK1
-        std::cout << " outer " << DIFF1 << std::endl;
     }
 
     void INLINE close() {

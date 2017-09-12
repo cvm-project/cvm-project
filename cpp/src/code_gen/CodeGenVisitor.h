@@ -820,7 +820,7 @@ private:
     }
 
     void storeLLVMCode(string ir, string opName) {
-        //the local.. string is not llvm-3.7 compatible:
+        //the local_unnamed_addr string is not llvm-3.7 compatible:
         regex reg1("local_unnamed_addr #.? ");
         ir = regex_replace(ir, reg1, "");
 //        ir = string_replace(ir, "local_unnamed_addr #1 ", "");
