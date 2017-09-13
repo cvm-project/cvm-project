@@ -14,11 +14,11 @@
 using std::vector;
 
 /**
- * for input tuples (K, V) and (K, W) returns (K, V, W)
- * returns every combination in case of repeating keys
+ * For input tuples (K, V) and (K, W) returns (K, V, W)
+ * Returns every combination in case of repeating keys
  *
- * Current implementation builds map on the first input operator
- *
+ * Current implementation builds map on the left input operator
+ * Keeps the right operator input ordered
  */
 template<class Upstream1, class Upstream2, class Tuple, class KeyType, class ValueType1, class ValueType2>
 class JoinOperator : public Operator {

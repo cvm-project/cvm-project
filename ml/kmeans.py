@@ -10,7 +10,7 @@ from sklearn.utils.sparsefuncs import mean_variance_axis
 import numba
 import numpy as np
 import scipy.sparse as sp
-
+from blaze.benchmarks.timer import Timer
 from blaze.blaze_context import BlazeContext
 from numba import njit
 
@@ -56,12 +56,12 @@ class KMeans():
         self.tol = _tolerance(X, self.tol)
         in_ = bc.numpy_array(X, add_index=True)
 
-        @njit
+        @njit(cache=True)
         def distance_func(t1, t2):
             dist = 0
             for i in range(n_cols):
                 _x1 = t1[i]
-                _x2 = t2[1:][i]
+                _x2 = t2[i]
                 dist += (_x1 - _x2) ** 2
             return dist
 
@@ -83,27 +83,40 @@ class KMeans():
             else:
                 return point, old_centre, old_dist
 
+        # @unroll_loops
         def reduce_2(t1, t2):
             sum_ = t1[1]
             mean_c = t1[0][:]
-            new_point = t2[2]
-            # for j in range(n_cols):
-            #     mean_c[j] += new_point[j]
-            return (mean_c[0] + new_point[0], mean_c[1] + new_point[1]), sum_ + t2[1], new_point
+            new_point = t2[2][:]
+            res = ()
+            for z in range(n_cols):
+                n = mean_c[z] + new_point[z]
+                res += (n,)
+            return res, sum_ + t2[1], new_point
 
+        # @unroll_loops
         def map_1(t):
             s = t[1]
-            # center = t[0][1:]
-            # my = gen(center)
-            # res = (a / 1 for a in [1,2])
-            # return t[0][0], res
-            return t[0][0], t[0][1] / s, t[0][2] / s
+            center = t[0][1:]
+            res = ()
+            for z in range(n_cols):
+                n = center[z] / s
+                res += (n,)
+            return t[0][0], res
 
+        # @unroll_loops
         def map_0(t1, t2):
-            return t2, t1, distance_func(t1[1:], t2[:])
+            dist = 0
+            for i in range(n_cols):
+                _x1 = t1[1:][i]
+                _x2 = t2[1:][i]
+                dist += (_x1 - _x2) ** 2
+            return t2, t1, dist
+            # return t2, t1, distance_func(t1[1:], t2[:])
 
         total_iterations = 0
         for i in range(self.max_iter):
+            # iteration time: 7000
             total_iterations = i
             cart = centroids.cartesian(in_)
             # put points first to reduce on them

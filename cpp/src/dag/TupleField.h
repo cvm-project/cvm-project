@@ -6,15 +6,30 @@
 #define CPP_TUPLEFIELD_H
 
 #include <string>
+#include <set>
 
 using namespace std;
 
 class Column;
 
+/**
+ * Properties specific for each field
+ * Field is identified by its position
+ * In case when the field in the downstream operator does not change its position
+ * the properties may be aliased. Otherwise a copy is needed
+ */
+enum FieldProperty {
+    FL_GROUPED, FL_SORTED, FL_UNIQUE
+};
+
 class TupleField {
 public:
 
-    TupleField(string type, size_t pos) : type(type), position(pos) {}
+    set<FieldProperty> *properties;
+
+    TupleField(string type, size_t pos) : type(type), position(pos) {
+        properties = new set<FieldProperty>();
+    }
 
     string type;
     Column *column = NULL;
@@ -22,6 +37,11 @@ public:
 
     const bool operator<(const TupleField &other) const {
         return position < other.position;
+    }
+
+    ~TupleField() {
+//        delete (properties);
+        properties = NULL;
     }
 };
 

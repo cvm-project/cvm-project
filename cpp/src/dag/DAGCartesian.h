@@ -10,6 +10,7 @@
 class DAGCartesian : public DAGOperator {
 public:
     static const std::string DAG_OP_NAME;
+    bool stream_right = true;
 
     static DAGOperator *make_dag_operator() {
         return new DAGCartesian;

@@ -1,6 +1,8 @@
 import json
 import re
 
+from blaze.ast_optimizer import *
+from blaze.benchmarks.timer import Timer
 from blaze.c_executor import execute
 from blaze.config import DUMP_DAG
 
@@ -37,16 +39,28 @@ def numba_abi_to_llvm_abi(type_):
     return out
 
 
-def get_llvm_ir_and_output_type(func, input_type=None):
+# 100 - 1000
+def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
     # print("old input type: " + str(input_type))
+    opts_ = {OPT_CONST_PROPAGATE, OPT_UNROLL}
+    if opts is not None:
+        opts_ += opts
+    func = ast_optimize(func, opts_)
     input_type = replace_unituple(input_type)
     # print("new input type: " + str(input_type))
 
     # get the output type with njit
+
+    # up to 1000
+    timer = Timer()
+    timer.start()
     if isinstance(input_type, list):
-        dec_func = numba.njit(tuple(input_type), fastmath=True)(func)
+        dec_func = numba.njit(tuple(input_type), fastmath=True, cache=True, parallel=True)(func)
     else:
-        dec_func = numba.njit((input_type,), fastmath=True)(func)
+        dec_func = numba.njit((input_type,), fastmath=True, cache=True, parallel=True)(func)
+    # # #
+    timer.end()
+    print("compilation " + func.__name__ + " " + str(timer.diff()))
     output_type = dec_func.nopython_signatures[0].return_type
 
     # print("old output type" + str(output_type))
@@ -54,10 +68,10 @@ def get_llvm_ir_and_output_type(func, input_type=None):
     # print("new output type" + str(output_type))
 
     input_type = dec_func.nopython_signatures[0].args
-    # if isinstance(input_type, list):
-    #     cfunc_code = cfunc(output_type(*input_type), fastmath=True)(func)
-    # else:
-    cfunc_code = cfunc(output_type(*input_type), fastmath=True)(func)
+
+    # 100 - 800
+    cfunc_code = cfunc(output_type(*input_type), fastmath=True, cache=True)(func)
+    ###
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
     m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
@@ -66,6 +80,7 @@ def get_llvm_ir_and_output_type(func, input_type=None):
 
     # make the function name not unique
     code_string = re.sub("@.*\".*\"", "@\"cfuncnotuniquename\"", code_string)
+
     return code_string, output_type
 
 
@@ -75,6 +90,9 @@ def get_llvm_ir_output_type_generator(func):
     llvm = dec_func.inspect_llvm()[()]
     output_type = output_type.yield_type
     return llvm, output_type
+
+
+rdd_dag_cache = {}
 
 
 class RDD(object):
@@ -109,26 +127,41 @@ class RDD(object):
         return cur_index
 
     def startDAG(self, action):
-        dagdict = dict()
-        dagdict[ACTION] = action
-        dagdict[DAG] = []
+        hash_ = tuple(self.get_hash())
+        dagdict = rdd_dag_cache.get(hash_, None)
+        inputs = self.get_inputs()
+        if dagdict:
+            return execute(dagdict, hash_, inputs)
+        else:
+            dagdict = dict()
+            dagdict[ACTION] = action
+            dagdict[DAG] = []
 
-        cleanRDDs(self)
-        self.writeDAG(dagdict[DAG], 0)
-        # write to file
-        if DUMP_DAG:
-            with open(getBlazePath() + 'dag.json', 'w') as fp:
-                json.dump(dagdict, fp=fp, cls=RDDEncoder)
-        res = execute(dagdict, self)
-        return res
+            cleanRDDs(self)
+
+            # 5500
+            self.writeDAG(dagdict[DAG], 0)
+            # ##
+
+            rdd_dag_cache[hash_] = dagdict
+            # write to file
+            if DUMP_DAG:
+                with open(getBlazePath() + 'dag.json', 'w') as fp:
+                    json.dump(dagdict, fp=fp, cls=RDDEncoder)
+            return execute(dagdict, hash_, inputs)
 
     def get_hash(self):
         hash_ = []
         hash_.append(type(self).__name__)
-        hash_.append(tuple(self.output_type))
         for pred in self.parents:
             hash_ += pred.get_hash()
         return hash_
+
+    def get_inputs(self):
+        ret = []
+        for p in self.parents:
+            ret += p.get_inputs()
+        return ret
 
     def map(self, map_func):
         return Map(self, map_func)
@@ -410,6 +443,9 @@ class CollectionSource(RDD):
         hash_ = super(CollectionSource, self).get_hash()
         hash_.append(self.add_index)
 
+    def get_inputs(self):
+        return [(self.data_ptr, self.size)]
+
 
 class NumpyArraySource(RDD):
     def __init__(self, array, add_index=False):
@@ -446,6 +482,9 @@ class NumpyArraySource(RDD):
         hash_ = super(NumpyArraySource, self).get_hash()
         hash_.append(self.add_index)
         return hash_
+
+    def get_inputs(self):
+        return [(self.data_ptr, self.size)]
 
 
 class RangeSource(RDD):

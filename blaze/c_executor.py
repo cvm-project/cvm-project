@@ -48,37 +48,40 @@ def load_cffi(header, lib_path, ffi):
     return ffi.dlopen(lib_path + lib_extension)
 
 
-def execute(dag_dict, sink):
+# 18 without compilation
+def execute(dag_dict, hash_, inputs):
+
     global lib_counter
 
     ffi = FFI()
     args = []
-    for op in dag_dict['dag']:
-        if op[OP] == 'collection_source':
-            data_ptr = ffi.cast("void*", op[DATA_PTR])
-            size = op[DATA_SIZE]
-            args.append(data_ptr)
-            args.append(size)
+    for inpt in inputs:
+        data_ptr = ffi.cast("void*", inpt[0])
+        size = inpt[1]
+        args.append(data_ptr)
+        args.append(size)
 
-    hash_ = tuple(sink.get_hash())
     executor_cffi = dag_cache.get(hash_, None)
     if not executor_cffi:
         dag_str = json.dumps(dag_dict, cls=RDDEncoder)
         generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
         dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
-        # counter_c = ffi.new('', dag_str.encode('utf-8'))
+
+        timer = Timer()
+        timer.start()
         generator_cffi.c_generate_dag_plan(dag_c, lib_counter)
+        timer.end()
+        print("calling make " + str(timer.diff()))
         executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib + str(lib_counter), ffi)
         lib_counter += 1
         dag_cache[hash_] = executor_cffi
 
     timer = Timer()
-
     timer.start()
     res = executor_cffi.c_execute(*args)
-    timer.end()
-    print("executing " + str(timer.diff()))
 
+    timer.end()
+    print("execute " + str(timer.diff()))
     if dag_dict[ACTION] == 'collect':
         # add a free function to the gc on the result object
         res = ffi.gc(res, executor_cffi.c_free_result)
@@ -88,6 +91,9 @@ def execute(dag_dict, sink):
     if dag_dict[ACTION] == 'collect':
         # keep the reference of ffi object to prevent gc
         res.ex = executor_cffi
+    # timer.end()
+    # print("this " + str(timer.diff()))
+
     return res
 
 

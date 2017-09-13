@@ -33,65 +33,79 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="CollectionSourceOperator.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/operators/CollectionSourceOperator.h">
+      <file leaf-file-name="ReduceByKeyGroupedOperator.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/operators/ReduceByKeyGroupedOperator.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="28" column="5" lean-forward="false" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
+            <state relative-caret-position="180">
+              <caret line="33" column="34" lean-forward="false" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
               <folding>
-                <element signature="e#119#140#0" expanded="true" />
+                <element signature="e#1479#1500#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MapOperator.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/operators/MapOperator.h">
+      <file leaf-file-name="SchemaInference.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/IR_analyzer/SchemaInference.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="21" column="18" lean-forward="false" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
-              <folding />
+            <state relative-caret-position="125">
+              <caret line="114" column="45" lean-forward="false" selection-start-line="114" selection-start-column="45" selection-end-line="114" selection-end-column="45" />
+              <folding>
+                <element signature="e#1488#2069#0" expanded="false" />
+                <element signature="e#5671#7227#0" expanded="false" />
+                <element signature="e#7233#8477#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ReduceByKeyOperator.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/operators/ReduceByKeyOperator.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="60" column="26" lean-forward="false" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DAGCreation.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/dag/DAGCreation.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="59" column="28" lean-forward="false" selection-start-line="59" selection-start-column="28" selection-end-line="59" selection-end-column="28" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CodeGenVisitor.h" pinned="false" current-in-tab="true">
+      <file leaf-file-name="CodeGenVisitor.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/code_gen/CodeGenVisitor.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="822" column="32" lean-forward="false" selection-start-line="822" selection-start-column="32" selection-end-line="822" selection-end-column="32" />
-              <folding />
+            <state relative-caret-position="215">
+              <caret line="452" column="34" lean-forward="false" selection-start-line="452" selection-start-column="34" selection-end-line="452" selection-end-column="34" />
+              <folding>
+                <element signature="e#455#1096#0" expanded="false" />
+                <element signature="e#1102#1847#0" expanded="false" />
+                <element signature="e#1853#2443#0" expanded="false" />
+                <element signature="e#2449#3321#0" expanded="false" />
+                <element signature="e#3327#3902#0" expanded="false" />
+                <element signature="e#3909#4537#0" expanded="false" />
+                <element signature="e#4545#5134#0" expanded="false" />
+                <element signature="e#5142#5634#0" expanded="false" />
+                <element signature="e#8378#8531#0" expanded="false" />
+                <element signature="e#8537#8654#0" expanded="false" />
+                <element signature="e#8660#8829#0" expanded="false" />
+                <element signature="e#8835#8943#0" expanded="false" />
+                <element signature="e#8949#9116#0" expanded="false" />
+                <element signature="e#9122#9295#0" expanded="false" />
+                <element signature="e#9301#9474#0" expanded="false" />
+                <element signature="e#9480#9672#0" expanded="false" />
+                <element signature="e#9678#9874#0" expanded="false" />
+                <element signature="e#9880#10037#0" expanded="false" />
+                <element signature="e#10043#10138#0" expanded="false" />
+                <element signature="e#10144#10310#0" expanded="false" />
+                <element signature="e#10316#10420#0" expanded="false" />
+                <element signature="e#10426#11730#0" expanded="false" />
+                <element signature="e#11736#12604#0" expanded="false" />
+                <element signature="e#12611#13448#0" expanded="false" />
+                <element signature="e#14367#15208#0" expanded="false" />
+                <element signature="e#15214#16790#0" expanded="false" />
+                <element signature="e#16796#18937#0" expanded="false" />
+                <element signature="e#18943#22514#0" expanded="false" />
+                <element signature="e#22520#25481#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="generate_dag_plan.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/generate_dag_plan.cpp">
+      <file leaf-file-name="TupleField.h" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/dag/TupleField.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
+            <state relative-caret-position="195">
+              <caret line="24" column="18" lean-forward="false" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
               <folding>
-                <element signature="e#0#18#0" expanded="true" />
+                <element signature="e#91#108#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -101,9 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>rbx</find>
-      <find>reallo</find>
-      <find>#1</find>
       <find>attributes #1</find>
       <find>rbp</find>
       <find>r13</find>
@@ -131,6 +142,9 @@
       <find>emitcar</find>
       <find>join</find>
       <find>visiting</find>
+      <find>llvm</find>
+      <find>left</find>
+      <find>right</find>
     </findStrings>
     <replaceStrings>
       <replace>#define</replace>
@@ -152,19 +166,16 @@
       <replace>&quot;</replace>
       <replace>UpstreamTuple</replace>
       <replace>schema inference visiting</replace>
+      <replace>builtPred</replace>
+      <replace>streamPred</replace>
     </replaceStrings>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/main.cpp" />
-        <option value="$PROJECT_DIR$/src/dag/TupleField.h" />
-        <option value="$PROJECT_DIR$/src/dag/Column.h" />
-        <option value="$PROJECT_DIR$/src/optimize/Optimizer.cpp" />
         <option value="$PROJECT_DIR$/src/optimize/Optimizer.h" />
         <option value="$PROJECT_DIR$/src/optimize/SimplePredicateMoveAround.h" />
         <option value="$PROJECT_DIR$/src/dag/DAGFilter.h" />
-        <option value="$PROJECT_DIR$/src/dag/DAGOperator.h" />
         <option value="$PROJECT_DIR$/src/dag/DAGOperator.cpp" />
         <option value="$PROJECT_DIR$/src/utils/printDAG.h" />
         <option value="$PROJECT_DIR$/testing.ll" />
@@ -175,7 +186,6 @@
         <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_1.ll" />
         <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_3.ll" />
         <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_4.ll" />
-        <option value="$PROJECT_DIR$/src/operators/JoinOperator.h" />
         <option value="$PROJECT_DIR$/src/operators/MapOperator.h" />
         <option value="$PROJECT_DIR$/src/optimize/SimplePredicateMoveAround.cpp" />
         <option value="$PROJECT_DIR$/gen/functions_llvm/filter_operator_function_0.ll" />
@@ -183,31 +193,37 @@
         <option value="$PROJECT_DIR$/src/dag/Column.cpp" />
         <option value="$PROJECT_DIR$/gen/c_execute.c" />
         <option value="$PROJECT_DIR$/src/dag/DAGCartesian.cpp" />
-        <option value="$PROJECT_DIR$/src/dag/DAGCartesian.h" />
         <option value="$PROJECT_DIR$/src/utils/constants.h" />
         <option value="$PROJECT_DIR$/src/dag/DAGCreation.cpp" />
         <option value="$PROJECT_DIR$/src/utils/DAGVisitor.h" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/src/dag/DAGCollection.cpp" />
         <option value="$PROJECT_DIR$/src/dag/DAGCollection.h" />
-        <option value="$PROJECT_DIR$/src/IR_analyzer/SchemaInference.h" />
         <option value="$PROJECT_DIR$/src/IR_analyzer/LLVMParser.cpp" />
         <option value="$PROJECT_DIR$/gen/functions_llvm/map_operator_function_4.ll" />
-        <option value="$PROJECT_DIR$/gen/execute.cpp" />
         <option value="$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_3.ll" />
         <option value="$PROJECT_DIR$/src/operators/Operator.h" />
         <option value="$PROJECT_DIR$/src/utils/Makefile" />
         <option value="$PROJECT_DIR$/src/operators/CollectionSourceOperator.h" />
-        <option value="$PROJECT_DIR$/src/operators/CartesianOperator.h" />
-        <option value="$PROJECT_DIR$/gen/functions_llvm/map_operator_function_0.ll" />
-        <option value="$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_1.ll" />
         <option value="$PROJECT_DIR$/src/utils/debug_print.h" />
         <option value="$PROJECT_DIR$/c_generate_dag_plan.h" />
         <option value="$PROJECT_DIR$/c_generate_dag_plan.c" />
         <option value="$PROJECT_DIR$/generate_dag_plan.hpp" />
         <option value="$PROJECT_DIR$/generate_dag_plan.cpp" />
+        <option value="$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_1.ll" />
+        <option value="$PROJECT_DIR$/src/dag/DAGOperator.h" />
+        <option value="$PROJECT_DIR$/gen/functions_llvm/map_operator_function_0.ll" />
         <option value="$PROJECT_DIR$/src/operators/ReduceByKeyOperator.h" />
+        <option value="$PROJECT_DIR$/src/operators/JoinOperator.h" />
+        <option value="$PROJECT_DIR$/src/operators/CartesianOperator.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGCartesian.h" />
+        <option value="$PROJECT_DIR$/src/dag/DAGJoin.h" />
+        <option value="$PROJECT_DIR$/gen/execute.cpp" />
+        <option value="$PROJECT_DIR$/src/operators/ReduceByKeyGroupedOperator.h" />
+        <option value="$PROJECT_DIR$/src/dag/Column.h" />
         <option value="$PROJECT_DIR$/src/code_gen/CodeGenVisitor.h" />
+        <option value="$PROJECT_DIR$/src/IR_analyzer/SchemaInference.h" />
+        <option value="$PROJECT_DIR$/src/dag/TupleField.h" />
       </list>
     </option>
   </component>
@@ -245,20 +261,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cpp" />
-              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cpp" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="gen" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
     </panes>
@@ -267,23 +269,23 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="settings.editor.selected.configurable" value="com.github.itechbear.clion.cpplint.Option" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/testing/testing" />
-    <property name="SearchEverywhereHistoryKey" value="code&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;dagcreat&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;reduceb&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceByKeyOperator.h&#10;mapOp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h&#10;olle&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;ge&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;exe&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;deb&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/debug_print.h&#10;reduce&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceByKeyOperator.h&#10;cart&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CartesianOperator.h&#10;colle&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;utils/ma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;utils/make&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;gen&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;collect&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;gene&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;sche&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/SchemaInference.h&#10;collec&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;joi&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;schema&#9;null&#9;null&#10;print&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/printDAG.h&#10;carte&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CartesianOperator.h&#10;join&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;execu&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;cma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;ex&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;joinop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;dagjoi&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGJoin.cpp&#10;collection&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;codege&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;codegen&#9;null&#9;null&#10;mapop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h&#10;llvm&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/LLVMParser.cpp&#10;FILTEROPER&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/FilterOperator.h&#10;tes&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/testing.ll&#10;test&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/testing.ll&#10;utils&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/utils.cpp&#10;function.cp&#9;FILE&#9;file:///home/sabir/projects/llvm/llvm/lib/IR/Function.cpp&#10;module.cpp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/libs/llvm/IR/Module.cpp&#10;cm&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;dagc&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;dagop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h&#10;dagfi&#9;null&#9;null&#10;dag&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAG.h&#10;dagJ&#9;null&#9;null&#10;dagcrea&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;dag.&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAG.h&#10;tupl&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/TupleField.h&#10;sch&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/SchemaInference.h&#10;main&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/main.cpp" />
+    <property name="SearchEverywhereHistoryKey" value="sch&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/SchemaInference.h&#10;colu&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/Column.h&#10;code&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;reduce&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceByKeyOperator.h&#10;exec&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;joi&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;join&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;dagjoin&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGJoin.cpp&#10;car&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CartesianOperator.h&#10;carte&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CartesianOperator.h&#10;chema&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/SchemaInference.cpp&#10;dagc&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;cart&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CartesianOperator.h&#10;map&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/functions_llvm/map_operator_function_0.ll&#10;dagop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGOperator.h&#10;dagcreat&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGCreation.cpp&#10;reduceb&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/ReduceByKeyOperator.h&#10;mapOp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h&#10;olle&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;ge&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;exe&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;deb&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/debug_print.h&#10;colle&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;utils/ma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;utils/make&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/Makefile&#10;gen&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;collect&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;gene&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/generate_dag_plan.cpp&#10;sche&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/SchemaInference.h&#10;collec&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;schema&#9;null&#9;null&#10;print&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/printDAG.h&#10;execu&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;cma&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;ex&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/gen/execute.cpp&#10;joinop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/JoinOperator.h&#10;dagjoi&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/dag/DAGJoin.cpp&#10;collection&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/CollectionSourceOperator.h&#10;codege&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/code_gen/CodeGenVisitor.h&#10;codegen&#9;null&#9;null&#10;mapop&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/MapOperator.h&#10;llvm&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/IR_analyzer/LLVMParser.cpp&#10;FILTEROPER&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/operators/FilterOperator.h&#10;tes&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/testing.ll&#10;test&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/testing.ll&#10;utils&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/utils/utils.cpp&#10;function.cp&#9;FILE&#9;file:///home/sabir/projects/llvm/llvm/lib/IR/Function.cpp&#10;module.cpp&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/src/libs/llvm/IR/Module.cpp&#10;cm&#9;FILE&#9;file:///home/sabir/projects/blaze/cpp/CMakeLists.txt&#10;dagfi&#9;null&#9;null" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/gen_example/execute_nested.ll" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/testing" />
-      <recent name="$PROJECT_DIR$/src/utils" />
-      <recent name="$PROJECT_DIR$/gen" />
-      <recent name="$PROJECT_DIR$/src" />
-      <recent name="$PROJECT_DIR$/src/libs" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/operators" />
       <recent name="$PROJECT_DIR$/src/dag" />
       <recent name="$PROJECT_DIR$/gen_example" />
       <recent name="$PROJECT_DIR$/gen" />
       <recent name="$PROJECT_DIR$/src/utils" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/testing" />
+      <recent name="$PROJECT_DIR$/src/utils" />
+      <recent name="$PROJECT_DIR$/gen" />
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/src/libs" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -590,12 +592,12 @@
       <workItem from="1504434625619" duration="6021000" />
       <workItem from="1504449719478" duration="4916000" />
       <workItem from="1504530242109" duration="42368000" />
-      <workItem from="1505051063255" duration="9035000" />
+      <workItem from="1505051063255" duration="30435000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="674635000" />
+    <option name="totallyTimeSpent" value="696035000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -649,58 +651,15 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/code_gen/CodeGenVisitor.h</url>
-          <line>750</line>
+          <line>753</line>
           <option name="timeStamp" value="198" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="199" />
+      <option name="time" value="203" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/utils/constants.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="10" column="28" lean-forward="false" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGCartesian.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="22" lean-forward="false" selection-start-line="1" selection-start-column="22" selection-end-line="1" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGCartesian.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="25" lean-forward="false" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGJoin.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1">
-          <caret line="0" column="2" lean-forward="true" selection-start-line="0" selection-start-column="2" selection-end-line="0" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGJoin.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="10" lean-forward="false" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gen_example/execute.cpp" />
     <entry file="file://$PROJECT_DIR$/src/dag/DAGCreation.hpp">
       <provider selected="true" editor-type-id="text-editor">
@@ -714,13 +673,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="65" column="42" lean-forward="false" selection-start-line="65" selection-start-column="42" selection-end-line="65" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/TupleField.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#91#121#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -738,27 +693,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/Column.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="19" lean-forward="false" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/JoinOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="131" column="34" lean-forward="false" selection-start-line="131" selection-start-column="34" selection-end-line="132" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGOperator.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/libs/json.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="116">
@@ -766,17 +700,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/dag/DAGOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/dag/DAGReduce.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -784,6 +712,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
           <caret line="16" column="28" lean-forward="false" selection-start-line="16" selection-start-column="28" selection-end-line="16" selection-end-column="28" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -791,6 +720,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
           <caret line="8" column="40" lean-forward="false" selection-start-line="8" selection-start-column="40" selection-end-line="8" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -798,6 +728,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="332">
           <caret line="25" column="1" lean-forward="true" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -809,17 +740,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/IR_analyzer/SchemaInference.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="2" lean-forward="false" selection-start-line="2" selection-start-column="2" selection-end-line="2" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/optimize/SimplePredicateMoveAround.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -846,13 +771,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/IR_analyzer/SchemaInference.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="69">
-          <caret line="138" column="0" lean-forward="false" selection-start-line="138" selection-start-column="0" selection-end-line="138" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/optimize/SimplePredicateMoveAround.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="503">
@@ -875,13 +793,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_3.ll">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gen/functions_llvm/map_operator_function_4.ll">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
@@ -893,6 +804,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="14" column="6" lean-forward="false" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="6" />
+          <folding>
+            <element signature="e#87#113#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -904,45 +818,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/CartesianOperator.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="32" column="54" lean-forward="false" selection-start-line="32" selection-start-column="54" selection-end-line="32" selection-end-column="54" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/map_operator_function_0.ll">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/debug_print.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_1.ll">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="29" lean-forward="false" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen/execute.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="56" column="0" lean-forward="true" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
-          <folding>
-            <marker date="1505149763090" expanded="true" signature="2869:3037" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -983,7 +863,7 @@
         <state relative-caret-position="216">
           <caret line="12" column="24" lean-forward="false" selection-start-line="12" selection-start-column="24" selection-end-line="12" selection-end-column="24" />
           <folding>
-            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -993,7 +873,7 @@
         <state relative-caret-position="36">
           <caret line="28" column="5" lean-forward="false" selection-start-line="28" selection-start-column="5" selection-end-line="28" selection-end-column="5" />
           <folding>
-            <element signature="e#119#140#0" expanded="true" />
+            <element signature="e#119#140#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1006,27 +886,211 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/operators/ReduceByKeyOperator.h">
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_3.ll">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="60" column="26" lean-forward="false" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
+        <state relative-caret-position="216">
+          <caret line="12" column="2" lean-forward="true" selection-start-line="12" selection-start-column="2" selection-end-line="12" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/reduce_by_key_operator_function_1.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="8" column="29" lean-forward="false" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/DAGOperator.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="19" lean-forward="false" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/functions_llvm/map_operator_function_0.ll">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="22" column="32" lean-forward="false" selection-start-line="22" selection-start-column="32" selection-end-line="22" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/DAG.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/DAGOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="24" column="14" lean-forward="true" selection-start-line="24" selection-start-column="14" selection-end-line="24" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/dag/DAGCreation.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="59" column="28" lean-forward="false" selection-start-line="59" selection-start-column="28" selection-end-line="59" selection-end-column="28" />
+        <state relative-caret-position="360">
+          <caret line="58" column="9" lean-forward="false" selection-start-line="58" selection-start-column="9" selection-end-line="58" selection-end-column="9" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/IR_analyzer/SchemaInference.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="17" lean-forward="true" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/DAGCartesian.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="215">
+          <caret line="12" column="29" lean-forward="false" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operators/CartesianOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="23" column="29" lean-forward="true" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/DAGJoin.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="14" lean-forward="false" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/DAGJoin.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="12" column="29" lean-forward="false" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operators/JoinOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="31" column="48" lean-forward="true" selection-start-line="31" selection-start-column="48" selection-end-line="33" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/execute.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="563" column="7" lean-forward="true" selection-start-line="563" selection-start-column="7" selection-end-line="563" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operators/ReduceByKeyOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="49" column="45" lean-forward="false" selection-start-line="49" selection-start-column="37" selection-end-line="49" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/Column.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="14" column="21" lean-forward="false" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
+          <folding>
+            <element signature="e#83#100#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/operators/ReduceByKeyGroupedOperator.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="33" column="34" lean-forward="false" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+          <folding>
+            <element signature="e#1479#1500#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/code_gen/CodeGenVisitor.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="822" column="32" lean-forward="false" selection-start-line="822" selection-start-column="32" selection-end-line="822" selection-end-column="32" />
+        <state relative-caret-position="215">
+          <caret line="452" column="34" lean-forward="false" selection-start-line="452" selection-start-column="34" selection-end-line="452" selection-end-column="34" />
+          <folding>
+            <element signature="e#455#1096#0" expanded="false" />
+            <element signature="e#1102#1847#0" expanded="false" />
+            <element signature="e#1853#2443#0" expanded="false" />
+            <element signature="e#2449#3321#0" expanded="false" />
+            <element signature="e#3327#3902#0" expanded="false" />
+            <element signature="e#3909#4537#0" expanded="false" />
+            <element signature="e#4545#5134#0" expanded="false" />
+            <element signature="e#5142#5634#0" expanded="false" />
+            <element signature="e#8378#8531#0" expanded="false" />
+            <element signature="e#8537#8654#0" expanded="false" />
+            <element signature="e#8660#8829#0" expanded="false" />
+            <element signature="e#8835#8943#0" expanded="false" />
+            <element signature="e#8949#9116#0" expanded="false" />
+            <element signature="e#9122#9295#0" expanded="false" />
+            <element signature="e#9301#9474#0" expanded="false" />
+            <element signature="e#9480#9672#0" expanded="false" />
+            <element signature="e#9678#9874#0" expanded="false" />
+            <element signature="e#9880#10037#0" expanded="false" />
+            <element signature="e#10043#10138#0" expanded="false" />
+            <element signature="e#10144#10310#0" expanded="false" />
+            <element signature="e#10316#10420#0" expanded="false" />
+            <element signature="e#10426#11730#0" expanded="false" />
+            <element signature="e#11736#12604#0" expanded="false" />
+            <element signature="e#12611#13448#0" expanded="false" />
+            <element signature="e#14367#15208#0" expanded="false" />
+            <element signature="e#15214#16790#0" expanded="false" />
+            <element signature="e#16796#18937#0" expanded="false" />
+            <element signature="e#18943#22514#0" expanded="false" />
+            <element signature="e#22520#25481#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/IR_analyzer/SchemaInference.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="114" column="45" lean-forward="false" selection-start-line="114" selection-start-column="45" selection-end-line="114" selection-end-column="45" />
+          <folding>
+            <element signature="e#1488#2069#0" expanded="false" />
+            <element signature="e#5671#7227#0" expanded="false" />
+            <element signature="e#7233#8477#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/c++/5/bits/stl_construct.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="92" column="0" lean-forward="false" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/dag/TupleField.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="24" column="18" lean-forward="false" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
+          <folding>
+            <element signature="e#91#108#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

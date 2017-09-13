@@ -9,6 +9,8 @@
 #include <iostream>
 #include "dag/TupleField.h"
 
+
+
 /**
  * part of the schema
  */
@@ -36,7 +38,7 @@ public:
 
     static void delete_columns();
 
-    vector<TupleField*> getFields();
+    vector<TupleField *> getFields();
 
 private:
 

@@ -16,7 +16,7 @@
  * Binary function must be associative, commutative
  * The return type of the function must be the same as its arguments
  *
- * Result tuples are in an arbitrary order
+ * This implementation assumes that the keycolumn is grouped and works in linear time
  *
  */
 template<class Upstream, class Tuple, class KeyType, class ValueType, class Function>
@@ -28,53 +28,35 @@ public:
     ReduceByKeyOperator(Upstream *upstream, Function func) : upstream(upstream), func(func) {};
 
     Optional<Tuple> INLINE next() {
-        if (tupleIterator != ht.end()) {
-            auto res = *tupleIterator;
-            tupleIterator++;
-            return buildResult(res.first, res.second);
+        if (lastTuple) {
+            auto key = getKey(lastTuple);
+            ValueType res = getValue(lastTuple);
+            while (auto up = upstream->next()) {
+                auto candKey = getKey(up);
+                if (candKey != key) {
+                    lastTuple = up;
+                    break;
+                }
+                res = func(res, getValue(up));
+            }
+            return buildResult(key, res);
         }
         return {};
     }
 
-    /**
-     * read all upstream input
-     * reduce in place
-     */
     void INLINE open() {
         upstream->open();
-        while (auto ret = upstream->next()) {
-            auto key = getKey(ret.value);
-            auto it = ht.find(key);
-            if (it != ht.end()) {
-                auto t = it->second;
-                it->second = func(t, getValue(ret.value));
-            }
-            else {
-                ht.emplace(key, getValue(ret.value));
-            }
-        }
-        tupleIterator = ht.begin();
+        lastTuple = upstream->next();
     }
 
     void INLINE close() {
         upstream->close();
+
     }
 
 private:
 
-    struct hash {
-        size_t operator()(const KeyType x) const {
-            return std::hash<long>()(*((long *) (&x)));
-        }
-    };
-
-    struct pred {
-        bool operator()(const KeyType x, const KeyType y) const {
-            return *((long *) (&x)) == *((long *) (&y));
-        }
-    };
-    std::unordered_map<KeyType, ValueType, hash, pred> ht;
-    typename std::unordered_map<KeyType, ValueType, hash, pred>::iterator tupleIterator;
+    Optional<Tuple> lastTuple;
 
     template<class UpstreamTuple>
     INLINE static constexpr KeyType getKey(const UpstreamTuple &t) {

@@ -187,7 +187,10 @@ public:
 
     void visit(DAGReduceByKey *op) {
         DAGVisitor::visit(op);
-        string operatorName = "ReduceByKeyOperator";
+        bool is_groped = op->fields[0].properties->find(FL_GROUPED) != op->fields[0].properties->end() ||
+                         op->fields[0].properties->find(FL_SORTED) != op->fields[0].properties->end() ||
+                         op->fields[0].properties->find(FL_UNIQUE) != op->fields[0].properties->end();
+        string operatorName = is_groped ? "ReduceByKeyOperator" : "ReduceByKeyGroupedOperator";
         emitComment(operatorName);
 
         string opName = getNextOperatorName();
@@ -206,7 +209,7 @@ public:
 
         includes.insert("\"operators/" + operatorName + ".h\"");
 
-        emitReduceByKeyMake(opName, op);
+        emitReduceByKeyMake(opName, op, operatorName);
         appendLineBodyNoCol();
     };
 
@@ -357,7 +360,7 @@ private:
                 .append(opClass)
                 .append("<")
                 .append(getCurrentTupleName());
-        if (add_boolean_template){
+        if (add_boolean_template) {
             line.append(", true");
         }
         line.append(">(");
@@ -444,11 +447,11 @@ private:
     }
 
 
-    void emitReduceByKeyMake(string opVarName, DAGReduceByKey *op) {
+    void emitReduceByKeyMake(string &opVarName, DAGReduceByKey *op, string &operatorName) {
         string line("auto ");
         line.append(opVarName)
                 .append(" = make")
-                .append("ReduceByKeyOperator")
+                .append(operatorName)
                 .append("<")
                 .append(getCurrentTupleName() + ", " +
                         getCurrentReduceByKeyKeyName() + ", " +

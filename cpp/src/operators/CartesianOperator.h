@@ -15,11 +15,13 @@ using std::vector;
 
 /**
  * Assumes the left operator is the smaller relation
+ * Keeps the right operator input ordered
  *
  */
 template<class Upstream1, class Upstream2, class Tuple, class UpstreamTuple>
 class CartesianOperator : public Operator {
 public:
+    bool stream_right = true;
     Upstream1 *upstream1;
     Upstream2 *upstream2;
 
@@ -33,11 +35,8 @@ public:
                 return buildResult(t1.value, currentTuple.value);
             }
         }
-//        DEBUG_PRINT("wtf");
         currentTuple = upstream2->next();
         if (currentTuple) {
-            //reset up1
-//            DEBUG_PRINT("shit is real");
             upstream1->close();
             upstream1->open();
             return next();
@@ -46,7 +45,6 @@ public:
     }
 
     void INLINE open() {
-        DEBUG_PRINT("wtf");
         upstream1->open();
         upstream2->open();
         currentTuple = upstream2->next();

@@ -10,6 +10,7 @@
 
 class DAGJoin : public DAGOperator {
 public:
+    bool stream_right = true;
     static const std::string DAG_OP_NAME;
 
     static DAGOperator *make_dag_operator() {
