@@ -13,6 +13,7 @@ def timer(func, max_rep=3):
         resu = func()
         t2 = time.perf_counter()
         res.append(t2 - t1)
+        print("run " + str(r) + " " + str(t2 - t1))
     return mean(res) * 1000
 
 
@@ -28,4 +29,4 @@ class Timer:
         self._end = time.perf_counter() * 1000
 
     def diff(self):
-        return self._end - self._start
+        return str(self._end - self._start)

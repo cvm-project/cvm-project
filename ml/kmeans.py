@@ -4,24 +4,17 @@ import sys
 from six import string_types
 from sklearn.metrics import euclidean_distances
 from sklearn.utils import check_random_state
-from sklearn.utils.extmath import row_norms
+from sklearn.utils.extmath import row_norms, squared_norm
 from sklearn.utils.sparsefuncs import mean_variance_axis
 
 import numba
 import numpy as np
 import scipy.sparse as sp
+
+from blaze.ast_optimizer import unroll_loops
 from blaze.benchmarks.timer import Timer
 from blaze.blaze_context import BlazeContext
 from numba import njit
-
-
-def _euclidian(x1, x2):
-    dist = 0
-    if x1 is x2:
-        return dist
-    for _x1, _x2 in zip(x1, x2):
-        dist += (_x1 - _x2) ** 2
-    return sqrt(dist)
 
 
 def _tolerance(X, tol):
@@ -33,37 +26,44 @@ def _tolerance(X, tol):
     return np.mean(variances) * tol
 
 
+@njit(cache=True)
+def _euclidian_dist(t1, t2):
+    dist = 0
+    for i in range(len(t1)):
+        _x1 = t1[i]
+        _x2 = t2[i]
+        dist += (_x1 - _x2) ** 2
+    return dist
+
+_metric = _euclidian_dist
+
 class KMeans():
     def __init__(self, n_clusters=8, n_init=10,
-                 max_iter=300, dist_func=_euclidian, tol=1e-4, random_state=None, init='kmeans++'):
+                 max_iter=300, tol=1e-4, random_state=None, init='kmeans++', metric="euclidian"):
         self.n_clusters = n_clusters
         self.n_init = n_init
         self.max_iter = max_iter
-        self.dist_func = numba.njit(dist_func)
         self.tol = 1e-4
         self.random_state = random_state
         self.cluster_centers_ = []
         self.init = init
+        global _metric
+        if metric == "euclidian":
+            _metric = _euclidian_dist
+        else:
+            if not hasattr(metric, "__call__"):
+                raise AttributeError("metric must be \"euclidian\" or a callable")
+            _metric = njit(metric, cache=True)
 
     def fit(self, X, y=None):
         n_cols = len(X[0])
         n_samples = len(X[1])
         bc = BlazeContext()
         old_centroids = _init_centroids(X, self.n_clusters, init=self.init, random_state=self.random_state)
-
         centroids = bc.numpy_array(old_centroids, add_index=True)
         old_centroids = centroids.collect()
         self.tol = _tolerance(X, self.tol)
         in_ = bc.numpy_array(X, add_index=True)
-
-        @njit(cache=True)
-        def distance_func(t1, t2):
-            dist = 0
-            for i in range(n_cols):
-                _x1 = t1[i]
-                _x2 = t2[i]
-                dist += (_x1 - _x2) ** 2
-            return dist
 
         def reduce_1(t1, t2):
             point = t1[0][:]
@@ -73,17 +73,12 @@ class KMeans():
             new_centre = t2[1][:]
 
             new_dist = t2[2]
-            # new_dist = 0
-            # for i in range(n_cols):
-            #     _x1 = point[i]
-            #     _x2 = new_centre[1:][i]
-            #     new_dist += (_x1 - _x2) ** 2
             if new_dist < old_dist:
                 return point, new_centre, new_dist
             else:
                 return point, old_centre, old_dist
 
-        # @unroll_loops
+        @unroll_loops
         def reduce_2(t1, t2):
             sum_ = t1[1]
             mean_c = t1[0][:]
@@ -94,7 +89,7 @@ class KMeans():
                 res += (n,)
             return res, sum_ + t2[1], new_point
 
-        # @unroll_loops
+        @unroll_loops
         def map_1(t):
             s = t[1]
             center = t[0][1:]
@@ -104,45 +99,41 @@ class KMeans():
                 res += (n,)
             return t[0][0], res
 
-        # @unroll_loops
+        @unroll_loops
         def map_0(t1, t2):
-            dist = 0
-            for i in range(n_cols):
-                _x1 = t1[1:][i]
-                _x2 = t2[1:][i]
-                dist += (_x1 - _x2) ** 2
-            return t2, t1, dist
-            # return t2, t1, distance_func(t1[1:], t2[:])
+            # dist = 0
+            # for j in range(n_cols):
+            #     _x1 = t1[1:][j]
+            #     _x2 = t2[1:][j]
+            #     dist += (_x1 - _x2) ** 2
+            # return t2, t1, dist
+            return t2, t1, _metric(t1[1:], t2[1:])
 
-        total_iterations = 0
         for i in range(self.max_iter):
             # iteration time: 7000
-            total_iterations = i
             cart = centroids.cartesian(in_)
             # put points first to reduce on them
             cart = cart.map(map_0)
             # for every point compute the closest centroid (E step)
-
-            # TODO use better version for grouped input
             pnt_center = cart.reduce_by_key(reduce_1)
             # put centres first to reduce on them,
             # use the point index as the accumulator
             centr_pnt = pnt_center.map(lambda *t: (t[1], 1, t[0][1:]))
-            # reassign each centroid to the mean
+            # reassign each centroid to the mean (M step)
             centr_pnt = centr_pnt.reduce_by_key(reduce_2)
             # project the new centroids and compute the mean
             centroids = centr_pnt.map(map_1)
             # # compute the error
             new_centroids = centroids.collect()
             centroids = bc.numpy_array(new_centroids)
-            shift = 0
-            for j in range(self.n_clusters):
-                shift += sum([(a - b) ** 2 for a, b in zip(list(new_centroids[j])[1:], list(old_centroids[j])[1:])])
+            shift = squared_norm(new_centroids.view(np.float64) - old_centroids.view(np.float64))
             old_centroids = new_centroids
             if shift < self.tol:
                 break
 
-        print("total iterations solrd: " + str(total_iterations))
+        print("total iterations solrd: " + str(i + 1))
+        self.cluster_centers_ = old_centroids[list(old_centroids.dtype.names[1:])].view(np.float64).reshape(
+            (self.n_clusters, n_cols))
         # compute labels and inertia
         cart = bc.numpy_array(old_centroids).cartesian(in_)
         # put points first to reduce on them
@@ -150,8 +141,6 @@ class KMeans():
         # for every point compute the closest centroid (E step)
         pnt_center_distance = cart.reduce_by_key(reduce_1).collect()
 
-        self.cluster_centers_ = old_centroids[list(old_centroids.dtype.names[1:])].view(np.float64).reshape(
-            (self.n_clusters, n_cols))
         last_col_index = pnt_center_distance.dtype.names[-1]
         self.inertia_ = np.sum(pnt_center_distance[last_col_index], dtype=np.float64)
 

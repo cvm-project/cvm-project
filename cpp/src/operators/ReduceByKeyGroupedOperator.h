@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_REDUCEBYKEYOPERATOR_H
-#define CPP_REDUCEBYKEYOPERATOR_H
+#ifndef CPP_REDUCEBYKEYGROUPEDOPERATOR_H
+#define CPP_REDUCEBYKEYGROUPEDOPERATOR_H
 
 #include <unordered_map>
 #include <iostream>
@@ -16,33 +16,33 @@
  * Binary function must be associative, commutative
  * The return type of the function must be the same as its arguments
  *
- * This implementation assumes that the keycolumn is grouped and works in linear time
+ * This implementation assumes that the key column is grouped and works in linear time
  *
  */
 template<class Upstream, class Tuple, class KeyType, class ValueType, class Function>
-class ReduceByKeyOperator : public Operator {
+class ReduceByKeyGroupedOperator : public Operator {
 public:
     Upstream *upstream;
     Function func;
 
-    ReduceByKeyOperator(Upstream *upstream, Function func) : upstream(upstream), func(func) {};
+    ReduceByKeyGroupedOperator(Upstream *upstream, Function func) : upstream(upstream), func(func) {};
 
     Optional<Tuple> INLINE next() {
         if (lastTuple) {
             auto key = getKey(lastTuple);
             ValueType res = getValue(lastTuple);
-            while (auto up = upstream->next()) {
-                auto candKey = getKey(up);
-                if (candKey != key) {
-                    lastTuple = up;
+            while ((lastTuple = upstream->next())) {
+                auto candKey = getKey(lastTuple);
+                if (candKey.v0 != key.v0) {
                     break;
                 }
-                res = func(res, getValue(up));
+                res = func(res, getValue(lastTuple));
             }
             return buildResult(key, res);
         }
         return {};
     }
+
 
     void INLINE open() {
         upstream->open();
@@ -58,13 +58,11 @@ private:
 
     Optional<Tuple> lastTuple;
 
-    template<class UpstreamTuple>
-    INLINE static constexpr KeyType getKey(const UpstreamTuple &t) {
+    INLINE static constexpr KeyType getKey(const Tuple &t) {
         return *(const_cast<KeyType *>((KeyType *) (&t)));
     }
 
-    template<class UpstreamTuple>
-    INLINE static constexpr ValueType getValue(const UpstreamTuple &t) {
+    INLINE static constexpr ValueType getValue(const Tuple &t) {
         return *((ValueType *) (((char *) &t) + sizeof(KeyType)));
     }
 
@@ -79,10 +77,10 @@ private:
 
 
 template<class Tuple, class KeyType, class ValueType, class Upstream, class Function>
-ReduceByKeyOperator<Upstream, Tuple, KeyType, ValueType, Function>
-INLINE makeReduceByKeyOperator(Upstream *upstream, Function func) {
-    return ReduceByKeyOperator<Upstream, Tuple, KeyType, ValueType, Function>(upstream, func);
+ReduceByKeyGroupedOperator<Upstream, Tuple, KeyType, ValueType, Function>
+INLINE makeReduceByKeyGroupedOperator(Upstream *upstream, Function func) {
+    return ReduceByKeyGroupedOperator<Upstream, Tuple, KeyType, ValueType, Function>(upstream, func);
 };
 
 
-#endif //CPP_REDUCEBYKEYOPERATOR_H
+#endif //CPP_REDUCEBYKEYGROUPEDOPERATOR_H

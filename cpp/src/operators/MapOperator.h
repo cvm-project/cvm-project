@@ -24,7 +24,7 @@ public:
 
     INLINE void open() { upstream->open(); }
 
-    INLINE void close() {upstream->close();}
+    INLINE void close() { upstream->close(); }
 };
 
 template<class Tuple, class Upstream, class MapFunction>

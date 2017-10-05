@@ -167,12 +167,8 @@ public:
             for (auto pos : parser.get_output_positions(c)) {
                 //every output in the list now has the same column type as this input
                 arg.column->addField(&(op->fields[pos]));
-                if (pos == c) {
-                    op->fields[pos].properties = arg.properties;
-                }
-                else {
-                    *(op->fields[pos].properties) = *(arg.properties);
-                }
+
+                *(op->fields[pos].properties) = *(arg.properties);
                 used = 1;
             }
             if (parser.is_argument_read(c)) {
@@ -187,7 +183,6 @@ public:
             c++;
         }
         //all the outputs which do not have the column set yet, are written by the map
-        //TODO the written fields could still keep the grouped property if its inputs are grouped
         size_t size = op->fields.size();
         for (size_t pos = 0; pos < size; pos++) {
             if (op->fields[pos].column == NULL) {
@@ -204,13 +199,13 @@ public:
 
         //keep the key column
         DAGOperator *pred = op->predecessors[0];
-        auto firstField = op->fields[0];
+        auto firstField = &(op->fields[0]);
 
-        firstField.column = pred->fields[0].column;
+        firstField->column = pred->fields[0].column;
         //add key to the read set
-        op->read_set.insert(firstField.column);
+        op->read_set.insert(firstField->column);
         //alias the properties
-        firstField.properties = pred->fields[0].properties;
+        firstField->properties = pred->fields[0].properties;
 
         LLVMParser parser(op->llvm_ir);
 

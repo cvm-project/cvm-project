@@ -1,8 +1,8 @@
-from blaze.ast_generator import ROOT_HASH_TABLE, RESULT_LIST, ASTGenerator, FUNCTION_NAME, PARAMETER_LIST, \
+from blaze.old.ast_generator import ROOT_HASH_TABLE, RESULT_LIST, ASTGenerator, FUNCTION_NAME, PARAMETER_LIST, \
     PARAMETER_HASH_TABLE
-from blaze.stage_ast import StageAst
-from blaze.ast_shortcuts import *
+from blaze.old.stage_ast import StageAst
 import blaze.rdd
+from blaze.old.ast_shortcuts import *
 
 
 class Stage:

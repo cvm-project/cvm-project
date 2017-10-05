@@ -50,7 +50,6 @@ def load_cffi(header, lib_path, ffi):
 
 # 18 without compilation
 def execute(dag_dict, hash_, inputs):
-
     global lib_counter
 
     ffi = FFI()

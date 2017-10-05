@@ -1,10 +1,10 @@
-from blaze.rdd import TextSource, CollectionSource, RangeSource, GeneratorSource, NumpyArraySource
+from blaze.rdd import CollectionSource, RangeSource, GeneratorSource, CSVSource
 
 
 class BlazeContext:
     @staticmethod
-    def text_file(path):
-        return TextSource(path)
+    def read_csv(path, dtype=None):
+        raise NotImplemented
 
     @staticmethod
     def collection(values, add_index=False):
@@ -17,7 +17,3 @@ class BlazeContext:
     @staticmethod
     def generator(func):
         return GeneratorSource(func)
-
-    @staticmethod
-    def numpy_array(array, add_index=False):
-        return NumpyArraySource(array, add_index)

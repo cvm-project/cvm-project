@@ -1,5 +1,5 @@
 CC = clang
-FLAGS = -O3  -flto -ffast-math
+FLAGS = -O3  -flto -ffast-math -march=native
 
 SOURCES = execute.cpp
 INC = -I ../src/ -I ../src/utils/
@@ -14,17 +14,17 @@ all: execute.so
 .PRECIOUS: %.ll
 
 %.o: %.cpp
-	ms-time $(CC) -c $^ $(INC) -o $@ $(FLAGS) -std=c++14
+	$(CC) -c $^ $(INC) -o $@ $(FLAGS) -std=c++14 $(PCH)
 
 %.o: %.ll
-	$(CC) -c $^ -o $@ $(FLAGS)
+	$(CC) -c $^ -o $@ $(FLAGS) -Wno-override-module
 
 c_execute.o: c_execute.c
 	 $(CC) -c $^ -o $@ -fPIC $(FLAGS)
 
 
 execute.so: $(UDF_OBJECTS) $(OBJECTS) c_execute.o
-	 ms-time $(CC)  $^ -o execute${LIB_ID}.so -shared -lstdc++ $(FLAGS)
+	 $(CC)  $^ -o execute${LIB_ID}.so -shared -lstdc++ $(FLAGS)
 
 execute.s: execute.so
 	objdump -D $^ > $@

@@ -15,8 +15,6 @@ class Column;
 /**
  * Properties specific for each field
  * Field is identified by its position
- * In case when the field in the downstream operator does not change its position
- * the properties may be aliased. Otherwise a copy is needed
  */
 enum FieldProperty {
     FL_GROUPED, FL_SORTED, FL_UNIQUE

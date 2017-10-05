@@ -13,18 +13,21 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     string label = op->get_name();
 
     string outCols = "columns:  ";
-    string outputTypes = "output types:  ";
+//    string outputTypes = "output types:  ";
     for (auto c : op->fields) {
         if (c.column != NULL) {
             outCols += c.column->get_name() + ", ";
         }
-        outputTypes += c.type + ", ";
+//        outputTypes += c.type;
+//        for (auto p : *(c.properties)) {
+//            outputTypes += to_string(p) + " prop, ";
+//        }
     }
-    outputTypes.pop_back();
-    outputTypes.pop_back();
+//    outputTypes.pop_back();
+//    outputTypes.pop_back();
     outCols.pop_back();
     outCols.pop_back();
-    label += "\n\n" + outCols + "\n" + outputTypes;
+    label += "\n\n" + outCols;
 
     string readSet = "read:  ";
     for (auto c : op->read_set) {
@@ -51,7 +54,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
 
     deadVars.pop_back();
     deadVars.pop_back();
-    label += "\n" + deadVars;
+//    label += "\n" + deadVars;
 
 
     Agnode_t *n = agnode(g, const_cast<char *>(label.c_str()), 1);

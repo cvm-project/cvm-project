@@ -38,10 +38,6 @@ class ASTGenerator:
                 kwonlyargs=[], kw_defaults=[], kwarg=None, defaults=[NameConstant(value=None)]),
                               body=body_ast, decorator_list=[], returns=None)])
 
-        # always add a hash_table
-        # body_ast.append(ast_scuts.assign_(ROOT_HASH_TABLE, Dict(keys=[], values=[])))
-        # body_ast.append(ast_scuts.assign_(RESULT_LIST, List(elts=[], ctx=Load())))
-
         inner_ast = []
         body_ast.append(
             For(target=Name(id=self.stage_ast.get_current_var(), ctx=Store()), iter=Name(id=PARAMETER_LIST, ctx=Load()),
@@ -52,20 +48,6 @@ class ASTGenerator:
         self.stage_ast.func_def = func_def
 
         self.top_node.accept(self)
-        # self.stage_ast
-
-        # compile and execute ast
-        # fix_missing_locations(ast)
-        # parseprint(ast)
-        # c = compile(ast, "<string>", "exec")
-        # exec(c, self._locals)
-        # f = njit(self._locals['f'])
-        # with open('/home/sabir/llvm.ll', 'w') as file:
-        #     llvm = f.inspect_llvm()
-        #     for k, v in llvm.items():
-        #         file.write(str(k))
-        #         file.write(v)
-        #         file.write('\n')
 
     def add_final_statement_inner(self):
         self.stage_ast.root_ast.append(Expr(value=Yield(value=Name(id=self.stage_ast.get_current_var(), ctx=Load()))))
@@ -123,26 +105,11 @@ class ASTGenerator:
     def visit_join(self, node):
         raise NotImplemented
 
-    @ast_decorator
-    def visit_text_source(self, node):
-        path = node.path
-        # add a loop over the lines
-        # for line in open(path):
-        # self.stage_ast.ast.append(
-        #         For(target=Name(id=self.stage_ast.get_current_var(), ctx=Store()), iter=Name(id='values', ctx=Load()),
-        #             body=body_ast, orelse=[])
-        # )
 
     @ast_decorator
     def visit_collection_source(self, node):
         values = node.values
         self.stage_ast.input_values = values
-        # body_ast = []
-        # self.stage_ast.ast.append(
-        #     For(target=Name(id=self.stage_ast.get_current_var(), ctx=Store()), iter=Name(id='values', ctx=Load()),
-        #         body=body_ast, orelse=[])
-        # )
-        # self.stage_ast.ast = body_ast
 
 
 def _find_top_node(node):

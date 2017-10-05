@@ -46,17 +46,17 @@ class TestJoin(unittest.TestCase):
         truth = [(1, 2, 22, 33), (1, 3, 22, 33), (1, 2, 44, 55), (1, 3, 44, 55), (2, 4, 33, 44), (2, 6, 33, 44)]
         self.assertListEqual([tuple(r) for r in res], truth)
 
-    # def test_count(self):
-    #     bc = BlazeContext()
-    #     input1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
-    #     input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
-    #     data1 = bc.collection(input1)
-    #     data2 = bc.collection(input2)
-    #
-    #     joined = data1.join(data2)
-    #     res = joined.count()
-    #     truth = 6
-    #     self.assertEqual(res, truth)
+        # def test_count(self):
+        #     bc = BlazeContext()
+        #     input1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        #     input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
+        #     data1 = bc.collection(input1)
+        #     data2 = bc.collection(input2)
+        #
+        #     joined = data1.join(data2)
+        #     res = joined.count()
+        #     truth = 6
+        #     self.assertEqual(res, truth)
 
 
 class TestFilter(unittest.TestCase):
@@ -122,6 +122,16 @@ class TestReduceByKey(unittest.TestCase):
         input_ = [(0, 1, 2), (1, 1, 2), (1, 1, 2), (0, 1, 2), (1, 1, 2)]
         d = bc.collection(input_).reduce_by_key(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).collect()
         truth = {(0, 2, 4), (1, 3, 6)}
+        self.assertSetEqual(set(tuple(t) for t in d), truth)
+
+    def test_grouped(self):
+        bc = BlazeContext()
+        input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
+        d = bc.collection(input_, add_index=True).cartesian(bc.collection(input_, add_index=True)).reduce_by_key(
+            lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).collect()
+        truth = {(4, 1, 1, 1, 1, 1), (0, 0, 1, 0, 1, 0), (1, 1, 1, 1, 1, 1),
+                 (2, 1, 1, 1, 1, 1), (3, 0, 1, 0, 1, 0)}
+        print(d)
         self.assertSetEqual(set(tuple(t) for t in d), truth)
 
 

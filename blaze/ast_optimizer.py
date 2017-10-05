@@ -1,5 +1,6 @@
 import ast
 import inspect
+import numbers
 from types import FunctionType
 
 OPT_UNROLL = "unroll"
@@ -16,7 +17,7 @@ class AstOptimizer(ast.NodeTransformer):
         if OPT_CONST_PROPAGATE in self.opts:
             self.generic_visit(node)
             value = self._namespace.get(node.id, None)
-            if value:
+            if value and isinstance(value, numbers.Number):
                 return ast.Num(value)
         return node
 
@@ -59,11 +60,23 @@ class AstOptimizer(ast.NodeTransformer):
         return node
 
 
+def update_opts(func, opts):
+    try:
+        if func.opt_unroll_loops:
+            opts.add(OPT_UNROLL)
+    except AttributeError:
+        pass
+    return opts
+
+
 def ast_optimize(func, opts):
+    update_opts(func, opts)
     vars = inspect.getclosurevars(func)[0].copy()
     vars.update(inspect.getclosurevars(func)[1])
 
     src = inspect.getsource(func)
+    if "lambda" in src:
+        return func
     # remove idents
     lines = src.split("\n")
     tabs = 0
@@ -80,3 +93,8 @@ def ast_optimize(func, opts):
     callble = FunctionType(func_code, func.__globals__, name=func.__name__,
                            argdefs=func.__defaults__)
     return callble
+
+
+def unroll_loops(func):
+    func.opt_unroll_loops = True
+    return func

@@ -184,3 +184,5 @@ fabric.properties
 
 gen/
 /cpp/CMakeFiles/Makefile2
+blaze/benchmarks/crime_data/
+*.h5

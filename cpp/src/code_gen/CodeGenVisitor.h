@@ -187,15 +187,16 @@ public:
 
     void visit(DAGReduceByKey *op) {
         DAGVisitor::visit(op);
-        bool is_groped = op->fields[0].properties->find(FL_GROUPED) != op->fields[0].properties->end() ||
-                         op->fields[0].properties->find(FL_SORTED) != op->fields[0].properties->end() ||
-                         op->fields[0].properties->find(FL_UNIQUE) != op->fields[0].properties->end();
-        string operatorName = is_groped ? "ReduceByKeyOperator" : "ReduceByKeyGroupedOperator";
+        bool is_grouped = op->fields[0].properties->find(FL_GROUPED) != op->fields[0].properties->end() ||
+                          op->fields[0].properties->find(FL_SORTED) != op->fields[0].properties->end() ||
+                          op->fields[0].properties->find(FL_UNIQUE) != op->fields[0].properties->end();
+        string operatorName = is_grouped ? "ReduceByKeyGroupedOperator" : "ReduceByKeyOperator";
         emitComment(operatorName);
 
         string opName = getNextOperatorName();
-        auto tType = generateTupleType(op->output_type);
-        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, tType.first, tType.second));
+        //reuse the pred tuple type
+        auto predNameTuple = operatorNameTupleTypeMap[op->predecessors[0]->id];
+        operatorNameTupleTypeMap.emplace(op->id, make_tuple(opName, get<1>(predNameTuple), get<2>(predNameTuple)));
 
         //add reducebykey key and value tuple types
         reduce_by_key_type_counter++;
@@ -487,7 +488,7 @@ private:
         string line("typedef struct {\n");
         string varName = "v";
         for (size_t i = 0; i < types.size(); i++) {
-            line += "\t" + types[i] + " " + varName + to_string(i) + ";\n";
+            line += "\t" + types[i] + " " + varName + to_string(i) + "; ";
         }
         line += "} " + tName + ";\n\n";
 
@@ -694,7 +695,7 @@ private:
         string line("typedef struct {\n");
         string varName = "v";
         for (size_t i = 0; i < keyTypes.size(); i++) {
-            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + ";\n";
+            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + "; ";
         }
         line += "} " + keyName + ";\n\n";
 
@@ -712,7 +713,7 @@ private:
             line += "typedef struct {\n";
 
             for (size_t i = 0; i < up1Types.size(); i++) {
-                line += "\t" + up1Types[i] + " " + varName + to_string(i) + ";\n";
+                line += "\t" + up1Types[i] + " " + varName + to_string(i) + "; ";
             }
             line += "} " + getCurrentJoinValue1Name() + ";\n\n";
         }
@@ -731,7 +732,7 @@ private:
             line += "typedef struct {\n";
 
             for (size_t i = 0; i < up2Types.size(); i++) {
-                line += "\t" + up2Types[i] + " " + varName + to_string(i) + ";\n";
+                line += "\t" + up2Types[i] + " " + varName + to_string(i) + "; ";
             }
             line += "} " + getCurrentJoinValue2Name() + ";\n\n";
         }
@@ -771,7 +772,7 @@ private:
         string line("typedef struct {\n");
         string varName = "v";
         for (size_t i = 0; i < keyTypes.size(); i++) {
-            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + ";\n";
+            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + "; ";
         }
         line += "} " + keyName + ";\n\n";
 
@@ -789,7 +790,7 @@ private:
             line += "typedef struct {\n";
 
             for (size_t i = 0; i < upTypes.size(); i++) {
-                line += "\t" + upTypes[i] + " " + varName + to_string(i) + ";\n";
+                line += "\t" + upTypes[i] + " " + varName + to_string(i) + "; ";
             }
             line += "} " + getCurrentReduceByKeyValueName() + ";\n\n";
         }
@@ -802,7 +803,9 @@ private:
     }
 
     void emitComment(string opName) {
+        tabInd++;
         appendLineBodyNoCol(genComment(opName));
+        tabInd--;
     }
 
     string parseTupleType(string &type) {
@@ -829,7 +832,7 @@ private:
 //        ir = string_replace(ir, "local_unnamed_addr #1 ", "");
         //replace the func name with our
         string funcName = opName.append(getNextLLVMFuncName());
-        regex reg("@.*\".*\"");
+        regex reg("@cfuncnotuniquename");
         ir = regex_replace(ir, reg, "@\"" + funcName + "\"");
         //write code to the gen dir
         if (DUMP_FILES) {

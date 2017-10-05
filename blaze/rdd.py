@@ -1,10 +1,13 @@
 import json
 import re
 
+from numpy import ndarray
+from pandas import DataFrame
+
 from blaze.ast_optimizer import *
 from blaze.benchmarks.timer import Timer
 from blaze.c_executor import execute
-from blaze.config import DUMP_DAG
+from blaze.config import DUMP_DAG, FAST_MATH
 
 from blaze.utils import *
 from blaze.libs.numba.llvm_ir import cfunc
@@ -39,28 +42,27 @@ def numba_abi_to_llvm_abi(type_):
     return out
 
 
-# 100 - 1000
+# TIME: 100 - 1000
 def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
     # print("old input type: " + str(input_type))
-    opts_ = {OPT_CONST_PROPAGATE, OPT_UNROLL}
+    opts_ = {OPT_CONST_PROPAGATE}
     if opts is not None:
         opts_ += opts
     func = ast_optimize(func, opts_)
     input_type = replace_unituple(input_type)
-    # print("new input type: " + str(input_type))
 
     # get the output type with njit
 
-    # up to 1000
+    # TIME: up to 1000
     timer = Timer()
     timer.start()
     if isinstance(input_type, list):
-        dec_func = numba.njit(tuple(input_type), fastmath=True, cache=True, parallel=True)(func)
+        dec_func = numba.njit(tuple(input_type), fastmath=FAST_MATH, parallel=True)(func)
     else:
-        dec_func = numba.njit((input_type,), fastmath=True, cache=True, parallel=True)(func)
+        dec_func = numba.njit((input_type,), fastmath=FAST_MATH, parallel=True)(func)
     # # #
     timer.end()
-    print("compilation " + func.__name__ + " " + str(timer.diff()))
+    # print("compilation " + func.__name__ + " " + str(timer.diff()))
     output_type = dec_func.nopython_signatures[0].return_type
 
     # print("old output type" + str(output_type))
@@ -70,7 +72,7 @@ def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
     input_type = dec_func.nopython_signatures[0].args
 
     # 100 - 800
-    cfunc_code = cfunc(output_type(*input_type), fastmath=True, cache=True)(func)
+    cfunc_code = cfunc(output_type(*input_type), fastmath=FAST_MATH)(func)
     ###
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
@@ -79,7 +81,7 @@ def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
     code_string = re.sub("attributes.*}", "", code_string)
 
     # make the function name not unique
-    code_string = re.sub("@.*\".*\"", "@\"cfuncnotuniquename\"", code_string)
+    code_string = re.sub("@.*\".*\"", "@cfuncnotuniquename", code_string)
 
     return code_string, output_type
 
@@ -127,7 +129,7 @@ class RDD(object):
         return cur_index
 
     def startDAG(self, action):
-        hash_ = tuple(self.get_hash())
+        hash_ = tuple([action] + self.get_hash())
         dagdict = rdd_dag_cache.get(hash_, None)
         inputs = self.get_inputs()
         if dagdict:
@@ -139,9 +141,8 @@ class RDD(object):
 
             cleanRDDs(self)
 
-            # 5500
+            # 1500
             self.writeDAG(dagdict[DAG], 0)
-            # ##
 
             rdd_dag_cache[hash_] = dagdict
             # write to file
@@ -189,6 +190,9 @@ class RDD(object):
 
     def count(self):
         return self.startDAG("count")
+
+    def to_csv(self, path):
+        return self.startDAG("to_csv")
 
     def accept(self, visitor):
 
@@ -288,7 +292,7 @@ class Join(ShuffleRDD):
                 output1.insert(0, key_type)
                 return Tuple(output1)
             else:
-                return Tuple([key_type, Tuple(output1 + output2)])
+                return Tuple([key_type, Tuple(flatten(output1) + flatten(output2))])
 
     def writeDAG(self, daglist, index):
         if self.dic:
@@ -300,7 +304,7 @@ class Join(ShuffleRDD):
         # (K, V), (K, W) => (K, (V, W))
 
         self.output_type = replace_unituple(self.compute_output_type())
-        dic[OUTPUT_TYPE] = self.output_type
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
@@ -402,28 +406,71 @@ class ReduceByKey(ShuffleRDD):
         return cur_index
 
 
-class TextSource(RDD):
-    def __init__(self, path):
-        super(TextSource, self).__init__()
+class CSVSource(RDD):
+    def __init__(self, path, delimiter=",", dtype=None, add_index=False):
+        super(CSVSource, self).__init__()
         self.path = path
+        self.dtype = dtype
+        self.add_index = add_index
+        self.delimiter = delimiter
+
+    def compute_output(self):
+        df = np.genfromtxt(self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
+
+        try:
+            self.output_type = replace_unituple(typeof(tuple(df[0])))
+        except TypeError:  # scalar type
+            self.output_type = typeof(df[0])
+
+    def writeDAG(self, daglist, index):
+        if self.dic:
+            return self.dic[ID]
+        cur_index = super(CSVSource, self).writeDAG(daglist, index)
+        self.output_type = self.compute_output()
+        dic = self.dic
+        dic[OP] = 'csv_source'
+        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
+        dic[DATA_PATH] = self.path
+        dic[ADD_INDEX] = self.add_index
+        return cur_index
+
+    def get_hash(self):
+        hash_ = super(CSVSource, self).get_hash()
+        hash_.append(self.path)
+        return hash_
 
 
 class CollectionSource(RDD):
     """
-    passed collection is copied into a numpy array
+    accepts any python collections, numpy arrays or pandas dataframes
+
+    passed python collection will be copied into a numpy array
     a reference to the array is stored in this instance
-    to prevent freeing input memory before the end of computation
+    to prevent freeing the input memory before the end of computation
     """
 
     def __init__(self, values, add_index=False):
-        assert values, "Empty collection not allowed"
         super(CollectionSource, self).__init__()
-        self.output_type = replace_unituple(numba.typeof(values[0]))
-        self.array = np.array(values, dtype=numba_type_to_dtype(self.output_type))
+
+        if isinstance(values, DataFrame):
+            t = Timer()
+            t.start()
+            self.array = values.values.ravel(order='C').reshape(values.shape)
+            t.end()
+            print("copying " + t.diff())
+        elif isinstance(values, ndarray):
+            self.array = values
+        else:
+            self.array = np.array(values, dtype=numba_type_to_dtype(self.output_type))
+        assert self.array.size > 0, "Empty collection not allowed"
+        try:
+            self.output_type = replace_unituple(typeof(tuple(self.array[0])))
+        except TypeError:  # scalar type
+            self.output_type = typeof(self.array[0])
         if add_index:
             self.output_type = replace_unituple(Tuple(flatten([numba.typeof(1), self.output_type])))
         self.data_ptr = self.array.__array_interface__['data'][0]
-        self.size = self.array.size
+        self.size = self.array.shape[0]
         self.add_index = add_index
 
     def writeDAG(self, daglist, index):
@@ -442,49 +489,50 @@ class CollectionSource(RDD):
     def get_hash(self):
         hash_ = super(CollectionSource, self).get_hash()
         hash_.append(self.add_index)
-
-    def get_inputs(self):
-        return [(self.data_ptr, self.size)]
-
-
-class NumpyArraySource(RDD):
-    def __init__(self, array, add_index=False):
-        super(NumpyArraySource, self).__init__()
-
-        try:
-            self.output_type = replace_unituple(typeof(tuple(array[0])))
-        except TypeError:  # scalar type
-            self.output_type = typeof(array[0])
-
-        if add_index:
-            self.output_type = replace_unituple(Tuple(flatten([numba.typeof(1), self.output_type])))
-        # self.size = array.shape[0]
-        self.size = array.shape[0]
-        self.data_ptr = array.__array_interface__['data'][0]
-        # keep a reference to the np array
-        # until the end of the execution to prevent gc
-        self.array = array
-        self.add_index = add_index
-
-    def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
-        cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)
-        dic = self.dic
-        dic[OP] = 'collection_source'
-        dic[DATA_PTR] = self.data_ptr
-        dic[DATA_SIZE] = self.size
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        dic[ADD_INDEX] = self.add_index
-        return cur_index
-
-    def get_hash(self):
-        hash_ = super(NumpyArraySource, self).get_hash()
-        hash_.append(self.add_index)
         return hash_
 
     def get_inputs(self):
         return [(self.data_ptr, self.size)]
+
+
+# class NumpyArraySource(RDD):
+#     def __init__(self, array, add_index=False):
+#         super(NumpyArraySource, self).__init__()
+#
+#         try:
+#             self.output_type = replace_unituple(typeof(tuple(array[0])))
+#         except TypeError:  # scalar type
+#             self.output_type = typeof(array[0])
+#
+#         if add_index:
+#             self.output_type = replace_unituple(Tuple(flatten([numba.typeof(1), self.output_type])))
+#         # self.size = array.shape[0]
+#         self.size = array.shape[0]
+#         self.data_ptr = array.__array_interface__['data'][0]
+#         # keep a reference to the np array
+#         # until the end of the execution to prevent gc
+#         self.array = array
+#         self.add_index = add_index
+#
+#     def writeDAG(self, daglist, index):
+#         if self.dic:
+#             return self.dic[ID]
+#         cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)
+#         dic = self.dic
+#         dic[OP] = 'collection_source'
+#         dic[DATA_PTR] = self.data_ptr
+#         dic[DATA_SIZE] = self.size
+#         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
+#         dic[ADD_INDEX] = self.add_index
+#         return cur_index
+#
+#     def get_hash(self):
+#         hash_ = super(NumpyArraySource, self).get_hash()
+#         hash_.append(self.add_index)
+#         return hash_
+#
+#     def get_inputs(self):
+#         return [(self.data_ptr, self.size)]
 
 
 class RangeSource(RDD):

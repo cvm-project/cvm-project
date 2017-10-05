@@ -6,25 +6,33 @@ import random
 # sys.path.insert(0, "/home/sabir/projects/")
 from numba import njit
 
-input_ = [(1, 2.0), (5, 4.0)]
+bc = BlazeContext()
 
-
-def func(t1, t2):
-    return t1 + t2
-
-
-ar = np.array(input_, dtype="int,float")
-# bc = BlazeContext()
-#
 # print(bc.collection(input_).map(lambda *t: (t[0:2], t[1:])).collect())
 
-# data2 = bc.collection([(1, 33), (0, 0)]).map(lambda t: (t[0]*3, t[0])).filter(lambda t: t[1] > -1).map(lambda t: (t[1], t[0]))
-# print(bc.collection(input_).map(func).filter(lambda t: t[0] == 1).join(data2).collect())
+data1 = bc.collection([(1, 33, 3), (0, 0, 4)]) \
+    .map(lambda t: (t[0] * 3, t[0])) \
+    .filter(lambda t: t[1] > -1) \
+    .map(lambda t: (t[1], t[0]))
+res = bc.collection([(1, 2.0), (5, 4.0)]) \
+    .map(lambda t: (t[0], t[1] * 3)) \
+    .filter(lambda t: t[0] == 1) \
+    .join(data1).collect()
 
-bc = BlazeContext()
-data2 = bc.collection([(1, 33), (0, 0)]).map(lambda t: (t[0] * 3, t[0])).filter(lambda t: t[1] > -1).map(
-    lambda t: (t[1], t[0]))
-print(bc.collection(input_).map(lambda t: (t[1], t[0])).filter(lambda t: t[0] == 1).join(data2).collect())
+
+# data1 = bc.collection([(1, 33), (0, 0)])\
+#     .map(lambda t: (t[0]*3, t[0]))\
+#     .filter(lambda t: t[1] > -1)\
+#     .map(lambda t: (t[1], t[0]))
+# res = bc.collection([(1, 2.0), (5, 4.0)])\
+#     .map(lambda t: (t[0], t[1]*3))\
+#     .filter(lambda t: t[0] == 1)\
+#     .join(data1).collect()
+
+# bc = BlazeContext()
+# data2 = bc.collection([(1, 33), (0, 0)]).map(lambda t: (t[0] * 3, t[0])).filter(lambda t: t[1] > -1).map(
+#     lambda t: (t[1], t[0]))
+# print(bc.collection(input_).map(lambda t: (t[1], t[0])).filter(lambda t: t[0] == 1).join(data2).collect())
 # bc.collection(input_).map(func).reduce_by_key(lambda t1, t2: (t1[0] + t2[0], t1[1])).collect()
 #
 # f(1, 2)
