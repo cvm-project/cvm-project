@@ -1,5 +1,5 @@
 CC = clang
-FLAGS = -O3 -std=c++14 -lstdc++ -ffast-math -I ../src
+FLAGS = -O3 -std=c++14 -lstdc++ -ffast-math -I ../src -march=native
 all: main
 
 main: main.cpp

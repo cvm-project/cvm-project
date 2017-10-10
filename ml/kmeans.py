@@ -60,10 +60,10 @@ class KMeans():
         n_samples = len(X[1])
         bc = BlazeContext()
         old_centroids = _init_centroids(X, self.n_clusters, init=self.init, random_state=self.random_state)
-        centroids = bc.numpy_array(old_centroids, add_index=True)
+        centroids = bc.collection(old_centroids, add_index=True)
         old_centroids = centroids.collect()
         self.tol = _tolerance(X, self.tol)
-        in_ = bc.numpy_array(X, add_index=True)
+        in_ = bc.collection(X, add_index=True)
 
         def reduce_1(t1, t2):
             point = t1[0][:]
@@ -125,7 +125,7 @@ class KMeans():
             centroids = centr_pnt.map(map_1)
             # # compute the error
             new_centroids = centroids.collect()
-            centroids = bc.numpy_array(new_centroids)
+            centroids = bc.collection(new_centroids)
             shift = squared_norm(new_centroids.view(np.float64) - old_centroids.view(np.float64))
             old_centroids = new_centroids
             if shift < self.tol:
@@ -135,7 +135,7 @@ class KMeans():
         self.cluster_centers_ = old_centroids[list(old_centroids.dtype.names[1:])].view(np.float64).reshape(
             (self.n_clusters, n_cols))
         # compute labels and inertia
-        cart = bc.numpy_array(old_centroids).cartesian(in_)
+        cart = bc.collection(old_centroids).cartesian(in_)
         # put points first to reduce on them
         cart = cart.map(map_0)
         # for every point compute the closest centroid (E step)

@@ -27,7 +27,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
 //    outputTypes.pop_back();
     outCols.pop_back();
     outCols.pop_back();
-    label += "\n\n" + outCols;
+    label += "\n\n" ;
 
     string readSet = "read:  ";
     for (auto c : op->read_set) {
@@ -57,7 +57,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
 //    label += "\n" + deadVars;
 
 
-    Agnode_t *n = agnode(g, const_cast<char *>(label.c_str()), 1);
+    Agnode_t *n = agnode(g, const_cast<char *>(op->get_name().c_str()), 1);
     agsafeset(n, "shape", "polygon", "polygon");
 
     for (auto pred : op->predecessors) {

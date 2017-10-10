@@ -190,6 +190,7 @@ public:
         bool is_grouped = op->fields[0].properties->find(FL_GROUPED) != op->fields[0].properties->end() ||
                           op->fields[0].properties->find(FL_SORTED) != op->fields[0].properties->end() ||
                           op->fields[0].properties->find(FL_UNIQUE) != op->fields[0].properties->end();
+//        is_grouped = 0;
         string operatorName = is_grouped ? "ReduceByKeyGroupedOperator" : "ReduceByKeyOperator";
         emitComment(operatorName);
 

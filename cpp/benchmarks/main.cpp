@@ -6,7 +6,7 @@
 #include "utils/timing.h"
 
 
-#define MAX 1l<<28
+#define MAX 1l<<29
 using namespace std;
 
 double my_add(double, double);
@@ -79,8 +79,54 @@ result_struct1 map_filter(double *array) {
     return {resSize, result};
 }
 
-tuple_1 map_1(double a){
-    return {a, a*3+7};
+double filter_sum(double *array) {
+
+    double res = 0;
+    TICK1
+    for (size_t i = 0; i < MAX; i++) {
+        if (array[i] > 0) {
+            res += array[i];
+//            tot--;
+        }
+    }
+    TOCK1
+    std::cout << DIFF1 << " filter sum\n";
+    return res;
+}
+
+double filter_sum2(double *array) {
+
+    double res = 0;
+    TICK1
+    for (size_t i = 0; i < MAX; i++) {
+        res += array[i] * (array[i] > 0);
+    }
+    TOCK1
+    std::cout << DIFF1 << " filter sum2\n";
+    return res;
+}
+
+double filter_sum3(double *array) {
+
+    double res = 0;
+    size_t tot = MAX;
+    TICK1
+    size_t allocatedSize = 2;
+    size_t resSize = 0;
+    double *result = (double *) malloc(sizeof(double) * );
+
+    for (size_t i = 0; i < MAX; i++) {
+        result[resSize] = array[i];
+        resSize += array[i] > 0;
+    }
+
+    TOCK1
+    std::cout << DIFF1 << " filter sum3\n";
+    return res;
+}
+
+tuple_1 map_1(double a) {
+    return {a, a * 3 + 7};
 }
 
 result_struct1 map(double *array) {
@@ -320,10 +366,11 @@ int main() {
 
     srand(time(NULL));
     double *array = new double[MAX];
-    for (size_t i = 0; i < MAX; i++) {
-        array[i] = (double) rand() / RAND_MAX;
-    }
 
+
+    for (size_t i = 0; i < MAX; i++) {
+        array[i] = ((double) rand() / RAND_MAX) + 0.1;
+    }
 //    auto res = simple_sum(array);
 //    cout << "sum result is " << res << endl;
 //
@@ -335,10 +382,19 @@ int main() {
 //    duration = duration_cast<milliseconds>(t2 - t1).count();
 //    std::cout << duration << " unrolled sum\n";
 
-    auto res = map(array);
+//    auto res = map(array);
 //    free(array);
-    std::cout << (res.data)[rand() % res.size].v0 << " " << (res.data)[rand() % res.size].v1 << " "
-              << std::endl;
+//    std::cout << (res.data)[rand() % res.size].v0 << " " << (res.data)[rand() % res.size].v1 << " "
+//              << std::endl;
+
+    auto res = filter_sum(array);
+    std::cout << res << std::endl;
+
+    res = filter_sum2(array);
+    std::cout << res << std::endl;
+
+    res = filter_sum3(array);
+    std::cout << res << std::endl;
 
 //    srand(time(NULL));
 //    long *array_rbk = new long[MAX];

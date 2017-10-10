@@ -68,8 +68,8 @@ def with_pandas():
     t.start()
     static_feat = pd.read_csv('crime_data/static_feat.csv', dtype=float)
     census = pd.read_csv('crime_data/semi_static_feat.csv', dtype=float)
-    features_raw = pd.read_csv('crime_data/main_feat_scaled.csv', dtype=float, nrows=2 ** 21)
-    t.end()
+    features_raw = pd.read_csv('crime_data/main_feat_scaled.csv', dtype=float)
+
     print("loading files " + t.diff())
 
     print('merging dataframes step 1...')
@@ -98,34 +98,30 @@ def with_pandas():
 def with_dask():
     static_feat = dd.read_csv('crime_data/static_feat.csv', dtype=float)
     census = dd.read_csv('crime_data/semi_static_feat.csv', dtype=float)
-    features_raw = dd.read_csv('crime_data/main_feat_scaled.csv', dtype=float)
+    features_raw = dd.read_csv('crime_data/main_feat_scaled2.csv', dtype=float)
 
     features_raw['temp'] = features_raw['temp'] * 1.8 + 32
-    features_raw['weather1'] = 3.2 * features_raw['temp'] ** 3 + 7.5 * features_raw['hum'] ** 3 + 2.3 * features_raw[
-                                                                                                            'discomf'] ** 3 + 5.3 * \
-                                                                                                                              features_raw[
-                                                                                                                                  'daylight'] ** 3 + 8.6 * \
-                                                                                                                                                     features_raw[
-                                                                                                                                                         'moon'] ** 3
-    features_raw['weather2'] = 3.2 * features_raw['temp'] ** 2 + 7.5 * features_raw['hum'] ** 2 + 2.3 * features_raw[
-                                                                                                            'discomf'] ** 2 + 5.3 * \
-                                                                                                                              features_raw[
-                                                                                                                                  'daylight'] ** 2 + 8.6 * \
-                                                                                                                                                     features_raw[
-                                                                                                                                                         'moon'] ** 2
-    features_raw['weather3'] = 3.2 * features_raw['temp'] ** 4 + 7.5 * features_raw['hum'] ** 4 + 2.3 * features_raw[
-                                                                                                            'discomf'] ** 4 + 5.3 * \
-                                                                                                                              features_raw[
-                                                                                                                                  'daylight'] ** 4 + 8.6 * \
-                                                                                                                                                     features_raw[
-                                                                                                                                                         'moon'] ** 4
-    features_raw = dd.merge(features_raw, census, on=['grid_id'])
+    features_raw['weather1'] = 3.2 * features_raw['temp'] ** 3 + 7.5 * features_raw['hum'] ** 3 + \
+                               2.3 * features_raw['discomf'] ** 3 + 5.3 * \
+                                features_raw['daylight'] ** 3 + 8.6 * \
+                                features_raw['moon'] ** 3
+
+    features_raw['weather2'] = 3.2 * features_raw['temp'] ** 2 + 7.5 * features_raw['hum'] ** 2 + \
+                               2.3 * features_raw['discomf'] ** 2 + 5.3 * \
+                            features_raw['daylight'] ** 2 + 8.6 * \
+                            features_raw['moon'] ** 2
+
+    features_raw['weather3'] = 3.2 * features_raw['temp'] ** 4 + 7.5 * features_raw['hum'] ** 4 + \
+                               2.3 * features_raw['discomf'] ** 4 + 5.3 * \
+                                features_raw['daylight'] ** 4 + 8.6 * \
+                                features_raw['moon'] ** 4
 
     features_raw = dd.merge(features_raw, static_feat, on=['grid_id'])
-
+    features_raw = dd.merge(features_raw, census, on=['grid_id'])
     features_raw = features_raw[features_raw['land_no_use'] < 1]
-    res = features_raw.compute()
-    print(res)
+
+    result = features_raw.compute()
+    # print(res)
     # store = pd.HDFStore('store.h5')
     # features_raw.to_hdf(store, key='all_features', index=False)
     # import numpy as np
@@ -141,28 +137,32 @@ def with_our():
     static_feat = bc.collection(static_feat)
     census = pd.read_csv('crime_data/semi_static_feat.csv', dtype=float)
     census = bc.collection(census)
-    features_raw = pd.read_csv('crime_data/main_feat_scaled.csv', dtype=float)
+    features_raw = pd.read_csv('crime_data/main_feat_scaled2.csv', dtype=float)
     features_raw = bc.collection(features_raw)
     ti.end()
     print("loading files " + ti.diff())
 
     features_raw = features_raw.map(lambda t: t[:3] + (t[3] * 1.8 + 32,) + t[4:])
+    # features_raw = features_raw.map(
+    #     lambda t: t + (3.2 * t[3] ** 3 + 7.5 * t[4] ** 3 + 2.3 * t[5] ** 3 + 5.3 * t[6] ** 3 + 8.6 * t[7] ** 3,))
+    # features_raw = features_raw.map(
+    #     lambda t: t + (3.2 * t[3] ** 2 + 7.5 * t[4] ** 2 + 2.3 * t[5] ** 2 + 5.3 * t[6] ** 2 + 8.6 * t[7] ** 2,))
+    # features_raw = features_raw.map(
+    #     lambda t: t + (3.2 * t[3] ** 4 + 7.5 * t[4] ** 4 + 2.3 * t[5] ** 4 + 5.3 * t[6] ** 4 + 8.6 * t[7] ** 4,))
+
     features_raw = features_raw.map(
-        lambda t: t + (3.2 * t[3] ** 3 + 7.5 * t[4] ** 3 + 2.3 * t[5] ** 3 + 5.3 * t[6] ** 3 + 8.6 * t[7] ** 3,))
-    features_raw = features_raw.map(
-        lambda t: t + (3.2 * t[3] ** 2 + 7.5 * t[4] ** 2 + 2.3 * t[5] ** 2 + 5.3 * t[6] ** 2 + 8.6 * t[7] ** 2,))
-    features_raw = features_raw.map(
-        lambda t: t + (3.2 * t[3] ** 4 + 7.5 * t[4] ** 4 + 2.3 * t[5] ** 4 + 5.3 * t[6] ** 4 + 8.6 * t[7] ** 4,))
-    # concatenate columns
-    features_raw = census.join(features_raw)
+        lambda t: t + (3.2 * t[3] ** 3 + 7.5 * t[4] ** 3 + 2.3 * t[5] ** 3 + 5.3 * t[6] ** 3 + 8.6 * t[7] ** 3,
+                       3.2 * t[3] ** 2 + 7.5 * t[4] ** 2 + 2.3 * t[5] ** 2 + 5.3 * t[6] ** 2 + 8.6 * t[7] ** 2,
+                       3.2 * t[3] ** 4 + 7.5 * t[4] ** 4 + 2.3 * t[5] ** 4 + 5.3 * t[6] ** 4 + 8.6 * t[7] ** 4,))
 
     features_raw = static_feat.join(features_raw)
+    features_raw = census.join(features_raw)
 
     features_raw = features_raw.filter(lambda t: t[1][37] < 1)  # 0.4 selectivity
     res = features_raw.collect()
-    print(res)
+    # print(res)
 
 
 # print("pandas time: " + str(timer(with_pandas, 1)))
-print("dask time: " + str(timer(with_dask, 3)))
-print("pard time: " + str(timer(with_our, 3)))
+print("dask time: " + str(timer(with_dask, 1)))
+print("jitq time: " + str(timer(with_our, 1)))

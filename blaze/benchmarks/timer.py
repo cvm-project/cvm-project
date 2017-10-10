@@ -5,7 +5,7 @@ def mean(l):
     return sum(l) / len(l)
 
 
-def timer(func, max_rep=3):
+def timer(func, max_rep=3, show_runs=False):
     res = []
     for r in range(0, max_rep):
         # print("run timer")
@@ -13,7 +13,8 @@ def timer(func, max_rep=3):
         resu = func()
         t2 = time.perf_counter()
         res.append(t2 - t1)
-        print("run " + str(r) + " " + str(t2 - t1))
+        if show_runs:
+            print("run " + str(r) + " " + str(t2 - t1))
     return mean(res) * 1000
 
 

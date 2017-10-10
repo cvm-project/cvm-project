@@ -1,3 +1,8 @@
+import os
+import sys
+
+sys.path.insert(0, os.environ['BLAZEPATH'])
+
 from sklearn.datasets.samples_generator import make_blobs
 from blaze.blaze_context import BlazeContext
 from blaze.benchmarks.timer import timer
@@ -6,27 +11,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ml.kmeans import KMeans
 
-# measuring stats
-# n_features = 50
-# n_samples = 10000
-# n_clusters = 6
-#
-# n_init = 1
-# max_iter = 100
-#
-# random_state = 100
-# # init = 'k-means++'
-# init = 'random'
-
-
-n_features = 3
+n_features = 30
 n_samples = 1 << 20
 n_clusters = 5
 
 n_init = 1
-max_iter = 300
+max_iter = 3
 
-random_state = 100
+random_state = 111
 # init = 'k-means++'
 init = 'random'
 
@@ -34,19 +26,15 @@ x, y = make_blobs(n_samples, n_features, n_clusters, random_state=random_state)
 # print("true labels " + str(y))
 print("generated data")
 
+
 # plt.scatter(x[:, 0], x[:, 1], c=y.astype(np.float))
 
 
 def bench_sklearn_kmeans():
-
     def run():
         classifier = sk_KMeans(n_clusters, n_init=n_init, max_iter=max_iter, random_state=random_state, init=init,
-                           algorithm='full', precompute_distances=False)
+                               algorithm='full', precompute_distances=False)
         classifier.fit(x)
-        print("error: " + str(classifier.inertia_))
-        # print("centroids: " + str(classifier.cluster_centers_))
-
-        plt.scatter(classifier.cluster_centers_[:, 0], classifier.cluster_centers_[:, 1], s=100)
 
     return run
 
@@ -61,23 +49,20 @@ def chebyshev_dist(t1, t2):
 
 
 def bench_kmeans():
-
     def run():
         classifier = KMeans(n_clusters, n_init=n_init, max_iter=max_iter, init=init, random_state=random_state)
         classifier.fit(x)
-        print("error: " + str(classifier.inertia_))
-        # print("centroids: " + str(classifier.cluster_centers_))
-        plt.scatter(classifier.cluster_centers_[:, 0], classifier.cluster_centers_[:, 1], s=250)
         return classifier
 
     return run
 
-t = timer(bench_sklearn_kmeans(), 3)
-print("time sklearn kmeans  " + str(t))
+
+# t = timer(bench_sklearn_kmeans(), 1)
+# print("time sklearn kmeans  " + str(t/max_iter))
 
 #
-t = timer(bench_kmeans(), 3)
-print("time kmeans  " + str(t))
+t = timer(bench_kmeans(), 1)
+print("time kmeans  " + str(t/max_iter))
 #
 
 plt.show()

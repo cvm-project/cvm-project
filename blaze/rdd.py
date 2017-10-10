@@ -453,14 +453,11 @@ class CollectionSource(RDD):
         super(CollectionSource, self).__init__()
 
         if isinstance(values, DataFrame):
-            t = Timer()
-            t.start()
             self.array = values.values.ravel(order='C').reshape(values.shape)
-            t.end()
-            print("copying " + t.diff())
         elif isinstance(values, ndarray):
             self.array = values
         else:
+            self.output_type = replace_unituple(typeof(values[0]))
             self.array = np.array(values, dtype=numba_type_to_dtype(self.output_type))
         assert self.array.size > 0, "Empty collection not allowed"
         try:
