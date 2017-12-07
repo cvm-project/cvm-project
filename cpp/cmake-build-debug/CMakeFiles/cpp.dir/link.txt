@@ -1,1 +1,0 @@
-/usr/bin/c++    -Wall -g   CMakeFiles/cpp.dir/main.cpp.o CMakeFiles/cpp.dir/src/parser/JSONParser.cpp.o  -o cpp 

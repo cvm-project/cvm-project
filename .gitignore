@@ -182,7 +182,7 @@ fabric.properties
 *.bin
 
 
-gen/
-/cpp/CMakeFiles/Makefile2
-blaze/benchmarks/crime_data/
+/cpp/gen/
+/blaze/benchmarks/crime_data/
 *.h5
+/dag.json
