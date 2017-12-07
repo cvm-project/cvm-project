@@ -33,7 +33,7 @@ int generate_dag_plan(char *dagstr,  unsigned long counter) {
     //call make in the subdir
 
     TICK1
-    exec(("cd " + get_lib_path() + "cpp/gen && make LIB_ID=" + to_string(counter) + " -f ../src/utils/Makefile -j").c_str());
+    exec(("cd " + get_lib_path() + "cpp/gen && make LIB_ID=" + to_string(counter) + " -f ../src/operators/Makefile -j").c_str());
     TOCK1
 //    std::cout << "call make " << DIFF1 << std::endl;
     delete (dag);
