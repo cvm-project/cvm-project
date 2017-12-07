@@ -16,7 +16,7 @@
 extern "C" {
 int generate_dag_plan(char *dagstr,  unsigned long counter) {
 
-    exec(("rm -r -f " + get_lib_path() + "cpp/gen").c_str());
+    exec(("bash -c 'rm -r -f " + get_lib_path() + "cpp/gen/*'").c_str());
 
     DAG *dag = parse_dag(std::string(dagstr));
     //scheme inference
