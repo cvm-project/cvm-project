@@ -14,11 +14,11 @@ class TestCollection(unittest.TestCase):
         res = [tuple(r) for r in res]
         self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
 
-    def test_index_array(self):
-        bc = BlazeContext()
-        res = bc.numpy_array(numpy.array([i ** 2 for i in range(10)]), add_index=True).collect()
-        res = [tuple(r) for r in res]
-        self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
+#    def test_index_array(self):
+#        bc = BlazeContext()
+#        res = bc.numpy_array(numpy.array([i ** 2 for i in range(10)]), add_index=True).collect()
+#        res = [tuple(r) for r in res]
+#        self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
 
 
 class TestJoin(unittest.TestCase):
@@ -102,6 +102,7 @@ class TestReduce(unittest.TestCase):
         d = bc.collection(input).reduce(lambda t1, t2: t1 + t2)
         self.assertEqual(d, sum(input))
 
+    @unittest.skip("Feature not fully implemented")
     def test_reduce_tuple(self):
         bc = BlazeContext()
         input = [(r, r * 10) for r in range(0, 10)]
@@ -117,6 +118,7 @@ class TestReduceByKey(unittest.TestCase):
         truth = {(0, 2), (1, 3)}
         self.assertSetEqual(set(tuple(t) for t in d), truth)
 
+    @unittest.skip("Feature not fully implemented")
     def test_reduce_by_key_tuple(self):
         bc = BlazeContext()
         input_ = [(0, 1, 2), (1, 1, 2), (1, 1, 2), (0, 1, 2), (1, 1, 2)]
@@ -131,7 +133,6 @@ class TestReduceByKey(unittest.TestCase):
             lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).collect()
         truth = {(4, 1, 1, 1, 1, 1), (0, 0, 1, 0, 1, 0), (1, 1, 1, 1, 1, 1),
                  (2, 1, 1, 1, 1, 1), (3, 0, 1, 0, 1, 0)}
-        print(d)
         self.assertSetEqual(set(tuple(t) for t in d), truth)
 
 
@@ -169,11 +170,11 @@ class TestIntegration(unittest.TestCase):
         mapF1 = lambda w: (w, w * 3)
         filtF1 = lambda w: w[0] % 2 == 0
         mapF2 = lambda w: w[0]
-        # d = bc.collection(range(0, 10)).map(mapF1).map(mapF2)
         d = bc.collection(input_).map(mapF1).filter(filtF1).map(mapF2)
         res = d.collect()
         self.assertListEqual(list(res), list(map(mapF2, filter(filtF1, map(mapF1, input_)))))
 
+    @unittest.skip("Test case not fully implemented")
     def test_map_filter_join(self):
         bc = BlazeContext()
         input_ = [(1, 2), (5, 4)]
