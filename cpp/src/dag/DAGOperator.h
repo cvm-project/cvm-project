@@ -25,7 +25,7 @@ public:
     size_t id;
     static size_t lastOperatorIndex;
 
-    ~DAGOperator() {
+    virtual ~DAGOperator() {
         for (auto op : predecessors) {
             delete (op);
         }
