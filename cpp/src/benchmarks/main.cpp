@@ -113,7 +113,7 @@ double filter_sum3(double *array) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    double *result = (double *) malloc(sizeof(double) * );
+    double *result = (double *) malloc(sizeof(double) * allocatedSize);
 
     for (size_t i = 0; i < MAX; i++) {
         result[resSize] = array[i];

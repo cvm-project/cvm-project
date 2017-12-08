@@ -60,6 +60,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         generate
     )
 
+# Set up benchmark utils
+add_executable(benchmark benchmarks/main.cpp)
+add_test(benchmark benchmark)
+
+add_executable(max_memory benchmarks/max_memory.c)
+
 # Set up LLVMParser unit tests
 add_executable(LLVMParser_tests
         tests/LLVMParser.cpp
