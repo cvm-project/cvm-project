@@ -16,7 +16,7 @@
 extern "C" {
 int generate_dag_plan(char *dagstr,  unsigned long counter) {
 
-    exec(("bash -c 'rm -r -f " + get_lib_path() + "cpp/gen/*'").c_str());
+    exec(("bash -c 'rm -r -f " + get_lib_path() + "/cpp/gen/*'").c_str());
 
     DAG *dag = parse_dag(std::string(dagstr));
     //scheme inference
@@ -33,7 +33,7 @@ int generate_dag_plan(char *dagstr,  unsigned long counter) {
     //call make in the subdir
 
     TICK1
-    exec(("cd " + get_lib_path() + "cpp/gen && make LIB_ID=" + to_string(counter) + " -f ../src/operators/Makefile -j").c_str());
+    exec(("cd " + get_lib_path() + "/cpp/gen && make LIB_ID=" + to_string(counter) + " -f " + get_lib_path() + "/cpp/src/operators/Makefile -j").c_str());
     TOCK1
 //    std::cout << "call make " << DIFF1 << std::endl;
     delete (dag);

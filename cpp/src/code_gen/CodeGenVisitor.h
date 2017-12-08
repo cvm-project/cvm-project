@@ -22,7 +22,7 @@ using namespace std;
 class CodeGenVisitor : public DAGVisitor {
 public:
 
-    CodeGenVisitor() : genDir(get_lib_path() + "cpp/gen/") {}
+    CodeGenVisitor() : genDir(get_lib_path() + "/cpp/gen/") {}
 
     void start_visit(DAG *dag) {
 

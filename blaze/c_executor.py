@@ -12,8 +12,8 @@ from numba.types import Tuple
 from blaze.benchmarks.timer import Timer
 
 BLAZE_PATH = getBlazePath()
-cpp_dir = BLAZE_PATH + "cpp/"
-gen_dir = BLAZE_PATH + "cpp/gen/"
+cpp_dir = BLAZE_PATH + "/cpp/"
+gen_dir = BLAZE_PATH + "/cpp/gen/"
 gen_header_file = "c_generate_dag_plan.h"
 executer_header_file = "c_execute.h"
 generate_lib = "libgenerate"
