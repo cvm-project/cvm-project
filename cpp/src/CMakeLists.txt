@@ -8,6 +8,12 @@ include_directories("${PROJECT_SOURCE_DIR}")
 
 include (ReleaseAsDefault)
 
+# Setup clang-format
+find_package (ClangFormat 4.0)
+if(ClangFormat_FOUND)
+    enable_clang_format_targets()
+endif()
+
 # Set up LLVM
 find_package(LLVM REQUIRED CONFIG)
 

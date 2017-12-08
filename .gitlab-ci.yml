@@ -1,6 +1,16 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
+format:
+  stage: build
+  image: ingomuellernet/buildenv
+  before_script:
+    - apt-get update && apt-get install -y libgraphviz-dev
+  script:
+    - cd cpp/build
+    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
+    - make check-format
+
 build:
   stage: build
   image: ingomuellernet/buildenv
