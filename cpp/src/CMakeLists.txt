@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(cpp)
+enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/cmake/")
 
@@ -58,3 +59,13 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         ${LLVM_LIBS}
         generate
     )
+
+# Set up LLVMParser unit tests
+add_executable(LLVMParser_tests
+        tests/LLVMParser.cpp
+        IR_analyzer/LLVMParser.cpp
+    )
+target_link_libraries(LLVMParser_tests PUBLIC
+        ${LLVM_LIBS}
+    )
+add_test(LLVMParser LLVMParser_tests)

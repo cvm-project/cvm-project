@@ -28,3 +28,12 @@ operator-test:
     - echo -e "CC=clang-5.0\nCXX=clang++-5.0" > cpp/src/operators/Makefile.local
   script:
     - blaze/tests/test_operators.py -q
+
+cpp-test:
+  stage: test
+  dependencies:
+    - build
+  image: ingomuellernet/buildenv
+  script:
+    - cd cpp/build
+    - ctest -V
