@@ -17,7 +17,7 @@ extern "C" {
 #include "utils/utils.h"
 
 extern "C" {
-int generate_dag_plan(char *dagstr, unsigned long counter) {
+int generate_dag_plan(char *dagstr, unsigned long counter) {  // NOLINT
     exec(("bash -c 'rm -r -f " + get_lib_path() + "/cpp/gen/*'").c_str());
 
     DAG *dag = parse_dag(std::string(dagstr));

@@ -180,19 +180,19 @@ result_struct2 filter(double *array) {
 }
 
 struct tuple_2 {
-    long v0;
-    long v1;
+    int64_t v0;
+    int64_t v1;
 };
 
 struct tuple_3 {
-    long v0;
-    long v1;
+    int64_t v0;
+    int64_t v1;
 };
 
 struct tuple_4 {
-    long v0;
-    long v1;
-    long v2;
+    int64_t v0;
+    int64_t v1;
+    int64_t v2;
 };
 
 struct result_struct {
@@ -205,7 +205,7 @@ size_t len2 = MAX >> 1;
 result_struct join(tuple_2 *array1, tuple_3 *array2) {
     // build ht
     TICK1
-    std::unordered_map<long, vector<tuple_3>> ht;
+    std::unordered_map<int64_t, vector<tuple_3>> ht;
     for (size_t i = 0; i < len2; i++) {
         auto key = array2[i].v0;
         if (ht.count(key) > 0) {
@@ -247,10 +247,10 @@ result_struct join(tuple_2 *array1, tuple_3 *array2) {
     return ret;
 }
 
-result_struct map_filter_join(long *array1, tuple_3 *array2) {
+result_struct map_filter_join(int64_t *array1, tuple_3 *array2) {
     // build ht
     TICK1
-    std::unordered_map<long, vector<tuple_3>> ht;
+    std::unordered_map<int64_t, vector<tuple_3>> ht;
     for (size_t i = 0; i < len2; i++) {
         auto key = array2[i].v0;
         if (ht.count(key) > 0) {
@@ -300,8 +300,8 @@ result_struct map_filter_join(long *array1, tuple_3 *array2) {
 }
 
 struct tuple_5 {
-    long v0;
-    long v1;
+    int64_t v0;
+    int64_t v1;
 };
 
 struct result_struct_rbk {
@@ -309,10 +309,10 @@ struct result_struct_rbk {
     tuple_5 *data;
 };
 
-result_struct_rbk map_reduce_by_key(long *array) {
+result_struct_rbk map_reduce_by_key(int64_t *array) {
     // build ht
     TICK1
-    std::unordered_map<long, long> ht;
+    std::unordered_map<int64_t, int64_t> ht;
     for (size_t i = 0; i < MAX; i++) {
         tuple_5 mapped = {array[i], 1};
         auto key = mapped.v0;
@@ -381,7 +381,7 @@ int main() {
     std::cout << res << std::endl;
 
     //    srand(time(NULL));
-    //    long *array_rbk = new long[MAX];
+    //    int64_t *array_rbk = new int64_t[MAX];
     //    for (size_t i = 0; i < MAX; i++) {
     //        array_rbk[i] = rand() % 100;
     //    }
@@ -429,7 +429,7 @@ int main() {
     //    free(array1);
     //    free(array2);
 
-    //    long *array1 = new long[MAX];
+    //    int64_t *array1 = new int64_t[MAX];
     //    for (size_t i = 0; i < MAX; i++) {
     //        array1[i] = rand() % 1000;
     //    }
