@@ -6,8 +6,8 @@
 #define CPP_SIMPLEPREDICATEMOVEAROUND_H
 
 
-#include <dag/DAG.h>
-#include <utils/DAGVisitor.h>
+#include "dag/DAG.h"
+#include "utils/DAGVisitor.h"
 
 class SimplePredicateMoveAround : DAGVisitor {
 public:

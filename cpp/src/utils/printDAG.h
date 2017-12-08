@@ -6,8 +6,9 @@
 #define CPP_PRINTDAG_H
 
 #include <graphviz/gvc.h>
-#include "utils/utils.h"
+
 #include "dag/DAG.h"
+#include "utils/utils.h"
 
 Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     string label = op->get_name();

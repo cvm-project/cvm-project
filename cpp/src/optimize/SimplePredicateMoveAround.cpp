@@ -2,9 +2,10 @@
 // Created by sabir on 29.08.17.
 //
 
-#include <dag/DAGFilter.h>
-#include <IR_analyzer/LLVMParser.h>
 #include "SimplePredicateMoveAround.h"
+
+#include "IR_analyzer/LLVMParser.h"
+#include "dag/DAGFilter.h"
 
 void SimplePredicateMoveAround::optimize(DAG *dag_) {
     //1. gather filters and remove from dag

@@ -1,8 +1,8 @@
 extern "C" int generate_dag_plan(char*);
 
-#include <string>
 #include <fstream>
 #include <streambuf>
+#include <string>
 
 int main(int argc, char **argv) {
 

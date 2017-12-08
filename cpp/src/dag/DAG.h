@@ -5,9 +5,9 @@
 #ifndef CPP_DAG_H
 #define CPP_DAG_H
 
+#include <iostream>
 
 #include "DAGOperator.h"
-#include "iostream"
 
 /**
  * destructor responsible for freeing the columns and the dag operators

@@ -1,17 +1,18 @@
 
+#include "DAGCreation.hpp"
+
 #include <dirent.h>
 #include <fstream>
-#include "DAGCreation.hpp"
-#include "DAGRange.h"
-#include "DAGCollection.h"
-#include "DAGMap.h"
-#include "DAGReduce.h"
-#include "DAGJoin.h"
-#include "DAGFilter.h"
-#include "DAGReduceByKey.h"
-#include "DAGCartesian.h"
-#include "utils/utils.h"
 
+#include "DAGCartesian.h"
+#include "DAGCollection.h"
+#include "DAGFilter.h"
+#include "DAGJoin.h"
+#include "DAGMap.h"
+#include "DAGRange.h"
+#include "DAGReduce.h"
+#include "DAGReduceByKey.h"
+#include "utils/utils.h"
 
 using namespace std;
 

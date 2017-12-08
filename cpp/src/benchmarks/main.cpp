@@ -1,10 +1,10 @@
-#include <iostream>
 #include <chrono>
 #include <cmath>
-#include <vector>
+#include <iostream>
 #include <unordered_map>
-#include "utils/timing.h"
+#include <vector>
 
+#include "utils/timing.h"
 
 #define MAX 1l<<29
 using namespace std;

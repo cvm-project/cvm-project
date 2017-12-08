@@ -5,8 +5,9 @@
 #ifndef CPP_DAGRANGE_H
 #define CPP_DAGRANGE_H
 
-#include "DAGOperator.h"
 #include <string>
+
+#include "DAGOperator.h"
 
 class DAGVisitor;
 using std::string;

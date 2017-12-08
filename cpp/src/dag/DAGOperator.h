@@ -6,11 +6,12 @@
 #define CPP_DAGOPERATOR_H
 
 #include <cstddef>
-#include <vector>
+#include <libs/json.hpp>
 #include <set>
-#include "libs/json.hpp"
-#include "dag/TupleField.h"
+#include <vector>
+
 #include "dag/Column.h"
+#include "dag/TupleField.h"
 
 class DAGOperator {
 public:

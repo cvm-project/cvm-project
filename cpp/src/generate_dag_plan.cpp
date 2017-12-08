@@ -1,20 +1,20 @@
-#include <utility>
-#include <cstddef>
-#include <tuple>
-#include <iostream>
-#include <cstring>
-#include "code_gen/generate_code.h"
-#include "utils/timing.h"
-#include "IR_analyzer/SchemaInference.h"
-
-#include "dag/DAGCreation.hpp"
-#include "utils/printDAG.h"
-#include "optimize/Optimizer.h"
-#include "utils/utils.h"
-
 extern "C" {
 #include "generate_dag_plan.h"
 }
+
+#include <cstddef>
+#include <cstring>
+#include <iostream>
+#include <tuple>
+#include <utility>
+
+#include "IR_analyzer/SchemaInference.h"
+#include "code_gen/generate_code.h"
+#include "dag/DAGCreation.hpp"
+#include "optimize/Optimizer.h"
+#include "utils/printDAG.h"
+#include "utils/timing.h"
+#include "utils/utils.h"
 
 extern "C" {
 int generate_dag_plan(char *dagstr,  unsigned long counter) {

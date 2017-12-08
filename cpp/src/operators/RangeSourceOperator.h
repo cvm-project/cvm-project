@@ -5,8 +5,8 @@
 #ifndef CPP_RANGESOURCEOPERATOR_H
 #define CPP_RANGESOURCEOPERATOR_H
 
-
 #include <iostream>
+
 #include "Operator.h"
 
 template<class Tuple>

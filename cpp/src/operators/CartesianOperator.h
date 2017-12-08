@@ -5,11 +5,12 @@
 #ifndef CPP_CARTESIANOPERATOR_H
 #define CPP_CARTESIANOPERATOR_H
 
-#include <unordered_map>
-#include "Operator.h"
-#include <vector>
 #include <iostream>
 #include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "Operator.h"
 
 using std::vector;
 

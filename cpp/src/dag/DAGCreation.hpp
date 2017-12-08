@@ -5,11 +5,11 @@
 #ifndef CPP_DAGCREATION_H
 #define CPP_DAGCREATION_H
 
-
 #include <iostream>
 #include <unordered_map>
-#include "DAGOperator.h"
+
 #include "DAG.h"
+#include "DAGOperator.h"
 #include "utils/constants.h"
 
 

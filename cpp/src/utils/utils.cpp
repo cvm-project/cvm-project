@@ -2,11 +2,12 @@
 // Created by sabir on 23.07.17.
 //
 
-#include <algorithm>
-#include <iostream>
-#include <array>
-#include <memory>
 #include "utils.h"
+
+#include <algorithm>
+#include <array>
+#include <iostream>
+#include <memory>
 
 string snake_to_camel_string(string str) {
     string tempString = "";

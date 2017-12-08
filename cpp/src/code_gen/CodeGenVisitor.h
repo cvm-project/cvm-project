@@ -5,17 +5,18 @@
 #ifndef CPP_CODEGENVISITOR_H
 #define CPP_CODEGENVISITOR_H
 
-#include <unordered_map>
+#include <cstdlib>
+#include <fstream>
 #include <regex>
-#include "utils/DAGVisitor.h"
+#include <set>
+#include <unordered_map>
+
+#include <sys/stat.h>
+
 #include "config.h"
 #include "dag/DAG.h"
+#include "utils/DAGVisitor.h"
 #include "utils/utils.h"
-#include <fstream>
-#include <sys/stat.h>
-#include <cstdlib>
-#include <set>
-
 
 using namespace std;
 

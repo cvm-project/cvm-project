@@ -5,9 +5,9 @@
 #ifndef CPP_OPERATOR_H
 #define CPP_OPERATOR_H
 
-#include "libs/optional.h"
-#include <stdlib.h> //size_t def
+#include <stdlib.h>  //size_t def
 
+#include "libs/optional.h"
 
 #define INLINE __attribute__((always_inline))
 

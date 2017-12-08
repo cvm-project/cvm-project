@@ -3,9 +3,10 @@
 //
 
 #include <string>
-#include <llvm/Support/SourceMgr.h>
+
 #include <llvm/IR/Module.h>
 #include <llvm/IRReader/IRReader.h>
+#include <llvm/Support/SourceMgr.h>
 
 using namespace llvm;
 

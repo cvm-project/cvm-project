@@ -5,8 +5,9 @@
 #ifndef CPP_COLUMN_H
 #define CPP_COLUMN_H
 
-#include <vector>
 #include <iostream>
+#include <vector>
+
 #include "dag/TupleField.h"
 
 

@@ -5,11 +5,11 @@
 #ifndef CPP_REDUCEBYKEYGROUPEDOPERATOR_H
 #define CPP_REDUCEBYKEYGROUPEDOPERATOR_H
 
-#include <unordered_map>
 #include <iostream>
-#include "utils/timing.h"
-#include "Operator.h"
+#include <unordered_map>
 
+#include "Operator.h"
+#include "utils/timing.h"
 
 /**
  * Groups up the input tuples by key and reduces the values

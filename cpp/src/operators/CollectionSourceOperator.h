@@ -5,8 +5,9 @@
 #ifndef CPP_COLLECTIONSOURCEOPERATOR_H
 #define CPP_COLLECTIONSOURCEOPERATOR_H
 
-#include "Operator.h"
 #include <cstring>
+
+#include "Operator.h"
 
 template<class Tuple, bool add_index = false>
 class CollectionSourceOperator : public Operator {

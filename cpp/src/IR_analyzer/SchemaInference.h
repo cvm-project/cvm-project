@@ -5,8 +5,9 @@
 #ifndef CPP_SCHEMAINFERENCE_H
 #define CPP_SCHEMAINFERENCE_H
 
-#include "utils/DAGVisitor.h"
 #include "IR_analyzer/LLVMParser.h"
+#include "dag/DAG.h"
+#include "utils/DAGVisitor.h"
 
 /**
  * assign schema for every operator

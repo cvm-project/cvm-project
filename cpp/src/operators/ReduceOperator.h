@@ -5,11 +5,11 @@
 #ifndef CPP_REDUCEOPERATOR_H
 #define CPP_REDUCEOPERATOR_H
 
+#include <iostream>
+#include <stdexcept>
 
 #include "Operator.h"
 #include "utils/timing.h"
-#include <stdexcept>
-#include <iostream>
 
 template<class Upstream, class Tuple, class Function>
 class ReduceOperator : public Operator {

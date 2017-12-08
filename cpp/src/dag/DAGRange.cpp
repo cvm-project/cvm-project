@@ -1,8 +1,10 @@
 
 #include "DAGRange.h"
+
+#include <string>
+
 #include "utils/DAGVisitor.h"
 #include "utils/constants.h"
-#include <string>
 
 using std::to_string;
 

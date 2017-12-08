@@ -6,10 +6,9 @@
 #define CPP_JOINOPERATOR_H
 
 #include <unordered_map>
-#include "Operator.h"
 #include <vector>
-//#include <iostream>
-//#include "utils/debug_print.h"
+
+#include "Operator.h"
 
 using std::vector;
 

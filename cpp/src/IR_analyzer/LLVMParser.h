@@ -6,13 +6,14 @@
 #define CPP_PARSER_H
 
 #include <memory>
-#include <vector>
 #include <string>
-#include <llvm/Support/SourceMgr.h>
+#include <vector>
+
 #include <llvm/IR/Module.h>
 #include <llvm/IRReader/IRReader.h>
-#include <dag/DAGFilter.h>
+#include <llvm/Support/SourceMgr.h>
 
+#include "dag/DAGFilter.h"
 
 using namespace llvm;
 

@@ -6,6 +6,7 @@
 #define CPP_DAGMAP_H
 
 #include <iostream>
+
 #include "DAGOperator.h"
 
 class DAGVisitor;

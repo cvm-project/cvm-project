@@ -5,15 +5,15 @@
 #ifndef CPP_DAGVISITOR_H
 #define CPP_DAGVISITOR_H
 
+#include "dag/DAGCartesian.h"
 #include "dag/DAGCollection.h"
 #include "dag/DAGFilter.h"
 #include "dag/DAGJoin.h"
 #include "dag/DAGMap.h"
-#include "dag/DAGRange.h"
 #include "dag/DAGOperator.h"
+#include "dag/DAGRange.h"
 #include "dag/DAGReduce.h"
 #include "dag/DAGReduceByKey.h"
-#include "dag/DAGCartesian.h"
 #include "utils/debug_print.h"
 
 class DAGVisitor {

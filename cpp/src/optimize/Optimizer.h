@@ -5,8 +5,7 @@
 #ifndef CPP_OPTIMIZER_H
 #define CPP_OPTIMIZER_H
 
-
-#include <dag/DAG.h>
+#include "dag/DAG.h"
 
 class Optimizer {
 public:

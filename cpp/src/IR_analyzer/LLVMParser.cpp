@@ -3,10 +3,12 @@
 //
 
 #include "LLVMParser.h"
+
 #include <regex>
-#include "utils/c_type_to_llvm.h"
+
 #include <llvm/Transforms/Utils/Cloning.h>
 
+#include "utils/c_type_to_llvm.h"
 
 void LLVMParser::parse(std::string &ir) {
     module = parseIR(MemoryBufferRef(StringRef(ir), StringRef("id")), Err, Context);
