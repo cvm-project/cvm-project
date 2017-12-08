@@ -12,6 +12,9 @@
 #include "optimize/Optimizer.h"
 #include "utils/utils.h"
 
+extern "C" {
+#include "generate_dag_plan.h"
+}
 
 extern "C" {
 int generate_dag_plan(char *dagstr,  unsigned long counter) {

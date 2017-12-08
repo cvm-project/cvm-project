@@ -26,7 +26,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 # Set up library
 include_directories(src/)
 set(SOURCE_FILES
-        c_generate_dag_plan.c
         generate_dag_plan.cpp
         src/code_gen/generate_code.cpp
         src/dag/Column.cpp

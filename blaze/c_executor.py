@@ -14,7 +14,7 @@ from blaze.benchmarks.timer import Timer
 BLAZE_PATH = getBlazePath()
 cpp_dir = BLAZE_PATH + "/cpp/"
 gen_dir = BLAZE_PATH + "/cpp/gen/"
-gen_header_file = "c_generate_dag_plan.h"
+gen_header_file = "generate_dag_plan.h"
 executer_header_file = "c_execute.h"
 generate_lib = "libgenerate"
 execute_lib = "execute"
@@ -68,7 +68,7 @@ def execute(dag_dict, hash_, inputs):
 
         timer = Timer()
         timer.start()
-        generator_cffi.c_generate_dag_plan(dag_c, lib_counter)
+        generator_cffi.generate_dag_plan(dag_c, lib_counter)
         timer.end()
         print("calling make " + str(timer.diff()))
         executor_cffi = load_cffi(gen_dir + executer_header_file, gen_dir + execute_lib + str(lib_counter), ffi)
