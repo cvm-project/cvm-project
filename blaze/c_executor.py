@@ -63,7 +63,7 @@ def execute(dag_dict, hash_, inputs):
     executor_cffi = dag_cache.get(hash_, None)
     if not executor_cffi:
         dag_str = json.dumps(dag_dict, cls=RDDEncoder)
-        generator_cffi = load_cffi(cpp_dir + gen_header_file, cpp_dir + generate_lib, ffi)
+        generator_cffi = load_cffi(cpp_dir + "src/" + gen_header_file, cpp_dir + "build/" + generate_lib, ffi)
         dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
 
         timer = Timer()

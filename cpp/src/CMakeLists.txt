@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(cpp)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../3rdparty/cmake/")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/cmake/")
+
+include_directories("${PROJECT_SOURCE_DIR}")
 
 include (ReleaseAsDefault)
 
@@ -24,25 +26,24 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 
 # Set up library
-include_directories(src/)
 set(SOURCE_FILES
         generate_dag_plan.cpp
-        src/code_gen/generate_code.cpp
-        src/dag/Column.cpp
-        src/dag/DAGCartesian.cpp
-        src/dag/DAGCollection.cpp
-        src/dag/DAGCreation.cpp
-        src/dag/DAGFilter.cpp
-        src/dag/DAGJoin.cpp
-        src/dag/DAGMap.cpp
-        src/dag/DAGOperator.cpp
-        src/dag/DAGRange.cpp
-        src/dag/DAGReduce.cpp
-        src/dag/DAGReduceByKey.cpp
-        src/IR_analyzer/LLVMParser.cpp
-        src/optimize/Optimizer.cpp
-        src/optimize/SimplePredicateMoveAround.cpp
-        src/utils/utils.cpp
+        code_gen/generate_code.cpp
+        dag/Column.cpp
+        dag/DAGCartesian.cpp
+        dag/DAGCollection.cpp
+        dag/DAGCreation.cpp
+        dag/DAGFilter.cpp
+        dag/DAGJoin.cpp
+        dag/DAGMap.cpp
+        dag/DAGOperator.cpp
+        dag/DAGRange.cpp
+        dag/DAGReduce.cpp
+        dag/DAGReduceByKey.cpp
+        IR_analyzer/LLVMParser.cpp
+        optimize/Optimizer.cpp
+        optimize/SimplePredicateMoveAround.cpp
+        utils/utils.cpp
     )
 add_library(generate SHARED ${SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
