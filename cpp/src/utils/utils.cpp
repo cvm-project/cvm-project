@@ -18,12 +18,11 @@ string snake_to_camel_string(string str) {
     for (size_t x = 0; x < camelString.length() - 1; x++) {
         if (camelString[x] == '_') {
             char nextC = camelString[x + 1];
-            nextC = (char) (nextC > 65 ? nextC - 32 : nextC);
+            nextC = (char)(nextC > 65 ? nextC - 32 : nextC);
             camelString.erase(x, 2);
             camelString.insert(x, 1, nextC);
         }
     }
-
 
     return camelString;
 }
@@ -57,7 +56,8 @@ vector<string> split_string(string s, string delimiter) {
 string get_lib_path() {
     const char *blazePath;
     if (!(blazePath = std::getenv("BLAZEPATH")))
-        std::cerr << "BLAZEPATH is not defined, set it to your blaze installation path\n";
+        std::cerr << "BLAZEPATH is not defined, set it to your blaze "
+                     "installation path\n";
     return string(blazePath);
 }
 

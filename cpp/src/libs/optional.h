@@ -5,8 +5,7 @@
 #ifndef CPP_OPTIONAL_H
 #define CPP_OPTIONAL_H
 
-
-template<typename T>
+template <typename T>
 class Optional {
 public:
     T value;
@@ -19,8 +18,6 @@ public:
     explicit operator bool() const { return initialized; }
 
     operator T() const { return value; }
-
 };
 
-
-#endif //CPP_OPTIONAL_H
+#endif  // CPP_OPTIONAL_H

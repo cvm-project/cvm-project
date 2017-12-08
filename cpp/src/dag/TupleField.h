@@ -16,13 +16,10 @@ class Column;
  * Properties specific for each field
  * Field is identified by its position
  */
-enum FieldProperty {
-    FL_GROUPED, FL_SORTED, FL_UNIQUE
-};
+enum FieldProperty { FL_GROUPED, FL_SORTED, FL_UNIQUE };
 
 class TupleField {
 public:
-
     set<FieldProperty> *properties;
 
     TupleField(string type, size_t pos) : type(type), position(pos) {
@@ -38,10 +35,9 @@ public:
     }
 
     ~TupleField() {
-//        delete (properties);
+        //        delete (properties);
         properties = NULL;
     }
 };
 
-
-#endif //CPP_TUPLEFIELD_H
+#endif  // CPP_TUPLEFIELD_H

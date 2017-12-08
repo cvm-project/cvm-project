@@ -12,8 +12,7 @@
 #include "DAGOperator.h"
 #include "utils/constants.h"
 
-
-typedef DAGOperator *(*make_dag_function)(void); // function pointer type
+typedef DAGOperator *(*make_dag_function)(void);  // function pointer type
 typedef std::unordered_map<std::string, make_dag_function> DAGOperatorsMap;
 
 DAG *parse_dag(std::string dag);
@@ -26,4 +25,4 @@ void load_operators();
 
 vector<TupleField> parse_output_type(const string &);
 
-#endif //CPP_DAGCREATION_H
+#endif  // CPP_DAGCREATION_H

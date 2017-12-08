@@ -19,13 +19,15 @@
  * Result tuples are in an arbitrary order
  *
  */
-template<class Upstream, class Tuple, class KeyType, class ValueType, class Function>
+template <class Upstream, class Tuple, class KeyType, class ValueType,
+          class Function>
 class ReduceByKeyOperator : public Operator {
 public:
     Upstream *upstream;
     Function func;
 
-    ReduceByKeyOperator(Upstream *upstream, Function func) : upstream(upstream), func(func) {};
+    ReduceByKeyOperator(Upstream *upstream, Function func)
+        : upstream(upstream), func(func){};
 
     Optional<Tuple> INLINE next() {
         if (tupleIterator != ht.end()) {
@@ -48,59 +50,56 @@ public:
             if (it != ht.end()) {
                 auto t = it->second;
                 it->second = func(t, getValue(ret.value));
-            }
-            else {
+            } else {
                 ht.emplace(key, getValue(ret.value));
             }
         }
         tupleIterator = ht.begin();
     }
 
-    void INLINE close() {
-        upstream->close();
-    }
+    void INLINE close() { upstream->close(); }
 
 private:
-
     struct hash {
         size_t operator()(const KeyType x) const {
-            return std::hash<long>()(*((long *) (&x)));
+            return std::hash<long>()(*((long *)(&x)));
         }
     };
 
     struct pred {
         bool operator()(const KeyType x, const KeyType y) const {
-            return *((long *) (&x)) == *((long *) (&y));
+            return *((long *)(&x)) == *((long *)(&y));
         }
     };
     std::unordered_map<KeyType, ValueType, hash, pred> ht;
-    typename std::unordered_map<KeyType, ValueType, hash, pred>::iterator tupleIterator;
+    typename std::unordered_map<KeyType, ValueType, hash, pred>::iterator
+            tupleIterator;
 
-    template<class UpstreamTuple>
+    template <class UpstreamTuple>
     INLINE static constexpr KeyType getKey(const UpstreamTuple &t) {
-        return *(const_cast<KeyType *>((KeyType *) (&t)));
+        return *(const_cast<KeyType *>((KeyType *)(&t)));
     }
 
-    template<class UpstreamTuple>
+    template <class UpstreamTuple>
     INLINE static constexpr ValueType getValue(const UpstreamTuple &t) {
-        return *((ValueType *) (((char *) &t) + sizeof(KeyType)));
+        return *((ValueType *)(((char *)&t) + sizeof(KeyType)));
     }
 
     INLINE static Tuple buildResult(const KeyType &key, const ValueType &val) {
         Tuple res;
-        char *resp = (char *) &res;
-        *((KeyType *) resp) = key;
-        *((ValueType *) (resp + sizeof(KeyType))) = val;
+        char *resp = (char *)&res;
+        *((KeyType *)resp) = key;
+        *((ValueType *)(resp + sizeof(KeyType))) = val;
         return res;
     }
 };
 
-
-template<class Tuple, class KeyType, class ValueType, class Upstream, class Function>
-ReduceByKeyOperator<Upstream, Tuple, KeyType, ValueType, Function>
-INLINE makeReduceByKeyOperator(Upstream *upstream, Function func) {
-    return ReduceByKeyOperator<Upstream, Tuple, KeyType, ValueType, Function>(upstream, func);
+template <class Tuple, class KeyType, class ValueType, class Upstream,
+          class Function>
+ReduceByKeyOperator<Upstream, Tuple, KeyType, ValueType, Function> INLINE
+makeReduceByKeyOperator(Upstream *upstream, Function func) {
+    return ReduceByKeyOperator<Upstream, Tuple, KeyType, ValueType, Function>(
+            upstream, func);
 };
 
-
-#endif //CPP_REDUCEBYKEYOPERATOR_H
+#endif  // CPP_REDUCEBYKEYOPERATOR_H

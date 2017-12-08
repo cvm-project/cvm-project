@@ -14,17 +14,11 @@ class DAGMap : public DAGOperator {
 public:
     static const std::string DAG_OP_NAME;
 
-    static DAGOperator *make_dag_operator() {
-        return new DAGMap;
-    };
+    static DAGOperator *make_dag_operator() { return new DAGMap; };
 
     void accept(DAGVisitor &v);
 
-    std::string get_name() {
-        return "Map_" + to_string(id);
-    }
-
+    std::string get_name() { return "Map_" + to_string(id); }
 };
 
-
-#endif //CPP_DAGMAP_H
+#endif  // CPP_DAGMAP_H

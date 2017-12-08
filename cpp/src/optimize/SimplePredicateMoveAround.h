@@ -5,7 +5,6 @@
 #ifndef CPP_SIMPLEPREDICATEMOVEAROUND_H
 #define CPP_SIMPLEPREDICATEMOVEAROUND_H
 
-
 #include "dag/DAG.h"
 #include "utils/DAGVisitor.h"
 
@@ -20,5 +19,4 @@ private:
     DAG *dag;
 };
 
-
-#endif //CPP_SIMPLEPREDICATEMOVEAROUND_H
+#endif  // CPP_SIMPLEPREDICATEMOVEAROUND_H

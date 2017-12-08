@@ -17,11 +17,10 @@ public:
     DAGOperator *sink;
     std::string action;
 
-    ~DAG(){
+    ~DAG() {
         Column::delete_columns();
-        delete(sink);
+        delete (sink);
     }
 };
 
-
-#endif //CPP_DAG_H
+#endif  // CPP_DAG_H

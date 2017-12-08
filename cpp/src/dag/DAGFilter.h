@@ -10,21 +10,14 @@
 class DAGVisitor;
 
 class DAGFilter : public DAGOperator {
-
 public:
     static const std::string DAG_OP_NAME;
 
-
-    static DAGOperator *make_dag_operator() {
-        return new DAGFilter;
-    };
-
+    static DAGOperator *make_dag_operator() { return new DAGFilter; };
 
     void accept(DAGVisitor &v);
 
-    std::string get_name() {
-        return "Filter_" + to_string(id);
-    }
+    std::string get_name() { return "Filter_" + to_string(id); }
 
     DAGFilter *copy() {
         DAGFilter *filt = new DAGFilter;
@@ -35,8 +28,6 @@ public:
         filt->id = ++DAGOperator::lastOperatorIndex;
         return filt;
     }
-
 };
 
-
-#endif //CPP_DAGFILTER_H
+#endif  // CPP_DAGFILTER_H

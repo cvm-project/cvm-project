@@ -33,7 +33,7 @@ public:
         }
     }
 
-    //free only this operator
+    // free only this operator
     void freeThisOperator() {
         predecessors.clear();
         successors.clear();
@@ -42,13 +42,13 @@ public:
 
     virtual std::string get_name() { return "Operator_" + to_string(id); };
 
-    virtual void accept(class DAGVisitor &v) =0;
+    virtual void accept(class DAGVisitor &v) = 0;
 
-    virtual void parse_json(nlohmann::json) {};
+    virtual void parse_json(nlohmann::json){};
 
     bool writeSetContains(Column *c) {
         bool ret = 0;
-        for (auto col:write_set) {
+        for (auto col : write_set) {
             if (col->operator==(*c)) {
                 ret = 1;
                 break;
@@ -58,4 +58,4 @@ public:
     }
 };
 
-#endif //CPP_DAGOPERATOR_H
+#endif  // CPP_DAGOPERATOR_H

@@ -11,12 +11,13 @@
 #include "Operator.h"
 #include "utils/timing.h"
 
-template<class Upstream, class Tuple, class Function>
+template <class Upstream, class Tuple, class Function>
 class ReduceOperator : public Operator {
 public:
     Upstream *upstream;
 
-    ReduceOperator(Upstream *upstream1, Function func) : upstream(upstream1), function(func) {}
+    ReduceOperator(Upstream *upstream1, Function func)
+        : upstream(upstream1), function(func) {}
 
     INLINE Optional<Tuple> next() {
         while (auto ret = upstream->next()) {
@@ -42,10 +43,10 @@ private:
     Function function;
 };
 
-template<class Tuple, class Upstream, class Function>
-ReduceOperator<Upstream, Tuple, Function> makeReduceOperator(Upstream *upstream, Function func) {
+template <class Tuple, class Upstream, class Function>
+ReduceOperator<Upstream, Tuple, Function> makeReduceOperator(Upstream *upstream,
+                                                             Function func) {
     return ReduceOperator<Upstream, Tuple, Function>(upstream, func);
 };
 
-
-#endif //CPP_REDUCEOPERATOR_H
+#endif  // CPP_REDUCEOPERATOR_H

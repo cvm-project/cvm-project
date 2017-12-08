@@ -26,7 +26,6 @@ DAG *parse_dag(std::string dagstr) {
 };
 
 void load_operators() {
-
     opMap.emplace(FILTER, &DAGFilter::make_dag_operator);
     opMap.emplace(RANGE, &DAGRange::make_dag_operator);
     opMap.emplace(COLLECTION, &DAGCollection::make_dag_operator);
@@ -63,8 +62,9 @@ DAG *parse(std::stringstream *istream) {
         op->fields = parse_output_type(op->output_type);
         vector<size_t> preds;
         auto preds_json = (*it)[DAG_PREDS];
-        for (auto it_preds = preds_json.begin(); it_preds != preds_json.end(); it_preds++) {
-            preds.push_back((size_t) (*it_preds));
+        for (auto it_preds = preds_json.begin(); it_preds != preds_json.end();
+             it_preds++) {
+            preds.push_back((size_t)(*it_preds));
         }
 
         if (id >= dag_ops.size()) {
@@ -98,7 +98,8 @@ DAG *parse(std::stringstream *istream) {
 
 DAGOperator *get_operator(std::string opName) {
     if (!opMap.count(opName)) {
-        throw std::invalid_argument("operator " + opName + " could not be found");
+        throw std::invalid_argument("operator " + opName +
+                                    " could not be found");
     }
     return opMap[opName]();
 }

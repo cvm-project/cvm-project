@@ -5,17 +5,16 @@
 #ifndef CPP_FILTEROPERATOR_H
 #define CPP_FILTEROPERATOR_H
 
-
 #include "Operator.h"
 
-template<class Upstream, class Tuple, class Function>
+template <class Upstream, class Tuple, class Function>
 class FilterOperator : public Operator {
 public:
     Upstream *upstream;
     Function function;
 
-    FilterOperator(Upstream *upstream1, Function func) : upstream(upstream1), function(func) {}
-
+    FilterOperator(Upstream *upstream1, Function func)
+        : upstream(upstream1), function(func) {}
 
     INLINE Optional<Tuple> next() {
         while (auto ret = upstream->next()) {
@@ -29,14 +28,12 @@ public:
     INLINE void open() { upstream->open(); }
 
     INLINE void close() { upstream->close(); }
-
 };
 
-
-template<class Tuple, class Upstream, class Function>
-FilterOperator<Upstream, Tuple, Function> makeFilterOperator(Upstream *upstream, Function func) {
+template <class Tuple, class Upstream, class Function>
+FilterOperator<Upstream, Tuple, Function> makeFilterOperator(Upstream *upstream,
+                                                             Function func) {
     return FilterOperator<Upstream, Tuple, Function>(upstream, func);
 };
 
-
-#endif //CPP_FILTEROPERATOR_H
+#endif  // CPP_FILTEROPERATOR_H

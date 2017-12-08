@@ -14,9 +14,7 @@ using std::string;
 
 class DAGRange : public DAGOperator {
 public:
-    static DAGOperator *make_dag_operator() {
-        return new DAGRange;
-    };
+    static DAGOperator *make_dag_operator() { return new DAGRange; };
 
     void accept(DAGVisitor &v);
 
@@ -26,12 +24,7 @@ public:
     string to;
     string step = "1";
 
-
-
-    std::string get_name() {
-        return "Range_" + to_string(id);
-    }
+    std::string get_name() { return "Range_" + to_string(id); }
 };
 
-
-#endif //CPP_DAGRANGE_H
+#endif  // CPP_DAGRANGE_H

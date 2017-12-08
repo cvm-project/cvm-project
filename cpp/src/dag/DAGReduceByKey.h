@@ -10,17 +10,11 @@ class DAGVisitor;
 
 class DAGReduceByKey : public DAGOperator {
 public:
-
-    static DAGOperator *make_dag_operator() {
-        return new DAGReduceByKey;
-    };
+    static DAGOperator *make_dag_operator() { return new DAGReduceByKey; };
 
     void accept(DAGVisitor &v);
 
-    std::string get_name() {
-        return "ReduceByKey_" + to_string(id);
-    }
+    std::string get_name() { return "ReduceByKey_" + to_string(id); }
 };
 
-
-#endif //CPP_DAGREDUCEBYKEY_H
+#endif  // CPP_DAGREDUCEBYKEY_H

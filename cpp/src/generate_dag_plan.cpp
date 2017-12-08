@@ -17,30 +17,31 @@ extern "C" {
 #include "utils/utils.h"
 
 extern "C" {
-int generate_dag_plan(char *dagstr,  unsigned long counter) {
-
+int generate_dag_plan(char *dagstr, unsigned long counter) {
     exec(("bash -c 'rm -r -f " + get_lib_path() + "/cpp/gen/*'").c_str());
 
     DAG *dag = parse_dag(std::string(dagstr));
-    //scheme inference
-//    printDAG(dag);
+    // scheme inference
+    //    printDAG(dag);
     SchemaInference si;
     si.start_visit(dag);
-//    printDAG(dag);
-    //optimize
+    //    printDAG(dag);
+    // optimize
     Optimizer opt;
     opt.run(dag);
-//    printDAG(dag);
-    //generate code
+    //    printDAG(dag);
+    // generate code
     generate_code(dag);
-    //call make in the subdir
+    // call make in the subdir
 
     TICK1
-    exec(("cd " + get_lib_path() + "/cpp/gen && make LIB_ID=" + to_string(counter) + " -f " + get_lib_path() + "/cpp/src/operators/Makefile -j").c_str());
+    exec(("cd " + get_lib_path() +
+          "/cpp/gen && make LIB_ID=" + to_string(counter) + " -f " +
+          get_lib_path() + "/cpp/src/operators/Makefile -j")
+                 .c_str());
     TOCK1
-//    std::cout << "call make " << DIFF1 << std::endl;
+    //    std::cout << "call make " << DIFF1 << std::endl;
     delete (dag);
     return 0;
 }
-
 }

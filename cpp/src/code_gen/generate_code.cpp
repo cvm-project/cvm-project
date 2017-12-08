@@ -4,8 +4,7 @@
 
 #include "generate_code.h"
 
-
-void generate_code(DAG *dag){
+void generate_code(DAG *dag) {
     CodeGenVisitor visitor;
     visitor.start_visit(dag);
 }

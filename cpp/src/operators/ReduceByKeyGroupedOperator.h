@@ -16,16 +16,19 @@
  * Binary function must be associative, commutative
  * The return type of the function must be the same as its arguments
  *
- * This implementation assumes that the key column is grouped and works in linear time
+ * This implementation assumes that the key column is grouped and works in
+ * linear time
  *
  */
-template<class Upstream, class Tuple, class KeyType, class ValueType, class Function>
+template <class Upstream, class Tuple, class KeyType, class ValueType,
+          class Function>
 class ReduceByKeyGroupedOperator : public Operator {
 public:
     Upstream *upstream;
     Function func;
 
-    ReduceByKeyGroupedOperator(Upstream *upstream, Function func) : upstream(upstream), func(func) {};
+    ReduceByKeyGroupedOperator(Upstream *upstream, Function func)
+        : upstream(upstream), func(func){};
 
     Optional<Tuple> INLINE next() {
         if (lastTuple) {
@@ -43,44 +46,39 @@ public:
         return {};
     }
 
-
     void INLINE open() {
         upstream->open();
         lastTuple = upstream->next();
     }
 
-    void INLINE close() {
-        upstream->close();
-
-    }
+    void INLINE close() { upstream->close(); }
 
 private:
-
     Optional<Tuple> lastTuple;
 
     INLINE static constexpr KeyType getKey(const Tuple &t) {
-        return *(const_cast<KeyType *>((KeyType *) (&t)));
+        return *(const_cast<KeyType *>((KeyType *)(&t)));
     }
 
     INLINE static constexpr ValueType getValue(const Tuple &t) {
-        return *((ValueType *) (((char *) &t) + sizeof(KeyType)));
+        return *((ValueType *)(((char *)&t) + sizeof(KeyType)));
     }
 
     INLINE static Tuple buildResult(const KeyType &key, const ValueType &val) {
         Tuple res;
-        char *resp = (char *) &res;
-        *((KeyType *) resp) = key;
-        *((ValueType *) (resp + sizeof(KeyType))) = val;
+        char *resp = (char *)&res;
+        *((KeyType *)resp) = key;
+        *((ValueType *)(resp + sizeof(KeyType))) = val;
         return res;
     }
 };
 
-
-template<class Tuple, class KeyType, class ValueType, class Upstream, class Function>
-ReduceByKeyGroupedOperator<Upstream, Tuple, KeyType, ValueType, Function>
-INLINE makeReduceByKeyGroupedOperator(Upstream *upstream, Function func) {
-    return ReduceByKeyGroupedOperator<Upstream, Tuple, KeyType, ValueType, Function>(upstream, func);
+template <class Tuple, class KeyType, class ValueType, class Upstream,
+          class Function>
+ReduceByKeyGroupedOperator<Upstream, Tuple, KeyType, ValueType, Function> INLINE
+makeReduceByKeyGroupedOperator(Upstream *upstream, Function func) {
+    return ReduceByKeyGroupedOperator<Upstream, Tuple, KeyType, ValueType,
+                                      Function>(upstream, func);
 };
 
-
-#endif //CPP_REDUCEBYKEYGROUPEDOPERATOR_H
+#endif  // CPP_REDUCEBYKEYGROUPEDOPERATOR_H

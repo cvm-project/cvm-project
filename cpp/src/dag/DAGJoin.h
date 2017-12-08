@@ -14,17 +14,11 @@ public:
     bool stream_right = true;
     static const std::string DAG_OP_NAME;
 
-    static DAGOperator *make_dag_operator() {
-        return new DAGJoin;
-    };
+    static DAGOperator *make_dag_operator() { return new DAGJoin; };
 
     void accept(DAGVisitor &v);
 
-    std::string get_name() {
-        return "Join_" + to_string(id);
-    }
-
+    std::string get_name() { return "Join_" + to_string(id); }
 };
 
-
-#endif //CPP_DAGJOIN_H
+#endif  // CPP_DAGJOIN_H

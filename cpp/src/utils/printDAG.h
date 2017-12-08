@@ -14,21 +14,21 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     string label = op->get_name();
 
     string outCols = "columns:  ";
-//    string outputTypes = "output types:  ";
+    //    string outputTypes = "output types:  ";
     for (auto c : op->fields) {
         if (c.column != NULL) {
             outCols += c.column->get_name() + ", ";
         }
-//        outputTypes += c.type;
-//        for (auto p : *(c.properties)) {
-//            outputTypes += to_string(p) + " prop, ";
-//        }
+        //        outputTypes += c.type;
+        //        for (auto p : *(c.properties)) {
+        //            outputTypes += to_string(p) + " prop, ";
+        //        }
     }
-//    outputTypes.pop_back();
-//    outputTypes.pop_back();
+    //    outputTypes.pop_back();
+    //    outputTypes.pop_back();
     outCols.pop_back();
     outCols.pop_back();
-    label += "\n\n" ;
+    label += "\n\n";
 
     string readSet = "read:  ";
     for (auto c : op->read_set) {
@@ -55,8 +55,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
 
     deadVars.pop_back();
     deadVars.pop_back();
-//    label += "\n" + deadVars;
-
+    //    label += "\n" + deadVars;
 
     Agnode_t *n = agnode(g, const_cast<char *>(op->get_name().c_str()), 1);
     agsafeset(n, "shape", "polygon", "polygon");
@@ -83,4 +82,4 @@ void printDAG(DAG *dag) {
     gvFreeContext(gvc);
 }
 
-#endif //CPP_PRINTDAG_H
+#endif  // CPP_PRINTDAG_H

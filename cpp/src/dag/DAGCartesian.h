@@ -12,17 +12,11 @@ public:
     static const std::string DAG_OP_NAME;
     bool stream_right = true;
 
-    static DAGOperator *make_dag_operator() {
-        return new DAGCartesian;
-    };
+    static DAGOperator *make_dag_operator() { return new DAGCartesian; };
 
     void accept(DAGVisitor &v);
 
-    std::string get_name() {
-        return "Cartesian_" + to_string(id);
-    }
-
+    std::string get_name() { return "Cartesian_" + to_string(id); }
 };
 
-
-#endif //CPP_DAGCARTESIAN_H
+#endif  // CPP_DAGCARTESIAN_H

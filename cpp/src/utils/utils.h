@@ -17,4 +17,4 @@ vector<string> split_string(string s, string delimiter);
 string get_lib_path();
 std::string exec(const char *cmd);
 
-#endif //CPP_UTILS_H
+#endif  // CPP_UTILS_H

@@ -12,5 +12,4 @@ public:
     void run(DAG *);
 };
 
-
-#endif //CPP_OPTIMIZER_H
+#endif  // CPP_OPTIMIZER_H
