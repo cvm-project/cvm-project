@@ -1,3 +1,6 @@
 [submodule "3rdparty/cmake"]
 	path = 3rdparty/cmake
 	url = ../../OU-SYSTEMS/cmake-modules.git
+[submodule "3rdparty/catch2"]
+	path = 3rdparty/catch
+	url = https://github.com/catchorg/Catch2.git

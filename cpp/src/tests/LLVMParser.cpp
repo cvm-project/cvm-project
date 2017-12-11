@@ -2,10 +2,12 @@
 // Created by sabir on 28.08.17.
 //
 #define CATCH_CONFIG_MAIN
+
 #include <string>
 
+#include <catch.hpp>
+
 #include "IR_analyzer/LLVMParser.h"
-#include "catch.hpp"
 
 TEST_CASE( "Read false, primitive return type", "" ) {
     std::string ir = "define i64 @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"(i64 %.1, i64 %.2) local_unnamed_addr #1 {\n"
