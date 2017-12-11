@@ -31,6 +31,9 @@ include_directories(${GRAPHVIZ_INCLUDE_DIRS})
 # Set up Catch (for unit tests)
 include_directories("${PROJECT_SOURCE_DIR}/../../3rdparty/catch/single_include")
 
+# Set up JSON library
+include_directories("${PROJECT_SOURCE_DIR}/../../3rdparty/json/src")
+
 # Set up compilation options
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")

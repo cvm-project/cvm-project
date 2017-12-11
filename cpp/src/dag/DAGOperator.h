@@ -6,9 +6,10 @@
 #define CPP_DAGOPERATOR_H
 
 #include <cstddef>
-#include <libs/json.hpp>
 #include <set>
 #include <vector>
+
+#include <json.hpp>
 
 #include "dag/Column.h"
 #include "dag/TupleField.h"
