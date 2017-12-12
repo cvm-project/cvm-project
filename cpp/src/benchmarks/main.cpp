@@ -103,7 +103,6 @@ double filter_sum2(double *array) {
 
 double filter_sum3(double *array) {
     double res = 0;
-    size_t tot = MAX;
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
@@ -195,8 +194,6 @@ struct result_struct {
 size_t len2 = MAX >> 1;
 
 result_struct join(tuple_2 *array1, tuple_3 *array2) {
-    size_t acc = 0;
-
     // build ht
     TICK1
     std::unordered_map<long, vector<tuple_3>> ht;

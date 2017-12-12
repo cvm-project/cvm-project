@@ -10,10 +10,7 @@
 #include <memory>
 
 string snake_to_camel_string(const string &str) {
-    string tempString = "";
-    string camelString = "";
-
-    camelString = str;
+    string camelString = str;
 
     for (size_t x = 0; x < camelString.length() - 1; x++) {
         if (camelString[x] == '_') {
