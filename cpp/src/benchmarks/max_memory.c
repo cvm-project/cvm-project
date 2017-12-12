@@ -8,14 +8,14 @@ int main(int argc, char* argv[]) {
     void* memPointer = NULL;
     do {
         if (memPointer != NULL) {
-            printf("Max Tested Memory = %zi\n", maxMemMiB);
+            printf("Max Tested Memory = %zu\n", maxMemMiB);
             memset(memPointer, 0, maxMemMiB);
             free(memPointer);
         }
         maxMemMiB += oneHundredMiB;
         memPointer = malloc(maxMemMiB);
     } while (memPointer != NULL);
-    printf("Max Usable Memory aprox = %zi\n", maxMemMiB - oneHundredMiB);
+    printf("Max Usable Memory aprox = %zu\n", maxMemMiB - oneHundredMiB);
 
     return 0;
 }
