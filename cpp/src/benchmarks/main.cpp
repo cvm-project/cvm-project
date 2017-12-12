@@ -56,7 +56,8 @@ result_struct1 map_filter(double *array) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    tuple_1 *result = (tuple_1 *)malloc(sizeof(tuple_1) * allocatedSize);
+    tuple_1 *result = reinterpret_cast<tuple_1 *>(
+            malloc(sizeof(tuple_1) * allocatedSize));
     for (size_t i = 0; i < MAX; i++) {
         tuple_1 t1 = {array[i], array[i] * 3 + 7};
         if (t1.v0 > 0.5) {
@@ -64,8 +65,8 @@ result_struct1 map_filter(double *array) {
         }
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
-            result =
-                    (tuple_1 *)realloc(result, sizeof(tuple_1) * allocatedSize);
+            result = reinterpret_cast<tuple_1 *>(
+                    realloc(result, sizeof(tuple_1) * allocatedSize));
         }
         result[resSize] = t1;
         resSize++;
@@ -106,7 +107,8 @@ double filter_sum3(double *array) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    double *result = (double *)malloc(sizeof(double) * allocatedSize);
+    double *result =
+            reinterpret_cast<double *>(malloc(sizeof(double) * allocatedSize));
 
     for (size_t i = 0; i < MAX; i++) {
         result[resSize] = array[i];
@@ -124,14 +126,15 @@ result_struct1 map(double *array) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    tuple_1 *result = (tuple_1 *)malloc(sizeof(tuple_1) * allocatedSize);
+    tuple_1 *result = reinterpret_cast<tuple_1 *>(
+            malloc(sizeof(tuple_1) * allocatedSize));
 
     for (size_t i = 0; i < MAX; i++) {
         tuple_1 t1 = map_1(array[i]);
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
-            result =
-                    (tuple_1 *)realloc(result, sizeof(tuple_1) * allocatedSize);
+            result = reinterpret_cast<tuple_1 *>(
+                    realloc(result, sizeof(tuple_1) * allocatedSize));
         }
         result[resSize] = t1;
         resSize++;
@@ -151,14 +154,14 @@ result_struct2 filter(double *array) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    double *result = (double *)malloc(sizeof(double) * MAX);
+    double *result = reinterpret_cast<double *>(malloc(sizeof(double) * MAX));
 
     for (size_t i = 0; i < MAX; i++) {
         if (array[i] * 100 > 50) {
             if (allocatedSize <= resSize) {
                 allocatedSize *= 2;
-                result = (double *)realloc(result,
-                                           sizeof(double) * allocatedSize);
+                result = reinterpret_cast<double *>(
+                        realloc(result, sizeof(double) * allocatedSize));
             }
             result[resSize] = array[i];
             resSize++;
@@ -212,7 +215,8 @@ result_struct join(tuple_2 *array1, tuple_3 *array2) {
 
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    tuple_4 *result = (tuple_4 *)malloc(sizeof(tuple_4) * allocatedSize);
+    tuple_4 *result = reinterpret_cast<tuple_4 *>(
+            malloc(sizeof(tuple_4) * allocatedSize));
 
     for (size_t i = 0; i < MAX; i++) {
         auto key = array1[i].v0;
@@ -222,8 +226,8 @@ result_struct join(tuple_2 *array1, tuple_3 *array2) {
                 tuple_4 r = {key, array1[i].v1, t.v1};
                 if (allocatedSize <= resSize) {
                     allocatedSize *= 2;
-                    result = (tuple_4 *)realloc(
-                            result, sizeof(tuple_4) * allocatedSize);
+                    result = reinterpret_cast<tuple_4 *>(
+                            realloc(result, sizeof(tuple_4) * allocatedSize));
                 }
                 result[resSize] = r;
                 resSize++;
@@ -258,7 +262,8 @@ result_struct map_filter_join(long *array1, tuple_3 *array2) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    tuple_4 *result = (tuple_4 *)malloc(sizeof(tuple_4) * allocatedSize);
+    tuple_4 *result = reinterpret_cast<tuple_4 *>(
+            malloc(sizeof(tuple_4) * allocatedSize));
 
     for (size_t i = 0; i < MAX; i++) {
         tuple_2 t1 = {array1[i], array1[i] * 3 + 7};
@@ -272,8 +277,8 @@ result_struct map_filter_join(long *array1, tuple_3 *array2) {
                 tuple_4 r = {key, t1.v1, t.v1};
                 if (allocatedSize <= resSize) {
                     allocatedSize *= 2;
-                    result = (tuple_4 *)realloc(
-                            result, sizeof(tuple_4) * allocatedSize);
+                    result = reinterpret_cast<tuple_4 *>(
+                            realloc(result, sizeof(tuple_4) * allocatedSize));
                 }
                 result[resSize] = r;
                 resSize++;
@@ -318,14 +323,15 @@ result_struct_rbk map_reduce_by_key(long *array) {
 
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    tuple_5 *result = (tuple_5 *)malloc(sizeof(tuple_4) * allocatedSize);
+    tuple_5 *result = reinterpret_cast<tuple_5 *>(
+            malloc(sizeof(tuple_5) * allocatedSize));
 
     for (auto it = ht.begin(); it != ht.end(); it++) {
         tuple_5 r = {it->first, it->second};
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
-            result =
-                    (tuple_5 *)realloc(result, sizeof(tuple_5) * allocatedSize);
+            result = reinterpret_cast<tuple_5 *>(
+                    realloc(result, sizeof(tuple_5) * allocatedSize));
         }
         result[resSize] = r;
         resSize++;
