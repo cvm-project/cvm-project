@@ -181,6 +181,15 @@ fabric.properties
 
 *.bin
 
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+# Git
+*.orig
+
 
 /cpp/gen/
 /blaze/benchmarks/crime_data/
