@@ -8,6 +8,7 @@
 #include "dag/DAG.h"
 #include "utils/DAGVisitor.h"
 
+// cppcheck-suppress noConstructor
 class SimplePredicateMoveAround : DAGVisitor {
 public:
     void optimize(DAG *);

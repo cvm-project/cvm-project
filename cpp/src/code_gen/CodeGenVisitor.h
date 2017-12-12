@@ -827,6 +827,7 @@ private:
         tabInd--;
     }
 
+    // cppcheck-suppress unusedPrivateFunction
     string parseTupleType(const string &type) {
         std::string ret = type;
         ret = string_replace(ret, "(", "tuple<");
