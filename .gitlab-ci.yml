@@ -24,6 +24,17 @@ build:
     paths:
       - cpp/build/*
 
+cppcheck:
+  stage: test
+  dependencies:
+    - build
+  before_script:
+    - apt-get update && apt-get install -y libgraphviz-dev
+  image: ingomuellernet/buildenv
+  script:
+    - cd cpp/build
+    - make cppcheck
+
 operator-test:
   stage: test
   dependencies:

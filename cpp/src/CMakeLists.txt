@@ -29,10 +29,14 @@ find_package(GraphViz REQUIRED)
 include_directories(${GRAPHVIZ_INCLUDE_DIRS})
 
 # Set up Catch (for unit tests)
-include_directories("${PROJECT_SOURCE_DIR}/../../3rdparty/catch/single_include")
+set(CATCH_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/catch/single_include")
+get_filename_component(CATCH_INCLUDE_DIRS "${CATCH_INCLUDE_DIRS}" ABSOLUTE)
+include_directories(${CATCH_INCLUDE_DIRS})
 
 # Set up JSON library
-include_directories("${PROJECT_SOURCE_DIR}/../../3rdparty/json/src")
+set(JSONLIB_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/json/src")
+get_filename_component(JSONLIB_INCLUDE_DIRS "${JSONLIB_INCLUDE_DIRS}" ABSOLUTE)
+include_directories(${JSONLIB_INCLUDE_DIRS})
 
 # Set up compilation options
 set(CMAKE_CXX_STANDARD 14)
@@ -87,3 +91,21 @@ target_link_libraries(LLVMParser_tests PUBLIC
         ${LLVM_LIBS}
     )
 add_test(LLVMParser LLVMParser_tests)
+
+# Setup cppcheck
+find_package(cppcheck 1.81)
+if(cppcheck_FOUND)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    add_custom_target(
+        cppcheck
+        COMMAND ${cppcheck_EXECUTABLE}
+            "--project=compile_commands.json"
+            "--enable=warning,performance,style"
+            "--error-exitcode=1"
+            "--inline-suppr"
+            "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
+            "--suppress='*:${GRAPHVIZ_INCLUDE_DIRS}/*'"
+            "--suppress='*:${CATCH_INCLUDE_DIRS}/*'"
+            "--suppress='*:${JSONLIB_INCLUDE_DIRS}/*'"
+        )
+endif()
