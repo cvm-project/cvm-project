@@ -5,6 +5,7 @@
 #ifndef CPP_TUPLEFIELD_H
 #define CPP_TUPLEFIELD_H
 
+#include <memory>
 #include <set>
 #include <string>
 
@@ -20,11 +21,10 @@ enum FieldProperty { FL_GROUPED, FL_SORTED, FL_UNIQUE };
 
 class TupleField {
 public:
-    set<FieldProperty> *properties;
+    std::shared_ptr<set<FieldProperty>> properties;
 
-    TupleField(const string &type, size_t pos) : type(type), position(pos) {
-        properties = new set<FieldProperty>();
-    }
+    TupleField(const string &type, size_t pos)
+        : properties(new set<FieldProperty>), type(type), position(pos) {}
 
     string type;
     Column *column = NULL;
@@ -32,11 +32,6 @@ public:
 
     const bool operator<(const TupleField &other) const {
         return position < other.position;
-    }
-
-    ~TupleField() {
-        //        delete (properties);
-        properties = NULL;
     }
 };
 
