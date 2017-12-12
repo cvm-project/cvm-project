@@ -1,6 +1,7 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
@@ -8,6 +9,13 @@
 
 #define MAX 1l << 29
 using namespace std;
+
+template <typename T>
+T *realloc_or_throw(T *old_ptr, const size_t n_elements) {
+    void *ptr = realloc(old_ptr, sizeof(T) * n_elements);
+    if (ptr == nullptr) throw std::bad_alloc();
+    return reinterpret_cast<T *>(ptr);
+}
 
 double my_add(double, double);
 
@@ -65,8 +73,7 @@ result_struct1 map_filter(double *array) {
         }
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
-            result = reinterpret_cast<tuple_1 *>(
-                    realloc(result, sizeof(tuple_1) * allocatedSize));
+            result = realloc_or_throw<tuple_1>(result, allocatedSize);
         }
         result[resSize] = t1;
         resSize++;
@@ -116,6 +123,7 @@ double filter_sum3(double *array) {
     }
 
     TOCK1
+    free(result);
     std::cout << DIFF1 << " filter sum3\n";
     return res;
 }
@@ -133,8 +141,7 @@ result_struct1 map(double *array) {
         tuple_1 t1 = map_1(array[i]);
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
-            result = reinterpret_cast<tuple_1 *>(
-                    realloc(result, sizeof(tuple_1) * allocatedSize));
+            result = realloc_or_throw<tuple_1>(result, allocatedSize);
         }
         result[resSize] = t1;
         resSize++;
@@ -160,8 +167,7 @@ result_struct2 filter(double *array) {
         if (array[i] * 100 > 50) {
             if (allocatedSize <= resSize) {
                 allocatedSize *= 2;
-                result = reinterpret_cast<double *>(
-                        realloc(result, sizeof(double) * allocatedSize));
+                result = realloc_or_throw<double>(result, allocatedSize);
             }
             result[resSize] = array[i];
             resSize++;
@@ -226,8 +232,7 @@ result_struct join(tuple_2 *array1, tuple_3 *array2) {
                 tuple_4 r = {key, array1[i].v1, t.v1};
                 if (allocatedSize <= resSize) {
                     allocatedSize *= 2;
-                    result = reinterpret_cast<tuple_4 *>(
-                            realloc(result, sizeof(tuple_4) * allocatedSize));
+                    result = realloc_or_throw<tuple_4>(result, allocatedSize);
                 }
                 result[resSize] = r;
                 resSize++;
@@ -277,8 +282,7 @@ result_struct map_filter_join(long *array1, tuple_3 *array2) {
                 tuple_4 r = {key, t1.v1, t.v1};
                 if (allocatedSize <= resSize) {
                     allocatedSize *= 2;
-                    result = reinterpret_cast<tuple_4 *>(
-                            realloc(result, sizeof(tuple_4) * allocatedSize));
+                    result = realloc_or_throw<tuple_4>(result, allocatedSize);
                 }
                 result[resSize] = r;
                 resSize++;
@@ -330,8 +334,7 @@ result_struct_rbk map_reduce_by_key(long *array) {
         tuple_5 r = {it->first, it->second};
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
-            result = reinterpret_cast<tuple_5 *>(
-                    realloc(result, sizeof(tuple_5) * allocatedSize));
+            result = realloc_or_throw<tuple_5>(result, allocatedSize);
         }
         result[resSize] = r;
         resSize++;
@@ -346,7 +349,7 @@ result_struct_rbk map_reduce_by_key(long *array) {
 
 int main() {
     srand(time(NULL));
-    double *array = new double[MAX];
+    double *array = reinterpret_cast<double *>(malloc((MAX) * sizeof(double)));
 
     for (size_t i = 0; i < MAX; i++) {
         array[i] = ((double)rand() / RAND_MAX) + 0.1;
