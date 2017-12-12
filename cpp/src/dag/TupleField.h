@@ -22,7 +22,7 @@ class TupleField {
 public:
     set<FieldProperty> *properties;
 
-    TupleField(string type, size_t pos) : type(type), position(pos) {
+    TupleField(const string &type, size_t pos) : type(type), position(pos) {
         properties = new set<FieldProperty>();
     }
 

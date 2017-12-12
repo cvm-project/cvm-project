@@ -18,7 +18,7 @@ using namespace std;
 
 static DAGOperatorsMap opMap;
 
-DAG *parse_dag(std::string dagstr) {
+DAG *parse_dag(const std::string &dagstr) {
     load_operators();
     std::stringstream in(dagstr);
     DAG *dag = parse(&in);
@@ -96,7 +96,7 @@ DAG *parse(std::stringstream *istream) {
     return dag;
 }
 
-DAGOperator *get_operator(std::string opName) {
+DAGOperator *get_operator(const std::string &opName) {
     if (!opMap.count(opName)) {
         throw std::invalid_argument("operator " + opName +
                                     " could not be found");

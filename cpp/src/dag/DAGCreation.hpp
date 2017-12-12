@@ -15,11 +15,11 @@
 typedef DAGOperator *(*make_dag_function)(void);  // function pointer type
 typedef std::unordered_map<std::string, make_dag_function> DAGOperatorsMap;
 
-DAG *parse_dag(std::string dag);
+DAG *parse_dag(const std::string &dag);
 
 DAG *parse(std::stringstream *);
 
-DAGOperator *get_operator(std::string);
+DAGOperator *get_operator(const std::string &);
 
 void load_operators();
 

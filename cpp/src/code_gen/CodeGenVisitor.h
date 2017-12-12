@@ -355,8 +355,9 @@ private:
         return getCurrentOperatorName();
     }
 
-    void emitOperatorMake(string opClass, DAGOperator *op, string opVarName,
-                          string opName = "", string extraArgs = "",
+    void emitOperatorMake(const string &opClass, const DAGOperator *const op,
+                          const string &opVarName, const string &opName = "",
+                          const string &extraArgs = "",
                           bool add_boolean_template = false) {
         string line("auto ");
         line.append(opVarName)
@@ -399,7 +400,7 @@ private:
         appendLineBody(line);
     }
 
-    void emitJoinMake(string opVarName, DAGJoin *op) {
+    void emitJoinMake(const string &opVarName, DAGJoin *op) {
         string line("auto ");
         line.append(opVarName)
                 .append(" = make")
@@ -424,7 +425,7 @@ private:
         appendLineBody(line);
     }
 
-    void emitCartesianMake(string opVarName, DAGCartesian *op) {
+    void emitCartesianMake(const string &opVarName, DAGCartesian *op) {
         string line("auto ");
         string pred2Tuple =
                 get<1>(operatorNameTupleTypeMap[op->predecessors[1]->id]);
@@ -449,8 +450,8 @@ private:
         appendLineBody(line);
     }
 
-    void emitReduceByKeyMake(string &opVarName, DAGReduceByKey *op,
-                             string &operatorName) {
+    void emitReduceByKeyMake(const string &opVarName, DAGReduceByKey *op,
+                             const string &operatorName) {
         string line("auto ");
         line.append(opVarName)
                 .append(" = make")
@@ -501,7 +502,7 @@ private:
         return make_pair(tName, types.size());
     }
 
-    void emitLLVMFunctionWrapper(DAGOperator *op, string opName,
+    void emitLLVMFunctionWrapper(DAGOperator *op, const string &opName,
                                  bool returnsBool = false) {
         string llvmFuncName = opName + getCurrentLLVMFuncName();
         string className = snake_to_camel_string(llvmFuncName);
@@ -546,8 +547,10 @@ private:
     /**
      * functions which take two arguments of the same type (e.g. reduce)
      */
-    void emitLLVMFunctionWrapperBinaryArgs(DAGOperator *op, string opName,
-                                           string inputType, size_t inputSize,
+    void emitLLVMFunctionWrapperBinaryArgs(DAGOperator *op,
+                                           const string &opName,
+                                           const string &inputType,
+                                           size_t inputSize,
                                            bool reduce_by_key = false) {
         string llvmFuncName = opName + getCurrentLLVMFuncName();
         string className = snake_to_camel_string(llvmFuncName);
@@ -599,7 +602,7 @@ private:
         }
     }
 
-    void emitFuncEnd(string action) {
+    void emitFuncEnd(const string &action) {
         //        appendLineBodyNoCol("TICK1");
         if (action == "count") {
             emitComment("counting the result");
@@ -816,18 +819,19 @@ private:
         tupleTypeDefs.push_back(line);
     }
 
-    string genComment(string com) { return "\n/**" + com + "**/\n"; }
+    string genComment(const string &com) { return "\n/**" + com + "**/\n"; }
 
-    void emitComment(string opName) {
+    void emitComment(const string &opName) {
         tabInd++;
         appendLineBodyNoCol(genComment(opName));
         tabInd--;
     }
 
-    string parseTupleType(string &type) {
-        type = string_replace(type, "(", "tuple<");
-        type = string_replace(type, ")", ">");
-        return type;
+    string parseTupleType(const string &type) {
+        std::string ret = type;
+        ret = string_replace(ret, "(", "tuple<");
+        ret = string_replace(ret, ")", ">");
+        return ret;
     }
 
     void makeDirectory() {
@@ -841,29 +845,31 @@ private:
         }
     }
 
-    void storeLLVMCode(string ir, string opName) {
+    void storeLLVMCode(const string &ir, const string &opName) {
+        std::string patched_ir = ir;
         // the local_unnamed_addr string is not llvm-3.7 compatible:
         regex reg1("local_unnamed_addr #.? ");
-        ir = regex_replace(ir, reg1, "");
-        //        ir = string_replace(ir, "local_unnamed_addr #1 ", "");
+        patched_ir = regex_replace(patched_ir, reg1, "");
+        //        patched_ir = string_replace(patched_ir, "local_unnamed_addr #1
+        //        ", "");
         // replace the func name with our
-        string funcName = opName.append(getNextLLVMFuncName());
+        string funcName = opName + getNextLLVMFuncName();
         regex reg("@cfuncnotuniquename");
-        ir = regex_replace(ir, reg, "@\"" + funcName + "\"");
+        patched_ir = regex_replace(patched_ir, reg, "@\"" + funcName + "\"");
         // write code to the gen dir
         if (DUMP_FILES) {
             string path = genDir + LLVM_FUNC_DIR + funcName + ".ll";
             ofstream out(path);
-            out << ir;
+            out << patched_ir;
             out.close();
         }
     }
 
-    void appendLineBody(string str) {
+    void appendLineBody(const string &str) {
         body.append(string(tabInd, '\t')).append(str).append(";\n");
     }
 
-    void appendLineBodyNoCol(string str = "") {
+    void appendLineBodyNoCol(const string &str = "") {
         body.append(string(tabInd, '\t')).append(str).append("\n");
     }
 
@@ -909,7 +915,7 @@ private:
         return ret;
     }
 
-    string writeTupleDefs(string action) {
+    string writeTupleDefs(const string &action) {
         string ret;
         string resultWrapper;
         ret.append(genComment("tuple definitions"));
@@ -956,13 +962,13 @@ private:
         return ret;
     }
 
-    void write_execute(string final_code) {
+    void write_execute(const string &final_code) {
         ofstream out(genDir + "execute.cpp");
         out << final_code;
         out.close();
     }
 
-    void write_c_execute(string action) {
+    void write_c_execute(const string &action) {
         ofstream out(genDir + "c_execute.c");
         string funcParamNames = "";
         for (auto param : inputNames) {
@@ -991,7 +997,7 @@ private:
         out.close();
     }
 
-    void write_c_executeh(string action) {
+    void write_c_executeh(const string &action) {
         ofstream out(genDir + "c_execute.h");
         out << resultTypeDef
             << "\n"

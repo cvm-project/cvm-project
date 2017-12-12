@@ -10,10 +10,12 @@
 
 using namespace std;
 
-string snake_to_camel_string(string str);
+string snake_to_camel_string(const std::string &str);
 
-string string_replace(string str, string from, string to);
-vector<string> split_string(string s, string delimiter);
+string string_replace(const std::string &str, const std::string &from,
+                      const std::string &to);
+vector<string> split_string(const std::string &str,
+                            const std::string &delimiter);
 string get_lib_path();
 std::string exec(const char *cmd);
 

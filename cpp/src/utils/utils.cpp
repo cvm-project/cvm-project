@@ -9,7 +9,7 @@
 #include <iostream>
 #include <memory>
 
-string snake_to_camel_string(string str) {
+string snake_to_camel_string(const string &str) {
     string tempString = "";
     string camelString = "";
 
@@ -27,29 +27,31 @@ string snake_to_camel_string(string str) {
     return camelString;
 }
 
-string string_replace(string str, string from, string to) {
+string string_replace(const string &str, const string &from, const string &to) {
+    std::string ret = str;
     size_t index = 0;
     while (true) {
         /* Locate the substring to replace. */
-        index = str.find(from, index);
+        index = ret.find(from, index);
         if (index == std::string::npos) break;
 
-        str.replace(index, from.size(), to);
+        ret.replace(index, from.size(), to);
         index += to.size();
     }
-    return str;
+    return ret;
 }
 
-vector<string> split_string(string s, string delimiter) {
+vector<string> split_string(const string &str, const string &delimiter) {
     vector<string> list;
+    std::string tmp = str;
     size_t pos = 0;
     string token;
-    while ((pos = s.find(delimiter)) != string::npos) {
-        token = s.substr(0, pos);
+    while ((pos = tmp.find(delimiter)) != string::npos) {
+        token = tmp.substr(0, pos);
         list.push_back(token);
-        s.erase(0, pos + delimiter.length());
+        tmp.erase(0, pos + delimiter.length());
     }
-    list.push_back(s);
+    list.push_back(tmp);
     return list;
 }
 
