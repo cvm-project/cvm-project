@@ -17,7 +17,7 @@
 
 class LLVMParser {
 public:
-    LLVMParser(const std::string &ir) { parse(ir); }
+    explicit LLVMParser(const std::string &ir) { parse(ir); }
 
     void parse(const std::string &ir);
 
