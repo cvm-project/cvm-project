@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include <assert.h>
+#include <cassert>
 
 #include <llvm/IR/Module.h>
 #include <llvm/IRReader/IRReader.h>

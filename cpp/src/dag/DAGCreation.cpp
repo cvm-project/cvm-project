@@ -37,7 +37,7 @@ void load_operators() {
 }
 
 DAG *parse(std::stringstream *istream) {
-    DAG *dag = new DAG;
+    auto *dag = new DAG;
 
     nlohmann::json j;
     *istream >> j;
@@ -48,24 +48,23 @@ DAG *parse(std::stringstream *istream) {
     std::vector<std::pair<DAGOperator *, std::vector<size_t> > > dag_ops(1);
 
     size_t op_count = 0;
-    for (auto it = dag_list.begin(); it != dag_list.end(); it++) {
-        size_t id = (*it)[DAG_ID];
+    for (auto &it : dag_list) {
+        size_t id = it[DAG_ID];
         DAGOperator::lastOperatorIndex = id;
-        std::string op_name = (*it)[DAG_OP];
+        std::string op_name = it[DAG_OP];
         DAGOperator *op = get_operator(op_name);
         op->id = id;
-        auto llvr_ir = (*it)[DAG_FUNC];
+        auto llvr_ir = it[DAG_FUNC];
         if (!llvr_ir.is_null()) {
             op->llvm_ir = llvr_ir;
         }
-        op->parse_json(*it);
-        op->output_type = (*it)[DAG_OUTPUT_TYPE];
+        op->parse_json(it);
+        op->output_type = it[DAG_OUTPUT_TYPE];
         op->fields = parse_output_type(op->output_type);
         std::vector<size_t> preds;
-        auto preds_json = (*it)[DAG_PREDS];
-        for (auto it_preds = preds_json.begin(); it_preds != preds_json.end();
-             it_preds++) {
-            preds.push_back(static_cast<size_t>(*it_preds));
+        auto preds_json = it[DAG_PREDS];
+        for (auto &it_preds : preds_json) {
+            preds.push_back(static_cast<size_t>(it_preds));
         }
 
         if (id >= dag_ops.size()) {
@@ -79,8 +78,7 @@ DAG *parse(std::stringstream *istream) {
     for (size_t i = 0; i < op_count; i++) {
         auto op = dag_ops[i].first;
         auto preds = dag_ops[i].second;
-        for (auto it = preds.begin(); it != preds.end(); it++) {
-            size_t pred_id = *it;
+        for (auto pred_id : preds) {
             auto predecessor = dag_ops[pred_id].first;
             op->predecessors.push_back(predecessor);
             predecessor->successors.push_back(op);
@@ -114,7 +112,7 @@ std::vector<TupleField> parse_output_type(const std::string &output) {
     std::vector<TupleField> ret;
     size_t pos = 0;
     for (auto t : types) {
-        ret.push_back(TupleField(t, pos));
+        ret.emplace_back(t, pos);
         pos++;
     }
     return ret;

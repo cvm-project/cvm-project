@@ -22,7 +22,7 @@ void Column::addFields(const std::vector<TupleField *> &fields) {
 size_t Column::column_counter = 0;
 
 Column *Column::makeColumn() {
-    Column *c = new Column();
+    auto *c = new Column();
     Column::all_columns.push_back(c);
     return c;
 }

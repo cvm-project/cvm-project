@@ -12,8 +12,8 @@
 #include "DAGOperator.h"
 #include "utils/constants.h"
 
-typedef DAGOperator *(*make_dag_function)(void);  // function pointer type
-typedef std::unordered_map<std::string, make_dag_function> DAGOperatorsMap;
+using make_dag_function = DAGOperator *(*)();  // function pointer type
+using DAGOperatorsMap = std::unordered_map<std::string, make_dag_function>;
 
 DAG *parse_dag(const std::string &dagstr);
 

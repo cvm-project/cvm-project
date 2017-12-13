@@ -191,7 +191,7 @@ public:
         // the map
         size_t size = op->fields.size();
         for (size_t pos = 0; pos < size; pos++) {
-            if (op->fields[pos].column == NULL) {
+            if (op->fields[pos].column == nullptr) {
                 Column *c = Column::makeColumn();
                 c->addField(&(op->fields[pos]));
                 op->write_set.insert(c);

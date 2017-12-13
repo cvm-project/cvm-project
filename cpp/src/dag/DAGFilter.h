@@ -15,12 +15,12 @@ public:
 
     static DAGOperator *make_dag_operator() { return new DAGFilter; };
 
-    void accept(DAGVisitor *v);
+    void accept(DAGVisitor *v) override;
 
-    std::string get_name() { return "Filter_" + std::to_string(id); }
+    std::string get_name() override { return "Filter_" + std::to_string(id); }
 
     DAGFilter *copy() {
-        DAGFilter *filt = new DAGFilter;
+        auto *filt = new DAGFilter;
         filt->fields = fields;
         filt->read_set = read_set;
         filt->llvm_ir = llvm_ir;

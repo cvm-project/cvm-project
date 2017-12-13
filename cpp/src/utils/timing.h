@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#include <stdio.h>
+#include <cstdio>
 
 std::chrono::steady_clock::time_point timing_tp1, timing_tp2;
 #define TICK1 timing_tp1 = std::chrono::steady_clock::now();

@@ -14,9 +14,11 @@ public:
 
     static DAGOperator *make_dag_operator() { return new DAGCartesian; };
 
-    void accept(DAGVisitor *v);
+    void accept(DAGVisitor *v) override;
 
-    std::string get_name() { return "Cartesian_" + std::to_string(id); }
+    std::string get_name() override {
+        return "Cartesian_" + std::to_string(id);
+    }
 };
 
 #endif  // DAG_DAGCARTESIAN_H

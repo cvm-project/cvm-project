@@ -8,6 +8,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <utility>
 
 class Column;
 
@@ -21,11 +22,14 @@ class TupleField {
 public:
     std::shared_ptr<std::set<FieldProperty>> properties;
 
-    TupleField(const std::string &type, size_t pos)
-        : properties(new std::set<FieldProperty>), type(type), position(pos) {}
+    // cppcheck-suppress passedByValue
+    TupleField(std::string type, size_t pos)
+        : properties(new std::set<FieldProperty>),
+          type(std::move(type)),
+          position(pos) {}
 
     std::string type;
-    Column *column = NULL;
+    Column *column = nullptr;
     size_t position;
 
     const bool operator<(const TupleField &other) const {

@@ -16,9 +16,9 @@ public:
 
     static DAGOperator *make_dag_operator() { return new DAGJoin; };
 
-    void accept(DAGVisitor *v);
+    void accept(DAGVisitor *v) override;
 
-    std::string get_name() { return "Join_" + std::to_string(id); }
+    std::string get_name() override { return "Join_" + std::to_string(id); }
 };
 
 #endif  // DAG_DAGJOIN_H

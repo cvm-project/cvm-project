@@ -18,7 +18,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     std::string outCols = "columns:  ";
     //    std::string outputTypes = "output types:  ";
     for (auto c : op->fields) {
-        if (c.column != NULL) {
+        if (c.column != nullptr) {
             outCols += c.column->get_name() + ", ";
         }
         //        outputTypes += c.type;

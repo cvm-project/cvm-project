@@ -20,8 +20,7 @@ void LLVMParser::parse(const std::string &ir) {
     if (t->isAggregateType()) {
         ret_type = STRUCT;
         // save the insert instructions
-        for (auto it = func->begin(); it != func->end(); it++) {
-            llvm::BasicBlock &b = *it;
+        for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; i++) {
                 if (auto instr = llvm::cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::InsertValue) {
@@ -33,8 +32,7 @@ void LLVMParser::parse(const std::string &ir) {
     } else if (t->isVoidTy()) {
         ret_type = CALLER_PTR;
         // save the store instructions
-        for (auto it = func->begin(); it != func->end(); it++) {
-            llvm::BasicBlock &b = *it;
+        for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; ++i) {
                 if (auto instr = llvm::cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::Store) {
