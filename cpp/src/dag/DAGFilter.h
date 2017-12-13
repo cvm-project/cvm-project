@@ -11,23 +11,19 @@ class DAGVisitor;
 
 class DAGFilter : public DAGOperator {
 public:
+    explicit DAGFilter(DAG *const dag) : DAGOperator(dag) {}
+
     static const std::string DAG_OP_NAME;
 
-    static DAGOperator *make_dag_operator() { return new DAGFilter; };
+    static DAGOperator *make_dag_operator(DAG *const dag) {
+        return new DAGFilter(dag);
+    };
 
     void accept(DAGVisitor *v) override;
 
     std::string get_name() override { return "Filter_" + std::to_string(id); }
 
-    DAGFilter *copy() {
-        auto *filt = new DAGFilter;
-        filt->fields = fields;
-        filt->read_set = read_set;
-        filt->llvm_ir = llvm_ir;
-        filt->output_type = output_type;
-        filt->id = ++DAGOperator::lastOperatorIndex;
-        return filt;
-    }
+    DAGFilter *copy();
 };
 
 #endif  // DAG_DAGFILTER_H

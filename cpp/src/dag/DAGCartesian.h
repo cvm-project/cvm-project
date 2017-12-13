@@ -9,10 +9,14 @@
 
 class DAGCartesian : public DAGOperator {
 public:
+    explicit DAGCartesian(DAG *const dag) : DAGOperator(dag) {}
+
     static const std::string DAG_OP_NAME;
     bool stream_right = true;
 
-    static DAGOperator *make_dag_operator() { return new DAGCartesian; };
+    static DAGOperator *make_dag_operator(DAG *const dag) {
+        return new DAGCartesian(dag);
+    };
 
     void accept(DAGVisitor *v) override;
 

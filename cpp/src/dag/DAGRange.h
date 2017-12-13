@@ -13,7 +13,11 @@ class DAGVisitor;
 
 class DAGRange : public DAGOperator {
 public:
-    static DAGOperator *make_dag_operator() { return new DAGRange; };
+    explicit DAGRange(DAG *const dag) : DAGOperator(dag) {}
+
+    static DAGOperator *make_dag_operator(DAG *const dag) {
+        return new DAGRange(dag);
+    };
 
     void accept(DAGVisitor *v) override;
 

@@ -6,21 +6,23 @@
 #define DAG_DAG_H
 
 #include <iostream>
+#include <memory>
+#include <vector>
 
 #include "DAGOperator.h"
 
 /**
  * destructor responsible for freeing the columns and the dag operators
  */
-class DAG {
+// TODO(sabir): refactor class in order to remove custom destructor
+class DAG {  // NOLINT hicpp-special-member-functions
 public:
     DAGOperator *sink{};
     std::string action;
+    std::vector<std::unique_ptr<DAGOperator>> operators;
+    size_t last_operator_id{};
 
-    ~DAG() {
-        Column::delete_columns();
-        delete (sink);
-    }
+    ~DAG() { Column::delete_columns(); }
 };
 
 #endif  // DAG_DAG_H

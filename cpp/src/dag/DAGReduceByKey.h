@@ -10,7 +10,11 @@ class DAGVisitor;
 
 class DAGReduceByKey : public DAGOperator {
 public:
-    static DAGOperator *make_dag_operator() { return new DAGReduceByKey; };
+    explicit DAGReduceByKey(DAG *const dag) : DAGOperator(dag) {}
+
+    static DAGOperator *make_dag_operator(DAG *const dag) {
+        return new DAGReduceByKey(dag);
+    };
 
     void accept(DAGVisitor *v) override;
 

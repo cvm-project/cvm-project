@@ -51,9 +51,10 @@ DAG *parse(std::stringstream *istream) {
     size_t op_count = 0;
     for (auto &it : dag_list) {
         size_t id = it[DAG_ID];
-        DAGOperator::lastOperatorIndex = id;
+        dag->last_operator_id = id;
         std::string op_name = it[DAG_OP];
-        DAGOperator *op = get_operator(op_name);
+        DAGOperator *op = get_operator(op_name, dag);
+        dag->operators.emplace_back(op);
         op->id = id;
         auto llvr_ir = it[DAG_FUNC];
         if (!llvr_ir.is_null()) {
@@ -97,12 +98,12 @@ DAG *parse(std::stringstream *istream) {
     return dag;
 }
 
-DAGOperator *get_operator(const std::string &opName) {
+DAGOperator *get_operator(const std::string &opName, DAG *const dag) {
     if (opMap.count(opName) == 0) {
         throw std::invalid_argument("operator " + opName +
                                     " could not be found");
     }
-    return opMap[opName]();
+    return opMap[opName](dag);
 }
 
 std::vector<TupleField> parse_output_type(const std::string &output) {

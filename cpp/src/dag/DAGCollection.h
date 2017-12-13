@@ -9,8 +9,12 @@
 
 class DAGCollection : public DAGOperator {
 public:
+    explicit DAGCollection(DAG *const dag) : DAGOperator(dag) {}
+
     bool add_index = false;
-    static DAGOperator *make_dag_operator() { return new DAGCollection; };
+    static DAGOperator *make_dag_operator(DAG *const dag) {
+        return new DAGCollection(dag);
+    };
 
     std::string get_name() override {
         return "Collection_" + std::to_string(id);

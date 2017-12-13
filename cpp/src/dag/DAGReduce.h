@@ -11,7 +11,11 @@ class DAGReduce : public DAGOperator {
 public:
     static const std::string DAG_OP_NAME;
 
-    static DAGOperator *make_dag_operator() { return new DAGReduce; };
+    explicit DAGReduce(DAG *const dag) : DAGOperator(dag) {}
+
+    static DAGOperator *make_dag_operator(DAG *const dag) {
+        return new DAGReduce(dag);
+    };
 
     void accept(DAGVisitor *v) override;
 

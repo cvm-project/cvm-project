@@ -14,8 +14,11 @@
 #include "dag/Column.h"
 #include "dag/TupleField.h"
 
+class DAG;
+
 class DAGOperator {
 public:
+    DAG *const dag_;
     std::vector<DAGOperator *> predecessors;
     std::vector<DAGOperator *> successors;
     std::vector<TupleField> fields;
@@ -25,19 +28,14 @@ public:
     std::string llvm_ir;
     std::string output_type;
     size_t id{};
-    static size_t lastOperatorIndex;
 
-    virtual ~DAGOperator() {
-        for (auto op : predecessors) {
-            delete (op);
-        }
-    }
+    explicit DAGOperator(DAG *const dag) : dag_(dag) {}
+    virtual ~DAGOperator() = default;
 
     // free only this operator
     void freeThisOperator() {
         predecessors.clear();
         successors.clear();
-        delete (this);
     }
 
     virtual std::string get_name() { return "Operator_" + std::to_string(id); };

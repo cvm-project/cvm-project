@@ -12,9 +12,13 @@
 class DAGVisitor;
 class DAGMap : public DAGOperator {
 public:
+    explicit DAGMap(DAG *const dag) : DAGOperator(dag) {}
+
     static const std::string DAG_OP_NAME;
 
-    static DAGOperator *make_dag_operator() { return new DAGMap; };
+    static DAGOperator *make_dag_operator(DAG *const dag) {
+        return new DAGMap(dag);
+    };
 
     void accept(DAGVisitor *v) override;
 

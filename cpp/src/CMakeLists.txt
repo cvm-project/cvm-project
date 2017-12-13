@@ -53,7 +53,6 @@ set(SOURCE_FILES
         dag/DAGFilter.cpp
         dag/DAGJoin.cpp
         dag/DAGMap.cpp
-        dag/DAGOperator.cpp
         dag/DAGRange.cpp
         dag/DAGReduce.cpp
         dag/DAGReduceByKey.cpp
