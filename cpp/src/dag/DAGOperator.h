@@ -40,7 +40,7 @@ public:
         delete (this);
     }
 
-    virtual std::string get_name() { return "Operator_" + to_string(id); };
+    virtual std::string get_name() { return "Operator_" + std::to_string(id); };
 
     virtual void accept(class DAGVisitor *v) = 0;
 

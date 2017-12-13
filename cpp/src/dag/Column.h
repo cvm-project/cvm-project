@@ -19,25 +19,25 @@ public:
 
     void addField(TupleField *field);
 
-    void addFields(const vector<TupleField *> &fields);
+    void addFields(const std::vector<TupleField *> &fields);
 
     bool operator==(const Column &other) { return id == other.id; }
 
     bool operator<(const Column &other) { return id < other.id; }
 
-    std::string get_name() { return "c" + to_string(id); }
+    std::string get_name() { return "c" + std::to_string(id); }
 
     static void delete_columns();
 
-    vector<TupleField *> getFields();
+    std::vector<TupleField *> getFields();
 
 private:
     Column() { id = column_counter++; }
 
     size_t id;
-    vector<TupleField *> fields;
+    std::vector<TupleField *> fields;
     static size_t column_counter;
-    static vector<Column *> all_columns;
+    static std::vector<Column *> all_columns;
 };
 
 #endif  // CPP_COLUMN_H

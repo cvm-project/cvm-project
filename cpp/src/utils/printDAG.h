@@ -5,23 +5,25 @@
 #ifndef CPP_PRINTDAG_H
 #define CPP_PRINTDAG_H
 
+#include <string>
+
 #include <graphviz/gvc.h>
 
 #include "dag/DAG.h"
 #include "utils/utils.h"
 
 Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
-    string label = op->get_name();
+    std::string label = op->get_name();
 
-    string outCols = "columns:  ";
-    //    string outputTypes = "output types:  ";
+    std::string outCols = "columns:  ";
+    //    std::string outputTypes = "output types:  ";
     for (auto c : op->fields) {
         if (c.column != NULL) {
             outCols += c.column->get_name() + ", ";
         }
         //        outputTypes += c.type;
         //        for (auto p : *(c.properties)) {
-        //            outputTypes += to_string(p) + " prop, ";
+        //            outputTypes += std::to_string(p) + " prop, ";
         //        }
     }
     //    outputTypes.pop_back();
@@ -30,7 +32,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     outCols.pop_back();
     label += "\n\n";
 
-    string readSet = "read:  ";
+    std::string readSet = "read:  ";
     for (auto c : op->read_set) {
         readSet += c->get_name() + ", ";
     }
@@ -39,7 +41,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     readSet.pop_back();
     label += "\n" + readSet;
 
-    string writeSet = "write:  ";
+    std::string writeSet = "write:  ";
     for (auto c : op->write_set) {
         writeSet += c->get_name() + ", ";
     }
@@ -48,9 +50,9 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     writeSet.pop_back();
     label += "\n" + writeSet;
 
-    string deadVars = "dead:  ";
+    std::string deadVars = "dead:  ";
     for (auto c : op->dead_set) {
-        deadVars += "o_" + to_string(c.position) + ", ";
+        deadVars += "o_" + std::to_string(c.position) + ", ";
     }
 
     deadVars.pop_back();

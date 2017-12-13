@@ -1,8 +1,10 @@
 
 #include "DAGCreation.hpp"
 
-#include <dirent.h>
 #include <fstream>
+#include <vector>
+
+#include <dirent.h>
 
 #include "DAGCartesian.h"
 #include "DAGCollection.h"
@@ -13,8 +15,6 @@
 #include "DAGReduce.h"
 #include "DAGReduceByKey.h"
 #include "utils/utils.h"
-
-using namespace std;
 
 static DAGOperatorsMap opMap;
 
@@ -45,7 +45,7 @@ DAG *parse(std::stringstream *istream) {
     // cppcheck-suppress uninitdata
     dag->action = action;
     auto dag_list = j[DAG_DAG];
-    vector<std::pair<DAGOperator *, vector<size_t> > > dag_ops(1);
+    std::vector<std::pair<DAGOperator *, std::vector<size_t> > > dag_ops(1);
 
     size_t op_count = 0;
     for (auto it = dag_list.begin(); it != dag_list.end(); it++) {
@@ -61,7 +61,7 @@ DAG *parse(std::stringstream *istream) {
         op->parse_json(*it);
         op->output_type = (*it)[DAG_OUTPUT_TYPE];
         op->fields = parse_output_type(op->output_type);
-        vector<size_t> preds;
+        std::vector<size_t> preds;
         auto preds_json = (*it)[DAG_PREDS];
         for (auto it_preds = preds_json.begin(); it_preds != preds_json.end();
              it_preds++) {
@@ -71,11 +71,11 @@ DAG *parse(std::stringstream *istream) {
         if (id >= dag_ops.size()) {
             dag_ops.resize(id * 2);
         }
-        dag_ops[id] = std::pair<DAGOperator *, vector<size_t> >(op, preds);
+        dag_ops[id] = std::pair<DAGOperator *, std::vector<size_t> >(op, preds);
         op_count++;
     }
 
-    vector<bool> has_successors(op_count, false);
+    std::vector<bool> has_successors(op_count, false);
     for (size_t i = 0; i < op_count; i++) {
         auto op = dag_ops[i].first;
         auto preds = dag_ops[i].second;
@@ -106,12 +106,12 @@ DAGOperator *get_operator(const std::string &opName) {
     return opMap[opName]();
 }
 
-vector<TupleField> parse_output_type(const string &output) {
-    string type_ = string_replace(output, "(", "");
+std::vector<TupleField> parse_output_type(const std::string &output) {
+    std::string type_ = string_replace(output, "(", "");
     type_ = string_replace(type_, ")", "");
     type_ = string_replace(type_, " ", "");
-    vector<string> types = split_string(type_, ",");
-    vector<TupleField> ret;
+    std::vector<std::string> types = split_string(type_, ",");
+    std::vector<TupleField> ret;
     size_t pos = 0;
     for (auto t : types) {
         ret.push_back(TupleField(t, pos));

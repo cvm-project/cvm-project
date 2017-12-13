@@ -15,8 +15,6 @@
 
 #include "dag/DAGFilter.h"
 
-using namespace llvm;
-
 class LLVMParser {
 public:
     LLVMParser(const std::string &ir) { parse(ir); }
@@ -38,9 +36,9 @@ public:
 
 private:
     // these 3 fields must be declared in this order
-    SMDiagnostic Err;
-    LLVMContext Context;
-    std::unique_ptr<Module> module;
+    llvm::SMDiagnostic Err;
+    llvm::LLVMContext Context;
+    std::unique_ptr<llvm::Module> module;
     std::vector<std::string> ret_instruction_ids;
     std::vector<size_t> get_output_positions_primitive(size_t arg_position);
     std::vector<size_t> get_output_positions_struct(size_t arg_position);

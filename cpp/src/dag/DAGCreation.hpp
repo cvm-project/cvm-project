@@ -23,6 +23,6 @@ DAGOperator *get_operator(const std::string &opName);
 
 void load_operators();
 
-vector<TupleField> parse_output_type(const string &output);
+std::vector<TupleField> parse_output_type(const std::string &output);
 
 #endif  // CPP_DAGCREATION_H

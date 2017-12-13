@@ -14,7 +14,7 @@ public:
 
     void accept(DAGVisitor *v);
 
-    std::string get_name() { return "ReduceByKey_" + to_string(id); }
+    std::string get_name() { return "ReduceByKey_" + std::to_string(id); }
 };
 
 #endif  // CPP_DAGREDUCEBYKEY_H

@@ -8,7 +8,6 @@
 #include "utils/timing.h"
 
 #define MAX 1l << 29
-using namespace std;
 
 template <typename T>
 T *realloc_or_throw(T *old_ptr, const size_t n_elements) {
@@ -203,13 +202,13 @@ size_t len2 = MAX >> 1;
 result_struct join(tuple_2 *array1, tuple_3 *array2) {
     // build ht
     TICK1
-    std::unordered_map<int64_t, vector<tuple_3>> ht;
+    std::unordered_map<int64_t, std::vector<tuple_3>> ht;
     for (size_t i = 0; i < len2; i++) {
         auto key = array2[i].v0;
         if (ht.count(key) > 0) {
             ht[key].push_back(array2[i]);
         } else {
-            vector<tuple_3> values;
+            std::vector<tuple_3> values;
             values.push_back(array2[i]);
             ht.emplace(key, values);
         }
@@ -249,13 +248,13 @@ result_struct map_filter_join(const int64_t *const array1,
                               const tuple_3 *const array2) {
     // build ht
     TICK1
-    std::unordered_map<int64_t, vector<tuple_3>> ht;
+    std::unordered_map<int64_t, std::vector<tuple_3>> ht;
     for (size_t i = 0; i < len2; i++) {
         auto key = array2[i].v0;
         if (ht.count(key) > 0) {
             ht[key].push_back(array2[i]);
         } else {
-            vector<tuple_3> values;
+            std::vector<tuple_3> values;
             values.push_back(array2[i]);
             ht.emplace(key, values);
         }

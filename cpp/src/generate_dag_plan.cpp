@@ -36,7 +36,7 @@ int generate_dag_plan(char *dagstr, unsigned long counter) {  // NOLINT
 
     TICK1
     exec(("cd " + get_lib_path() +
-          "/cpp/gen && make LIB_ID=" + to_string(counter) + " -f " +
+          "/cpp/gen && make LIB_ID=" + std::to_string(counter) + " -f " +
           get_lib_path() + "/cpp/src/operators/Makefile -j")
                  .c_str());
     TOCK1

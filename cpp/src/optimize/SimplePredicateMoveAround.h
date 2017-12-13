@@ -16,7 +16,7 @@ public:
     void visit(DAGFilter *op);
 
 private:
-    vector<DAGFilter *> filters;
+    std::vector<DAGFilter *> filters;
     DAG *dag;
 };
 

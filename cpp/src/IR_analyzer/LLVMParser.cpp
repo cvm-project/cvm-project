@@ -11,8 +11,9 @@
 #include "utils/c_type_to_llvm.h"
 
 void LLVMParser::parse(const std::string &ir) {
-    module = parseIR(MemoryBufferRef(StringRef(ir), StringRef("id")), Err,
-                     Context);
+    module = parseIR(
+            llvm::MemoryBufferRef(llvm::StringRef(ir), llvm::StringRef("id")),
+            Err, Context);
     // find out the return type
     auto func = module->getFunctionList().begin();
     auto t = func->getReturnType();
@@ -20,10 +21,10 @@ void LLVMParser::parse(const std::string &ir) {
         ret_type = STRUCT;
         // save the insert instructions
         for (auto it = func->begin(); it != func->end(); it++) {
-            BasicBlock &b = *it;
+            llvm::BasicBlock &b = *it;
             for (auto i = b.begin(), ie = b.end(); i != ie; i++) {
-                if (auto instr = cast<Instruction>(i)) {
-                    if (instr->getOpcode() == Instruction::InsertValue) {
+                if (auto instr = llvm::cast<llvm::Instruction>(i)) {
+                    if (instr->getOpcode() == llvm::Instruction::InsertValue) {
                         ret_instruction_ids.push_back(instr->getName());
                     }
                 }
@@ -33,10 +34,10 @@ void LLVMParser::parse(const std::string &ir) {
         ret_type = CALLER_PTR;
         // save the store instructions
         for (auto it = func->begin(); it != func->end(); it++) {
-            BasicBlock &b = *it;
+            llvm::BasicBlock &b = *it;
             for (auto i = b.begin(), ie = b.end(); i != ie; ++i) {
-                if (auto instr = cast<Instruction>(i)) {
-                    if (instr->getOpcode() == Instruction::Store) {
+                if (auto instr = llvm::cast<llvm::Instruction>(i)) {
+                    if (instr->getOpcode() == llvm::Instruction::Store) {
                         // the store target uniquely identifies this instruction
                         ret_instruction_ids.push_back(
                                 instr->getOperand(1)->getName());
@@ -79,7 +80,7 @@ std::vector<size_t> LLVMParser::get_output_positions_struct(
         auto &u = *it;
 
         if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
-            if (inst->getOpcode() == Instruction::InsertValue) {
+            if (inst->getOpcode() == llvm::Instruction::InsertValue) {
                 // find the index
                 for (size_t i = 0; i < ret_instruction_ids.size(); i++) {
                     std::string id = ret_instruction_ids[i];
@@ -105,7 +106,7 @@ std::vector<size_t> LLVMParser::get_output_positions_caller_ptr(
         auto &u = *it;
 
         if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
-            if (inst->getOpcode() == Instruction::Store) {
+            if (inst->getOpcode() == llvm::Instruction::Store) {
                 // find the index
                 for (size_t i = 0; i < ret_instruction_ids.size(); i++) {
                     std::string id = ret_instruction_ids[i];
@@ -145,9 +146,9 @@ bool LLVMParser::is_argument_read(size_t arg_pos) {
         auto &u = *it;
 
         if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
-            if (inst->getOpcode() != Instruction::Store &&
-                inst->getOpcode() != Instruction::InsertValue &&
-                inst->getOpcode() != Instruction::Ret) {
+            if (inst->getOpcode() != llvm::Instruction::Store &&
+                inst->getOpcode() != llvm::Instruction::InsertValue &&
+                inst->getOpcode() != llvm::Instruction::Ret) {
                 used = true;
                 break;
             }
@@ -161,18 +162,20 @@ bool LLVMParser::is_argument_read(size_t arg_pos) {
 
 std::string LLVMParser::adjust_filter_signature(DAGFilter *pFilter) {
     DAGOperator *predecessor = pFilter->predecessors[0];
-    Module *new_mod = new Module("filter", Context);
+    llvm::Module *new_mod = new llvm::Module("filter", Context);
 
-    std::vector<Type *> types;
+    std::vector<llvm::Type *> types;
     for (auto f : predecessor->fields) {
         types.push_back(c_type_to_llvm(f.type, &Context));
     }
 
     auto old_function = module->getFunctionList().begin();
-    FunctionType *FT = FunctionType::get(Type::getInt1Ty(Context),
-                                         ArrayRef<Type *>(types), false);
-    Function *filter_predicate = Function::Create(
-            FT, Function::ExternalLinkage, old_function->getName(), new_mod);
+    llvm::FunctionType *FT =
+            llvm::FunctionType::get(llvm::Type::getInt1Ty(Context),
+                                    llvm::ArrayRef<llvm::Type *>(types), false);
+    llvm::Function *filter_predicate =
+            llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
+                                   old_function->getName(), new_mod);
 
     filter_predicate->getBasicBlockList().splice(
             filter_predicate->begin(), old_function->getBasicBlockList());
@@ -180,7 +183,7 @@ std::string LLVMParser::adjust_filter_signature(DAGFilter *pFilter) {
     size_t counter = 1;
     for (auto it = filter_predicate->arg_begin();
          it != filter_predicate->arg_end(); it++) {
-        it->setName("." + to_string(counter++));
+        it->setName("." + std::to_string(counter++));
     }
     // go over the read set
     for (auto c : pFilter->read_set) {
@@ -203,8 +206,8 @@ std::string LLVMParser::adjust_filter_signature(DAGFilter *pFilter) {
         auto newArg = filter_predicate->arg_begin() + newPos;
         oldArg->replaceAllUsesWith(newArg);
     }
-    string ret;
-    raw_string_ostream OS(ret);
+    std::string ret;
+    llvm::raw_string_ostream OS(ret);
     OS << *new_mod;
     OS.flush();
     //    new_mod->dump();

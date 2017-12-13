@@ -10,7 +10,6 @@
 #include "DAGOperator.h"
 
 class DAGVisitor;
-using std::string;
 
 class DAGRange : public DAGOperator {
 public:
@@ -20,11 +19,11 @@ public:
 
     void parse_json(nlohmann::json json);
 
-    string from;
-    string to;
-    string step = "1";
+    std::string from;
+    std::string to;
+    std::string step = "1";
 
-    std::string get_name() { return "Range_" + to_string(id); }
+    std::string get_name() { return "Range_" + std::to_string(id); }
 };
 
 #endif  // CPP_DAGRANGE_H

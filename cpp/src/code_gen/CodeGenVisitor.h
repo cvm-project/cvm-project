@@ -10,6 +10,7 @@
 #include <regex>
 #include <set>
 #include <unordered_map>
+#include <utility>
 
 #include <sys/stat.h>
 
@@ -17,8 +18,6 @@
 #include "dag/DAG.h"
 #include "utils/DAGVisitor.h"
 #include "utils/utils.h"
-
-using namespace std;
 
 class CodeGenVisitor : public DAGVisitor {
 public:
@@ -31,7 +30,7 @@ public:
         dag->sink->accept(this);
         emitFuncEnd(dag->action);
 
-        string final_code;
+        std::string final_code;
         final_code += writeHeader() + "\n" + writeIncludes() + "\n"
                       //                + "using namespace std;\n"
                       + writeTupleDefs(dag->action) + "\n" +
@@ -46,17 +45,17 @@ public:
     }
 
     void visit(DAGCollection *op) {
-        string operatorName = "CollectionSourceOperator";
+        std::string operatorName = "CollectionSourceOperator";
         DAGVisitor::visit(op);
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
         auto tType = generateTupleType(op->output_type);
         operatorNameTupleTypeMap.emplace(
-                op->id, make_tuple(opName, tType.first, tType.second));
+                op->id, std::make_tuple(opName, tType.first, tType.second));
 
         includes.insert("\"operators/" + operatorName + ".h\"");
-        pair<string, string> inputNamePair = getNextInputName();
+        std::pair<std::string, std::string> inputNamePair = getNextInputName();
         emitOperatorMake(operatorName, op, opName, "",
                          "(" + tType.first + "*)" + inputNamePair.first + ", " +
                                  inputNamePair.second,
@@ -67,14 +66,14 @@ public:
 
     void visit(DAGMap *op) {
         DAGVisitor::visit(op);
-        string operatorName = "MapOperator";
+        std::string operatorName = "MapOperator";
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
 
         auto tType = generateTupleType(op->output_type);
         operatorNameTupleTypeMap.emplace(
-                op->id, make_tuple(opName, tType.first, tType.second));
+                op->id, std::make_tuple(opName, tType.first, tType.second));
 
         includes.insert("\"operators/" + operatorName + ".h\"");
 
@@ -86,59 +85,61 @@ public:
     }
 
     void visit(DAGReduce *op) {
-        string operatorName = "ReduceOperator";
+        std::string operatorName = "ReduceOperator";
 
         DAGVisitor::visit(op);
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
 
-        auto tType = get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+        auto tType =
+                std::get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
         auto typeSize =
-                get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
-        operatorNameTupleTypeMap.emplace(op->id,
-                                         make_tuple(opName, tType, typeSize));
+                std::get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+        operatorNameTupleTypeMap.emplace(
+                op->id, std::make_tuple(opName, tType, typeSize));
 
         includes.insert("\"operators/" + operatorName + ".h\"");
 
         storeLLVMCode(op->llvm_ir, "reduce");
         emitLLVMFunctionWrapperBinaryArgs(
                 op, "reduce",
-                get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]),
-                get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]));
+                std::get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]),
+                std::get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]));
 
         emitOperatorMake(operatorName, op, opName, "reduce");
         appendLineBodyNoCol();
     }
 
     void visit(DAGRange *op) {
-        string operatorName = "FilterOperator";
+        std::string operatorName = "FilterOperator";
 
         DAGVisitor::visit(op);
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
         auto tType = generateTupleType(op->output_type);
         operatorNameTupleTypeMap.emplace(
-                op->id, make_tuple(opName, tType.first, tType.second));
+                op->id, std::make_tuple(opName, tType.first, tType.second));
 
         includes.insert("\"operators/" + operatorName + ".h\"");
 
-        string args = op->from + ", " + op->to + ", " + op->step;
+        std::string args = op->from + ", " + op->to + ", " + op->step;
         emitOperatorMake(operatorName, op, opName, "", args);
         appendLineBodyNoCol();
     };
 
     void visit(DAGFilter *op) {
-        string operatorName = "FilterOperator";
+        std::string operatorName = "FilterOperator";
 
         DAGVisitor::visit(op);
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
         auto tType = operatorNameTupleTypeMap[op->predecessors[0]->id];
         operatorNameTupleTypeMap.emplace(
-                op->id, make_tuple(opName, get<1>(tType), get<2>(tType)));
+                op->id, std::make_tuple(opName, std::get<1>(tType),
+                                        std::get<2>(tType)));
 
         includes.insert("\"operators/" + operatorName + ".h\"");
 
@@ -151,13 +152,13 @@ public:
 
     void visit(DAGJoin *op) {
         DAGVisitor::visit(op);
-        string operatorName = "JoinOperator";
+        std::string operatorName = "JoinOperator";
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
         auto tType = generateTupleType(op->output_type);
         operatorNameTupleTypeMap.emplace(
-                op->id, make_tuple(opName, tType.first, tType.second));
+                op->id, std::make_tuple(opName, tType.first, tType.second));
 
         // add join k1, v1, v2 tuple types
         join_type_counter++;
@@ -172,13 +173,13 @@ public:
 
     void visit(DAGCartesian *op) {
         DAGVisitor::visit(op);
-        string operatorName = "CartesianOperator";
+        std::string operatorName = "CartesianOperator";
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
         auto tType = generateTupleType(op->output_type);
         operatorNameTupleTypeMap.emplace(
-                op->id, make_tuple(opName, tType.first, tType.second));
+                op->id, std::make_tuple(opName, tType.first, tType.second));
 
         includes.insert("\"operators/" + operatorName + ".h\"");
 
@@ -195,16 +196,16 @@ public:
                           op->fields[0].properties->find(FL_UNIQUE) !=
                                   op->fields[0].properties->end();
         //        is_grouped = 0;
-        string operatorName = is_grouped ? "ReduceByKeyGroupedOperator"
-                                         : "ReduceByKeyOperator";
+        std::string operatorName = is_grouped ? "ReduceByKeyGroupedOperator"
+                                              : "ReduceByKeyOperator";
         emitComment(operatorName);
 
-        string opName = getNextOperatorName();
+        std::string opName = getNextOperatorName();
         // reuse the pred tuple type
         auto predNameTuple = operatorNameTupleTypeMap[op->predecessors[0]->id];
         operatorNameTupleTypeMap.emplace(
-                op->id, make_tuple(opName, get<1>(predNameTuple),
-                                   get<2>(predNameTuple)));
+                op->id, std::make_tuple(opName, std::get<1>(predNameTuple),
+                                        std::get<2>(predNameTuple)));
 
         // add reducebykey key and value tuple types
         reduce_by_key_type_counter++;
@@ -215,7 +216,8 @@ public:
         // assume the key is a scalar type
         emitLLVMFunctionWrapperBinaryArgs(
                 op, "reduce_by_key", getCurrentReduceByKeyValueName(),
-                get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]) - 1,
+                std::get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]) -
+                        1,
                 true);
 
         includes.insert("\"operators/" + operatorName + ".h\"");
@@ -225,10 +227,10 @@ public:
     };
 
 private:
-    const string genDir;
-    const string LLVM_FUNC_DIR = "functions_llvm/";
+    const std::string genDir;
+    const std::string LLVM_FUNC_DIR = "functions_llvm/";
 
-    string body;
+    std::string body;
 
     const std::string TUPLE_NAME = "tuple_";
     size_t tupleCounter = -1;
@@ -239,127 +241,130 @@ private:
     const std::string LLVM_WRAPPER_NAME = "WrapperFunction_";
     size_t llvmWrapperCounter = -1;
 
-    string LLVMFuncName = "_operator_function_";
+    std::string LLVMFuncName = "_operator_function_";
     size_t LLVMFuncNameCounter = -1;
 
-    string JOIN_KEY_NAME = "join_key_";
-    string JOIN_VALUE1_NAME = "join_value_0_";
-    string JOIN_VALUE2_NAME = "join_value_1_";
+    std::string JOIN_KEY_NAME = "join_key_";
+    std::string JOIN_VALUE1_NAME = "join_value_0_";
+    std::string JOIN_VALUE2_NAME = "join_value_1_";
     size_t join_type_counter = -1;
 
-    string REDUCE_BY_KEY_KEY_NAME = "reduce_by_key_key_";
-    string REDUCE_BY_KEY_VALUE_NAME = "reduce_by_key_value_";
+    std::string REDUCE_BY_KEY_KEY_NAME = "reduce_by_key_key_";
+    std::string REDUCE_BY_KEY_VALUE_NAME = "reduce_by_key_value_";
     size_t reduce_by_key_type_counter = -1;
 
-    unordered_map<size_t, tuple<string, string, size_t>>
+    std::unordered_map<size_t, std::tuple<std::string, std::string, size_t>>
             operatorNameTupleTypeMap;
 
-    vector<string> llvmFuncDecls;
+    std::vector<std::string> llvmFuncDecls;
 
-    vector<string> tupleTypeDefs;
+    std::vector<std::string> tupleTypeDefs;
 
-    //    vector<string> joinKeyValuesTypeDefs;
+    //    std::vector<std::string> joinKeyValuesTypeDefs;
 
-    vector<string> reduceByKeyKeyValuesTypeDefs;
+    std::vector<std::string> reduceByKeyKeyValuesTypeDefs;
 
-    vector<pair<string, string>> inputNames;
+    std::vector<std::pair<std::string, std::string>> inputNames;
 
-    set<string> includes;
+    std::set<std::string> includes;
 
     size_t tabInd = 0;
 
-    string lastTupleType;
-    string lastTupleTypeLLVM;
+    std::string lastTupleType;
+    std::string lastTupleTypeLLVM;
 
-    string resultTypeDef;
+    std::string resultTypeDef;
 
-    string executeFuncReturn = "result_type";
-    string executeFuncParams;
+    std::string executeFuncReturn = "result_type";
+    std::string executeFuncParams;
 
-    const string INPUT_NAME = "input_";
-    const string INPUT_NAME_SIZE = "input_size_";
+    const std::string INPUT_NAME = "input_";
+    const std::string INPUT_NAME_SIZE = "input_size_";
     size_t inputNameCounter = -1;
 
     auto getCurrentInputNamePair() {
-        return make_pair(INPUT_NAME + to_string(inputNameCounter),
-                         INPUT_NAME_SIZE + to_string(inputNameCounter));
+        return std::make_pair(
+                INPUT_NAME + std::to_string(inputNameCounter),
+                INPUT_NAME_SIZE + std::to_string(inputNameCounter));
     }
 
-    pair<string, string> getNextInputName() {
+    std::pair<std::string, std::string> getNextInputName() {
         inputNameCounter++;
         return getCurrentInputNamePair();
     }
 
-    string getCurrentLLVMFuncName() {
-        string res;
-        res.append(LLVMFuncName).append(to_string(LLVMFuncNameCounter));
+    std::string getCurrentLLVMFuncName() {
+        std::string res;
+        res.append(LLVMFuncName).append(std::to_string(LLVMFuncNameCounter));
         return res;
     }
 
-    string getNextLLVMFuncName() {
+    std::string getNextLLVMFuncName() {
         LLVMFuncNameCounter++;
         return getCurrentLLVMFuncName();
     }
 
-    string getCurrentJoinKeyName() {
-        string res;
-        res.append(JOIN_KEY_NAME).append(to_string(join_type_counter));
+    std::string getCurrentJoinKeyName() {
+        std::string res;
+        res.append(JOIN_KEY_NAME).append(std::to_string(join_type_counter));
         return res;
     }
 
-    string getCurrentJoinValue1Name() {
-        string res;
-        res.append(JOIN_VALUE1_NAME).append(to_string(join_type_counter));
+    std::string getCurrentJoinValue1Name() {
+        std::string res;
+        res.append(JOIN_VALUE1_NAME).append(std::to_string(join_type_counter));
         return res;
     }
 
-    string getCurrentJoinValue2Name() {
-        string res;
-        res.append(JOIN_VALUE2_NAME).append(to_string(join_type_counter));
+    std::string getCurrentJoinValue2Name() {
+        std::string res;
+        res.append(JOIN_VALUE2_NAME).append(std::to_string(join_type_counter));
         return res;
     }
 
-    string getCurrentReduceByKeyKeyName() {
-        string res;
+    std::string getCurrentReduceByKeyKeyName() {
+        std::string res;
         res.append(REDUCE_BY_KEY_KEY_NAME)
-                .append(to_string(reduce_by_key_type_counter));
+                .append(std::to_string(reduce_by_key_type_counter));
         return res;
     }
 
-    string getCurrentReduceByKeyValueName() {
-        string res;
+    std::string getCurrentReduceByKeyValueName() {
+        std::string res;
         res.append(REDUCE_BY_KEY_VALUE_NAME)
-                .append(to_string(reduce_by_key_type_counter));
+                .append(std::to_string(reduce_by_key_type_counter));
         return res;
     }
 
-    string getCurrentTupleName() {
-        string res;
-        res.append(TUPLE_NAME).append(to_string(tupleCounter));
+    std::string getCurrentTupleName() {
+        std::string res;
+        res.append(TUPLE_NAME).append(std::to_string(tupleCounter));
         return res;
     }
 
-    string getNextTupleName() {
+    std::string getNextTupleName() {
         tupleCounter++;
         return getCurrentTupleName();
     }
 
-    string getCurrentOperatorName() {
-        string res;
-        res.append(OPERATOR_NAME).append(to_string(operatorCounter));
+    std::string getCurrentOperatorName() {
+        std::string res;
+        res.append(OPERATOR_NAME).append(std::to_string(operatorCounter));
         return res;
     }
 
-    string getNextOperatorName() {
+    std::string getNextOperatorName() {
         operatorCounter++;
         return getCurrentOperatorName();
     }
 
-    void emitOperatorMake(const string &opClass, const DAGOperator *const op,
-                          const string &opVarName, const string &opName = "",
-                          const string &extraArgs = "",
+    void emitOperatorMake(const std::string &opClass,
+                          const DAGOperator *const op,
+                          const std::string &opVarName,
+                          const std::string &opName = "",
+                          const std::string &extraArgs = "",
                           bool add_boolean_template = false) {
-        string line("auto ");
+        std::string line("auto ");
         line.append(opVarName)
                 .append(" = make")
                 .append(opClass)
@@ -370,10 +375,11 @@ private:
         }
         line.append(">(");
 
-        string argList;
+        std::string argList;
         for (auto it = op->predecessors.begin(); it < op->predecessors.end();
              it++) {
-            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
+            argList.append("&" +
+                           std::get<0>(operatorNameTupleTypeMap[(*it)->id]));
             if (it != (--op->predecessors.end())) {
                 argList.append(", ");
             }
@@ -400,8 +406,8 @@ private:
         appendLineBody(line);
     }
 
-    void emitJoinMake(const string &opVarName, DAGJoin *op) {
-        string line("auto ");
+    void emitJoinMake(const std::string &opVarName, DAGJoin *op) {
+        std::string line("auto ");
         line.append(opVarName)
                 .append(" = make")
                 .append("JoinOperator")
@@ -411,10 +417,11 @@ private:
                         getCurrentJoinValue2Name())
                 .append(">(");
 
-        string argList;
+        std::string argList;
         for (auto it = op->predecessors.begin(); it < op->predecessors.end();
              it++) {
-            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
+            argList.append("&" +
+                           std::get<0>(operatorNameTupleTypeMap[(*it)->id]));
             if (it != (--op->predecessors.end())) {
                 argList.append(", ");
             }
@@ -425,10 +432,10 @@ private:
         appendLineBody(line);
     }
 
-    void emitCartesianMake(const string &opVarName, DAGCartesian *op) {
-        string line("auto ");
-        string pred2Tuple =
-                get<1>(operatorNameTupleTypeMap[op->predecessors[1]->id]);
+    void emitCartesianMake(const std::string &opVarName, DAGCartesian *op) {
+        std::string line("auto ");
+        std::string pred2Tuple =
+                std::get<1>(operatorNameTupleTypeMap[op->predecessors[1]->id]);
         line.append(opVarName)
                 .append(" = make")
                 .append("CartesianOperator")
@@ -436,10 +443,11 @@ private:
                 .append(getCurrentTupleName() + ", " + pred2Tuple)
                 .append(">(");
 
-        string argList;
+        std::string argList;
         for (auto it = op->predecessors.begin(); it < op->predecessors.end();
              it++) {
-            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
+            argList.append("&" +
+                           std::get<0>(operatorNameTupleTypeMap[(*it)->id]));
             if (it != (--op->predecessors.end())) {
                 argList.append(", ");
             }
@@ -450,9 +458,9 @@ private:
         appendLineBody(line);
     }
 
-    void emitReduceByKeyMake(const string &opVarName, DAGReduceByKey *op,
-                             const string &operatorName) {
-        string line("auto ");
+    void emitReduceByKeyMake(const std::string &opVarName, DAGReduceByKey *op,
+                             const std::string &operatorName) {
+        std::string line("auto ");
         line.append(opVarName)
                 .append(" = make")
                 .append(operatorName)
@@ -462,10 +470,11 @@ private:
                         getCurrentReduceByKeyValueName())
                 .append(">(");
 
-        string argList;
+        std::string argList;
         for (auto it = op->predecessors.begin(); it < op->predecessors.end();
              it++) {
-            argList.append("&" + get<0>(operatorNameTupleTypeMap[(*it)->id]));
+            argList.append("&" +
+                           std::get<0>(operatorNameTupleTypeMap[(*it)->id]));
             argList.append(", ");
         }
 
@@ -483,44 +492,45 @@ private:
      * returns the tuple type name(e.g tuple_0) and the number of fields in this
      * tuple
      */
-    pair<string, size_t> generateTupleType(const string &type) {
-        string tName = getNextTupleName();
-        string type_ = type;
+    std::pair<std::string, size_t> generateTupleType(const std::string &type) {
+        std::string tName = getNextTupleName();
+        std::string type_ = type;
         type_ = string_replace(type_, "(", "");
         type_ = string_replace(type_, ")", "");
         type_ = string_replace(type_, " ", "");
-        vector<string> types = split_string(type_, ",");
-        string line("typedef struct {\n");
-        string varName = "v";
+        std::vector<std::string> types = split_string(type_, ",");
+        std::string line("typedef struct {\n");
+        std::string varName = "v";
         for (size_t i = 0; i < types.size(); i++) {
-            line += "\t" + types[i] + " " + varName + to_string(i) + "; ";
+            line += "\t" + types[i] + " " + varName + std::to_string(i) + "; ";
         }
         line += "} " + tName + ";\n\n";
 
         tupleTypeDefs.push_back(line);
         resultTypeDef = line;
-        return make_pair(tName, types.size());
+        return std::make_pair(tName, types.size());
     }
 
-    void emitLLVMFunctionWrapper(DAGOperator *op, const string &opName,
+    void emitLLVMFunctionWrapper(DAGOperator *op, const std::string &opName,
                                  bool returnsBool = false) {
-        string llvmFuncName = opName + getCurrentLLVMFuncName();
-        string className = snake_to_camel_string(llvmFuncName);
+        std::string llvmFuncName = opName + getCurrentLLVMFuncName();
+        std::string className = snake_to_camel_string(llvmFuncName);
         appendLineBodyNoCol("class " + className + " {");
         appendLineBodyNoCol("public:");
         tabInd++;
-        string inputType =
-                get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
-        string retType = get<1>(operatorNameTupleTypeMap[op->id]);
-        appendLineBodyNoCol(
-                string("auto operator()(").append(inputType).append(" t) {"));
+        std::string inputType =
+                std::get<1>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+        std::string retType = std::get<1>(operatorNameTupleTypeMap[op->id]);
+        appendLineBodyNoCol(std::string("auto operator()(")
+                                    .append(inputType)
+                                    .append(" t) {"));
         tabInd++;
-        string args;
-        string varName = "v";
+        std::string args;
+        std::string varName = "v";
         for (size_t i = 0;
-             i < get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
+             i < std::get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
              i++) {
-            args += "t." + varName + to_string(i) + ", ";
+            args += "t." + varName + std::to_string(i) + ", ";
         }
         if (!args.empty()) {
             args.pop_back();
@@ -532,7 +542,7 @@ private:
         tabInd--;
         appendLineBodyNoCol("};");
 
-        string flatInputType =
+        std::string flatInputType =
                 string_replace(op->predecessors[0]->output_type, "(", "");
         flatInputType = string_replace(flatInputType, ")", "");
         if (returnsBool) {
@@ -548,28 +558,28 @@ private:
      * functions which take two arguments of the same type (e.g. reduce)
      */
     void emitLLVMFunctionWrapperBinaryArgs(DAGOperator *op,
-                                           const string &opName,
-                                           const string &inputType,
+                                           const std::string &opName,
+                                           const std::string &inputType,
                                            size_t inputSize,
                                            bool reduce_by_key = false) {
-        string llvmFuncName = opName + getCurrentLLVMFuncName();
-        string className = snake_to_camel_string(llvmFuncName);
+        std::string llvmFuncName = opName + getCurrentLLVMFuncName();
+        std::string className = snake_to_camel_string(llvmFuncName);
         appendLineBodyNoCol("class " + className + " {");
         appendLineBodyNoCol("public:");
         tabInd++;
-        string retType = get<1>(operatorNameTupleTypeMap[op->id]);
-        appendLineBodyNoCol(string("auto operator()(")
+        std::string retType = std::get<1>(operatorNameTupleTypeMap[op->id]);
+        appendLineBodyNoCol(std::string("auto operator()(")
                                     .append(inputType + " t0, ")
                                     .append(inputType + " t1) {"));
         tabInd++;
-        string args;
-        string varName = "v";
+        std::string args;
+        std::string varName = "v";
         for (size_t i = 0; i < inputSize; i++) {
-            args += "t0." + varName + to_string(i) + ", ";
+            args += "t0." + varName + std::to_string(i) + ", ";
         }
 
         for (size_t i = 0; i < inputSize; i++) {
-            args += "t1." + varName + to_string(i) + ", ";
+            args += "t1." + varName + std::to_string(i) + ", ";
         }
 
         if (!args.empty()) {
@@ -582,7 +592,7 @@ private:
         tabInd--;
         appendLineBodyNoCol("};");
         if (reduce_by_key) {
-            string flatInputType;
+            std::string flatInputType;
             for (size_t i = 1; i < op->predecessors[0]->fields.size(); i++) {
                 auto t = op->predecessors[0]->fields[i];
                 flatInputType += t.type + ", ";
@@ -593,7 +603,7 @@ private:
                                     flatInputType + ", " + flatInputType +
                                     ");");
         } else {
-            string flatInputType =
+            std::string flatInputType =
                     string_replace(op->predecessors[0]->output_type, "(", "");
             flatInputType = string_replace(flatInputType, ")", "");
             llvmFuncDecls.push_back(retType + " " + llvmFuncName + "(" +
@@ -602,7 +612,7 @@ private:
         }
     }
 
-    void emitFuncEnd(const string &action) {
+    void emitFuncEnd(const std::string &action) {
         //        appendLineBodyNoCol("TICK1");
         if (action == "count") {
             emitComment("counting the result");
@@ -690,18 +700,18 @@ private:
      * for current join
      */
     void generateJoinKeyValueTypes(DAGJoin *op) {
-        string up1Type = op->predecessors[0]->output_type;
-        string up2Type = op->predecessors[1]->output_type;
+        std::string up1Type = op->predecessors[0]->output_type;
+        std::string up2Type = op->predecessors[1]->output_type;
 
         // key1 type
-        string keyName = getCurrentJoinKeyName();
-        vector<string> keyTypes;
+        std::string keyName = getCurrentJoinKeyName();
+        std::vector<std::string> keyTypes;
         if (up1Type.find("((") == 0) {
             // key is a tuple
-            regex reg("((.*)");
+            std::regex reg("((.*)");
             std::smatch m;
-            regex_search(up1Type, m, reg);
-            string typesStr;
+            std::regex_search(up1Type, m, reg);
+            std::string typesStr;
             for (auto x : m) typesStr = x;
             typesStr = string_replace(typesStr, "(", " ");
             typesStr = string_replace(typesStr, ")", " ");
@@ -709,51 +719,54 @@ private:
             keyTypes = split_string(typesStr, ",");
         } else {
             // key is the first element
-            string typesStr = string_replace(up1Type, "(", " ");
+            std::string typesStr = string_replace(up1Type, "(", " ");
             typesStr = string_replace(typesStr, ")", " ");
             typesStr = string_replace(typesStr, " ", "");
             keyTypes.push_back(split_string(typesStr, ",")[0]);
         }
-        string line("typedef struct {\n");
-        string varName = "v";
+        std::string line("typedef struct {\n");
+        std::string varName = "v";
         for (size_t i = 0; i < keyTypes.size(); i++) {
-            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + "; ";
+            line += "\t" + keyTypes[i] + " " + varName + std::to_string(i) +
+                    "; ";
         }
         line += "} " + keyName + ";\n\n";
 
         // up1 type
-        vector<string> up1Types;
+        std::vector<std::string> up1Types;
         if (up1Type.find("((") == 0) {
             // assume for now the key is a scalar type
         } else {
-            string typesStr = string_replace(up1Type, "(", " ");
+            std::string typesStr = string_replace(up1Type, "(", " ");
             typesStr = string_replace(typesStr, ")", " ");
             typesStr = string_replace(typesStr, " ", "");
             up1Types = split_string(typesStr, ",");
-            up1Types = vector<string>(up1Types.begin() + 1, up1Types.end());
+            up1Types = std::vector<std::string>(up1Types.begin() + 1,
+                                                up1Types.end());
             line += "typedef struct {\n";
 
             for (size_t i = 0; i < up1Types.size(); i++) {
-                line += "\t" + up1Types[i] + " " + varName + to_string(i) +
+                line += "\t" + up1Types[i] + " " + varName + std::to_string(i) +
                         "; ";
             }
             line += "} " + getCurrentJoinValue1Name() + ";\n\n";
         }
 
         // up2 type
-        vector<string> up2Types;
+        std::vector<std::string> up2Types;
         if (up2Type.find("((") == 0) {
             // assume for now the key is a scalar type
         } else {
-            string typesStr = string_replace(up2Type, "(", " ");
+            std::string typesStr = string_replace(up2Type, "(", " ");
             typesStr = string_replace(typesStr, ")", " ");
             typesStr = string_replace(typesStr, " ", "");
             up2Types = split_string(typesStr, ",");
-            up2Types = vector<string>(up2Types.begin() + 1, up2Types.end());
+            up2Types = std::vector<std::string>(up2Types.begin() + 1,
+                                                up2Types.end());
             line += "typedef struct {\n";
 
             for (size_t i = 0; i < up2Types.size(); i++) {
-                line += "\t" + up2Types[i] + " " + varName + to_string(i) +
+                line += "\t" + up2Types[i] + " " + varName + std::to_string(i) +
                         "; ";
             }
             line += "} " + getCurrentJoinValue2Name() + ";\n\n";
@@ -767,17 +780,17 @@ private:
      * for current reduce by key
      */
     void generateReduceByKeyKeyValueTypes(DAGReduceByKey *op) {
-        string upType = op->predecessors[0]->output_type;
+        std::string upType = op->predecessors[0]->output_type;
 
         // key type
-        string keyName = getCurrentReduceByKeyKeyName();
-        vector<string> keyTypes;
+        std::string keyName = getCurrentReduceByKeyKeyName();
+        std::vector<std::string> keyTypes;
         //        if (upType.find("((") == 0) {
         //            //key is a tuple
-        //            regex reg("((.*)");
+        //            std::regex reg("((.*)");
         //            std::smatch m;
-        //            regex_search(upType, m, reg);
-        //            string typesStr;
+        //            std::regex_search(upType, m, reg);
+        //            std::string typesStr;
         //            for (auto x:m) typesStr = x;
         //            typesStr = string_replace(typesStr, "(", " ");
         //            typesStr = string_replace(typesStr, ")", " ");
@@ -786,32 +799,35 @@ private:
         //        }
         //        else {
         // key is the first element
-        string typesStr = string_replace(upType, "(", " ");
+        std::string typesStr = string_replace(upType, "(", " ");
         typesStr = string_replace(typesStr, ")", " ");
         typesStr = string_replace(typesStr, " ", "");
         keyTypes.push_back(split_string(typesStr, ",")[0]);
         //        }
-        string line("typedef struct {\n");
-        string varName = "v";
+        std::string line("typedef struct {\n");
+        std::string varName = "v";
         for (size_t i = 0; i < keyTypes.size(); i++) {
-            line += "\t" + keyTypes[i] + " " + varName + to_string(i) + "; ";
+            line += "\t" + keyTypes[i] + " " + varName + std::to_string(i) +
+                    "; ";
         }
         line += "} " + keyName + ";\n\n";
 
         // upstream type
-        vector<string> upTypes;
+        std::vector<std::string> upTypes;
         if (upType.find("((") == 0) {
             // assume for now the key is a scalar type
         } else {
-            string typesStr = string_replace(upType, "(", " ");
+            std::string typesStr = string_replace(upType, "(", " ");
             typesStr = string_replace(typesStr, ")", " ");
             typesStr = string_replace(typesStr, " ", "");
             upTypes = split_string(typesStr, ",");
-            upTypes = vector<string>(upTypes.begin() + 1, upTypes.end());
+            upTypes = std::vector<std::string>(upTypes.begin() + 1,
+                                               upTypes.end());
             line += "typedef struct {\n";
 
             for (size_t i = 0; i < upTypes.size(); i++) {
-                line += "\t" + upTypes[i] + " " + varName + to_string(i) + "; ";
+                line += "\t" + upTypes[i] + " " + varName + std::to_string(i) +
+                        "; ";
             }
             line += "} " + getCurrentReduceByKeyValueName() + ";\n\n";
         }
@@ -819,16 +835,18 @@ private:
         tupleTypeDefs.push_back(line);
     }
 
-    string genComment(const string &com) { return "\n/**" + com + "**/\n"; }
+    std::string genComment(const std::string &com) {
+        return "\n/**" + com + "**/\n";
+    }
 
-    void emitComment(const string &opName) {
+    void emitComment(const std::string &opName) {
         tabInd++;
         appendLineBodyNoCol(genComment(opName));
         tabInd--;
     }
 
     // cppcheck-suppress unusedPrivateFunction
-    string parseTupleType(const string &type) {
+    std::string parseTupleType(const std::string &type) {
         std::string ret = type;
         ret = string_replace(ret, "(", "tuple<");
         ret = string_replace(ret, ")", ">");
@@ -840,52 +858,53 @@ private:
             const int dirErr =
                     system(("mkdir -p " + genDir + LLVM_FUNC_DIR).c_str());
             if (0 != dirErr) {
-                cerr << ("Error creating gen directory!") << endl;
-                exit(1);
+                std::cerr << ("Error creating gen directory!") << std::endl;
+                std::exit(1);
             }
         }
     }
 
-    void storeLLVMCode(const string &ir, const string &opName) {
+    void storeLLVMCode(const std::string &ir, const std::string &opName) {
         std::string patched_ir = ir;
-        // the local_unnamed_addr string is not llvm-3.7 compatible:
-        regex reg1("local_unnamed_addr #.? ");
-        patched_ir = regex_replace(patched_ir, reg1, "");
+        // the local_unnamed_addr std::string is not llvm-3.7 compatible:
+        std::regex reg1("local_unnamed_addr #.? ");
+        patched_ir = std::regex_replace(patched_ir, reg1, "");
         //        patched_ir = string_replace(patched_ir, "local_unnamed_addr #1
         //        ", "");
         // replace the func name with our
-        string funcName = opName + getNextLLVMFuncName();
-        regex reg("@cfuncnotuniquename");
-        patched_ir = regex_replace(patched_ir, reg, "@\"" + funcName + "\"");
+        std::string funcName = opName + getNextLLVMFuncName();
+        std::regex reg("@cfuncnotuniquename");
+        patched_ir =
+                std::regex_replace(patched_ir, reg, "@\"" + funcName + "\"");
         // write code to the gen dir
         if (DUMP_FILES) {
-            string path = genDir + LLVM_FUNC_DIR + funcName + ".ll";
-            ofstream out(path);
+            std::string path = genDir + LLVM_FUNC_DIR + funcName + ".ll";
+            std::ofstream out(path);
             out << patched_ir;
             out.close();
         }
     }
 
-    void appendLineBody(const string &str) {
-        body.append(string(tabInd, '\t')).append(str).append(";\n");
+    void appendLineBody(const std::string &str) {
+        body.append(std::string(tabInd, '\t')).append(str).append(";\n");
     }
 
-    void appendLineBodyNoCol(const string &str = "") {
-        body.append(string(tabInd, '\t')).append(str).append("\n");
+    void appendLineBodyNoCol(const std::string &str = "") {
+        body.append(std::string(tabInd, '\t')).append(str).append("\n");
     }
 
     void addGenIncludes() {
-        //        includes.insert("<vector>");
+        //        includes.insert("<std::vector>");
     }
 
-    string writeHeader() {
+    std::string writeHeader() {
         return "/**\n"
                " * Auto-generated execution plan\n"
                " */\n";
     }
 
-    //    string writeJoinTupleDefs() {
-    //        string line = "";
+    //    std::string writeJoinTupleDefs() {
+    //        std::string line = "";
     //        line += genComment("join key value definitions");
     //        for (auto tupleDef : joinKeyValuesTypeDefs) {
     //            line += tupleDef;
@@ -893,7 +912,7 @@ private:
     //        return line;
     //    }
 
-    string writeFuncDecl() {
+    std::string writeFuncDecl() {
         executeFuncParams = "";
         for (auto inputPair : inputNames) {
             executeFuncParams += "void *" + inputPair.first +
@@ -907,8 +926,8 @@ private:
                executeFuncParams + ") {";
     }
 
-    string writeIncludes() {
-        string ret;
+    std::string writeIncludes() {
+        std::string ret;
         for (auto incl : includes) {
             ret.append("#include ").append(incl).append("\n");
         }
@@ -916,9 +935,9 @@ private:
         return ret;
     }
 
-    string writeTupleDefs(const string &action) {
-        string ret;
-        string resultWrapper;
+    std::string writeTupleDefs(const std::string &action) {
+        std::string ret;
+        std::string resultWrapper;
         ret.append(genComment("tuple definitions"));
         if (action == "collect") {
             size_t len = tupleTypeDefs.size();
@@ -951,8 +970,8 @@ private:
         return ret + resultWrapper;
     }
 
-    string writeLLVMFuncDecls() {
-        string ret;
+    std::string writeLLVMFuncDecls() {
+        std::string ret;
         ret.append("extern \"C\" {\n");
         tabInd++;
         for (auto def : llvmFuncDecls) {
@@ -963,15 +982,15 @@ private:
         return ret;
     }
 
-    void write_execute(const string &final_code) {
-        ofstream out(genDir + "execute.cpp");
+    void write_execute(const std::string &final_code) {
+        std::ofstream out(genDir + "execute.cpp");
         out << final_code;
         out.close();
     }
 
-    void write_c_execute(const string &action) {
-        ofstream out(genDir + "c_execute.c");
-        string funcParamNames;
+    void write_c_execute(const std::string &action) {
+        std::ofstream out(genDir + "c_execute.c");
+        std::string funcParamNames;
         for (auto param : inputNames) {
             funcParamNames += param.first + ", " + param.second + ", ";
         }
@@ -998,8 +1017,8 @@ private:
         out.close();
     }
 
-    void write_c_executeh(const string &action) {
-        ofstream out(genDir + "c_execute.h");
+    void write_c_executeh(const std::string &action) {
+        std::ofstream out(genDir + "c_execute.h");
         out << resultTypeDef
             << "\n"
                "" + executeFuncReturn +

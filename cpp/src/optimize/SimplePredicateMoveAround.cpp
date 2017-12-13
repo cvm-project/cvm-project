@@ -4,6 +4,8 @@
 
 #include "SimplePredicateMoveAround.h"
 
+#include <vector>
+
 #include "IR_analyzer/LLVMParser.h"
 #include "dag/DAGFilter.h"
 
@@ -14,7 +16,7 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
     // 2. for every filter go up the dag and insert them
 
     for (auto filter : filters) {
-        vector<DAGOperator *> q;
+        std::vector<DAGOperator *> q;
         q.push_back(dag->sink);
         while (!q.empty()) {
             DAGOperator *currentOp = q.back();

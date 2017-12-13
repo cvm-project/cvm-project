@@ -12,7 +12,7 @@ public:
     bool add_index = false;
     static DAGOperator *make_dag_operator() { return new DAGCollection; };
 
-    std::string get_name() { return "Collection_" + to_string(id); }
+    std::string get_name() { return "Collection_" + std::to_string(id); }
 
     void accept(DAGVisitor *v);
     void parse_json(nlohmann::json json);

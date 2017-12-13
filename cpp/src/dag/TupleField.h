@@ -9,8 +9,6 @@
 #include <set>
 #include <string>
 
-using namespace std;
-
 class Column;
 
 /**
@@ -21,12 +19,12 @@ enum FieldProperty { FL_GROUPED, FL_SORTED, FL_UNIQUE };
 
 class TupleField {
 public:
-    std::shared_ptr<set<FieldProperty>> properties;
+    std::shared_ptr<std::set<FieldProperty>> properties;
 
-    TupleField(const string &type, size_t pos)
-        : properties(new set<FieldProperty>), type(type), position(pos) {}
+    TupleField(const std::string &type, size_t pos)
+        : properties(new std::set<FieldProperty>), type(type), position(pos) {}
 
-    string type;
+    std::string type;
     Column *column = NULL;
     size_t position;
 

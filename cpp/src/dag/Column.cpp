@@ -4,14 +4,16 @@
 
 #include "Column.h"
 
-vector<Column *> Column::all_columns;
+#include <vector>
+
+std::vector<Column *> Column::all_columns;
 
 void Column::addField(TupleField *field) {
     fields.push_back(field);
     field->column = this;
 }
 
-void Column::addFields(const vector<TupleField *> &fields) {
+void Column::addFields(const std::vector<TupleField *> &fields) {
     for (auto field : fields) {
         addField(field);
     }
@@ -32,4 +34,4 @@ void Column::delete_columns() {
     Column::all_columns.clear();
 }
 
-vector<TupleField *> Column::getFields() { return fields; }
+std::vector<TupleField *> Column::getFields() { return fields; }
