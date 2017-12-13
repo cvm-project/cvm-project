@@ -13,7 +13,7 @@
 #include <llvm/IRReader/IRReader.h>
 #include <llvm/Support/SourceMgr.h>
 
-llvm::Type *c_type_to_llvm(const std::string type_,
+llvm::Type *c_type_to_llvm(const std::string &type_,
                            llvm::LLVMContext *context) {
     assert(context != nullptr);
     if (type_ == "long") return llvm::Type::getInt64Ty(*context);

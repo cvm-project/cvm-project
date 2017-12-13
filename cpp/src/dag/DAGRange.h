@@ -17,7 +17,7 @@ public:
 
     void accept(DAGVisitor *v) override;
 
-    void parse_json(nlohmann::json json) override;
+    void parse_json(const nlohmann::json &json) override;
 
     std::string from;
     std::string to;

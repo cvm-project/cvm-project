@@ -928,7 +928,7 @@ private:
 
     std::string writeIncludes() {
         std::string ret;
-        for (auto incl : includes) {
+        for (const auto &incl : includes) {
             ret.append("#include ").append(incl).append("\n");
         }
         ret.append("\n");
@@ -974,7 +974,7 @@ private:
         std::string ret;
         ret.append("extern \"C\" {\n");
         tabInd++;
-        for (auto def : llvmFuncDecls) {
+        for (const auto &def : llvmFuncDecls) {
             ret.append(def + "\n");
         }
         tabInd--;

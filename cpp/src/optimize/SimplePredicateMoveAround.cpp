@@ -54,7 +54,7 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
 
                     // copy the output fields
                     filt->fields.clear();
-                    for (auto f : filt->predecessors[0]->fields) {
+                    for (const auto &f : filt->predecessors[0]->fields) {
                         filt->fields.push_back(f);
                     }
                     filt->output_type = filt->predecessors[0]->output_type;
