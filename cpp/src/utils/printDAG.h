@@ -61,7 +61,7 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     agsafeset(n, "shape", "polygon", "polygon");
 
     for (auto pred : op->predecessors) {
-        Agedge_t *e = agedge(g, buildDOT(pred, g), n, "", 1);
+        agedge(g, buildDOT(pred, g), n, "", 1);
     }
     return n;
 }
