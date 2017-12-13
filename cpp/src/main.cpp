@@ -4,7 +4,7 @@ extern "C" int generate_dag_plan(char *);
 #include <streambuf>
 #include <string>
 
-int main(int argc, char **argv) {
+int main(int /*argc*/, char ** /*argv*/) {
     std::ifstream t("../dag.json");
     std::string test((std::istreambuf_iterator<char>(t)),
                      std::istreambuf_iterator<char>());

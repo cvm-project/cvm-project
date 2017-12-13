@@ -44,7 +44,7 @@ public:
 
     virtual void accept(class DAGVisitor *v) = 0;
 
-    virtual void parse_json(nlohmann::json json) {}
+    virtual void parse_json(nlohmann::json /*json*/) {}
 
     bool writeSetContains(Column *c) {
         bool ret = false;
