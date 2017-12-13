@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGCOLLECTION_H
-#define CPP_DAGCOLLECTION_H
+#ifndef DAG_DAGCOLLECTION_H
+#define DAG_DAGCOLLECTION_H
 
 #include "DAGOperator.h"
 
@@ -18,4 +18,4 @@ public:
     void parse_json(nlohmann::json json);
 };
 
-#endif  // CPP_DAGCOLLECTION_H
+#endif  // DAG_DAGCOLLECTION_H

@@ -1,3 +1,6 @@
+#ifndef UTILS_C_TYPE_TO_LLVM_H
+#define UTILS_C_TYPE_TO_LLVM_H
+
 //
 // Created by sabir on 29.08.17.
 //
@@ -20,3 +23,5 @@ llvm::Type *c_type_to_llvm(const std::string type_,
     if (type_ == "double") return llvm::Type::getDoubleTy(*context);
     return llvm::Type::getDoubleTy(*context);
 }
+
+#endif

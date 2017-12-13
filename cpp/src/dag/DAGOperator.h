@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGOPERATOR_H
-#define CPP_DAGOPERATOR_H
+#ifndef DAG_DAGOPERATOR_H
+#define DAG_DAGOPERATOR_H
 
 #include <cstddef>
 #include <set>
@@ -58,4 +58,4 @@ public:
     }
 };
 
-#endif  // CPP_DAGOPERATOR_H
+#endif  // DAG_DAGOPERATOR_H

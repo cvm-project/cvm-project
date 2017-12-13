@@ -2,8 +2,8 @@
 // Created by sabir on 27.08.17.
 //
 
-#ifndef CPP_PRINTDAG_H
-#define CPP_PRINTDAG_H
+#ifndef UTILS_PRINTDAG_H
+#define UTILS_PRINTDAG_H
 
 #include <string>
 
@@ -84,4 +84,4 @@ void printDAG(DAG *dag) {
     gvFreeContext(gvc);
 }
 
-#endif  // CPP_PRINTDAG_H
+#endif  // UTILS_PRINTDAG_H

@@ -2,8 +2,8 @@
 // Created by sabir on 26.08.17.
 //
 
-#ifndef CPP_COLUMN_H
-#define CPP_COLUMN_H
+#ifndef DAG_COLUMN_H
+#define DAG_COLUMN_H
 
 #include <iostream>
 #include <vector>
@@ -40,4 +40,4 @@ private:
     static std::vector<Column *> all_columns;
 };
 
-#endif  // CPP_COLUMN_H
+#endif  // DAG_COLUMN_H

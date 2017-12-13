@@ -1,7 +1,7 @@
 // Use gcc -lrt flag
 
-#ifndef CPP_TIMING_H
-#define CPP_TIMING_H
+#ifndef UTILS_TIMING_H
+#define UTILS_TIMING_H
 
 #include <stdio.h>
 #include <chrono>

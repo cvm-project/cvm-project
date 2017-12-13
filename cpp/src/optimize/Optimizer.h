@@ -2,8 +2,8 @@
 // Created by sabir on 29.08.17.
 //
 
-#ifndef CPP_OPTIMIZER_H
-#define CPP_OPTIMIZER_H
+#ifndef OPTIMIZE_OPTIMIZER_H
+#define OPTIMIZE_OPTIMIZER_H
 
 #include "dag/DAG.h"
 
@@ -12,4 +12,4 @@ public:
     void run(DAG* dag);
 };
 
-#endif  // CPP_OPTIMIZER_H
+#endif  // OPTIMIZE_OPTIMIZER_H

@@ -1,3 +1,6 @@
+#ifndef UTILS_CONSTANTS_H
+#define UTILS_CONSTANTS_H
+
 //
 // Created by sabir on 23.07.17.
 //
@@ -24,3 +27,5 @@ const std::string DAG_RANGE_FROM = "from";
 const std::string DAG_RANGE_TO = "to";
 const std::string DAG_RANGE_STEP = "step";
 const std::string PLUGINS_DIR = "src/op_plugins";
+
+#endif

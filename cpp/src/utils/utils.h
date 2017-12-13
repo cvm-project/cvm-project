@@ -2,8 +2,8 @@
 // Created by sabir on 23.07.17.
 //
 
-#ifndef CPP_UTILS_H
-#define CPP_UTILS_H
+#ifndef UTILS_UTILS_H
+#define UTILS_UTILS_H
 
 #include <string>
 #include <vector>
@@ -17,4 +17,4 @@ std::vector<std::string> split_string(const std::string &str,
 std::string get_lib_path();
 std::string exec(const char *cmd);
 
-#endif  // CPP_UTILS_H
+#endif  // UTILS_UTILS_H

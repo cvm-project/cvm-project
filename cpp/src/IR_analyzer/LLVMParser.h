@@ -2,8 +2,8 @@
 // Created by sabir on 18.07.17.
 //
 
-#ifndef CPP_PARSER_H
-#define CPP_PARSER_H
+#ifndef IR_ANALYZER_LLVMPARSER_H
+#define IR_ANALYZER_LLVMPARSER_H
 
 #include <memory>
 #include <string>
@@ -70,4 +70,4 @@ private:
     ret_types ret_type;
 };
 
-#endif  // CPP_PARSER_H
+#endif  // IR_ANALYZER_LLVMPARSER_H

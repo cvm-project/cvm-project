@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGFILTER_H
-#define CPP_DAGFILTER_H
+#ifndef DAG_DAGFILTER_H
+#define DAG_DAGFILTER_H
 
 #include "DAGOperator.h"
 
@@ -30,4 +30,4 @@ public:
     }
 };
 
-#endif  // CPP_DAGFILTER_H
+#endif  // DAG_DAGFILTER_H

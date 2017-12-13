@@ -2,8 +2,8 @@
 // Created by sabir on 26.08.17.
 //
 
-#ifndef CPP_TUPLEFIELD_H
-#define CPP_TUPLEFIELD_H
+#ifndef DAG_TUPLEFIELD_H
+#define DAG_TUPLEFIELD_H
 
 #include <memory>
 #include <set>
@@ -33,4 +33,4 @@ public:
     }
 };
 
-#endif  // CPP_TUPLEFIELD_H
+#endif  // DAG_TUPLEFIELD_H

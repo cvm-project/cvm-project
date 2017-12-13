@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGRANGE_H
-#define CPP_DAGRANGE_H
+#ifndef DAG_DAGRANGE_H
+#define DAG_DAGRANGE_H
 
 #include <string>
 
@@ -26,4 +26,4 @@ public:
     std::string get_name() { return "Range_" + std::to_string(id); }
 };
 
-#endif  // CPP_DAGRANGE_H
+#endif  // DAG_DAGRANGE_H

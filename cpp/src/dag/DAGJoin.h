@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGJOIN_H
-#define CPP_DAGJOIN_H
+#ifndef DAG_DAGJOIN_H
+#define DAG_DAGJOIN_H
 
 #include <iostream>
 
@@ -21,4 +21,4 @@ public:
     std::string get_name() { return "Join_" + std::to_string(id); }
 };
 
-#endif  // CPP_DAGJOIN_H
+#endif  // DAG_DAGJOIN_H

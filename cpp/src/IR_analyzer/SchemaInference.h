@@ -2,8 +2,8 @@
 // Created by sabir on 26.08.17.
 //
 
-#ifndef CPP_SCHEMAINFERENCE_H
-#define CPP_SCHEMAINFERENCE_H
+#ifndef IR_ANALYZER_SCHEMAINFERENCE_H
+#define IR_ANALYZER_SCHEMAINFERENCE_H
 
 #include "IR_analyzer/LLVMParser.h"
 #include "dag/DAG.h"
@@ -237,4 +237,4 @@ public:
     }
 };
 
-#endif  // CPP_SCHEMAINFERENCE_H
+#endif  // IR_ANALYZER_SCHEMAINFERENCE_H

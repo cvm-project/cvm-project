@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGCARTESIAN_H
-#define CPP_DAGCARTESIAN_H
+#ifndef DAG_DAGCARTESIAN_H
+#define DAG_DAGCARTESIAN_H
 
 #include "DAGOperator.h"
 
@@ -19,4 +19,4 @@ public:
     std::string get_name() { return "Cartesian_" + std::to_string(id); }
 };
 
-#endif  // CPP_DAGCARTESIAN_H
+#endif  // DAG_DAGCARTESIAN_H

@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGMAP_H
-#define CPP_DAGMAP_H
+#ifndef DAG_DAGMAP_H
+#define DAG_DAGMAP_H
 
 #include <iostream>
 
@@ -21,4 +21,4 @@ public:
     std::string get_name() { return "Map_" + std::to_string(id); }
 };
 
-#endif  // CPP_DAGMAP_H
+#endif  // DAG_DAGMAP_H

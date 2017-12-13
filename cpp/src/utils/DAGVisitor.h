@@ -2,8 +2,8 @@
 // Created by sabir on 21.07.17.
 //
 
-#ifndef CPP_DAGVISITOR_H
-#define CPP_DAGVISITOR_H
+#ifndef UTILS_DAGVISITOR_H
+#define UTILS_DAGVISITOR_H
 
 #include "dag/DAGCartesian.h"
 #include "dag/DAGCollection.h"
@@ -80,4 +80,4 @@ public:
     }
 };
 
-#endif  // CPP_DAGVISITOR_H
+#endif  // UTILS_DAGVISITOR_H

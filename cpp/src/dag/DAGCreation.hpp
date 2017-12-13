@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGCREATION_H
-#define CPP_DAGCREATION_H
+#ifndef DAG_DAGCREATION_HPP
+#define DAG_DAGCREATION_HPP
 
 #include <iostream>
 #include <unordered_map>
@@ -25,4 +25,4 @@ void load_operators();
 
 std::vector<TupleField> parse_output_type(const std::string &output);
 
-#endif  // CPP_DAGCREATION_H
+#endif  // DAG_DAGCREATION_HPP

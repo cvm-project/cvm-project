@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_DAGREDUCE_H
-#define CPP_DAGREDUCE_H
+#ifndef DAG_DAGREDUCE_H
+#define DAG_DAGREDUCE_H
 
 #include "DAGOperator.h"
 
@@ -18,4 +18,4 @@ public:
     std::string get_name() { return "Reduce_" + std::to_string(id); }
 };
 
-#endif  // CPP_DAGREDUCE_H
+#endif  // DAG_DAGREDUCE_H
