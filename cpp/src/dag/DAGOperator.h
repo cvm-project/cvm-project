@@ -24,7 +24,7 @@ public:
     std::set<TupleField> dead_set;
     std::string llvm_ir;
     std::string output_type;
-    size_t id;
+    size_t id{};
     static size_t lastOperatorIndex;
 
     virtual ~DAGOperator() {

@@ -238,7 +238,7 @@ result_struct join(tuple_2 *array1, tuple_3 *array2) {
             continue;
         }
     }
-    result_struct ret;
+    result_struct ret{};
     ret.data = result;
     ret.size = resSize;
     return ret;
@@ -289,7 +289,7 @@ result_struct map_filter_join(const int64_t *const array1,
             continue;
         }
     }
-    result_struct ret;
+    result_struct ret{};
     ret.data = result;
     ret.size = resSize;
     TOCK1
@@ -337,7 +337,7 @@ result_struct_rbk map_reduce_by_key(const int64_t *const array) {
         result[resSize] = r;
         resSize++;
     }
-    result_struct_rbk ret;
+    result_struct_rbk ret{};
     ret.data = result;
     ret.size = resSize;
     TOCK1

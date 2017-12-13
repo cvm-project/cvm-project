@@ -17,7 +17,7 @@ class SchemaInference : DAGVisitor {
 public:
     void start_visit(DAG *dag) { dag->sink->accept(this); }
 
-    void visit(DAGCollection *op) {
+    void visit(DAGCollection *op) override {
         DEBUG_PRINT("schema inference visiting collection");
         visitPredecessors(op);
         // for every output produce a new column
@@ -33,7 +33,7 @@ public:
         }
     }
 
-    void visit(DAGRange *op) {
+    void visit(DAGRange *op) override {
         DEBUG_PRINT("schema inference visiting range");
         visitPredecessors(op);
 
@@ -49,7 +49,7 @@ public:
         }
     }
 
-    void visit(DAGFilter *op) {
+    void visit(DAGFilter *op) override {
         DEBUG_PRINT("schema inference visiting filter");
         visitPredecessors(op);
 
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    void visit(DAGCartesian *op) {
+    void visit(DAGCartesian *op) override {
         DEBUG_PRINT("schema inference cartesian");
         visitPredecessors(op);
 
@@ -104,7 +104,7 @@ public:
         }
     }
 
-    void visit(DAGJoin *op) {
+    void visit(DAGJoin *op) override {
         DEBUG_PRINT("schema inference visiting join");
         visitPredecessors(op);
         DAGOperator *builtPred = op->predecessors[0];
@@ -159,7 +159,7 @@ public:
         }
     }
 
-    void visit(DAGMap *op) {
+    void visit(DAGMap *op) override {
         DEBUG_PRINT("schema inference visiting map");
         visitPredecessors(op);
         LLVMParser parser(op->llvm_ir);
@@ -199,7 +199,7 @@ public:
         }
     }
 
-    void visit(DAGReduceByKey *op) {
+    void visit(DAGReduceByKey *op) override {
         DEBUG_PRINT("schema inference visiting reduce_by_key");
         visitPredecessors(op);
 

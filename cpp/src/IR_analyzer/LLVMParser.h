@@ -17,7 +17,9 @@
 
 class LLVMParser {
 public:
-    explicit LLVMParser(const std::string &ir) { parse(ir); }
+    explicit LLVMParser(const std::string &ir) : ret_type(UNKNOWN) {
+        parse(ir);
+    }
 
     void parse(const std::string &ir);
 
@@ -66,7 +68,7 @@ private:
           store i64 3, i64* %.1.repack3, align 8
           ret void
      */
-    enum ret_types { PRIMITIVE, STRUCT, CALLER_PTR };
+    enum ret_types { UNKNOWN, PRIMITIVE, STRUCT, CALLER_PTR };
     ret_types ret_type;
 };
 

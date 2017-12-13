@@ -44,7 +44,7 @@ public:
         write_c_executeh(dag->action);
     }
 
-    void visit(DAGCollection *op) {
+    void visit(DAGCollection *op) override {
         std::string operatorName = "CollectionSourceOperator";
         DAGVisitor::visit(op);
         emitComment(operatorName);
@@ -64,7 +64,7 @@ public:
         appendLineBodyNoCol();
     }
 
-    void visit(DAGMap *op) {
+    void visit(DAGMap *op) override {
         DAGVisitor::visit(op);
         std::string operatorName = "MapOperator";
         emitComment(operatorName);
@@ -84,7 +84,7 @@ public:
         appendLineBodyNoCol();
     }
 
-    void visit(DAGReduce *op) {
+    void visit(DAGReduce *op) override {
         std::string operatorName = "ReduceOperator";
 
         DAGVisitor::visit(op);
@@ -111,7 +111,7 @@ public:
         appendLineBodyNoCol();
     }
 
-    void visit(DAGRange *op) {
+    void visit(DAGRange *op) override {
         std::string operatorName = "FilterOperator";
 
         DAGVisitor::visit(op);
@@ -129,7 +129,7 @@ public:
         appendLineBodyNoCol();
     };
 
-    void visit(DAGFilter *op) {
+    void visit(DAGFilter *op) override {
         std::string operatorName = "FilterOperator";
 
         DAGVisitor::visit(op);
@@ -150,7 +150,7 @@ public:
         appendLineBodyNoCol();
     };
 
-    void visit(DAGJoin *op) {
+    void visit(DAGJoin *op) override {
         DAGVisitor::visit(op);
         std::string operatorName = "JoinOperator";
         emitComment(operatorName);
@@ -171,7 +171,7 @@ public:
         appendLineBodyNoCol();
     };
 
-    void visit(DAGCartesian *op) {
+    void visit(DAGCartesian *op) override {
         DAGVisitor::visit(op);
         std::string operatorName = "CartesianOperator";
         emitComment(operatorName);
@@ -187,7 +187,7 @@ public:
         appendLineBodyNoCol();
     };
 
-    void visit(DAGReduceByKey *op) {
+    void visit(DAGReduceByKey *op) override {
         DAGVisitor::visit(op);
         bool is_grouped = op->fields[0].properties->find(FL_GROUPED) !=
                                   op->fields[0].properties->end() ||

@@ -13,11 +13,11 @@ class SimplePredicateMoveAround : DAGVisitor {
 public:
     void optimize(DAG *dag_);
 
-    void visit(DAGFilter *op);
+    void visit(DAGFilter *op) override;
 
 private:
     std::vector<DAGFilter *> filters;
-    DAG *dag;
+    DAG *dag{};
 };
 
 #endif  // OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H

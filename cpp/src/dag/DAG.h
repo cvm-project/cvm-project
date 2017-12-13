@@ -14,7 +14,7 @@
  */
 class DAG {
 public:
-    DAGOperator *sink;
+    DAGOperator *sink{};
     std::string action;
 
     ~DAG() {
