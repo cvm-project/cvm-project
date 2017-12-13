@@ -75,7 +75,7 @@ DAG *parse(std::stringstream *istream) {
         op_count++;
     }
 
-    vector<bool> has_successors(op_count, 0);
+    vector<bool> has_successors(op_count, false);
     for (size_t i = 0; i < op_count; i++) {
         auto op = dag_ops[i].first;
         auto preds = dag_ops[i].second;
@@ -84,7 +84,7 @@ DAG *parse(std::stringstream *istream) {
             auto predecessor = dag_ops[pred_id].first;
             op->predecessors.push_back(predecessor);
             predecessor->successors.push_back(op);
-            has_successors[pred_id] = 1;
+            has_successors[pred_id] = true;
         }
     }
 
@@ -99,7 +99,7 @@ DAG *parse(std::stringstream *istream) {
 }
 
 DAGOperator *get_operator(const std::string &opName) {
-    if (!opMap.count(opName)) {
+    if (opMap.count(opName) == 0) {
         throw std::invalid_argument("operator " + opName +
                                     " could not be found");
     }

@@ -42,7 +42,7 @@ TEST_CASE("input arg 1 used in output, primitive return type", "") {
     LLVMParser parser(ir);
     REQUIRE(parser.get_output_positions(0)[0] == 0);
     REQUIRE(parser.get_output_positions(0).size() == 1);
-    REQUIRE(parser.get_output_positions(1).size() == 0);
+    REQUIRE(parser.get_output_positions(1).empty());
 }
 
 TEST_CASE("input arg 2 used in output, primitive return type", "") {
@@ -55,7 +55,7 @@ TEST_CASE("input arg 2 used in output, primitive return type", "") {
     LLVMParser parser(ir);
     REQUIRE(parser.get_output_positions(1)[0] == 0);
     REQUIRE(parser.get_output_positions(1).size() == 1);
-    REQUIRE(parser.get_output_positions(0).size() == 0);
+    REQUIRE(parser.get_output_positions(0).empty());
 }
 
 TEST_CASE("Read false, struct return type", "") {

@@ -21,12 +21,12 @@ class LLVMParser {
 public:
     LLVMParser(std::string &ir) { parse(ir); }
 
-    void parse(std::string &);
+    void parse(std::string &ir);
 
     /**
      * if the argument is part of the output, return its positions in the output
      */
-    std::vector<size_t> get_output_positions(size_t arg_pos);
+    std::vector<size_t> get_output_positions(size_t arg_position);
 
     /**
      * whether this argument is used by the function to produce any output
@@ -42,9 +42,9 @@ private:
     LLVMContext Context;
     std::unique_ptr<Module> module;
     std::vector<std::string> ret_instruction_ids;
-    std::vector<size_t> get_output_positions_primitive(size_t arg_pos);
-    std::vector<size_t> get_output_positions_struct(size_t arg_pos);
-    std::vector<size_t> get_output_positions_caller_ptr(size_t arg_pos);
+    std::vector<size_t> get_output_positions_primitive(size_t arg_position);
+    std::vector<size_t> get_output_positions_struct(size_t arg_position);
+    std::vector<size_t> get_output_positions_caller_ptr(size_t arg_position);
 
     /**
      * we need to differentiate between 3 cases

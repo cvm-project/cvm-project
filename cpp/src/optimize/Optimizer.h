@@ -9,7 +9,7 @@
 
 class Optimizer {
 public:
-    void run(DAG *);
+    void run(DAG* dag);
 };
 
 #endif  // CPP_OPTIMIZER_H

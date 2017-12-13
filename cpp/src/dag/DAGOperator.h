@@ -44,13 +44,13 @@ public:
 
     virtual void accept(class DAGVisitor &v) = 0;
 
-    virtual void parse_json(nlohmann::json){};
+    virtual void parse_json(nlohmann::json json) {}
 
     bool writeSetContains(Column *c) {
-        bool ret = 0;
+        bool ret = false;
         for (auto col : write_set) {
             if (col->operator==(*c)) {
-                ret = 1;
+                ret = true;
                 break;
             }
         }

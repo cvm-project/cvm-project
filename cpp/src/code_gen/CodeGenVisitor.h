@@ -379,8 +379,8 @@ private:
             }
         }
 
-        if (opName.size()) {
-            if (argList.size()) {
+        if (!opName.empty()) {
+            if (!argList.empty()) {
                 argList.append(", ");
             }
             argList.append(opName +
@@ -388,8 +388,8 @@ private:
                     .append("()");
         }
 
-        if (extraArgs.size()) {
-            if (argList.size()) {
+        if (!extraArgs.empty()) {
+            if (!argList.empty()) {
                 argList.append(", ");
             }
             argList.append(extraArgs);
@@ -515,14 +515,14 @@ private:
         appendLineBodyNoCol(
                 string("auto operator()(").append(inputType).append(" t) {"));
         tabInd++;
-        string args = "";
+        string args;
         string varName = "v";
         for (size_t i = 0;
              i < get<2>(operatorNameTupleTypeMap[op->predecessors[0]->id]);
              i++) {
             args += "t." + varName + to_string(i) + ", ";
         }
-        if (args != "") {
+        if (!args.empty()) {
             args.pop_back();
             args.pop_back();
         }
@@ -562,7 +562,7 @@ private:
                                     .append(inputType + " t0, ")
                                     .append(inputType + " t1) {"));
         tabInd++;
-        string args = "";
+        string args;
         string varName = "v";
         for (size_t i = 0; i < inputSize; i++) {
             args += "t0." + varName + to_string(i) + ", ";
@@ -572,7 +572,7 @@ private:
             args += "t1." + varName + to_string(i) + ", ";
         }
 
-        if (args != "") {
+        if (!args.empty()) {
             args.pop_back();
             args.pop_back();
         }
@@ -582,7 +582,7 @@ private:
         tabInd--;
         appendLineBodyNoCol("};");
         if (reduce_by_key) {
-            string flatInputType = "";
+            string flatInputType;
             for (size_t i = 1; i < op->predecessors[0]->fields.size(); i++) {
                 auto t = op->predecessors[0]->fields[i];
                 flatInputType += t.type + ", ";
@@ -899,7 +899,7 @@ private:
             executeFuncParams += "void *" + inputPair.first +
                                  ", unsigned long " + inputPair.second + ", ";
         }
-        if (executeFuncParams != "") {
+        if (!executeFuncParams.empty()) {
             executeFuncParams.pop_back();
             executeFuncParams.pop_back();
         }
@@ -971,11 +971,11 @@ private:
 
     void write_c_execute(const string &action) {
         ofstream out(genDir + "c_execute.c");
-        string funcParamNames = "";
+        string funcParamNames;
         for (auto param : inputNames) {
             funcParamNames += param.first + ", " + param.second + ", ";
         }
-        if (funcParamNames != "") {
+        if (!funcParamNames.empty()) {
             funcParamNames.pop_back();
             funcParamNames.pop_back();
         }

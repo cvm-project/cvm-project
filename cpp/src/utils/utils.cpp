@@ -53,10 +53,11 @@ vector<string> split_string(const string &str, const string &delimiter) {
 }
 
 string get_lib_path() {
-    const char *blazePath;
-    if (!(blazePath = std::getenv("BLAZEPATH")))
+    const char *const blazePath = std::getenv("BLAZEPATH");
+    if (blazePath == nullptr) {
         std::cerr << "BLAZEPATH is not defined, set it to your blaze "
                      "installation path\n";
+    }
     return string(blazePath);
 }
 
@@ -65,7 +66,7 @@ std::string exec(const char *cmd) {
     std::string result;
     std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
     if (!pipe) throw std::runtime_error("popen() failed!");
-    while (!feof(pipe.get())) {
+    while (feof(pipe.get()) == 0) {
         if (fgets(buffer.data(), 128, pipe.get()) != nullptr) {
             result += buffer.data();
         }

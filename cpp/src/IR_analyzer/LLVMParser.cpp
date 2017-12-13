@@ -140,7 +140,7 @@ bool LLVMParser::is_argument_read(size_t arg_pos) {
     auto function = module->getFunctionList().begin();
     auto &s = function->arg_begin()[arg_pos];
 
-    bool used = 0;
+    bool used = false;
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
 
@@ -148,11 +148,11 @@ bool LLVMParser::is_argument_read(size_t arg_pos) {
             if (inst->getOpcode() != Instruction::Store &&
                 inst->getOpcode() != Instruction::InsertValue &&
                 inst->getOpcode() != Instruction::Ret) {
-                used = 1;
+                used = true;
                 break;
             }
         } else {
-            used = 1;
+            used = true;
             break;
         }
     }

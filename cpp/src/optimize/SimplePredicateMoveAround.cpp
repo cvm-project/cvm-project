@@ -30,7 +30,7 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
                     filt->predecessors.push_back(currentOp);
                     filt->successors = currentOp->successors;
 
-                    if (currentOp->successors.size() > 0) {
+                    if (!currentOp->successors.empty()) {
                         currentOp->successors[0] = filt;
                         DAGOperator *succ = filt->successors[0];
 
@@ -74,7 +74,7 @@ void SimplePredicateMoveAround::visit(DAGFilter *op) {
 
     // connect the predecessors and successors
     // if this is the sink, reassign the sink
-    if (op->successors.size() == 0) {
+    if (op->successors.empty()) {
         pred->successors.clear();
         dag->sink = pred;
     } else {

@@ -165,18 +165,18 @@ public:
 
         size_t c = 0;
         for (auto arg : op->predecessors[0]->fields) {
-            bool used = 0;
+            bool used = false;
             for (auto pos : parser.get_output_positions(c)) {
                 // every output in the list now has the same column type as this
                 // input
                 arg.column->addField(&(op->fields[pos]));
 
                 *(op->fields[pos].properties) = *(arg.properties);
-                used = 1;
+                used = true;
             }
             if (parser.is_argument_read(c)) {
                 op->read_set.insert(arg.column);
-                used = 1;
+                used = true;
             }
 
             // all the inputs which are not in the read set and are not repeated

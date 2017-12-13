@@ -11,7 +11,7 @@
 // cppcheck-suppress noConstructor
 class SimplePredicateMoveAround : DAGVisitor {
 public:
-    void optimize(DAG *);
+    void optimize(DAG *dag_);
 
     void visit(DAGFilter *op);
 

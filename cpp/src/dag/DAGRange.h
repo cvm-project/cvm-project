@@ -18,7 +18,7 @@ public:
 
     void accept(DAGVisitor &v);
 
-    void parse_json(nlohmann::json);
+    void parse_json(nlohmann::json json);
 
     string from;
     string to;

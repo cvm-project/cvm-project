@@ -15,14 +15,14 @@
 typedef DAGOperator *(*make_dag_function)(void);  // function pointer type
 typedef std::unordered_map<std::string, make_dag_function> DAGOperatorsMap;
 
-DAG *parse_dag(const std::string &dag);
+DAG *parse_dag(const std::string &dagstr);
 
-DAG *parse(std::stringstream *);
+DAG *parse(std::stringstream *istream);
 
-DAGOperator *get_operator(const std::string &);
+DAGOperator *get_operator(const std::string &opName);
 
 void load_operators();
 
-vector<TupleField> parse_output_type(const string &);
+vector<TupleField> parse_output_type(const string &output);
 
 #endif  // CPP_DAGCREATION_H
