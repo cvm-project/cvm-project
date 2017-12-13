@@ -351,7 +351,7 @@ int main() {
     double *array = reinterpret_cast<double *>(malloc((MAX) * sizeof(double)));
 
     for (size_t i = 0; i < MAX; i++) {
-        array[i] = ((double)rand() / RAND_MAX) + 0.1;
+        array[i] = (static_cast<double>(rand()) / RAND_MAX) + 0.1;
     }
     //    auto res = simple_sum(array);
     //    cout << "sum result is " << res << endl;

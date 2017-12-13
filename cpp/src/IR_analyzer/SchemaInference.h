@@ -77,7 +77,8 @@ public:
             op->fields[i].column = col;
             auto field = &(op->fields[i]);
             field->properties = op->predecessors[0]->fields[i].properties;
-            // TODO could still keep the props if the other side has size 1
+            // TODO(sabir): could still keep the props if the other side has
+            // size 1
             if (op->stream_right) {
                 // strip away properties
                 field->properties->erase(FL_SORTED);
@@ -147,13 +148,13 @@ public:
                 op->fields[i].column = predCol;
                 if (op->stream_right) {
                     // this is the build relation
-                    // TODO
+                    // TODO(sabir):
                 }
             } else {
                 auto predCol =
                         right->fields[i - left->fields.size() + 1].column;
                 op->fields[i].column = predCol;
-                // TODO column properties
+                // TODO(sabir): column properties
             }
         }
     }
@@ -215,7 +216,7 @@ public:
         LLVMParser parser(op->llvm_ir);
 
         for (size_t i = 1; i < op->fields.size(); i++) {
-            // TODO
+            // TODO(sabir):
             // check which of the columns are read from the second input
 
             size_t arg_pos = i + op->fields.size() - 2;

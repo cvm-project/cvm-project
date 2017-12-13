@@ -65,7 +65,7 @@ DAG *parse(std::stringstream *istream) {
         auto preds_json = (*it)[DAG_PREDS];
         for (auto it_preds = preds_json.begin(); it_preds != preds_json.end();
              it_preds++) {
-            preds.push_back((size_t)(*it_preds));
+            preds.push_back(static_cast<size_t>(*it_preds));
         }
 
         if (id >= dag_ops.size()) {

@@ -30,6 +30,6 @@ int main(int argc, char **argv) {
     //    %.42.i, 2\\n  %.34.0.i = select i1 %.44.i, i64 %.53.i, i64 %.42.i\\n
     //    %.75.i = icmp eq i64 %.34.0.i, 0\\n  ret i1 %.75.i\\n}\\n\\n\\n\\n\",
     //    \"output_type\": \"(long, long, long)\"}]}";
-    generate_dag_plan((char *)test.c_str());
+    generate_dag_plan(const_cast<char *>(test.c_str()));
     return 0;
 }
