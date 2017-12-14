@@ -1,11 +1,13 @@
 extern "C" int generate_dag_plan(char *);
 
+#include "utils/utils.h"
+
 #include <fstream>
 #include <streambuf>
 #include <string>
 
 int main(int /*argc*/, char ** /*argv*/) {
-    std::ifstream t("../dag.json");
+    std::ifstream t(get_lib_path() + "/dag.json");
     std::string test((std::istreambuf_iterator<char>(t)),
                      std::istreambuf_iterator<char>());
     //    std::string test = "{\"action\": \"collect\", \"dag\": [{\"id\": 0,
