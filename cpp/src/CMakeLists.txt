@@ -60,6 +60,8 @@ set(SOURCE_FILES
         IR_analyzer/LLVMParser.cpp
         optimize/Optimizer.cpp
         optimize/SimplePredicateMoveAround.cpp
+        utils/c_type_to_llvm.cpp
+        utils/printDAG.cpp
         utils/utils.cpp
     )
 add_library(generate SHARED ${SOURCE_FILES} )
@@ -86,6 +88,7 @@ add_executable(max_memory benchmarks/max_memory.c)
 add_executable(LLVMParser_tests
         tests/LLVMParser.cpp
         IR_analyzer/LLVMParser.cpp
+        utils/c_type_to_llvm.cpp
     )
 target_link_libraries(LLVMParser_tests PUBLIC
         ${LLVM_LIBS}
