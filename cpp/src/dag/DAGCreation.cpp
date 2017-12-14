@@ -16,7 +16,8 @@
 #include "DAGReduceByKey.h"
 #include "utils/utils.h"
 
-static DAGOperatorsMap opMap;
+// TODO(sabir): Implement proper singleton pattern
+static DAGOperatorsMap opMap;  // NOLINT
 
 DAG *parse_dag(const std::string &dagstr) {
     load_operators();

@@ -14,18 +14,18 @@
 #define CARTESIAN "cartesian"
 #define RANGE "range_source"
 #define COLLECTION "collection_source"
-const std::string DAG_OP_RANGE = "range_source";
-const std::string DAG_ACTION = "action";
-const std::string DAG_DAG = "dag";
-const std::string DAG_ID = "id";
-const std::string DAG_OP = "op";
-const std::string DAG_FUNC = "func";
-const std::string DAG_OUTPUT_TYPE = "output_type";
-const std::string DAG_PREDS = "predecessors";
-const std::string DAG_VALUES = "values";
-const std::string DAG_RANGE_FROM = "from";
-const std::string DAG_RANGE_TO = "to";
-const std::string DAG_RANGE_STEP = "step";
-const std::string PLUGINS_DIR = "src/op_plugins";
+#define DAG_OP_RANGE std::string("range_source")
+#define DAG_ACTION std::string("action")
+#define DAG_DAG std::string("dag")
+#define DAG_ID std::string("id")
+#define DAG_OP std::string("op")
+#define DAG_FUNC std::string("func")
+#define DAG_OUTPUT_TYPE std::string("output_type")
+#define DAG_PREDS std::string("predecessors")
+#define DAG_VALUES std::string("values")
+#define DAG_RANGE_FROM std::string("from")
+#define DAG_RANGE_TO std::string("to")
+#define DAG_RANGE_STEP std::string("step")
+#define PLUGINS_DIR std::string("src/op_plugins")
 
 #endif
