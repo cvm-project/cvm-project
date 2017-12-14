@@ -1,6 +1,7 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
+#include <random>
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
@@ -346,11 +347,13 @@ result_struct_rbk map_reduce_by_key(const int64_t *const array) {
 }
 
 int main() {
-    srand(time(nullptr));
+    std::mt19937 gen(1337);
+    std::uniform_real_distribution<double> dis(0.1, 1.0);
+
     auto *array = reinterpret_cast<double *>(malloc((MAX) * sizeof(double)));
 
     for (size_t i = 0; i < MAX; i++) {
-        array[i] = (static_cast<double>(rand()) / RAND_MAX) + 0.1;
+        array[i] = dis(gen);
     }
     //    auto res = simple_sum(array);
     //    cout << "sum result is " << res << endl;
