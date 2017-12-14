@@ -2,6 +2,8 @@
 
 import random
 import unittest
+import argparse
+import sys
 from functools import reduce
 
 import numpy
@@ -185,4 +187,12 @@ class TestIntegration(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("-r", "--repeat", type=int, default=1,
+                        help="Repeat tests given number of times")
+    (args, unitargs) = parser.parse_known_args()
+    unitargs.insert(0, "placeholder") # unittest ignores first arg
+    for iteration in range(args.repeat):
+        wasSuccessful = unittest.main(exit=False, argv=unitargs).result.wasSuccessful()
+    if not wasSuccessful:
+        sys.exit(1)
