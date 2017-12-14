@@ -45,6 +45,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 # Set up library
 set(SOURCE_FILES
         generate_dag_plan.cpp
+        code_gen/CodeGenVisitor.cpp
         code_gen/generate_code.cpp
         dag/Column.cpp
         dag/DAGCartesian.cpp
