@@ -12,7 +12,7 @@ class DAGReduceByKey : public DAGOperator {
 public:
     static DAGOperator *make_dag_operator() { return new DAGReduceByKey; };
 
-    void accept(DAGVisitor &v);
+    void accept(DAGVisitor *v);
 
     std::string get_name() { return "ReduceByKey_" + to_string(id); }
 };

@@ -10,7 +10,7 @@
 
 #include "utils/c_type_to_llvm.h"
 
-void LLVMParser::parse(std::string &ir) {
+void LLVMParser::parse(const std::string &ir) {
     module = parseIR(MemoryBufferRef(StringRef(ir), StringRef("id")), Err,
                      Context);
     // find out the return type
@@ -165,7 +165,7 @@ std::string LLVMParser::adjust_filter_signature(DAGFilter *pFilter) {
 
     std::vector<Type *> types;
     for (auto f : predecessor->fields) {
-        types.push_back(c_type_to_llvm(f.type, Context));
+        types.push_back(c_type_to_llvm(f.type, &Context));
     }
 
     auto old_function = module->getFunctionList().begin();

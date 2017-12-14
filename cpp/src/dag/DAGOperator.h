@@ -42,7 +42,7 @@ public:
 
     virtual std::string get_name() { return "Operator_" + to_string(id); };
 
-    virtual void accept(class DAGVisitor &v) = 0;
+    virtual void accept(class DAGVisitor *v) = 0;
 
     virtual void parse_json(nlohmann::json json) {}
 

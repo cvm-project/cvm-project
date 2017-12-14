@@ -18,7 +18,7 @@
 
 class DAGVisitor {
 public:
-    virtual void start_visit(DAGOperator *op) { op->accept(*this); }
+    virtual void start_visit(DAGOperator *op) { op->accept(this); }
 
     virtual void visit(DAGOperator *op) {
         DEBUG_PRINT("visiting undefined op");
@@ -68,14 +68,14 @@ public:
     void visitPredecessors(DAGOperator *op) {
         for (auto it = op->predecessors.begin(); it < op->predecessors.end();
              it++) {
-            (*it)->accept(*this);
+            (*it)->accept(this);
         }
     }
 
     void visitSuccessors(DAGOperator *op) {
         for (auto it = op->successors.begin(); it < op->successors.end();
              it++) {
-            (*it)->accept(*this);
+            (*it)->accept(this);
         }
     }
 };

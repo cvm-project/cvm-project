@@ -28,7 +28,7 @@ public:
         makeDirectory();
         addGenIncludes();
         tabInd++;
-        dag->sink->accept(*this);
+        dag->sink->accept(this);
         emitFuncEnd(dag->action);
 
         string final_code;

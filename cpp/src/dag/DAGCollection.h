@@ -14,7 +14,7 @@ public:
 
     std::string get_name() { return "Collection_" + to_string(id); }
 
-    void accept(DAGVisitor &v);
+    void accept(DAGVisitor *v);
     void parse_json(nlohmann::json json);
 };
 

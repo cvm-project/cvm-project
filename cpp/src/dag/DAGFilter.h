@@ -15,7 +15,7 @@ public:
 
     static DAGOperator *make_dag_operator() { return new DAGFilter; };
 
-    void accept(DAGVisitor &v);
+    void accept(DAGVisitor *v);
 
     std::string get_name() { return "Filter_" + to_string(id); }
 

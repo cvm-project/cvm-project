@@ -16,7 +16,7 @@ class DAGRange : public DAGOperator {
 public:
     static DAGOperator *make_dag_operator() { return new DAGRange; };
 
-    void accept(DAGVisitor &v);
+    void accept(DAGVisitor *v);
 
     void parse_json(nlohmann::json json);
 

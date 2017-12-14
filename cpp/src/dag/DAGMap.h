@@ -16,7 +16,7 @@ public:
 
     static DAGOperator *make_dag_operator() { return new DAGMap; };
 
-    void accept(DAGVisitor &v);
+    void accept(DAGVisitor *v);
 
     std::string get_name() { return "Map_" + to_string(id); }
 };

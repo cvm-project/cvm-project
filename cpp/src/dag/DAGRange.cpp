@@ -8,7 +8,7 @@
 
 using std::to_string;
 
-void DAGRange::accept(DAGVisitor &v) { v.visit(this); }
+void DAGRange::accept(DAGVisitor *v) { v->visit(this); }
 
 void DAGRange::parse_json(nlohmann::json json) {
     // TODO(sabir): should not have to cast to double

@@ -19,9 +19,9 @@ using namespace llvm;
 
 class LLVMParser {
 public:
-    LLVMParser(std::string &ir) { parse(ir); }
+    LLVMParser(const std::string &ir) { parse(ir); }
 
-    void parse(std::string &ir);
+    void parse(const std::string &ir);
 
     /**
      * if the argument is part of the output, return its positions in the output

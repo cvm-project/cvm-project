@@ -15,7 +15,7 @@
  */
 class SchemaInference : DAGVisitor {
 public:
-    void start_visit(DAG *dag) { dag->sink->accept(*this); }
+    void start_visit(DAG *dag) { dag->sink->accept(this); }
 
     void visit(DAGCollection *op) {
         DEBUG_PRINT("schema inference visiting collection");
