@@ -76,7 +76,7 @@ void printDAG(DAG *dag) {
     gvc = gvContext();
     gvLayout(gvc, g, "dot");
     FILE *fp;
-    fp = fopen("/tmp/dag.dot", "w");
+    fp = fopen("/tmp/dag.dot", "we");
     gvRender(gvc, g, "dot", fp);
     exec("xdot /tmp/dag.dot");
     gvFreeLayout(gvc, g);
