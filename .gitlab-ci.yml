@@ -5,7 +5,7 @@ format:
   stage: build
   image: ingomuellernet/buildenv
   before_script:
-    - apt-get update && apt-get install -y libgraphviz-dev
+    - apt-get update && apt-get install -y libgraphviz-dev libboost-dev
   script:
     - cd cpp/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
@@ -15,7 +15,7 @@ build:
   stage: build
   image: ingomuellernet/buildenv
   before_script:
-    - apt-get update && apt-get install -y libgraphviz-dev
+    - apt-get update && apt-get install -y libgraphviz-dev libboost-dev
   script:
     - cd cpp/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
@@ -28,7 +28,7 @@ clang-tidy:
   stage: build
   image: ingomuellernet/buildenv
   before_script:
-    - apt-get update && apt-get install -y libgraphviz-dev
+    - apt-get update && apt-get install -y libgraphviz-dev libboost-dev
   script:
     - cd cpp/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_CXX_CLANG_TIDY:STRING="clang-tidy-5.0;-extra-arg=-I/opt/clang+llvm-5.0.0/lib/clang/5.0.0;-header-filter=/builds/OU-SYSTEMS/msc-sakhadov/cpp/src/"
@@ -39,7 +39,7 @@ cppcheck:
   dependencies:
     - build
   before_script:
-    - apt-get update && apt-get install -y libgraphviz-dev
+    - apt-get update && apt-get install -y libgraphviz-dev libboost-dev
   image: ingomuellernet/buildenv
   script:
     - cd cpp/build

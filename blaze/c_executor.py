@@ -82,6 +82,7 @@ def execute(dag_dict, hash_, inputs):
     timer.end()
     print("execute " + str(timer.diff()))
     # add a free function to the gc on the result object
+    res = ffi.gc(res, executor_cffi.free_result)
     res = wrap_result(res, dag_dict['dag'][-1]['output_type'], ffi)
 
     # keep the reference of ffi object to prevent gc

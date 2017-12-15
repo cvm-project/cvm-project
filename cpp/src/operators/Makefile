@@ -17,7 +17,7 @@ CXXFLAGS = $(CFLAGS) -std=c++14
 LDFLAGS = -fuse-ld=gold -flto
 
 # Set inputs
-UDF_SOURCES = $(wildcard functions_llvm/*.ll)
+UDF_SOURCES = llvm_funcs.ll
 UDF_OBJECTS = $(UDF_SOURCES:.ll=.o)
 
 HEADER = ../src/operators/Operators.h

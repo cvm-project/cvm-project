@@ -6,24 +6,46 @@
 #define CODE_GEN_CODEGENVISITOR_H
 
 #include <cstdlib>
-#include <fstream>
-#include <regex>
+#include <iostream>
 #include <set>
 #include <unordered_map>
-#include <utility>
-
-#include <sys/stat.h>
+#include <vector>
 
 #include "dag/DAG.h"
 #include "utils/DAGVisitor.h"
-#include "utils/utils.h"
 
 class CodeGenVisitor : public DAGVisitor {
 public:
-    CodeGenVisitor() : genDir(get_lib_path() + "/cpp/gen/") {}
+    struct TupleTypeDesc {
+        std::string name;
+        std::vector<std::string> types;
+        std::vector<std::string> names;
+        static TupleTypeDesc fromTupleString(std::string &&name,
+                                             const std::string &s);
+        std::string field_definitions() const;
+        size_t num_fields() const {
+            assert(types.size() == names.size());
+            return types.size();
+        }
+        TupleTypeDesc computeHeadType(size_t head_size = 1) const;
+        TupleTypeDesc computeTailType(size_t head_size = 1) const;
+    };
 
-    void start_visit(DAG *dag);
+    struct OperatorDesc {
+        size_t id{};
+        std::string var_name;
+        TupleTypeDesc return_type;
+    };
 
+    CodeGenVisitor(std::ostream &planBody, std::ostream &planDeclarations,
+                   std::ostream &llvmCode)
+        : planBody_(planBody),
+          planDeclarations_(planDeclarations),
+          llvmCode_(llvmCode) {}
+
+    /*
+     * Implementation of DAGVisitor interface
+     */
     void visit(DAGCollection *op) override;
     void visit(DAGMap *op) override;
     void visit(DAGReduce *op) override;
@@ -33,216 +55,74 @@ public:
     void visit(DAGCartesian *op) override;
     void visit(DAGReduceByKey *op) override;
 
-private:
-    const std::string genDir;
-    const std::string LLVM_FUNC_DIR = "functions_llvm/";
-
-    std::string body;
-
-    const std::string TUPLE_NAME = "tuple_";
-    size_t tupleCounter = -1;
-
-    const std::string OPERATOR_NAME = "op_";
-    size_t operatorCounter = -1;
-
-    const std::string LLVM_WRAPPER_NAME = "WrapperFunction_";
-    size_t llvmWrapperCounter = -1;
-
-    std::string LLVMFuncName = "_operator_function_";
-    size_t LLVMFuncNameCounter = -1;
-
-    std::string JOIN_KEY_NAME = "join_key_";
-    std::string JOIN_VALUE1_NAME = "join_value_0_";
-    std::string JOIN_VALUE2_NAME = "join_value_1_";
-    size_t join_type_counter = -1;
-
-    std::string REDUCE_BY_KEY_KEY_NAME = "reduce_by_key_key_";
-    std::string REDUCE_BY_KEY_VALUE_NAME = "reduce_by_key_value_";
-    size_t reduce_by_key_type_counter = -1;
-
-    std::unordered_map<size_t, std::tuple<std::string, std::string, size_t>>
-            operatorNameTupleTypeMap;
-
-    std::vector<std::string> llvmFuncDecls;
-
-    std::vector<std::string> tupleTypeDefs;
-
-    //    std::vector<std::string> joinKeyValuesTypeDefs;
-
-    std::vector<std::string> reduceByKeyKeyValuesTypeDefs;
-
+    /*
+     * These members are the "result" of the visitor
+     */
+    std::ostream &planBody_;
+    std::ostream &planDeclarations_;
+    std::ostream &llvmCode_;
     std::vector<std::pair<std::string, std::string>> inputNames;
-
     std::set<std::string> includes;
+    std::unordered_map<std::string, std::string> tupleDefinitions_;
+    std::unordered_map<size_t, OperatorDesc> operatorNameTupleTypeMap;
 
-    size_t tabInd = 0;
+private:
+    /*
+     * Implementation helpers for visit functions
+     */
+    std::string visit_common(DAGOperator *op, const std::string &operator_name);
+    std::string visitLLVMFunc(const DAGOperator &op,
+                              const std::vector<TupleTypeDesc> &input_types,
+                              const std::string &return_type);
+    std::string emitTupleDefinition(const TupleTypeDesc &type);
+    void emitOperatorMake(
+            const std::string &variable_name, const std::string &operator_name,
+            const DAGOperator *op,
+            const std::vector<std::string> &extra_template_args = {},
+            const std::vector<std::string> &extra_args = {});
+    void emitLLVMFunctionWrapper(const std::string &func_name,
+                                 const std::vector<TupleTypeDesc> &input_types,
+                                 const std::string &return_type);
+    void storeLLVMCode(const std::string &ir, const std::string &func_name);
 
-    std::string lastTupleType;
-    std::string lastTupleTypeLLVM;
+    /*
+     * Manage tuple/function/variable names
+     */
+    std::unordered_map<std::string, size_t> unique_counters;
 
-    std::string resultTypeDef;
-
-    std::string executeFuncReturn = "result_type";
-    std::string executeFuncParams;
-
-    const std::string INPUT_NAME = "input_";
-    const std::string INPUT_NAME_SIZE = "input_size_";
-    size_t inputNameCounter = -1;
-
-    auto getCurrentInputNamePair() {
-        return std::make_pair(
-                INPUT_NAME + std::to_string(inputNameCounter),
-                INPUT_NAME_SIZE + std::to_string(inputNameCounter));
+    size_t unique_counter(const std::string &name) const {
+        return unique_counters.at(name);
     }
 
-    std::pair<std::string, std::string> getNextInputName() {
-        inputNameCounter++;
-        return getCurrentInputNamePair();
+    void incrementUniqueCounter(const std::string &name) {
+        auto it = unique_counters.emplace(name, -1).first;
+        (it->second)++;
     }
 
-    std::string getCurrentLLVMFuncName() {
-        std::string res;
-        res.append(LLVMFuncName).append(std::to_string(LLVMFuncNameCounter));
-        return res;
+    std::string unique_name(const std::string &name) const {
+        return name + "_" + std::to_string(unique_counter(name));
+    }
+
+    auto getNextInputName() {
+        incrementUniqueCounter("input");
+        incrementUniqueCounter("input_size");
+        return std::make_pair(unique_name("input"), unique_name("input_size"));
     }
 
     std::string getNextLLVMFuncName() {
-        LLVMFuncNameCounter++;
-        return getCurrentLLVMFuncName();
-    }
-
-    std::string getCurrentJoinKeyName() {
-        std::string res;
-        res.append(JOIN_KEY_NAME).append(std::to_string(join_type_counter));
-        return res;
-    }
-
-    std::string getCurrentJoinValue1Name() {
-        std::string res;
-        res.append(JOIN_VALUE1_NAME).append(std::to_string(join_type_counter));
-        return res;
-    }
-
-    std::string getCurrentJoinValue2Name() {
-        std::string res;
-        res.append(JOIN_VALUE2_NAME).append(std::to_string(join_type_counter));
-        return res;
-    }
-
-    std::string getCurrentReduceByKeyKeyName() {
-        std::string res;
-        res.append(REDUCE_BY_KEY_KEY_NAME)
-                .append(std::to_string(reduce_by_key_type_counter));
-        return res;
-    }
-
-    std::string getCurrentReduceByKeyValueName() {
-        std::string res;
-        res.append(REDUCE_BY_KEY_VALUE_NAME)
-                .append(std::to_string(reduce_by_key_type_counter));
-        return res;
-    }
-
-    std::string getCurrentTupleName() {
-        std::string res;
-        res.append(TUPLE_NAME).append(std::to_string(tupleCounter));
-        return res;
+        incrementUniqueCounter("_operator_function");
+        return unique_name("_operator_function");
     }
 
     std::string getNextTupleName() {
-        tupleCounter++;
-        return getCurrentTupleName();
-    }
-
-    std::string getCurrentOperatorName() {
-        std::string res;
-        res.append(OPERATOR_NAME).append(std::to_string(operatorCounter));
-        return res;
+        incrementUniqueCounter("tuple");
+        return unique_name("tuple");
     }
 
     std::string getNextOperatorName() {
-        operatorCounter++;
-        return getCurrentOperatorName();
+        incrementUniqueCounter("op");
+        return unique_name("op");
     }
-
-    /***
-     * generate a struct type
-     * returns the tuple type name(e.g tuple_0) and the number of fields in this
-     * tuple
-     */
-    std::pair<std::string, size_t> generateTupleType(const std::string &type);
-
-    void emitOperatorMake(const std::string &opClass, const DAGOperator *op,
-                          const std::string &opVarName,
-                          const std::string &opName = "",
-                          const std::string &extraArgs = "",
-                          bool add_boolean_template = false);
-    void emitJoinMake(const std::string &opVarName, DAGJoin *op);
-    void emitCartesianMake(const std::string &opVarName, DAGCartesian *op);
-    void emitReduceByKeyMake(const std::string &opVarName, DAGReduceByKey *op,
-                             const std::string &operatorName);
-    void emitLLVMFunctionWrapper(DAGOperator *op, const std::string &opName,
-                                 bool returnsBool = false);
-    /**
-     * functions which take two arguments of the same type (e.g. reduce)
-     */
-    void emitLLVMFunctionWrapperBinaryArgs(DAGOperator *op,
-                                           const std::string &opName,
-                                           const std::string &inputType,
-                                           size_t inputSize,
-                                           bool reduce_by_key = false);
-    void emitFuncEnd();
-
-    /**
-     * generate Key, Value1, Value2 struct types
-     * for current join
-     */
-    void generateJoinKeyValueTypes(DAGJoin *op);
-    /**
-     * generate Key and Value struct types
-     * for current reduce by key
-     */
-    void generateReduceByKeyKeyValueTypes(DAGReduceByKey *op);
-    std::string genComment(const std::string &com);
-    void emitComment(const std::string &opName);
-    // cppcheck-suppress unusedPrivateFunction
-    std::string parseTupleType(const std::string &type);
-    void makeDirectory();
-    void storeLLVMCode(const std::string &ir, const std::string &opName);
-
-    void appendLineBody(const std::string &str) {
-        body.append(std::string(tabInd, '\t')).append(str).append(";\n");
-    }
-
-    void appendLineBodyNoCol(const std::string &str = "") {
-        body.append(std::string(tabInd, '\t')).append(str).append("\n");
-    }
-
-    void addGenIncludes() {
-        //        includes.insert("<std::vector>");
-    }
-
-    std::string writeHeader() {
-        return "/**\n"
-               " * Auto-generated execution plan\n"
-               " */\n";
-    }
-
-    //    std::string writeJoinTupleDefs() {
-    //        std::string line = "";
-    //        line += genComment("join key value definitions");
-    //        for (auto tupleDef : joinKeyValuesTypeDefs) {
-    //            line += tupleDef;
-    //        }
-    //        return line;
-    //    }
-
-    std::string writeFuncDecl();
-    std::string writeIncludes();
-    std::string writeTupleDefs();
-    std::string writeLLVMFuncDecls();
-    void write_execute(const std::string &final_code);
-    void write_executeh();
 };
 
 #endif  // CODE_GEN_CODEGENVISITOR_H
