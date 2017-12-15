@@ -224,6 +224,15 @@ class TestIntegration(unittest.TestCase):
         res = d.collect()
         self.assertListEqual(list(res), list(map(mapF2, filter(filtF1, map(mapF1, input_)))))
 
+    def test_all_operators(self):
+        bc = BlazeContext()
+        input1 = bc.range_(0, 10).map(lambda i: (i,1))
+        input2 = bc.collection(range(0, 10)).map(lambda i: (2*i,i))
+        input3 = bc.collection(range(0, 10)).map(lambda i: (1,1))
+        step1 = input1.join(input2).map(lambda t: (t[0], t[1][1])).reduce_by_key(lambda a, b: a + b).cartesian(input3)
+        step2 = step1.filter(lambda t, s: t[0] % 3 == 0).map(lambda s, t: t[0]).reduce(lambda t1, t2: t1 + t2)
+        self.assertEqual(step2, 20)
+
     @unittest.skip("Test case not fully implemented")
     def test_map_filter_join(self):
         bc = BlazeContext()
