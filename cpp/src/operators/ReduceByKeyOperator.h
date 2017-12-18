@@ -9,7 +9,6 @@
 #include <unordered_map>
 
 #include "Operator.h"
-#include "utils/timing.h"
 
 /**
  * Groups up the input tuples by key and reduces the values

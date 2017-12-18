@@ -9,7 +9,6 @@
 #include <stdexcept>
 
 #include "Operator.h"
-#include "utils/timing.h"
 
 template <class Upstream, class Tuple, class Function>
 class ReduceOperator : public Operator {
