@@ -112,7 +112,7 @@ public:
     }
 
     void visit(DAGRange *op) override {
-        std::string operatorName = "FilterOperator";
+        std::string operatorName = "RangeSourceOperator";
 
         DAGVisitor::visit(op);
         emitComment(operatorName);

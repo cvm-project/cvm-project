@@ -12,30 +12,33 @@
 template <class Tuple>
 class RangeSourceOperator : public Operator {
 public:
-    RangeSourceOperator(Tuple start, Tuple end, Tuple step)
+    typedef decltype(Tuple().v0) ValueType;
+
+    RangeSourceOperator(ValueType start, ValueType end, ValueType step)
         : from(start), to(end), step(step) {}
 
     void printName() { std::cout << "range op\n"; }
 
     void open() {}
+    void close() {}
 
     INLINE Optional<Tuple> next() {
         if (from < to) {
             from += step;
-            return from - step;
+            return Tuple{from - step};
         }
         return {};
     }
 
 private:
-    Tuple from;
-    Tuple to;
-    Tuple step;
+    ValueType from;
+    ValueType to;
+    ValueType step;
 };
 
-template <class Tuple>
-RangeSourceOperator<Tuple> makeRangeSourceOperator(Tuple from, Tuple to,
-                                                   Tuple step) {
+template <class Tuple, typename ValueType>
+RangeSourceOperator<Tuple> makeRangeSourceOperator(ValueType from, ValueType to,
+                                                   ValueType step) {
     return RangeSourceOperator<Tuple>(from, to, step);
 };
 
