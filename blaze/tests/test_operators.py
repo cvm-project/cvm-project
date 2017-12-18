@@ -167,6 +167,32 @@ class TestCartesian(unittest.TestCase):
         self.assertSetEqual(set(tuple(t) for t in res), truth)
 
 
+class TestCache(unittest.TestCase):
+    def test_map1(self):
+        for i in range(2):
+            bc = BlazeContext
+            res = bc.collection(range(0, 10)).map(lambda t: t + 1).collect()
+            self.assertListEqual(list(res), list(range(1, 11)))
+
+    def test_map2(self):
+        bc = BlazeContext
+        res = bc.collection(range(0, 10)).map(lambda t: t + 2).collect()
+        self.assertListEqual(list(res), list(range(2, 12)))
+
+    def test_filter1(self):
+        for i in range(2):
+            bc = BlazeContext
+            res = bc.collection(range(0, 10)).filter(lambda t: t % 2 == 0).collect()
+            self.assertListEqual(list(res), list(range(0, 10, 2)))
+
+    def test_filter2(self):
+        bc = BlazeContext
+        res = bc.collection(range(0, 10)).filter(lambda t: t % 2 == 1).collect()
+        self.assertListEqual(list(res), list(range(1, 10, 2)))
+
+    # TODO(sabir): there should be test cases for the caching mechanism of all operators
+
+
 class TestIntegration(unittest.TestCase):
     def test_map_filter_map(self):
         bc = BlazeContext()
