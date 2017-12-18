@@ -17,6 +17,7 @@ import numba
 import numba.types as types
 from numba.types.containers import *
 
+import dis, io
 
 def cleanRDDs(rdd):
     rdd.dic = None
@@ -106,6 +107,7 @@ class RDD(object):
         else:
             self.parents = []
         self.output_type = None
+        self.hash = None
 
     def cache(self):
         self.cache = True
@@ -129,7 +131,7 @@ class RDD(object):
         return cur_index
 
     def startDAG(self, action):
-        hash_ = tuple([action] + self.get_hash())
+        hash_ = tuple(str(action) + str(hash(self)))
         dagdict = rdd_dag_cache.get(hash_, None)
         inputs = self.get_inputs()
         if dagdict:
@@ -151,12 +153,15 @@ class RDD(object):
                     json.dump(dagdict, fp=fp, cls=RDDEncoder)
             return execute(dagdict, hash_, inputs)
 
-    def get_hash(self):
-        hash_ = []
-        hash_.append(type(self).__name__)
-        for pred in self.parents:
-            hash_ += pred.get_hash()
-        return hash_
+    def __hash__(self):
+        if not self.hash:
+            parent_hashes = "#".join([ str(hash(p)) for p in self.parents ])
+            self_hash = str(self.self_hash())
+            self.hash = hash(type(self).__name__ + parent_hashes + self_hash)
+        return self.hash
+
+    def self_hash(self):
+        return hash("")
 
     def get_inputs(self):
         ret = []
@@ -213,6 +218,11 @@ class PipeRDD(RDD):
     def __init__(self, parent, func):
         super(PipeRDD, self).__init__(parent)
         self.func = func
+
+    def self_hash(self):
+        f = io.StringIO()
+        dis.dis(self.func, file=f)
+        return hash(f.getvalue())
 
 
 class ShuffleRDD(RDD):
@@ -343,6 +353,11 @@ class Reduce(ShuffleRDD):
         super(Reduce, self).__init__(parent)
         self.func = func
 
+    def self_hash(self):
+        f = io.StringIO()
+        dis.dis(self.func, file=f)
+        return hash(f.getvalue())
+
     def computeInputType(self):
         # repeat the input type two times
         return [self.parents[0].output_type, self.parents[0].output_type]
@@ -371,6 +386,11 @@ class ReduceByKey(ShuffleRDD):
     def __init__(self, parent, func):
         super(ReduceByKey, self).__init__(parent)
         self.func = func
+
+    def self_hash(self):
+        f = io.StringIO()
+        dis.dis(self.func, file=f)
+        return hash(f.getvalue())
 
     def _compute_input_type(self):
         # repeat the input type two times minus the key
@@ -414,6 +434,11 @@ class CSVSource(RDD):
         self.add_index = add_index
         self.delimiter = delimiter
 
+    def self_hash(self):
+        hash_objects = [self.path, str(self.dtype), str(self.add_index), delimiter,
+                        self.compute_output()]
+        return hash("#".join(hash_objects))
+
     def compute_output(self):
         df = np.genfromtxt(self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
 
@@ -433,11 +458,6 @@ class CSVSource(RDD):
         dic[DATA_PATH] = self.path
         dic[ADD_INDEX] = self.add_index
         return cur_index
-
-    def get_hash(self):
-        hash_ = super(CSVSource, self).get_hash()
-        hash_.append(self.path)
-        return hash_
 
 
 class CollectionSource(RDD):
@@ -470,6 +490,10 @@ class CollectionSource(RDD):
         self.size = self.array.shape[0]
         self.add_index = add_index
 
+    def self_hash(self):
+        hash_objects = [str(self.output_type), str(self.add_index)]
+        return hash("#".join(hash_objects))
+
     def writeDAG(self, daglist, index):
         if self.dic:
             return self.dic[ID]
@@ -482,11 +506,6 @@ class CollectionSource(RDD):
         dic[ADD_INDEX] = self.add_index
 
         return cur_index
-
-    def get_hash(self):
-        hash_ = super(CollectionSource, self).get_hash()
-        hash_.append(self.add_index)
-        return hash_
 
     def get_inputs(self):
         return [(self.data_ptr, self.size)]
@@ -540,6 +559,10 @@ class RangeSource(RDD):
         self.step = step
         self.output_type = typeof(step + from_)
 
+    def self_hash(self):
+        hash_objects = [str(o) for o in [self.from_, self.to, self.step, self.output_type]]
+        return hash("#".join(hash_objects))
+
     def writeDAG(self, daglist, index):
         if self.dic:
             return self.dic[ID]
@@ -557,6 +580,11 @@ class GeneratorSource(RDD):
     def __init__(self, func):
         super(GeneratorSource, self).__init__()
         self.func = func
+
+    def self_hash(self):
+        f = io.StringIO()
+        dis.dis(self.func, file=f)
+        return hash(f.getvalue())
 
     def writeDAG(self, daglist, index):
         if self.dic:
