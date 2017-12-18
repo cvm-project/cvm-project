@@ -41,7 +41,7 @@ $(GCHEADER): $(HEADER)
 $(HEADER):
 	$(GENHEADER) $@
 
-execute.so: $(UDF_OBJECTS) execute.o c_execute.o
+execute.so: $(UDF_OBJECTS) execute.o
 	 $(CXX)  $^ -o execute${LIB_ID}.so -shared $(LDFLAGS)
 
 execute.s: execute.so

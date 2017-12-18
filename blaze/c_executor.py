@@ -15,7 +15,7 @@ BLAZE_PATH = getBlazePath()
 cpp_dir = BLAZE_PATH + "/cpp/"
 gen_dir = BLAZE_PATH + "/cpp/gen/"
 gen_header_file = "generate_dag_plan.h"
-executer_header_file = "c_execute.h"
+executer_header_file = "execute.h"
 generate_lib = "libgenerate"
 execute_lib = "execute"
 
@@ -77,13 +77,13 @@ def execute(dag_dict, hash_, inputs):
 
     timer = Timer()
     timer.start()
-    res = executor_cffi.c_execute(*args)
+    res = executor_cffi.execute(*args)
 
     timer.end()
     print("execute " + str(timer.diff()))
     if dag_dict[ACTION] == 'collect':
         # add a free function to the gc on the result object
-        res = ffi.gc(res, executor_cffi.c_free_result)
+        res = ffi.gc(res, executor_cffi.free_result)
         pass
     res = wrap_result(res, dag_dict[ACTION], dag_dict['dag'][-1]['output_type'], ffi)
 

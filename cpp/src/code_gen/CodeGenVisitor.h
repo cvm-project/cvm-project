@@ -242,8 +242,7 @@ private:
     std::string writeTupleDefs(const std::string &action);
     std::string writeLLVMFuncDecls();
     void write_execute(const std::string &final_code);
-    void write_c_execute(const std::string &action);
-    void write_c_executeh(const std::string &action);
+    void write_executeh(const std::string &action);
 };
 
 #endif  // CODE_GEN_CODEGENVISITOR_H

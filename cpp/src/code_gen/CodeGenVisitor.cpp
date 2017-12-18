@@ -33,9 +33,7 @@ void CodeGenVisitor::start_visit(DAG *dag) {
 
     write_execute(final_code);
 
-    write_c_execute(dag->action);
-
-    write_c_executeh(dag->action);
+    write_executeh(dag->action);
 }
 
 void CodeGenVisitor::visit(DAGCollection *op) {
@@ -807,44 +805,15 @@ void CodeGenVisitor::write_execute(const std::string &final_code) {
     out.close();
 }
 
-void CodeGenVisitor::write_c_execute(const std::string &action) {
-    std::ofstream out(genDir + "c_execute.c");
-    std::string funcParamNames;
-    for (auto param : inputNames) {
-        funcParamNames += param.first + ", " + param.second + ", ";
-    }
-    if (!funcParamNames.empty()) {
-        funcParamNames.pop_back();
-        funcParamNames.pop_back();
-    }
-    out << "#include \"c_execute.h\"\n"
-           "\n"
-           "" + executeFuncReturn +
-                    " execute(" + executeFuncParams +
-                    ");\n"
-                    "\n"
-                    "" +
-                    executeFuncReturn + " c_execute(" + executeFuncParams +
-                    ") { return execute(" + funcParamNames + "); }\n";
-    if (action == "collect") {
-        out << "void free_result(" + executeFuncReturn +
-                        " ptr);\n"
-                        "\n"
-                        "void c_free_result(" +
-                        executeFuncReturn + " ptr) { free_result(ptr); }";
-    }
-    out.close();
-}
-
-void CodeGenVisitor::write_c_executeh(const std::string &action) {
-    std::ofstream out(genDir + "c_execute.h");
+void CodeGenVisitor::write_executeh(const std::string &action) {
+    std::ofstream out(genDir + "execute.h");
     out << resultTypeDef
         << "\n"
            "" + executeFuncReturn +
-                    " c_execute(" + executeFuncParams + ");\n";
+                    " execute(" + executeFuncParams + ");\n";
     if (action == "collect") {
         out << "\n"
-               "void c_free_result(" +
+               "void free_result(" +
                         executeFuncReturn + ");";
     }
     out.close();
