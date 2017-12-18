@@ -6,7 +6,7 @@ import argparse
 import sys
 from functools import reduce
 
-import numpy
+import numpy as np
 
 from blaze.blaze_context import BlazeContext
 
@@ -20,10 +20,30 @@ class TestCollection(unittest.TestCase):
 
 #    def test_index_array(self):
 #        bc = BlazeContext()
-#        res = bc.numpy_array(numpy.array([i ** 2 for i in range(10)]), add_index=True).collect()
+#        res = bc.numpy_array(np.array([i ** 2 for i in range(10)]), add_index=True).collect()
 #        res = [tuple(r) for r in res]
 #        self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
 
+class TestRange(unittest.TestCase):
+    def test_range_simple(self):
+        bc = BlazeContext()
+        res = bc.range_(0, 10).collect()
+        self.assertListEqual(list(res), list(range(10)))
+
+    def test_range_start(self):
+        bc = BlazeContext()
+        res = bc.range_(10, 20).collect()
+        self.assertListEqual(list(res), list(range(10, 20)))
+
+    def test_range_step(self):
+        bc = BlazeContext()
+        res = bc.range_(10, 20, 2).collect()
+        self.assertListEqual(list(res), list(range(10, 20, 2)))
+
+    def test_range_float(self):
+        bc = BlazeContext()
+        res = bc.range_(10.5, 20.0, 2.0).collect()
+        self.assertListEqual(list(res), list(np.arange(10.5, 20.0, 2.0)))
 
 class TestJoin(unittest.TestCase):
     def test_overlap(self):
