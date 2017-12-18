@@ -12,7 +12,7 @@ endif
 
 # Set flags
 INC = -I ../src/ -I ../src/utils/
-CFLAGS = -O3 -ffast-math -march=native -mtune=native -fPIC -flto
+CFLAGS = -DNDEBUG -O3 -ffast-math -march=native -mtune=native -fPIC -flto
 CXXFLAGS = $(CFLAGS) -std=c++14
 LDFLAGS = -fuse-ld=gold -flto
 
