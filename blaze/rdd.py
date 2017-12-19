@@ -231,8 +231,6 @@ class ShuffleRDD(RDD):
 
 class Map(PipeRDD):
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(Map, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = MAP
@@ -243,8 +241,6 @@ class Map(PipeRDD):
 
 class Filter(PipeRDD):
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(Filter, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = FILTER
@@ -256,8 +252,6 @@ class Filter(PipeRDD):
 
 class FlatMap(PipeRDD):
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(FlatMap, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = FLAT_MAP
@@ -305,8 +299,6 @@ class Join(ShuffleRDD):
                 return Tuple([key_type, Tuple(flatten(output1) + flatten(output2))])
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(Join, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'join'
@@ -331,8 +323,6 @@ class Cartesian(ShuffleRDD):
         return [p1, p2]
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(Cartesian, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'cartesian'
@@ -363,8 +353,6 @@ class Reduce(ShuffleRDD):
         return [self.parents[0].output_type, self.parents[0].output_type]
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(Reduce, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = REDUCE
@@ -414,8 +402,6 @@ class ReduceByKey(ShuffleRDD):
         return [par_type, par_type]
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(ReduceByKey, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = REDUCEBYKEY
@@ -448,8 +434,6 @@ class CSVSource(RDD):
             self.output_type = typeof(df[0])
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(CSVSource, self).writeDAG(daglist, index)
         self.output_type = self.compute_output()
         dic = self.dic
@@ -495,8 +479,6 @@ class CollectionSource(RDD):
         return hash("#".join(hash_objects))
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(CollectionSource, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'collection_source'
@@ -531,8 +513,6 @@ class CollectionSource(RDD):
 #         self.add_index = add_index
 #
 #     def writeDAG(self, daglist, index):
-#         if self.dic:
-#             return self.dic[ID]
 #         cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)
 #         dic = self.dic
 #         dic[OP] = 'collection_source'
@@ -564,8 +544,6 @@ class RangeSource(RDD):
         return hash("#".join(hash_objects))
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(RangeSource, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'range_source'
@@ -587,8 +565,6 @@ class GeneratorSource(RDD):
         return hash(f.getvalue())
 
     def writeDAG(self, daglist, index):
-        if self.dic:
-            return self.dic[ID]
         cur_index = super(GeneratorSource, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'generator_source'
