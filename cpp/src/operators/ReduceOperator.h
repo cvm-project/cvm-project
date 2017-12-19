@@ -16,12 +16,16 @@ public:
     Upstream *upstream;
 
     ReduceOperator(Upstream *upstream1, Function func)
-        : upstream(upstream1), function(func) {}
+        : upstream(upstream1), has_returned(false), function(func) {}
 
     INLINE Optional<Tuple> next() {
+        if (has_returned) {
+            return {};
+        }
         while (auto ret = upstream->next()) {
             acc = function(acc, ret);
         }
+        has_returned = true;
         return acc;
     }
 
@@ -39,6 +43,7 @@ public:
 
 private:
     Tuple acc;
+    bool has_returned;
     Function function;
 };
 
