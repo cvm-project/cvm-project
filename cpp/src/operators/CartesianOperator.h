@@ -22,7 +22,6 @@ using std::vector;
 template <class Upstream1, class Upstream2, class Tuple, class UpstreamTuple>
 class CartesianOperator : public Operator {
 public:
-    bool stream_right = true;
     Upstream1 *upstream1;
     Upstream2 *upstream2;
 
