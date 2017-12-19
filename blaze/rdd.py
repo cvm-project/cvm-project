@@ -113,32 +113,32 @@ class RDD(object):
         self.cache = True
         return self
 
-    def writeDAG(self, daglist, index):
+    def writeDAG(self, daglist, index, empty = False):
         if self.dic:
             return self.dic[ID]
         cur_index = index
         preds_index = []
         for par in self.parents:
             pred_index = par.writeDAG(daglist, cur_index)
-            cur_index = max(pred_index + 1, cur_index)
+            cur_index = max(pred_index + int(not empty), cur_index)
             preds_index.append(pred_index)
 
-        dic = dict()
-        dic[ID] = cur_index
-        dic[PREDS] = preds_index
-        self.dic = dic
-        daglist.append(dic)
+        if not empty:
+            dic = dict()
+            dic[ID] = cur_index
+            dic[PREDS] = preds_index
+            self.dic = dic
+            daglist.append(dic)
         return cur_index
 
-    def startDAG(self, action):
-        hash_ = tuple(str(action) + str(hash(self)))
+    def executeDAG(self):
+        hash_ = str(hash(self))
         dagdict = rdd_dag_cache.get(hash_, None)
         inputs = self.get_inputs()
         if dagdict:
             return execute(dagdict, hash_, inputs)
         else:
             dagdict = dict()
-            dagdict[ACTION] = action
             dagdict[DAG] = []
 
             cleanRDDs(self)
@@ -172,6 +172,9 @@ class RDD(object):
     def map(self, map_func):
         return Map(self, map_func)
 
+    def flatten(self):
+        return Flatten(self)
+
     def filter(self, predicate):
         return Filter(self, predicate)
 
@@ -182,7 +185,7 @@ class RDD(object):
         return ReduceByKey(self, func)
 
     def reduce(self, func):
-        return Reduce(self, func).startDAG("reduce")
+        return Reduce(self, func).collect()[0]
 
     def join(self, other):
         return Join(self, other)
@@ -191,13 +194,10 @@ class RDD(object):
         return Cartesian(self, other)
 
     def collect(self):
-        return self.startDAG("collect")
+        return self.executeDAG()
 
     def count(self):
-        return self.startDAG("count")
-
-    def to_csv(self, path):
-        return self.startDAG("to_csv")
+        return self.flatten().map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
 
     def accept(self, visitor):
 
@@ -257,6 +257,13 @@ class FlatMap(PipeRDD):
         dic[OP] = FLAT_MAP
         dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
+        return cur_index
+
+
+class Flatten(RDD):
+    def writeDAG(self, daglist, index):
+        cur_index = super(Flatten, self).writeDAG(daglist, index, True)
+        self.output_type = make_tuple(flatten(self.parents[0].output_type))
         return cur_index
 
 

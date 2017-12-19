@@ -18,7 +18,6 @@
 class DAG {  // NOLINT hicpp-special-member-functions
 public:
     DAGOperator *sink{};
-    std::string action;
     std::vector<std::unique_ptr<DAGOperator>> operators;
     size_t last_operator_id{};
 

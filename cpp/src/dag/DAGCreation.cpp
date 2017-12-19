@@ -48,9 +48,6 @@ DAG *parse(std::stringstream *istream) {
 
     nlohmann::json j;
     *istream >> j;
-    auto action = j[DAG_ACTION];
-    // cppcheck-suppress uninitdata
-    dag->action = action;
     auto dag_list = j[DAG_DAG];
     std::vector<std::pair<DAGOperator *, std::vector<size_t> > > dag_ops(1);
 

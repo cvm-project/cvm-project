@@ -1,4 +1,3 @@
-ACTION = 'action'
 DAG = 'dag'
 ID = 'id'
 OP = 'op'

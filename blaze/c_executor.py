@@ -81,36 +81,19 @@ def execute(dag_dict, hash_, inputs):
 
     timer.end()
     print("execute " + str(timer.diff()))
-    if dag_dict[ACTION] == 'collect':
-        # add a free function to the gc on the result object
-        res = ffi.gc(res, executor_cffi.free_result)
-        pass
-    res = wrap_result(res, dag_dict[ACTION], dag_dict['dag'][-1]['output_type'], ffi)
+    # add a free function to the gc on the result object
+    res = wrap_result(res, dag_dict['dag'][-1]['output_type'], ffi)
 
-    if dag_dict[ACTION] == 'collect':
-        # keep the reference of ffi object to prevent gc
-        res.ex = executor_cffi
-    # timer.end()
-    # print("this " + str(timer.diff()))
+    # keep the reference of ffi object to prevent gc
+    res.ex = executor_cffi
 
     return res
 
 
-def wrap_result(res, action, type_, ffi):
-    if action == "collect":
-        buffer_size = res.size * get_type_size(type_)
-        c_buffer = ffi.buffer(res.data, buffer_size)
-        np_arr = np.frombuffer(c_buffer, dtype=str(type_).replace("(", "").replace(")", ""), count=res.size)
-        np_arr = np_arr.view(NumpyResult)
-        np_arr.ptr = res
-        return np_arr
-    elif action == "reduce":
-        buffer_size = 1 * get_type_size(type_)
-        c_buffer = ffi.buffer(res, buffer_size)
-        np_arr = np.frombuffer(c_buffer, dtype=numba_type_to_dtype(type_))
-        try:
-            return tuple(np_arr[0]) if isinstance(type_, Tuple) else np_arr[0]
-        except TypeError:
-            return np_arr
-    else:
-        return res
+def wrap_result(res, type_, ffi):
+    buffer_size = res.size * get_type_size(type_)
+    c_buffer = ffi.buffer(res.data, buffer_size)
+    np_arr = np.frombuffer(c_buffer, dtype=str(type_).replace("(", "").replace(")", ""), count=res.size)
+    np_arr = np_arr.view(NumpyResult)
+    np_arr.ptr = res
+    return np_arr

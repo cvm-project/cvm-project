@@ -25,17 +25,16 @@ void CodeGenVisitor::start_visit(DAG *dag) {
 
     this->visitDag(dag);
 
-    emitFuncEnd(dag->action);
+    emitFuncEnd();
 
     std::string final_code;
-    final_code += writeHeader() + "\n" + writeIncludes() + "\n"
-                  //                + "using namespace std;\n"
-                  + writeTupleDefs(dag->action) + "\n" + writeLLVMFuncDecls() +
-                  "\n" + writeFuncDecl() + "\n" + body;
+    final_code += writeHeader() + "\n" + writeIncludes() + "\n" +
+                  writeTupleDefs() + "\n" + writeLLVMFuncDecls() + "\n" +
+                  writeFuncDecl() + "\n" + body;
 
     write_execute(final_code);
 
-    write_executeh(dag->action);
+    write_executeh();
 }
 
 void CodeGenVisitor::visit(DAGCollection *op) {
@@ -455,85 +454,51 @@ void CodeGenVisitor::emitLLVMFunctionWrapperBinaryArgs(
     }
 }
 
-void CodeGenVisitor::emitFuncEnd(const std::string &action) {
-    //        appendLineBodyNoCol("TICK1");
-    if (action == "count") {
-        emitComment("counting the result");
-        appendLineBody(getCurrentOperatorName() + ".open()");
-        appendLineBody("result_type tuple_count = 0");
-        appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() +
-                            ".next()) {");
-        tabInd++;
-        appendLineBody("tuple_count++");
-        tabInd--;
-        appendLineBodyNoCol("}");
-        appendLineBody(getCurrentOperatorName() + ".close()");
+void CodeGenVisitor::emitFuncEnd() {
+    emitComment("collecting the result");
+    appendLineBody(getCurrentOperatorName() + ".open()");
+    appendLineBody("size_t allocatedSize = 2");
+    appendLineBody("size_t resSize = 0");
+    appendLineBody(getCurrentTupleName() + " *result = (" +
+                   getCurrentTupleName() + " *) malloc(sizeof(" +
+                   getCurrentTupleName() + ") * allocatedSize)");
+    appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() +
+                        ".next()) {");
+    tabInd++;
+    appendLineBodyNoCol("if (allocatedSize <= resSize) {");
+    tabInd++;
+    appendLineBody("allocatedSize *= 2");
+    appendLineBody("result = (" + getCurrentTupleName() +
+                   "*) realloc(result, sizeof(" + getCurrentTupleName() +
+                   ") * allocatedSize)");
+    tabInd--;
+    appendLineBodyNoCol("}");
+    appendLineBody("result[resSize] = res.value");
+    appendLineBody("resSize++");
+    tabInd--;
+    appendLineBodyNoCol("}");
+    appendLineBody(getCurrentOperatorName() + ".close()");
+    appendLineBody(
+            "result_type ret = (result_type) "
+            "malloc(sizeof(result_struct))");
+    appendLineBody("ret->data = result");
+    appendLineBody("ret->size = resSize");
+    appendLineBody("return ret");
 
-        //            appendLineBodyNoCol("TOCK1");
+    tabInd--;
+    appendLineBodyNoCol("}");
 
-        appendLineBody("return tuple_count");
-        tabInd--;
-        appendLineBodyNoCol("}");
-    } else if (action == "reduce") {
-        emitComment("reduce");
-        appendLineBody(getCurrentOperatorName() + ".open()");
-        appendLineBody("auto res = " + getCurrentOperatorName() + ".next()");
-        appendLineBody(getCurrentOperatorName() + ".close()");
-        //            appendLineBodyNoCol("TOCK1");
-        //            appendLineBody("std::cout << \"outer loop time:
-        //            \"<<DIFF1 << std::endl");
-        appendLineBody("result_type ret = (result_type) malloc(sizeof(" +
-                       getCurrentTupleName() + "))");
-        appendLineBody("*ret = res");
-        appendLineBody("return ret");
-        tabInd--;
-        appendLineBodyNoCol("}");
-    } else if (action == "collect") {
-        emitComment("collecting the result");
-        appendLineBody(getCurrentOperatorName() + ".open()");
-        appendLineBody("size_t allocatedSize = 2");
-        appendLineBody("size_t resSize = 0");
-        appendLineBody(getCurrentTupleName() + " *result = (" +
-                       getCurrentTupleName() + " *) malloc(sizeof(" +
-                       getCurrentTupleName() + ") * allocatedSize)");
-        appendLineBodyNoCol("while (auto res = " + getCurrentOperatorName() +
-                            ".next()) {");
-        tabInd++;
-        appendLineBodyNoCol("if (allocatedSize <= resSize) {");
-        tabInd++;
-        appendLineBody("allocatedSize *= 2");
-        appendLineBody("result = (" + getCurrentTupleName() +
-                       "*) realloc(result, sizeof(" + getCurrentTupleName() +
-                       ") * allocatedSize)");
-        tabInd--;
-        appendLineBodyNoCol("}");
-        appendLineBody("result[resSize] = res.value");
-        appendLineBody("resSize++");
-        tabInd--;
-        appendLineBodyNoCol("}");
-        appendLineBody(getCurrentOperatorName() + ".close()");
-        appendLineBody(
-                "result_type ret = (result_type) "
-                "malloc(sizeof(result_struct))");
-        appendLineBody("ret->data = result");
-        appendLineBody("ret->size = resSize");
-        appendLineBody("return ret");
-
-        tabInd--;
-        appendLineBodyNoCol("}");
-
-        appendLineBodyNoCol(
-                "void free_result(result_type ptr) {\n"
-                "    if (ptr != NULL && ptr->data != NULL) {\n"
-                "        free(ptr->data);\n"
-                "        ptr->data = NULL;\n"
-                "    }\n"
-                "    if (ptr != NULL) {\n"
-                "        free(ptr);\n"
-                "    }\n"
-                "    ptr = NULL;\n"
-                "}");
-    }
+    appendLineBodyNoCol(
+            "void free_result(result_type ptr) {\n"
+            "    if (ptr != NULL && ptr->data != NULL) {\n"
+            "        free(ptr->data);\n"
+            "        ptr->data = NULL;\n"
+            "    }\n"
+            "    if (ptr != NULL) {\n"
+            "        free(ptr);\n"
+            "    }\n"
+            "    ptr = NULL;\n"
+            "}");
     appendLineBodyNoCol("}");
 }
 
@@ -747,36 +712,22 @@ std::string CodeGenVisitor::writeIncludes() {
     return ret;
 }
 
-std::string CodeGenVisitor::writeTupleDefs(const std::string &action) {
+std::string CodeGenVisitor::writeTupleDefs() {
     std::string ret;
     std::string resultWrapper;
     ret.append(genComment("tuple definitions"));
-    if (action == "collect") {
-        size_t len = tupleTypeDefs.size();
-        for (size_t i = 0; i < len; i++) {
-            ret.append(tupleTypeDefs[i]);
-        }
-        resultWrapper =
-                "\ntypedef struct {\n "
-                "\tunsigned long size;\n"
-                "\t" +
-                getCurrentTupleName() +
-                " *data;\n"
-                "} result_struct;\n"
-                "typedef result_struct* result_type;\n";
-    } else if (action == "count") {
-        size_t len = tupleTypeDefs.size();
-        for (size_t i = 0; i < len; i++) {
-            ret.append(tupleTypeDefs[i]).append(";\n");
-        }
-        resultWrapper = "typedef unsigned long result_type;\n";
-    } else if (action == "reduce") {
-        size_t len = tupleTypeDefs.size();
-        for (size_t i = 0; i < len; i++) {
-            ret.append(tupleTypeDefs[i]).append(";\n");
-        };
-        resultWrapper = "typedef " + getCurrentTupleName() + "* result_type;\n";
+    size_t len = tupleTypeDefs.size();
+    for (size_t i = 0; i < len; i++) {
+        ret.append(tupleTypeDefs[i]);
     }
+    resultWrapper =
+            "\ntypedef struct {\n "
+            "\tunsigned long size;\n"
+            "\t" +
+            getCurrentTupleName() +
+            " *data;\n"
+            "} result_struct;\n"
+            "typedef result_struct* result_type;\n";
     resultTypeDef += resultWrapper;
     return ret + resultWrapper;
 }
@@ -799,16 +750,14 @@ void CodeGenVisitor::write_execute(const std::string &final_code) {
     out.close();
 }
 
-void CodeGenVisitor::write_executeh(const std::string &action) {
+void CodeGenVisitor::write_executeh() {
     std::ofstream out(genDir + "execute.h");
     out << resultTypeDef
         << "\n"
            "" + executeFuncReturn +
                     " execute(" + executeFuncParams + ");\n";
-    if (action == "collect") {
-        out << "\n"
-               "void free_result(" +
-                        executeFuncReturn + ");";
-    }
+    out << "\n"
+           "void free_result(" +
+                    executeFuncReturn + ");";
     out.close();
 }

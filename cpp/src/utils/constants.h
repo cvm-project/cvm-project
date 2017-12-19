@@ -6,7 +6,6 @@
 //
 
 #define DAG_OP_RANGE std::string("range_source")
-#define DAG_ACTION std::string("action")
 #define DAG_DAG std::string("dag")
 #define DAG_ID std::string("id")
 #define DAG_OP std::string("op")

@@ -192,7 +192,7 @@ private:
                                            const std::string &inputType,
                                            size_t inputSize,
                                            bool reduce_by_key = false);
-    void emitFuncEnd(const std::string &action);
+    void emitFuncEnd();
 
     /**
      * generate Key, Value1, Value2 struct types
@@ -240,10 +240,10 @@ private:
 
     std::string writeFuncDecl();
     std::string writeIncludes();
-    std::string writeTupleDefs(const std::string &action);
+    std::string writeTupleDefs();
     std::string writeLLVMFuncDecls();
     void write_execute(const std::string &final_code);
-    void write_executeh(const std::string &action);
+    void write_executeh();
 };
 
 #endif  // CODE_GEN_CODEGENVISITOR_H
