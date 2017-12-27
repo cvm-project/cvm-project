@@ -14,8 +14,6 @@ class DAGMap : public DAGOperator {
 public:
     explicit DAGMap(DAG *const dag) : DAGOperator(dag) {}
 
-    static const std::string DAG_OP_NAME;
-
     static DAGOperator *make_dag_operator(DAG *const dag) {
         return new DAGMap(dag);
     };

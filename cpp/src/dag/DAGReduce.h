@@ -9,8 +9,6 @@
 
 class DAGReduce : public DAGOperator {
 public:
-    static const std::string DAG_OP_NAME;
-
     explicit DAGReduce(DAG *const dag) : DAGOperator(dag) {}
 
     static DAGOperator *make_dag_operator(DAG *const dag) {
