@@ -6,23 +6,14 @@
 #define DAG_DAGCREATION_HPP
 
 #include <iostream>
-#include <unordered_map>
+#include <string>
 
 #include "DAG.h"
 #include "DAGOperator.h"
-#include "utils/constants.h"
 
-using make_dag_function = DAGOperator *(*)(DAG *);  // function pointer type
-using DAGOperatorsMap = std::unordered_map<std::string, make_dag_function>;
+DAGOperator *get_operator(const std::string &opName);
 
+DAG *parse_dag(std::istream *istream);
 DAG *parse_dag(const std::string &dagstr);
-
-DAG *parse(std::stringstream *istream);
-
-DAGOperator *get_operator(const std::string &opName, DAG *dag);
-
-void load_operators();
-
-std::vector<TupleField> parse_output_type(const std::string &output);
 
 #endif  // DAG_DAGCREATION_HPP

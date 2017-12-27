@@ -7,20 +7,16 @@
 
 #include "DAGOperator.h"
 
-class DAGCollection : public DAGOperator {
+class DAGCollection : public DAGOperatorBase<DAGCollection> {
 public:
-    explicit DAGCollection(DAG *const dag) : DAGOperator(dag) {}
-
     bool add_index = false;
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGCollection(dag);
-    };
 
     constexpr static const char *kName = "collection_source";
     std::string name() const override { return kName; }
 
     void accept(DAGVisitor *v) override;
-    void parse_json(const nlohmann::json &json) override;
+    void to_json(nlohmann::json *json) const override;
+    void from_json(const nlohmann::json &json) override;
 };
 
 #endif  // DAG_DAGCOLLECTION_H

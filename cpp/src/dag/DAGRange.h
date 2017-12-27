@@ -11,17 +11,11 @@
 
 class DAGVisitor;
 
-class DAGRange : public DAGOperator {
+class DAGRange : public DAGOperatorBase<DAGRange> {
 public:
-    explicit DAGRange(DAG *const dag) : DAGOperator(dag) {}
-
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGRange(dag);
-    };
-
     void accept(DAGVisitor *v) override;
-
-    void parse_json(const nlohmann::json &json) override;
+    void to_json(nlohmann::json *json) const override;
+    void from_json(const nlohmann::json &json) override;
 
     std::string from;
     std::string to;

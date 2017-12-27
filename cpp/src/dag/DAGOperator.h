@@ -12,15 +12,16 @@
 #include <json.hpp>
 
 #include "dag/Column.h"
+#include "dag/DAG.h"
 #include "dag/TupleField.h"
 #include "utils/constants.h"
 
 class DAG;
 class DAGVisitor;
 
+// cppcheck-suppress noConstructor
 class DAGOperator {
 public:
-    DAG *const dag_;
     std::vector<DAGOperator *> predecessors;
     std::vector<DAGOperator *> successors;
     std::vector<TupleField> fields;
@@ -31,8 +32,9 @@ public:
     std::string output_type;
     size_t id{};
 
-    explicit DAGOperator(DAG *const dag) : dag_(dag) {}
     virtual ~DAGOperator() = default;
+
+    virtual void Init(DAG *dag) { dag_ = dag; }
 
     // free only this operator
     void freeThisOperator() {
@@ -43,8 +45,8 @@ public:
     virtual std::string name() const = 0;
 
     virtual void accept(class DAGVisitor *v) = 0;
-
-    virtual void parse_json(const nlohmann::json & /*json*/) {}
+    virtual void to_json(nlohmann::json *json) const = 0;
+    virtual void from_json(const nlohmann::json &json) = 0;
 
     bool writeSetContains(Column *c) {
         bool ret = false;
@@ -56,6 +58,32 @@ public:
         }
         return ret;
     }
+
+    DAG *dag() const {
+        assert(dag_ != nullptr);
+        return dag_;
+    }
+
+private:
+    DAG *dag_{};
 };
+
+template <class OperatorType>
+class DAGOperatorBase : public DAGOperator {
+public:
+    static DAGOperator *make_dag_operator() { return new OperatorType(); }
+
+    void to_json(nlohmann::json * /*json*/) const override {}
+    void from_json(const nlohmann::json & /*json*/) override {}
+};
+
+// NOLINTNEXTLINE google-runtime-references
+void from_json(const nlohmann::json &json, DAGOperator &op);
+// NOLINTNEXTLINE google-runtime-references
+void to_json(nlohmann::json &json, const DAGOperator &op);
+// NOLINTNEXTLINE google-runtime-references
+void to_json(nlohmann::json &json, const DAGOperator *op);
+// NOLINTNEXTLINE google-runtime-references
+void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op);
 
 #endif  // DAG_DAGOPERATOR_H

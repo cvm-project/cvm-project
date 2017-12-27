@@ -8,14 +8,8 @@
 #include "DAGOperator.h"
 class DAGVisitor;
 
-class DAGReduceByKey : public DAGOperator {
+class DAGReduceByKey : public DAGOperatorBase<DAGReduceByKey> {
 public:
-    explicit DAGReduceByKey(DAG *const dag) : DAGOperator(dag) {}
-
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGReduceByKey(dag);
-    };
-
     void accept(DAGVisitor *v) override;
 
     constexpr static const char *kName = "reduce_by_key";

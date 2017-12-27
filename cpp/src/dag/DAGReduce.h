@@ -7,14 +7,8 @@
 
 #include "DAGOperator.h"
 
-class DAGReduce : public DAGOperator {
+class DAGReduce : public DAGOperatorBase<DAGReduce> {
 public:
-    explicit DAGReduce(DAG *const dag) : DAGOperator(dag) {}
-
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGReduce(dag);
-    };
-
     void accept(DAGVisitor *v) override;
 
     constexpr static const char *kName = "reduce";

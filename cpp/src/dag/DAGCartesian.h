@@ -7,15 +7,9 @@
 
 #include "DAGOperator.h"
 
-class DAGCartesian : public DAGOperator {
+class DAGCartesian : public DAGOperatorBase<DAGCartesian> {
 public:
-    explicit DAGCartesian(DAG *const dag) : DAGOperator(dag) {}
-
     bool stream_right = true;
-
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGCartesian(dag);
-    };
 
     void accept(DAGVisitor *v) override;
 

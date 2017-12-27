@@ -48,12 +48,14 @@ set(SOURCE_FILES
         code_gen/CodeGenVisitor.cpp
         code_gen/generate_code.cpp
         dag/Column.cpp
+        dag/DAG.cpp
         dag/DAGCartesian.cpp
         dag/DAGCollection.cpp
         dag/DAGCreation.cpp
         dag/DAGFilter.cpp
         dag/DAGJoin.cpp
         dag/DAGMap.cpp
+        dag/DAGOperator.cpp
         dag/DAGRange.cpp
         dag/DAGReduce.cpp
         dag/DAGReduceByKey.cpp

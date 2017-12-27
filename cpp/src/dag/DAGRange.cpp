@@ -10,9 +10,15 @@ using std::to_string;
 
 void DAGRange::accept(DAGVisitor *v) { v->visit(this); }
 
-void DAGRange::parse_json(const nlohmann::json &json) {
+void DAGRange::from_json(const nlohmann::json &json) {
     // TODO(sabir): should not have to cast to double
-    this->from = std::to_string(static_cast<double>(json[DAG_RANGE_FROM]));
-    this->to = std::to_string(static_cast<double>(json[DAG_RANGE_TO]));
-    this->step = std::to_string(static_cast<double>(json[DAG_RANGE_STEP]));
+    this->from = std::to_string(static_cast<double>(json.at("from")));
+    this->to = std::to_string(static_cast<double>(json.at("to")));
+    this->step = std::to_string(static_cast<double>(json.at("step")));
+}
+
+void DAGRange::to_json(nlohmann::json *json) const {
+    json->emplace("from", this->from);
+    json->emplace("to", this->to);
+    json->emplace("step", this->step);
 }

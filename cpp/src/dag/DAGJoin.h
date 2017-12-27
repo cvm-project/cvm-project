@@ -9,15 +9,9 @@
 
 #include "DAGOperator.h"
 
-class DAGJoin : public DAGOperator {
+class DAGJoin : public DAGOperatorBase<DAGJoin> {
 public:
-    explicit DAGJoin(DAG *const dag) : DAGOperator(dag) {}
-
     bool stream_right = true;
-
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGJoin(dag);
-    };
 
     void accept(DAGVisitor *v) override;
 

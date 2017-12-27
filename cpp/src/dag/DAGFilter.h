@@ -9,14 +9,8 @@
 
 class DAGVisitor;
 
-class DAGFilter : public DAGOperator {
+class DAGFilter : public DAGOperatorBase<DAGFilter> {
 public:
-    explicit DAGFilter(DAG *const dag) : DAGOperator(dag) {}
-
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGFilter(dag);
-    };
-
     void accept(DAGVisitor *v) override;
 
     constexpr static const char *kName = "filter";

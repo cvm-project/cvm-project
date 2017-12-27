@@ -10,14 +10,8 @@
 #include "DAGOperator.h"
 
 class DAGVisitor;
-class DAGMap : public DAGOperator {
+class DAGMap : public DAGOperatorBase<DAGMap> {
 public:
-    explicit DAGMap(DAG *const dag) : DAGOperator(dag) {}
-
-    static DAGOperator *make_dag_operator(DAG *const dag) {
-        return new DAGMap(dag);
-    };
-
     void accept(DAGVisitor *v) override;
 
     constexpr static const char *kName = "map";
