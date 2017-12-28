@@ -13,6 +13,7 @@
 
 #include "dag/Column.h"
 #include "dag/TupleField.h"
+#include "utils/constants.h"
 
 class DAG;
 
@@ -38,7 +39,7 @@ public:
         successors.clear();
     }
 
-    virtual std::string get_name() { return "Operator_" + std::to_string(id); };
+    virtual std::string name() const = 0;
 
     virtual void accept(class DAGVisitor *v) = 0;
 

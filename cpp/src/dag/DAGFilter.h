@@ -21,7 +21,8 @@ public:
 
     void accept(DAGVisitor *v) override;
 
-    std::string get_name() override { return "Filter_" + std::to_string(id); }
+    constexpr static const char *kName = "filter";
+    std::string name() const override { return kName; }
 
     DAGFilter *copy();
 };

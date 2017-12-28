@@ -5,15 +5,6 @@
 // Created by sabir on 23.07.17.
 //
 
-#define FILTER "filter"
-#define MAP "map"
-#define FLAT_MAP "flat_map"
-#define JOIN "join"
-#define REDUCE "reduce"
-#define REDUCEBYKEY "reduce_by_key"
-#define CARTESIAN "cartesian"
-#define RANGE "range_source"
-#define COLLECTION "collection_source"
 #define DAG_OP_RANGE std::string("range_source")
 #define DAG_ACTION std::string("action")
 #define DAG_DAG std::string("dag")

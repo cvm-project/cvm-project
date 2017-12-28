@@ -16,9 +16,8 @@ public:
         return new DAGCollection(dag);
     };
 
-    std::string get_name() override {
-        return "Collection_" + std::to_string(id);
-    }
+    constexpr static const char *kName = "collection_source";
+    std::string name() const override { return kName; }
 
     void accept(DAGVisitor *v) override;
     void parse_json(const nlohmann::json &json) override;

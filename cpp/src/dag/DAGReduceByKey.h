@@ -18,9 +18,8 @@ public:
 
     void accept(DAGVisitor *v) override;
 
-    std::string get_name() override {
-        return "ReduceByKey_" + std::to_string(id);
-    }
+    constexpr static const char *kName = "reduce_by_key";
+    std::string name() const override { return kName; }
 };
 
 #endif  // DAG_DAGREDUCEBYKEY_H

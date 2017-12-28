@@ -26,15 +26,21 @@ DAG *parse_dag(const std::string &dagstr) {
     return dag;
 };
 
+template <class OperatorType>
+void load_operator() {
+    std::string name(OperatorType::kName);
+    opMap.emplace(name.c_str(), &OperatorType::make_dag_operator);
+}
+
 void load_operators() {
-    opMap.emplace(FILTER, &DAGFilter::make_dag_operator);
-    opMap.emplace(RANGE, &DAGRange::make_dag_operator);
-    opMap.emplace(COLLECTION, &DAGCollection::make_dag_operator);
-    opMap.emplace(MAP, &DAGMap::make_dag_operator);
-    opMap.emplace(JOIN, &DAGJoin::make_dag_operator);
-    opMap.emplace(REDUCE, &DAGReduce::make_dag_operator);
-    opMap.emplace(REDUCEBYKEY, &DAGReduceByKey::make_dag_operator);
-    opMap.emplace(CARTESIAN, &DAGCartesian::make_dag_operator);
+    load_operator<DAGCartesian>();
+    load_operator<DAGCollection>();
+    load_operator<DAGFilter>();
+    load_operator<DAGJoin>();
+    load_operator<DAGMap>();
+    load_operator<DAGRange>();
+    load_operator<DAGReduce>();
+    load_operator<DAGReduceByKey>();
 }
 
 DAG *parse(std::stringstream *istream) {

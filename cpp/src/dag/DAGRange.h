@@ -27,7 +27,8 @@ public:
     std::string to;
     std::string step = "1";
 
-    std::string get_name() override { return "Range_" + std::to_string(id); }
+    constexpr static const char *kName = "range_source";
+    std::string name() const override { return kName; }
 };
 
 #endif  // DAG_DAGRANGE_H

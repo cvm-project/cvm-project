@@ -19,7 +19,8 @@ public:
 
     void accept(DAGVisitor *v) override;
 
-    std::string get_name() override { return "Reduce_" + std::to_string(id); }
+    constexpr static const char *kName = "reduce";
+    std::string name() const override { return kName; }
 };
 
 #endif  // DAG_DAGREDUCE_H
