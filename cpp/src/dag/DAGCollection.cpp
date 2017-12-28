@@ -1,3 +1,4 @@
+#include "DAGCollection.h"
 
 #include "utils/DAGVisitor.h"
 

@@ -15,14 +15,16 @@
 
 #include "config.h"
 #include "dag/DAG.h"
-#include "utils/DAGVisitor.h"
+#include "dag/DAGOperators.h"
 #include "utils/utils.h"
 
 void CodeGenVisitor::start_visit(DAG *dag) {
     makeDirectory();
     addGenIncludes();
     tabInd++;
-    dag->sink->accept(this);
+
+    this->visitDag(dag);
+
     emitFuncEnd(dag->action);
 
     std::string final_code;
@@ -38,7 +40,6 @@ void CodeGenVisitor::start_visit(DAG *dag) {
 
 void CodeGenVisitor::visit(DAGCollection *op) {
     std::string operatorName = "CollectionSourceOperator";
-    DAGVisitor::visit(op);
     emitComment(operatorName);
 
     std::string opName = getNextOperatorName();
@@ -57,7 +58,6 @@ void CodeGenVisitor::visit(DAGCollection *op) {
 }
 
 void CodeGenVisitor::visit(DAGMap *op) {
-    DAGVisitor::visit(op);
     std::string operatorName = "MapOperator";
     emitComment(operatorName);
 
@@ -79,7 +79,6 @@ void CodeGenVisitor::visit(DAGMap *op) {
 void CodeGenVisitor::visit(DAGReduce *op) {
     std::string operatorName = "ReduceOperator";
 
-    DAGVisitor::visit(op);
     emitComment(operatorName);
 
     std::string opName = getNextOperatorName();
@@ -105,7 +104,6 @@ void CodeGenVisitor::visit(DAGReduce *op) {
 void CodeGenVisitor::visit(DAGRange *op) {
     std::string operatorName = "RangeSourceOperator";
 
-    DAGVisitor::visit(op);
     emitComment(operatorName);
 
     std::string opName = getNextOperatorName();
@@ -123,7 +121,6 @@ void CodeGenVisitor::visit(DAGRange *op) {
 void CodeGenVisitor::visit(DAGFilter *op) {
     std::string operatorName = "FilterOperator";
 
-    DAGVisitor::visit(op);
     emitComment(operatorName);
 
     std::string opName = getNextOperatorName();
@@ -142,7 +139,6 @@ void CodeGenVisitor::visit(DAGFilter *op) {
 };
 
 void CodeGenVisitor::visit(DAGJoin *op) {
-    DAGVisitor::visit(op);
     std::string operatorName = "JoinOperator";
     emitComment(operatorName);
 
@@ -163,7 +159,6 @@ void CodeGenVisitor::visit(DAGJoin *op) {
 };
 
 void CodeGenVisitor::visit(DAGCartesian *op) {
-    DAGVisitor::visit(op);
     std::string operatorName = "CartesianOperator";
     emitComment(operatorName);
 
@@ -179,7 +174,6 @@ void CodeGenVisitor::visit(DAGCartesian *op) {
 };
 
 void CodeGenVisitor::visit(DAGReduceByKey *op) {
-    DAGVisitor::visit(op);
     bool is_grouped = op->fields[0].properties->find(FL_GROUPED) !=
                               op->fields[0].properties->end() ||
                       op->fields[0].properties->find(FL_SORTED) !=

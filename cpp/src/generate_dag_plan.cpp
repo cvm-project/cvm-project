@@ -24,7 +24,7 @@ int generate_dag_plan(char *dagstr, unsigned long counter) {  // NOLINT
     // scheme inference
     //    printDAG(dag);
     SchemaInference si;
-    si.start_visit(dag);
+    si.visitDag(dag);
     //    printDAG(dag);
     // optimize
     Optimizer opt;

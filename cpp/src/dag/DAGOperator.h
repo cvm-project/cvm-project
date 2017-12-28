@@ -16,6 +16,7 @@
 #include "utils/constants.h"
 
 class DAG;
+class DAGVisitor;
 
 class DAGOperator {
 public:

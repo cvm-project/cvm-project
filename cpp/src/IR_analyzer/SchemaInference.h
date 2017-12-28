@@ -7,19 +7,18 @@
 
 #include "IR_analyzer/LLVMParser.h"
 #include "dag/DAG.h"
+#include "dag/DAGOperators.h"
 #include "utils/DAGVisitor.h"
+#include "utils/debug_print.h"
 
 /**
  * assign schema for every operator
  * compute read, write and dead sets
  */
-class SchemaInference : DAGVisitor {
+class SchemaInference : public DAGVisitor {
 public:
-    void start_visit(DAG *dag) { dag->sink->accept(this); }
-
     void visit(DAGCollection *op) override {
         DEBUG_PRINT("schema inference visiting collection");
-        visitPredecessors(op);
         // for every output produce a new column
         for (size_t i = 0; i < op->fields.size(); i++) {
             Column *c = Column::makeColumn();
@@ -35,7 +34,6 @@ public:
 
     void visit(DAGRange *op) override {
         DEBUG_PRINT("schema inference visiting range");
-        visitPredecessors(op);
 
         // for every output produce a new column
         for (size_t i = 0; i < op->fields.size(); i++) {
@@ -51,7 +49,6 @@ public:
 
     void visit(DAGFilter *op) override {
         DEBUG_PRINT("schema inference visiting filter");
-        visitPredecessors(op);
 
         LLVMParser parser(op->llvm_ir);
         // copy output columns and fields from the predecessor
@@ -69,7 +66,6 @@ public:
 
     void visit(DAGCartesian *op) override {
         DEBUG_PRINT("schema inference cartesian");
-        visitPredecessors(op);
 
         // copy output columns and fields from the predecessors
         for (size_t i = 0; i < op->predecessors[0]->fields.size(); i++) {
@@ -106,7 +102,6 @@ public:
 
     void visit(DAGJoin *op) override {
         DEBUG_PRINT("schema inference visiting join");
-        visitPredecessors(op);
         DAGOperator *builtPred = op->predecessors[0];
         DAGOperator *streamPred = op->predecessors[1];
         if (!op->stream_right) {
@@ -161,7 +156,6 @@ public:
 
     void visit(DAGMap *op) override {
         DEBUG_PRINT("schema inference visiting map");
-        visitPredecessors(op);
         LLVMParser parser(op->llvm_ir);
 
         size_t c = 0;
@@ -201,7 +195,6 @@ public:
 
     void visit(DAGReduceByKey *op) override {
         DEBUG_PRINT("schema inference visiting reduce_by_key");
-        visitPredecessors(op);
 
         // keep the key column
         DAGOperator *pred = op->predecessors[0];

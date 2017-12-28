@@ -24,6 +24,7 @@ public:
     CodeGenVisitor() : genDir(get_lib_path() + "/cpp/gen/") {}
 
     void start_visit(DAG *dag);
+
     void visit(DAGCollection *op) override;
     void visit(DAGMap *op) override;
     void visit(DAGReduce *op) override;

@@ -61,6 +61,7 @@ set(SOURCE_FILES
         optimize/Optimizer.cpp
         optimize/SimplePredicateMoveAround.cpp
         utils/c_type_to_llvm.cpp
+        utils/DAGVisitor.cpp
         utils/printDAG.cpp
         utils/utils.cpp
     )

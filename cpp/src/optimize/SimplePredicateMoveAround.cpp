@@ -12,7 +12,7 @@
 void SimplePredicateMoveAround::optimize(DAG *dag_) {
     // 1. gather filters and remove from dag
     dag = dag_;
-    dag->sink->accept(this);
+    this->visitDag(dag);
     // 2. for every filter go up the dag and insert them
 
     for (auto filter : filters) {
@@ -70,7 +70,6 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
 }
 
 void SimplePredicateMoveAround::visit(DAGFilter *op) {
-    DAGVisitor::visit(op);
     DAGFilter *filt = op->copy();
     DAGOperator *pred = op->predecessors[0];
 
