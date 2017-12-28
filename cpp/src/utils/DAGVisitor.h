@@ -19,8 +19,12 @@ class DAGReduceByKey;
 
 class DAGVisitor {
 public:
+    template <class OperatorType>
+    friend class DAGOperatorBase;
+
     virtual void visitDag(DAG *dag) final;
 
+protected:
     virtual void visit(DAGCollection * /*op*/) {}
     virtual void visit(DAGRange * /*op*/) {}
     virtual void visit(DAGFilter * /*op*/) {}
@@ -30,5 +34,10 @@ public:
     virtual void visit(DAGReduceByKey * /*op*/) {}
     virtual void visit(DAGCartesian * /*op*/) {}
 };
+
+template <class OperatorType>
+void DAGOperatorBase<OperatorType>::accept(DAGVisitor *v) {
+    v->visit(reinterpret_cast<OperatorType *>(this));
+}
 
 #endif  // UTILS_DAGVISITOR_H

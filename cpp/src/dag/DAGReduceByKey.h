@@ -10,8 +10,6 @@ class DAGVisitor;
 
 class DAGReduceByKey : public DAGOperatorBase<DAGReduceByKey> {
 public:
-    void accept(DAGVisitor *v) override;
-
     constexpr static const char *kName = "reduce_by_key";
 };
 

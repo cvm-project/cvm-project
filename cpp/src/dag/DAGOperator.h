@@ -74,6 +74,8 @@ public:
 
     std::string name() const override { return OperatorType::kName; }
 
+    void inline accept(DAGVisitor *v) override;
+
     void to_json(nlohmann::json * /*json*/) const override {}
     void from_json(const nlohmann::json & /*json*/) override {}
 };
@@ -86,5 +88,7 @@ void to_json(nlohmann::json &json, const DAGOperator &op);
 void to_json(nlohmann::json &json, const DAGOperator *op);
 // NOLINTNEXTLINE google-runtime-references
 void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op);
+
+#include "utils/DAGVisitor.h"
 
 #endif  // DAG_DAGOPERATOR_H

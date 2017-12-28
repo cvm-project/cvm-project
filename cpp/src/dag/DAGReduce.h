@@ -9,8 +9,6 @@
 
 class DAGReduce : public DAGOperatorBase<DAGReduce> {
 public:
-    void accept(DAGVisitor *v) override;
-
     constexpr static const char *kName = "reduce";
 };
 

@@ -11,8 +11,6 @@ class DAGVisitor;
 
 class DAGFilter : public DAGOperatorBase<DAGFilter> {
 public:
-    void accept(DAGVisitor *v) override;
-
     constexpr static const char *kName = "filter";
 
     DAGFilter *copy();

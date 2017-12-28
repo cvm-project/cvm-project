@@ -13,7 +13,6 @@ public:
 
     constexpr static const char *kName = "collection_source";
 
-    void accept(DAGVisitor *v) override;
     void to_json(nlohmann::json *json) const override;
     void from_json(const nlohmann::json &json) override;
 };

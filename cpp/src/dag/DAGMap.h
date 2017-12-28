@@ -12,8 +12,6 @@
 class DAGVisitor;
 class DAGMap : public DAGOperatorBase<DAGMap> {
 public:
-    void accept(DAGVisitor *v) override;
-
     constexpr static const char *kName = "map";
 };
 

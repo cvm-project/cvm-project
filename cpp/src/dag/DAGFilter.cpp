@@ -2,9 +2,6 @@
 #include "dag/DAGFilter.h"
 
 #include "dag/DAG.h"
-#include "utils/DAGVisitor.h"
-
-void DAGFilter::accept(DAGVisitor *v) { v->visit(this); }
 
 DAGFilter *DAGFilter::copy() {
     auto *filt = new DAGFilter();

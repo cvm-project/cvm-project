@@ -3,11 +3,7 @@
 
 #include <string>
 
-#include "utils/DAGVisitor.h"
-
 using std::to_string;
-
-void DAGRange::accept(DAGVisitor *v) { v->visit(this); }
 
 void DAGRange::from_json(const nlohmann::json &json) {
     // TODO(sabir): should not have to cast to double

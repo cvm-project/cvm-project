@@ -13,7 +13,6 @@ class DAGVisitor;
 
 class DAGRange : public DAGOperatorBase<DAGRange> {
 public:
-    void accept(DAGVisitor *v) override;
     void to_json(nlohmann::json *json) const override;
     void from_json(const nlohmann::json &json) override;
 

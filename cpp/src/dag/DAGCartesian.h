@@ -11,8 +11,6 @@ class DAGCartesian : public DAGOperatorBase<DAGCartesian> {
 public:
     bool stream_right = true;
 
-    void accept(DAGVisitor *v) override;
-
     constexpr static const char *kName = "cartesian";
 };
 

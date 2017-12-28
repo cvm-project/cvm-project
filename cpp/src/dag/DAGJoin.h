@@ -13,8 +13,6 @@ class DAGJoin : public DAGOperatorBase<DAGJoin> {
 public:
     bool stream_right = true;
 
-    void accept(DAGVisitor *v) override;
-
     constexpr static const char *kName = "join";
 };
 
