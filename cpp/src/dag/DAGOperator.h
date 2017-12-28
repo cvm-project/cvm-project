@@ -72,6 +72,8 @@ class DAGOperatorBase : public DAGOperator {
 public:
     static DAGOperator *make_dag_operator() { return new OperatorType(); }
 
+    std::string name() const override { return OperatorType::kName; }
+
     void to_json(nlohmann::json * /*json*/) const override {}
     void from_json(const nlohmann::json & /*json*/) override {}
 };

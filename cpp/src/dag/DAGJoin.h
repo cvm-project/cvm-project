@@ -16,7 +16,6 @@ public:
     void accept(DAGVisitor *v) override;
 
     constexpr static const char *kName = "join";
-    std::string name() const override { return kName; }
 };
 
 #endif  // DAG_DAGJOIN_H

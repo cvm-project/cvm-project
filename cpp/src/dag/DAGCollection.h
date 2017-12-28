@@ -12,7 +12,6 @@ public:
     bool add_index = false;
 
     constexpr static const char *kName = "collection_source";
-    std::string name() const override { return kName; }
 
     void accept(DAGVisitor *v) override;
     void to_json(nlohmann::json *json) const override;

@@ -15,7 +15,6 @@ public:
     void accept(DAGVisitor *v) override;
 
     constexpr static const char *kName = "map";
-    std::string name() const override { return kName; }
 };
 
 #endif  // DAG_DAGMAP_H
