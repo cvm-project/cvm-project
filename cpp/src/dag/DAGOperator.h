@@ -14,7 +14,6 @@
 #include "dag/Column.h"
 #include "dag/DAG.h"
 #include "dag/TupleField.h"
-#include "utils/constants.h"
 
 class DAG;
 class DAGVisitor;

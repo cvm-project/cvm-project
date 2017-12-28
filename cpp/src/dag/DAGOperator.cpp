@@ -6,7 +6,6 @@
 #include <json.hpp>
 
 #include "TupleField.h"
-#include "utils/constants.h"
 #include "utils/utils.h"
 
 std::vector<TupleField> parse_output_type(const std::string &output) {

@@ -17,7 +17,6 @@
 #include "DAGRange.h"
 #include "DAGReduce.h"
 #include "DAGReduceByKey.h"
-#include "utils/constants.h"
 #include "utils/utils.h"
 
 // TODO(sabir): Implement proper singleton pattern

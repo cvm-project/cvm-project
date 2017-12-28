@@ -4,7 +4,6 @@
 #include <string>
 
 #include "utils/DAGVisitor.h"
-#include "utils/constants.h"
 
 using std::to_string;
 

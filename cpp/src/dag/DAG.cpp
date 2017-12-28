@@ -7,7 +7,6 @@
 
 #include "DAGCreation.hpp"
 #include "DAGOperator.h"
-#include "utils/constants.h"
 
 void DAG::addOperator(DAGOperator *const op) {
     assert(op->dag() == this);
