@@ -42,6 +42,12 @@ include_directories(${JSONLIB_INCLUDE_DIRS})
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 
+# Set up Boost
+find_package(Boost REQUIRED COMPONENTS
+        program_options
+    )
+include_directories(${Boost_INCLUDE_DIRS})
+
 # Set up library
 set(SOURCE_FILES
         generate_dag_plan.cpp
@@ -92,6 +98,15 @@ target_link_libraries(LLVMParser_tests PUBLIC
         ${LLVM_LIBS}
     )
 add_test(LLVMParser LLVMParser_tests)
+
+# Set up DAG parser unit test
+add_executable(dag_parser_tests
+        tests/TestDagParser.cpp
+    )
+target_link_libraries(dag_parser_tests PUBLIC
+        ${Boost_LIBRARIES}
+        generate
+    )
 
 # Setup cppcheck
 find_package(cppcheck 1.81)
