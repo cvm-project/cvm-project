@@ -490,8 +490,6 @@ class CollectionSource(RDD):
         dic = self.dic
         dic[OP] = 'collection_source'
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        dic[DATA_PTR] = self.data_ptr
-        dic[DATA_SIZE] = self.size
         dic[ADD_INDEX] = self.add_index
 
         return cur_index
@@ -523,8 +521,6 @@ class CollectionSource(RDD):
 #         cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)
 #         dic = self.dic
 #         dic[OP] = 'collection_source'
-#         dic[DATA_PTR] = self.data_ptr
-#         dic[DATA_SIZE] = self.size
 #         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
 #         dic[ADD_INDEX] = self.add_index
 #         return cur_index
