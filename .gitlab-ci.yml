@@ -45,7 +45,7 @@ cppcheck:
     - cd cpp/build
     - make cppcheck
 
-operator-test:
+python-tests:
   stage: test
   dependencies:
     - build
@@ -58,7 +58,8 @@ operator-test:
     - pip3 install -r requirements.txt
     - echo -e "CC=clang-5.0\nCXX=clang++-5.0" > cpp/src/operators/Makefile.local
   script:
-    - blaze/tests/test_operators.py -q
+    - cd blaze/tests
+    - python3 -m unittest discover -v
 
 cpp-test:
   stage: test
