@@ -14,7 +14,6 @@
 
 #include <sys/stat.h>
 
-#include "config.h"
 #include "dag/DAG.h"
 #include "utils/DAGVisitor.h"
 #include "utils/utils.h"

@@ -13,7 +13,6 @@
 
 #include <sys/stat.h>
 
-#include "config.h"
 #include "dag/DAG.h"
 #include "dag/DAGOperators.h"
 #include "utils/utils.h"
@@ -658,13 +657,10 @@ std::string CodeGenVisitor::parseTupleType(const std::string &type) {
 }
 
 void CodeGenVisitor::makeDirectory() {
-    if (DUMP_FILES) {
-        const int dirErr =
-                system(("mkdir -p " + genDir + LLVM_FUNC_DIR).c_str());
-        if (0 != dirErr) {
-            std::cerr << ("Error creating gen directory!") << std::endl;
-            std::exit(1);
-        }
+    const int dirErr = system(("mkdir -p " + genDir + LLVM_FUNC_DIR).c_str());
+    if (0 != dirErr) {
+        std::cerr << ("Error creating gen directory!") << std::endl;
+        std::exit(1);
     }
 }
 
@@ -681,12 +677,10 @@ void CodeGenVisitor::storeLLVMCode(const std::string &ir,
     std::regex reg("@cfuncnotuniquename");
     patched_ir = std::regex_replace(patched_ir, reg, "@\"" + funcName + "\"");
     // write code to the gen dir
-    if (DUMP_FILES) {
-        std::string path = genDir + LLVM_FUNC_DIR + funcName + ".ll";
-        std::ofstream out(path);
-        out << patched_ir;
-        out.close();
-    }
+    std::string path = genDir + LLVM_FUNC_DIR + funcName + ".ll";
+    std::ofstream out(path);
+    out << patched_ir;
+    out.close();
 }
 
 std::string CodeGenVisitor::writeFuncDecl() {
