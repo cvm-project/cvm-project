@@ -18,11 +18,27 @@ class TestCollection(unittest.TestCase):
         res = [tuple(r) for r in res]
         self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
 
-#    def test_index_array(self):
-#        bc = BlazeContext()
-#        res = bc.numpy_array(np.array([i ** 2 for i in range(10)]), add_index=True).collect()
-#        res = [tuple(r) for r in res]
-#        self.assertListEqual(res, [(i, i ** 2) for i in range(10)])
+    def test_tuple(self):
+        bc = BlazeContext()
+        collection = [(i, 2*i) for i in range(10)]
+        res = bc.collection(collection).collect()
+        res = [tuple(r) for r in res]
+        self.assertListEqual(res, collection)
+
+    def test_array(self):
+        bc = BlazeContext()
+        collection = [(i, 2*i) for i in range(10)]
+        res = bc.collection(np.array(collection)).collect()
+        res = [tuple(r) for r in res]
+        self.assertListEqual(res, collection)
+
+    def test_array_index(self):
+        bc = BlazeContext()
+        collection = [(i, 2*i) for i in range(10)]
+        res = bc.collection(np.array(collection), add_index=True).collect()
+        res = [tuple(r) for r in res]
+        ref = [(i,) + r for i, r in enumerate(collection)]
+        self.assertListEqual(res, ref)
 
 class TestRange(unittest.TestCase):
     def test_range_simple(self):
