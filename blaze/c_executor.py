@@ -19,7 +19,7 @@ executer_header_file = "execute.h"
 generate_lib = "libgenerate"
 execute_lib = "execute"
 
-# static counter used to differentiate share lib versions
+# static counter used to differentiate shared lib versions
 lib_counter = 0
 dag_cache = {}
 
@@ -48,7 +48,6 @@ def load_cffi(header, lib_path, ffi):
     return ffi.dlopen(lib_path + lib_extension)
 
 
-# 18 without compilation
 def execute(dag_dict, hash_, inputs):
     global lib_counter
 
