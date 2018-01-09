@@ -1,16 +1,16 @@
 #cmakefiles
-/CMakeFiles/
-/CMakeTmp/
-/CMakeCache.txt
-/Makefile
-/cmake-build-debug
-/cmake-build-release
-/cmake_install.cmake
-/cpp.cbp
+CMakeFiles/
+CMakeTmp/
+src/CMakeCache.txt
+Makefile
+cmake-build-debug
+cmake-build-release
+cmake_install.cmake
+cpp.cbp
 
 #llvm sources
 src/libs/llvm
 *.out
 *.ll
 *.s
-/cpp
+CTestTestfile.cmake
