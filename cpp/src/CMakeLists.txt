@@ -78,6 +78,7 @@ target_link_libraries(generate PUBLIC
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC
         ${GRAPHVIZ_GVC_LIBRARY}
+        ${GRAPHVIZ_CGRAPH_LIBRARY}
         ${LLVM_LIBS}
         generate
     )
