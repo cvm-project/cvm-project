@@ -1,12 +1,6 @@
-import os
-import math
-from functools import reduce
 import numpy as np
-import sys
-
-sys.path.insert(0, "/home/sabir/projects/jitq")
-
 import pandas as pd
+
 from jitq.benchmarks.timer import timer
 
 MAX = 1 << 27

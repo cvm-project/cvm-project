@@ -1,13 +1,10 @@
 import numpy as np
-import sys
-
-sys.path.insert(0, "/home/sabir/projects/jitq")
 import pandas as pd
 import pyspark as ps
-from pyspark.sql.functions import sum, col, rand
-from jitq.benchmarks.timer import timer
-from operator import add
 import pyspark.sql.types as tp
+from pyspark.sql.functions import rand, col, sum
+
+from jitq.benchmarks.timer import timer
 
 MAX = 1 << 22
 # MAX = 1 << 2

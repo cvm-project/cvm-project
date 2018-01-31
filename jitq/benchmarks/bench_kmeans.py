@@ -1,15 +1,13 @@
-import os
 import sys
 
-sys.path.insert(0, os.environ['JITQPATH'])
-
+import os
 from sklearn.datasets.samples_generator import make_blobs
-from jitq.jitq_context import JitqContext
 from jitq.benchmarks.timer import timer
 from sklearn.cluster import KMeans as sk_KMeans
-import numpy as np
 import matplotlib.pyplot as plt
 from ml.kmeans import KMeans
+
+sys.path.insert(0, os.environ['JITQPATH'])
 
 n_features = 30
 n_samples = 1 << 20

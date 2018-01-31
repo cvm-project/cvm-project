@@ -1,15 +1,8 @@
 from scipy.spatial import distance
-from sklearn.cluster import DBSCAN
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.neighbors import KNeighborsClassifier
 
-from jitq.jitq_context import JitqContext
 from jitq.benchmarks.timer import timer
-from sklearn.cluster import KMeans as sk_KMeans
-import numpy as np
-import matplotlib.pyplot as plt
-from ml.kmeans import KMeans
-
 n_features = 5
 n_samples = 1 << 12
 n_clusters = 5

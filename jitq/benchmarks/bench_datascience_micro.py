@@ -1,13 +1,8 @@
 import pandas as pd
 import numpy as np
-import os
-import sys
-
-sys.path.insert(0, os.environ['JITQPATH'])
 
 from jitq.benchmarks.timer import Timer
 from jitq.jitq_context import JitqContext
-from numba import njit
 
 size = 1 << 27
 data = np.random.rand(size)

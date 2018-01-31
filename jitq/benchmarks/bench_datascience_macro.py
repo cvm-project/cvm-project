@@ -1,14 +1,7 @@
 import pandas as pd
 import dask.dataframe as dd
-import sys
-import numpy as np
-
-from dask import threaded
-
-sys.path.insert(0, "/home/sabir/projects/jitq")
 
 from jitq.jitq_context import JitqContext
-
 from jitq.benchmarks.timer import timer, Timer
 
 from multiprocessing.pool import ThreadPool

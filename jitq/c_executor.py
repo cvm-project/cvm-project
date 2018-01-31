@@ -1,6 +1,5 @@
 import json
 
-import gc
 from cffi import FFI
 from sys import exit, platform
 import numpy as np
