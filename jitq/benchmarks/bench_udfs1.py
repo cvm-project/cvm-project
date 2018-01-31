@@ -22,15 +22,11 @@ salaries['sal'] = np.random.randint(min_sal, max_sal, size=n_emps)
 for i in range(0, 7):
     n_deps = 2 ** (13 + i)
     print("number of deps: " + str(n_deps))
-    # n_deps = 2 ** 3
-    # n_emps = 2 ** 7
-
     deps = pd.DataFrame()
     t = np.arange(0, n_emps)
     np.random.shuffle(t)
     deps['d_id'] = np.random.randint(0, n_deps, size=n_emps)
     deps['e_id'] = t
-
 
     dep_emp_sal = pd.merge(deps, salaries, on='e_id')
 

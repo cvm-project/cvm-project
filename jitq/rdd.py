@@ -43,38 +43,26 @@ def numba_abi_to_llvm_abi(type_):
     return out
 
 
-# TIME: 100 - 1000
 def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
-    # print("old input type: " + str(input_type))
     opts_ = {OPT_CONST_PROPAGATE}
     if opts is not None:
         opts_ += opts
     func = ast_optimize(func, opts_)
     input_type = replace_unituple(input_type)
-
-    # get the output type with njit
-
-    # TIME: up to 1000
     timer = Timer()
     timer.start()
     if isinstance(input_type, list):
         dec_func = numba.njit(tuple(input_type), fastmath=FAST_MATH, parallel=True)(func)
     else:
         dec_func = numba.njit((input_type,), fastmath=FAST_MATH, parallel=True)(func)
-    # # #
     timer.end()
-    # print("compilation " + func.__name__ + " " + str(timer.diff()))
     output_type = dec_func.nopython_signatures[0].return_type
 
-    # print("old output type" + str(output_type))
     output_type = replace_unituple(output_type)
-    # print("new output type" + str(output_type))
 
     input_type = dec_func.nopython_signatures[0].args
 
-    # 100 - 800
     cfunc_code = cfunc(output_type(*input_type), fastmath=FAST_MATH)(func)
-    ###
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
     m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
@@ -143,7 +131,6 @@ class RDD(object):
 
             cleanRDDs(self)
 
-            # 1500
             self.writeDAG(dagdict[DAG], 0)
 
             rdd_dag_cache[hash_] = dagdict
@@ -315,8 +302,6 @@ class Join(ShuffleRDD):
         cur_index = super(Join, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = 'join'
-        # dic[FUNC] = 'function code join'
-        # (K, V), (K, W) => (K, (V, W))
 
         self.output_type = replace_unituple(self.compute_output_type())
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
@@ -510,42 +495,6 @@ class CollectionSource(RDD):
 
     def get_inputs(self):
         return [(self.data_ptr, self.size)]
-
-
-# class NumpyArraySource(RDD):
-#     def __init__(self, array, add_index=False):
-#         super(NumpyArraySource, self).__init__()
-#
-#         try:
-#             self.output_type = replace_unituple(typeof(tuple(array[0])))
-#         except TypeError:  # scalar type
-#             self.output_type = typeof(array[0])
-#
-#         if add_index:
-#             self.output_type = replace_unituple(Tuple(flatten([numba.typeof(1), self.output_type])))
-#         # self.size = array.shape[0]
-#         self.size = array.shape[0]
-#         self.data_ptr = array.__array_interface__['data'][0]
-#         # keep a reference to the np array
-#         # until the end of the execution to prevent gc
-#         self.array = array
-#         self.add_index = add_index
-#
-#     def writeDAG(self, daglist, index):
-#         cur_index = super(NumpyArraySource, self).writeDAG(daglist, index)
-#         dic = self.dic
-#         dic[OP] = 'collection_source'
-#         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-#         dic[ADD_INDEX] = self.add_index
-#         return cur_index
-#
-#     def get_hash(self):
-#         hash_ = super(NumpyArraySource, self).get_hash()
-#         hash_.append(self.add_index)
-#         return hash_
-#
-#     def get_inputs(self):
-#         return [(self.data_ptr, self.size)]
 
 
 class RangeSource(RDD):

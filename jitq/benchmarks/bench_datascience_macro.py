@@ -82,17 +82,6 @@ def with_pandas():
     print('filtering...')
     features_raw = features_raw[features_raw['land_no_use'] < 1]
     print(features_raw.shape)
-    #
-    # print(features_raw.shape)
-    #
-    # print(features_raw.columns)
-
-    # print("res shape " + str(res.shape))
-    # t.start()
-    # print('writing csv file')
-    # res.to_csv('crime_data/ALL_features.csv', index=False)
-    # t.end()
-    # print('writing csv: ' + t.diff())
 
 
 def with_dask():
@@ -121,12 +110,6 @@ def with_dask():
     features_raw = features_raw[features_raw['land_no_use'] < 1]
 
     result = features_raw.compute()
-    # print(res)
-    # store = pd.HDFStore('store.h5')
-    # features_raw.to_hdf(store, key='all_features', index=False)
-    # import numpy as np
-    # print('export csv')
-    # np.savetxt('crime_data/all_f.csv', store['all_features'], '%g', ',')
 
 
 def with_our():
@@ -143,13 +126,6 @@ def with_our():
     print("loading files " + ti.diff())
 
     features_raw = features_raw.map(lambda t: t[:3] + (t[3] * 1.8 + 32,) + t[4:])
-    # features_raw = features_raw.map(
-    #     lambda t: t + (3.2 * t[3] ** 3 + 7.5 * t[4] ** 3 + 2.3 * t[5] ** 3 + 5.3 * t[6] ** 3 + 8.6 * t[7] ** 3,))
-    # features_raw = features_raw.map(
-    #     lambda t: t + (3.2 * t[3] ** 2 + 7.5 * t[4] ** 2 + 2.3 * t[5] ** 2 + 5.3 * t[6] ** 2 + 8.6 * t[7] ** 2,))
-    # features_raw = features_raw.map(
-    #     lambda t: t + (3.2 * t[3] ** 4 + 7.5 * t[4] ** 4 + 2.3 * t[5] ** 4 + 5.3 * t[6] ** 4 + 8.6 * t[7] ** 4,))
-
     features_raw = features_raw.map(
         lambda t: t + (3.2 * t[3] ** 3 + 7.5 * t[4] ** 3 + 2.3 * t[5] ** 3 + 5.3 * t[6] ** 3 + 8.6 * t[7] ** 3,
                        3.2 * t[3] ** 2 + 7.5 * t[4] ** 2 + 2.3 * t[5] ** 2 + 5.3 * t[6] ** 2 + 8.6 * t[7] ** 2,
@@ -160,7 +136,6 @@ def with_our():
 
     features_raw = features_raw.filter(lambda t: t[1][37] < 1)  # 0.4 selectivity
     res = features_raw.collect()
-    # print(res)
 
 
 # print("pandas time: " + str(timer(with_pandas, 1)))

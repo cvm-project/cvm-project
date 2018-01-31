@@ -52,14 +52,6 @@ numpyDtypeMap = {
 }
 
 
-# dtypeNumbaMap = {
-#     'f4': 'float32',
-#     'f8': 'float64',
-#     'i4': 'int32',
-#     'i8': 'int64',
-#     'b1': 'boolean',
-# }
-
 def numba_type_to_dtype(type_):
     if isinstance(type_, nb_types.Tuple):
         types = []
