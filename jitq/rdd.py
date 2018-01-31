@@ -136,7 +136,7 @@ class RDD(object):
             rdd_dag_cache[hash_] = dagdict
             # write to file
             if DUMP_DAG:
-                with open(getJitqPath() + '/dag.json', 'w') as fp:
+                with open(getProjectPath() + '/dag.json', 'w') as fp:
                     json.dump(dagdict, fp=fp, cls=RDDEncoder)
             return execute(dagdict, hash_, inputs)
 

@@ -139,14 +139,14 @@ def replace_unituple(type_):
     return out
 
 
-def getJitqPath():
-    jitq_path = ""
+def getProjectPath():
+    path = ""
     try:
-        jitq_path = os.environ['JITQPATH']
+        path = os.environ['JITQPATH']
     except KeyError:
         eprint("JITQPATH is not defined, set it to your jitq installation path")
         exit(1)
-    return jitq_path
+    return path
 
 
 def flatten(iterable_):

@@ -11,7 +11,7 @@ from jitq.rdd_result import NumpyResult
 from numba.types import Tuple
 from jitq.benchmarks.timer import Timer
 
-JITQ_PATH = getJitqPath()
+JITQ_PATH = getProjectPath()
 cpp_dir = JITQ_PATH + "/cpp/"
 gen_dir = JITQ_PATH + "/cpp/gen/"
 gen_header_file = "generate_dag_plan.h"

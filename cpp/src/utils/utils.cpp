@@ -56,12 +56,12 @@ std::vector<std::string> split_string(const std::string &str,
 }
 
 std::string get_lib_path() {
-    const char *const jitqPath = std::getenv("JITQPATH");
-    if (jitqPath == nullptr) {
+    const char *const projectPath = std::getenv("JITQPATH");
+    if (projectPath == nullptr) {
         std::cerr << "JITQPATH is not defined, set it to your jitq "
                      "installation path\n";
     }
-    return std::string(jitqPath);
+    return std::string(projectPath);
 }
 
 std::string exec(const char *cmd) {
