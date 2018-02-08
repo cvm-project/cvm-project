@@ -235,6 +235,7 @@ class Map(PipeRDD):
         dic = self.dic
         dic[OP] = MAP
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
+        # TODO(ingo): what output types are valid here?
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
@@ -244,7 +245,12 @@ class Filter(PipeRDD):
         cur_index = super(Filter, self).writeDAG(daglist, index)
         dic = self.dic
         dic[OP] = FILTER
-        dic[FUNC], _ = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
+        dic[FUNC], return_type = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
+        if str(return_type) != "bool":
+            raise BaseException(
+                    "Function given to reduce_by_key has the wrong return type:\n"
+                    "  expected: {0}\n"
+                    "  found:    {1}".format("bool", return_type))
         self.output_type = self.parents[0].output_type
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
@@ -365,8 +371,11 @@ class Reduce(ShuffleRDD):
         dic[OP] = REDUCE
         input_type = self.computeInputType()
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, input_type)
-        assert self.output_type == self.parents[
-            0].output_type, "The reduce function must return the same type as its arguments"
+        if str(input_type[0]) != str(self.output_type):
+            raise BaseException(
+                    "Function given to reduce_by_key has the wrong return type:\n"
+                    "  expected: {0}\n"
+                    "  found:    {1}".format(input_type[0], self.output_type))
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
@@ -413,7 +422,12 @@ class ReduceByKey(ShuffleRDD):
         dic = self.dic
         dic[OP] = REDUCEBYKEY
         input_type = self._compute_input_type()
-        dic[FUNC], _ = get_llvm_ir_and_output_type(self.func, input_type)
+        dic[FUNC], output_type = get_llvm_ir_and_output_type(self.func, input_type)
+        if str(input_type[0]) != str(output_type):
+            raise BaseException(
+                    "Function given to reduce_by_key has the wrong return type:\n"
+                    "  expected: {0}\n"
+                    "  found:    {1}".format(input_type[0], output_type))
         self.output_type = self.parents[0].output_type
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
