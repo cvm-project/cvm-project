@@ -5,6 +5,8 @@ import unittest
 import argparse
 import sys
 from functools import reduce
+from itertools import groupby
+from operator import itemgetter
 
 import numpy as np
 
@@ -169,11 +171,17 @@ class TestReduceByKey(unittest.TestCase):
     def test_grouped(self):
         bc = BlazeContext()
         input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
-        d = bc.collection(input_, add_index=True).cartesian(bc.collection(input_, add_index=True)).reduce_by_key(
-            lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).collect()
-        truth = {(4, 1, 1, 1, 1, 1), (0, 0, 1, 0, 1, 0), (1, 1, 1, 1, 1, 1),
-                 (2, 1, 1, 1, 1, 1), (3, 0, 1, 0, 1, 0)}
-        self.assertSetEqual(set(tuple(t) for t in d), truth)
+        reduce_func = lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1], t1[2] + t2[2], t1[3] + t2[3], t1[4] + t2[4])
+
+        enumerated_input = [(i,) + t for i, t in enumerate(input_)]
+        cart = [t1 + t2 for t1 in enumerated_input for t2 in enumerated_input]
+        truth = [reduce(lambda t1, t2: (t1[0],) + reduce_func(t1[1:], t2[1:]), group)
+                       for _, group in groupby(sorted(cart), key=itemgetter(0))]
+
+        d = bc.collection(input_, add_index=True).cartesian(bc.collection(input_, add_index=True)) \
+                .flatten().reduce_by_key(reduce_func).collect()
+
+        self.assertEqual(sorted((tuple(t) for t in d)), list(sorted(truth)))
 
 
 class TestCartesian(unittest.TestCase):
