@@ -144,12 +144,13 @@ class TestReduce(unittest.TestCase):
         d = bc.collection(input).reduce(lambda t1, t2: t1 + t2)
         self.assertEqual(d, sum(input))
 
-    @unittest.skip("Feature not fully implemented")
     def test_reduce_tuple(self):
         bc = BlazeContext()
         input = [(r, r * 10) for r in range(0, 10)]
         res = bc.collection(input).reduce(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1]))
-        self.assertTupleEqual(res, (sum(map(lambda t: t[0], input)), sum(map(lambda t: t[1], input))))
+        res = tuple(res)
+        truth = (sum(map(lambda t: t[0], input)), sum(map(lambda t: t[1], input)))
+        self.assertTupleEqual(res, truth)
 
 
 class TestReduceByKey(unittest.TestCase):
@@ -160,13 +161,12 @@ class TestReduceByKey(unittest.TestCase):
         truth = {(0, 2), (1, 3)}
         self.assertSetEqual(set(tuple(t) for t in d), truth)
 
-    @unittest.skip("Feature not fully implemented")
     def test_reduce_by_key_tuple(self):
         bc = BlazeContext()
         input_ = [(0, 1, 2), (1, 1, 2), (1, 1, 2), (0, 1, 2), (1, 1, 2)]
         d = bc.collection(input_).reduce_by_key(lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).collect()
-        truth = {(0, 2, 4), (1, 3, 6)}
-        self.assertSetEqual(set(tuple(t) for t in d), truth)
+        truth = [(0, 2, 4), (1, 3, 6)]
+        self.assertEqual(sorted([tuple(t) for t in d]), sorted(truth))
 
     def test_grouped(self):
         bc = BlazeContext()
