@@ -2,11 +2,11 @@
 /cpp/gen/
 
 # benchmark data
-/blaze/benchmarks/crime_data/
+/jitq/benchmarks/crime_data/
 *.h5
 
 # generated dag file
-/blaze/dag.json
+/jitq/dag.json
 /dag.json
 
 # Byte-compiled / optimized / DLL files

@@ -2,12 +2,12 @@ import sys, os
 
 sys.path.append(os.getcwd())
 
-from blaze.blaze_context import BlazeContext
+from jitq.jitq_context import JitqContext
 from timeit import default_timer as timer
 
 start = timer()
-bc = BlazeContext()
-tf = bc.text_file("blaze/example_data/xaa")
+bc = JitqContext()
+tf = bc.text_file("jitq/example_data/xaa")
 # tf = bc.text_file("/home/sabir/gutemberg.txt")
 words = tf.flat_map(lambda line: line.split(" ")).map(lambda w: w.lower())
 

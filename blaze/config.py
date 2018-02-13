@@ -1,2 +1,0 @@
-DUMP_DAG = True
-FAST_MATH = True

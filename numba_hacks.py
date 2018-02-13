@@ -1,4 +1,4 @@
-from blaze.libs.numba.llvm_ir import cfunc
+from jitq.libs.numba.llvm_ir import cfunc
 from numba import njit, types
 import os
 

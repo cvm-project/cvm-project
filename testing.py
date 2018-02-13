@@ -2,7 +2,7 @@ import os
 
 from numba import njit
 import numpy as np
-from blaze.blaze_context import BlazeContext
+from jitq.jitq_context import JitqContext
 
 # os.environ["NUMBA_DUMP_IR"] = '1'
 # os.environ["NUMBA_DUMP_ASSEMBLY"] = '1'
@@ -17,5 +17,5 @@ def id_(ls):
     return d
 
 
-bc = BlazeContext()
+bc = JitqContext()
 bc.numpy_array(np.array([[1, 2], [2, 3]])).map(id_).collect()

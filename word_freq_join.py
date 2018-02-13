@@ -2,15 +2,15 @@ import sys, os
 
 sys.path.append(os.getcwd())
 
-from blaze.blaze_context import BlazeContext
+from jitq.jitq_context import JitqContext
 from timeit import default_timer as timer
 
 start = timer()
-bc = BlazeContext()
-tf1 = bc.text_file("blaze/example_data/xaa")
-# tf1 = bc.text_file("blaze/example_data/nat.txt")
-tf2 = bc.text_file("blaze/example_data/xab")
-# tf2 = bc.text_file("blaze/example_data/nat.txt")
+bc = JitqContext()
+tf1 = bc.text_file("jitq/example_data/xaa")
+# tf1 = bc.text_file("jitq/example_data/nat.txt")
+tf2 = bc.text_file("jitq/example_data/xab")
+# tf2 = bc.text_file("jitq/example_data/nat.txt")
 
 words_count1 = tf1.flat_map(lambda line: line.split(" ")) \
     .map(lambda w: (w.lower(), 1)) \

@@ -11,9 +11,9 @@ import numba
 import numpy as np
 import scipy.sparse as sp
 
-from blaze.ast_optimizer import unroll_loops
-from blaze.benchmarks.timer import Timer
-from blaze.blaze_context import BlazeContext
+from jitq.ast_optimizer import unroll_loops
+from jitq.benchmarks.timer import Timer
+from jitq.jitq_context import JitqContext
 from numba import njit
 
 
@@ -58,7 +58,7 @@ class KMeans():
     def fit(self, X, y=None):
         n_cols = len(X[0])
         n_samples = len(X[1])
-        bc = BlazeContext()
+        bc = JitqContext()
         old_centroids = _init_centroids(X, self.n_clusters, init=self.init, random_state=self.random_state)
         centroids = bc.collection(old_centroids, add_index=True)
         old_centroids = centroids.collect()

@@ -1,0 +1,27 @@
+{
+    "dag": [
+        {
+            "add_index": false,
+            "id": 0,
+            "op": "collection_source",
+            "output_type": "(long, long)",
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": "(long, long, long)",
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "cartesian",
+            "output_type": "(long, long, long, long, long)",
+            "predecessors": [
+                0,
+                1
+            ]
+        }
+    ]
+}

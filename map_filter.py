@@ -1,12 +1,12 @@
 import os
-from blaze.blaze_context import *
+from jitq.jitq_context import *
 import numpy as np
 import random
 
 # sys.path.insert(0, "/home/sabir/projects/")
 from numba import njit
 
-bc = BlazeContext()
+bc = JitqContext()
 
 # print(bc.collection(input_).map(lambda *t: (t[0:2], t[1:])).collect())
 
@@ -29,7 +29,7 @@ res = bc.collection([(1, 2.0), (5, 4.0)]) \
 #     .filter(lambda t: t[0] == 1)\
 #     .join(data1).collect()
 
-# bc = BlazeContext()
+# bc = JitqContext()
 # data2 = bc.collection([(1, 33), (0, 0)]).map(lambda t: (t[0] * 3, t[0])).filter(lambda t: t[1] > -1).map(
 #     lambda t: (t[1], t[0]))
 # print(bc.collection(input_).map(lambda t: (t[1], t[0])).filter(lambda t: t[0] == 1).join(data2).collect())

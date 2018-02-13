@@ -52,13 +52,13 @@ python-tests:
   image: ingomuellernet/buildenv
   variables:
     PYTHONPATH: $CI_PROJECT_DIR
-    BLAZEPATH: $CI_PROJECT_DIR
+    JITQPATH: $CI_PROJECT_DIR
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev
     - pip3 install -r requirements.txt
     - echo -e "CC=clang-5.0\nCXX=clang++-5.0" > cpp/src/operators/Makefile.local
   script:
-    - cd blaze/tests
+    - cd jitq/tests
     - python3 -m unittest discover -v
 
 cpp-test:

@@ -56,12 +56,12 @@ std::vector<std::string> split_string(const std::string &str,
 }
 
 std::string get_lib_path() {
-    const char *const blazePath = std::getenv("BLAZEPATH");
-    if (blazePath == nullptr) {
-        std::cerr << "BLAZEPATH is not defined, set it to your blaze "
+    const char *const jitqPath = std::getenv("JITQPATH");
+    if (jitqPath == nullptr) {
+        std::cerr << "JITQPATH is not defined, set it to your jitq "
                      "installation path\n";
     }
-    return std::string(blazePath);
+    return std::string(jitqPath);
 }
 
 std::string exec(const char *cmd) {
