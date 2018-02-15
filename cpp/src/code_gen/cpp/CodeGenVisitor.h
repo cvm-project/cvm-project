@@ -14,6 +14,9 @@
 #include "dag/DAG.h"
 #include "utils/DAGVisitor.h"
 
+namespace code_gen {
+namespace cpp {
+
 class CodeGenVisitor : public DAGVisitor {
 public:
     struct TupleTypeDesc {
@@ -124,5 +127,8 @@ private:
         return unique_name("op");
     }
 };
+
+}  // namespace cpp
+}  // namespace code_gen
 
 #endif  // CODE_GEN_CPP_CODEGENVISITOR_H

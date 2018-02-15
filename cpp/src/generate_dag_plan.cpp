@@ -33,7 +33,7 @@ int generate_dag_plan(const char *const dagstr,
 
     // Generate code
     exec(("bash -c 'rm -r -f " + get_lib_path() + "/cpp/gen/*'").c_str());
-    generate_code(dag.get());
+    code_gen::cpp::generate_code(dag.get());
 
     // Call make in the subdir
     TICK1

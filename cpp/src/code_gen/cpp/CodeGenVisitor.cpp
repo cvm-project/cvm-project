@@ -18,6 +18,9 @@
 using boost::algorithm::join;
 using boost::format;
 
+namespace code_gen {
+namespace cpp {
+
 auto CodeGenVisitor::TupleTypeDesc::fromTupleString(std::string &&name,
                                                     const std::string &s)
         -> TupleTypeDesc {
@@ -316,3 +319,6 @@ void CodeGenVisitor::storeLLVMCode(const std::string &ir,
     // write code to the gen dir
     llvmCode_ << patched_ir;
 }
+
+}  // namespace cpp
+}  // namespace code_gen

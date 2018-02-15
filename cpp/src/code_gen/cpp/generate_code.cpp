@@ -18,6 +18,9 @@ using boost::adaptors::transformed;
 using boost::algorithm::join;
 using boost::format;
 
+namespace code_gen {
+namespace cpp {
+
 std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
     // TODO(sabir): this should be an operator
     return (format("/** collecting the result **/"
@@ -123,3 +126,6 @@ void generate_code(DAG *dag) {
     headerFile << format("result_type* execute(%s);\n") % input_args;
     headerFile << "void free_result(result_type*);";
 }
+
+}  // namespace cpp
+}  // namespace code_gen

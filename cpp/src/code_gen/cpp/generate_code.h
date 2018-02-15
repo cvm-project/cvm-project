@@ -8,6 +8,12 @@
 #include "CodeGenVisitor.h"
 #include "dag/DAG.h"
 
+namespace code_gen {
+namespace cpp {
+
 void generate_code(DAG* dag);
+
+}  // namespace cpp
+}  // namespace code_gen
 
 #endif
