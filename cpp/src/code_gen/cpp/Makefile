@@ -11,7 +11,7 @@ ifeq ($(origin CXX),default)
 endif
 
 # Set flags
-INC = -I ../src/ -I ../src/utils/
+INC = -I $(SCRIPT_DIR)/operators
 CFLAGS = -DNDEBUG -O3 -ffast-math -march=native -mtune=native -fPIC -flto
 CXXFLAGS = $(CFLAGS) -std=c++14
 LDFLAGS = -fuse-ld=gold -flto
@@ -20,9 +20,9 @@ LDFLAGS = -fuse-ld=gold -flto
 UDF_SOURCES = llvm_funcs.ll
 UDF_OBJECTS = $(UDF_SOURCES:.ll=.o)
 
-HEADER = ../src/operators/Operators.h
-GCHEADER = ../src/operators/Operators.h.gch
-GENHEADER = ../src/operators/Operators.h.sh
+HEADER = $(SCRIPT_DIR)/operators/Operators.h
+GCHEADER = $(SCRIPT_DIR)/operators/Operators.h.gch
+GENHEADER = $(SCRIPT_DIR)/operators/Operators.h.sh
 
 # Rules
 all: execute.so

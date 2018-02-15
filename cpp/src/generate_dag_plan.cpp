@@ -39,7 +39,7 @@ int generate_dag_plan(const char *const dagstr,
     TICK1
     exec(("cd " + get_lib_path() +
           "/cpp/gen && make LIB_ID=" + std::to_string(counter) + " -f " +
-          get_lib_path() + "/cpp/src/operators/Makefile -j")
+          get_lib_path() + "/cpp/src/code_gen/cpp/Makefile -j")
                  .c_str());
     TOCK1
     //    std::cout << "call make " << DIFF1 << std::endl;

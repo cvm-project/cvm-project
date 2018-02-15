@@ -205,7 +205,7 @@ std::string CodeGenVisitor::visit_common(DAGOperator *op,
 
     operatorNameTupleTypeMap.emplace(
             op->id, OperatorDesc{op->id, var_name, output_type});
-    includes.insert("\"operators/" + operator_name + ".h\"");
+    includes.insert("\"" + operator_name + ".h\"");
     return var_name;
 }
 
