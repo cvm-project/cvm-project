@@ -6,10 +6,12 @@ extern "C" {
 #include <cstring>
 #include <iostream>
 #include <tuple>
+#include <unordered_map>
 #include <utility>
 
 #include "IR_analyzer/SchemaInference.h"
-#include "code_gen/cpp/generate_code.h"
+#include "code_gen/common/BackEnd.hpp"
+#include "code_gen/cpp/BackEnd.hpp"
 #include "dag/DAGCreation.hpp"
 #include "optimize/Optimizer.h"
 #include "utils/printDAG.h"
@@ -31,19 +33,25 @@ int generate_dag_plan(const char *const dagstr,
     Optimizer opt;
     opt.run(dag.get());
 
-    // Generate code
-    exec(("bash -c 'rm -r -f " + get_lib_path() + "/cpp/gen/*'").c_str());
-    code_gen::cpp::generate_code(dag.get());
+    // Select code gen back-end
+    using CodeGenBackEnd = std::unique_ptr<code_gen::common::BackEnd>;
+    std::unordered_map<std::string, CodeGenBackEnd> code_generators;
+    code_generators.emplace("cpp",
+                            CodeGenBackEnd(new code_gen::cpp::BackEnd()));
 
-    // Call make in the subdir
+    const auto code_gen_backend = code_generators.at("cpp").get();
+
+    // Generate code
+    code_gen_backend->GenerateCode(dag.get());
+
+    // Compile to native machine code
     TICK1
-    exec(("cd " + get_lib_path() +
-          "/cpp/gen && make LIB_ID=" + std::to_string(counter) + " -f " +
-          get_lib_path() + "/cpp/src/code_gen/cpp/Makefile -j")
-                 .c_str());
+    // TODO(ingo): think again about this interface
+    code_gen_backend->Compile(counter);
     TOCK1
     //    std::cout << "call make " << DIFF1 << std::endl;
 
+    // TODO(ingo): better error handling
     return 0;
 }
 }  // extern "C"

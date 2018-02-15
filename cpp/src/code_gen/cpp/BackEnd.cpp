@@ -1,4 +1,4 @@
-#include "generate_code.h"
+#include "BackEnd.hpp"
 
 #include <fstream>
 #include <regex>
@@ -12,6 +12,7 @@
 
 #include <sys/stat.h>
 
+#include "CodeGenVisitor.h"
 #include "utils/utils.h"
 
 using boost::adaptors::transformed;
@@ -46,8 +47,9 @@ std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
             .str();
 }
 
-void generate_code(DAG *dag) {
+void BackEnd::GenerateCode(DAG *const dag) {
     const std::string genDir = get_lib_path() + "/cpp/gen/";
+    exec(("bash -c 'rm -r -f " + genDir + "/*'").c_str());
 
     // Create output directory
     const int dirErr = system(("mkdir -p " + genDir).c_str());
@@ -125,6 +127,13 @@ void generate_code(DAG *dag) {
     headerFile << result_wrapper;
     headerFile << format("result_type* execute(%s);\n") % input_args;
     headerFile << "void free_result(result_type*);";
+}
+
+void BackEnd::Compile(const uint64_t counter) {
+    exec(("cd " + get_lib_path() +
+          "/cpp/gen && make LIB_ID=" + std::to_string(counter) + " -f " +
+          get_lib_path() + "/cpp/src/code_gen/cpp/Makefile -j")
+                 .c_str());
 }
 
 }  // namespace cpp

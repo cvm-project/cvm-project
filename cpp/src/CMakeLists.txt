@@ -52,7 +52,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 set(SOURCE_FILES
         generate_dag_plan.cpp
         code_gen/cpp/CodeGenVisitor.cpp
-        code_gen/cpp/generate_code.cpp
+        code_gen/cpp/BackEnd.cpp
         dag/Column.cpp
         dag/DAG.cpp
         dag/DAGCollection.cpp
