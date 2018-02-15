@@ -1,5 +1,5 @@
-#ifndef CODE_GEN_GENERATE_CODE_H
-#define CODE_GEN_GENERATE_CODE_H
+#ifndef CODE_GEN_CPP_GENERATE_CODE_H
+#define CODE_GEN_CPP_GENERATE_CODE_H
 
 //
 // Created by sabir on 19.07.17.

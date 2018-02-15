@@ -9,7 +9,7 @@ extern "C" {
 #include <utility>
 
 #include "IR_analyzer/SchemaInference.h"
-#include "code_gen/generate_code.h"
+#include "code_gen/cpp/generate_code.h"
 #include "dag/DAGCreation.hpp"
 #include "optimize/Optimizer.h"
 #include "utils/printDAG.h"

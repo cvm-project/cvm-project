@@ -51,8 +51,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 # Set up library
 set(SOURCE_FILES
         generate_dag_plan.cpp
-        code_gen/CodeGenVisitor.cpp
-        code_gen/generate_code.cpp
+        code_gen/cpp/CodeGenVisitor.cpp
+        code_gen/cpp/generate_code.cpp
         dag/Column.cpp
         dag/DAG.cpp
         dag/DAGCollection.cpp

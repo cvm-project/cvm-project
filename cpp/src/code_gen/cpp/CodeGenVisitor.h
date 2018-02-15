@@ -2,8 +2,8 @@
 // Created by sabir on 21.07.17.
 //
 
-#ifndef CODE_GEN_CODEGENVISITOR_H
-#define CODE_GEN_CODEGENVISITOR_H
+#ifndef CODE_GEN_CPP_CODEGENVISITOR_H
+#define CODE_GEN_CPP_CODEGENVISITOR_H
 
 #include <cstdlib>
 #include <iostream>
@@ -125,4 +125,4 @@ private:
     }
 };
 
-#endif  // CODE_GEN_CODEGENVISITOR_H
+#endif  // CODE_GEN_CPP_CODEGENVISITOR_H
