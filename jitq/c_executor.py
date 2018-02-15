@@ -64,9 +64,8 @@ class Executor:
     class __Inner:
         def __init__(self):
             self.lib_counter = 0
-            self.dag_cache = {}
 
-        def execute(self, dag_dict, hash_, inputs):
+        def execute(self, context, dag_dict, inputs):
 
             ffi = FFI()
             args = []
@@ -75,9 +74,10 @@ class Executor:
                 args.append(data_ptr)
                 args.append(inpt[1])
 
-            executor_cffi = self.dag_cache.get(hash_, None)
+            dag_str = json.dumps(dag_dict, cls=RDDEncoder)
+
+            executor_cffi = context.executor_cache.get(dag_str, None)
             if not executor_cffi:
-                dag_str = json.dumps(dag_dict, cls=RDDEncoder)
                 generator_cffi = load_cffi(CPP_DIR + "src/" + GEN_HEADER_FILE,
                                            CPP_DIR + "build/" + GENERATE_LIB,
                                            ffi)
@@ -92,7 +92,7 @@ class Executor:
                     GEN_DIR + EXECUTOR_HEADER_FILE,
                     GEN_DIR + EXECUTE_LIB + str(self.lib_counter), ffi)
                 self.lib_counter += 1
-                self.dag_cache[hash_] = executor_cffi
+                context.executor_cache[dag_str] = executor_cffi
 
             timer = Timer()
             timer.start()

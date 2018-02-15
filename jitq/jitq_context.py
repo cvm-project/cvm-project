@@ -2,18 +2,18 @@ from jitq.rdd import CollectionSource, RangeSource, GeneratorSource
 
 
 class JitqContext:
-    @staticmethod
-    def read_csv(path, dtype=None):
+    def __init__(self):
+        self.serialization_cache = {}
+        self.executor_cache = {}
+
+    def read_csv(self, path, dtype=None):
         raise NotImplementedError
 
-    @staticmethod
-    def collection(values, add_index=False):
-        return CollectionSource(values, add_index)
+    def collection(self, values, add_index=False):
+        return CollectionSource(self, values, add_index)
 
-    @staticmethod
-    def range_(from_, to, step=1):
-        return RangeSource(from_, to, step)
+    def range_(self, from_, to, step=1):
+        return RangeSource(self, from_, to, step)
 
-    @staticmethod
-    def generator(func):
-        return GeneratorSource(func)
+    def generator(self, func):
+        return GeneratorSource(self, func)

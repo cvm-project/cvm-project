@@ -92,9 +92,6 @@ def get_llvm_ir_for_generator(func):
     return llvm, output_type
 
 
-RDD_DAG_CACHE = {}
-
-
 class RDD(object):
     """
     Dataset representation.
@@ -102,12 +99,15 @@ class RDD(object):
 
     """
 
-    def __init__(self, parents):
+    def __init__(self, context, parents):
         self.dic = None
         self._cache = False
         self.parents = parents
+        self.context = context
         self.output_type = None
         self.hash = None
+        if any([p.context != self.context for p in self.parents]):
+            raise ValueError("The context of all parents must be the same!")
 
     def cache(self):
         self._cache = True
@@ -133,11 +133,9 @@ class RDD(object):
 
     def execute_dag(self):
         hash_ = str(hash(self))
-        dag_dict = RDD_DAG_CACHE.get(hash_, None)
+        dag_dict = self.context.serialization_cache.get(hash_, None)
         inputs = self.get_inputs()
-        if dag_dict:
-            return Executor().execute(dag_dict, hash_, inputs)
-        else:
+        if not dag_dict:
             dag_dict = dict()
             dag_dict[DAG] = []
 
@@ -145,12 +143,12 @@ class RDD(object):
 
             self.write_dag(dag_dict[DAG], 0)
 
-            RDD_DAG_CACHE[hash_] = dag_dict
+            self.context.serialization_cache[hash_] = dag_dict
             # write to file
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
                     json.dump(dag_dict, fp=fp, cls=RDDEncoder)
-            return Executor().execute(dag_dict, hash_, inputs)
+        return Executor().execute(self.context, dag_dict, inputs)
 
     def __hash__(self):
         if not self.hash:
@@ -170,28 +168,28 @@ class RDD(object):
         return ret
 
     def map(self, map_func):
-        return Map(self, map_func)
+        return Map(self.context, self, map_func)
 
     def flatten(self):
-        return Flatten(self)
+        return Flatten(self.context, self)
 
     def filter(self, predicate):
-        return Filter(self, predicate)
+        return Filter(self.context, self, predicate)
 
     def flat_map(self, func):
-        return FlatMap(self, func)
+        return FlatMap(self.context, self, func)
 
     def reduce_by_key(self, func):
-        return ReduceByKey(self, func)
+        return ReduceByKey(self.context, self, func)
 
     def reduce(self, func):
-        return Reduce(self, func).collect()[0]
+        return Reduce(self.context, self, func).collect()[0]
 
     def join(self, other):
-        return Join(self, other)
+        return Join(self.context, self, other)
 
     def cartesian(self, other):
-        return Cartesian(self, other)
+        return Cartesian(self.context, self, other)
 
     def collect(self):
         return self.execute_dag()
@@ -201,24 +199,24 @@ class RDD(object):
 
 
 class SourceRDD(RDD):
-    def __init__(self):
-        super(SourceRDD, self).__init__([])
+    def __init__(self, context):
+        super(SourceRDD, self).__init__(context, [])
 
 
 class UnaryRDD(RDD):
-    def __init__(self, parent):
-        super(UnaryRDD, self).__init__([parent])
+    def __init__(self, context, parent):
+        super(UnaryRDD, self).__init__(context, [parent])
 
 
 class BinaryRDD(RDD):
-    def __init__(self, parents):
-        super(BinaryRDD, self).__init__(parents)
+    def __init__(self, context, parents):
+        super(BinaryRDD, self).__init__(context, parents)
         assert len(parents) == 2
 
 
 class PipeRDD(UnaryRDD):
-    def __init__(self, parent, func):
-        super(PipeRDD, self).__init__(parent)
+    def __init__(self, context, parent, func):
+        super(PipeRDD, self).__init__(context, parent)
         self.func = func
 
     def self_hash(self):
@@ -280,8 +278,8 @@ class Join(BinaryRDD):
     the first element in a tuple is the key
     """
 
-    def __init__(self, left, right):
-        super(Join, self).__init__([left, right])
+    def __init__(self, context, left, right):
+        super(Join, self).__init__(context, [left, right])
 
     def compute_output_type(self):
         par_output_type1 = self.parents[0].output_type
@@ -325,8 +323,8 @@ class Join(BinaryRDD):
 
 
 class Cartesian(BinaryRDD):
-    def __init__(self, left, right):
-        super(Cartesian, self).__init__([left, right])
+    def __init__(self, context, left, right):
+        super(Cartesian, self).__init__(context, [left, right])
 
     def compute_output_type(self):
         parent_type_1 = make_tuple(self.parents[0].output_type) if len(
@@ -354,8 +352,8 @@ class Reduce(UnaryRDD):
     the input cannot be empty
     """
 
-    def __init__(self, parent, func):
-        super(Reduce, self).__init__(parent)
+    def __init__(self, context, parent, func):
+        super(Reduce, self).__init__(context, parent)
         self.func = func
 
     def self_hash(self):
@@ -390,8 +388,8 @@ class ReduceByKey(UnaryRDD):
     the input cannot be empty
     """
 
-    def __init__(self, parent, func):
-        super(ReduceByKey, self).__init__(parent)
+    def __init__(self, context, parent, func):
+        super(ReduceByKey, self).__init__(context, parent)
         self.func = func
 
     def self_hash(self):
@@ -437,8 +435,9 @@ class ReduceByKey(UnaryRDD):
 
 
 class CSVSource(SourceRDD):
-    def __init__(self, path, delimiter=",", dtype=None, add_index=False):
-        super(CSVSource, self).__init__()
+    def __init__(self, context, path, delimiter=",",
+                 dtype=None, add_index=False):
+        super(CSVSource, self).__init__(context)
         self.path = path
         self.dtype = dtype
         self.add_index = add_index
@@ -482,8 +481,8 @@ class CollectionSource(SourceRDD):
     to prevent freeing the input memory before the end of computation
     """
 
-    def __init__(self, values, add_index=False):
-        super(CollectionSource, self).__init__()
+    def __init__(self, context, values, add_index=False):
+        super(CollectionSource, self).__init__(context)
 
         if isinstance(values, DataFrame):
             self.array = values.values.ravel(order='C').reshape(values.shape)
@@ -523,8 +522,8 @@ class CollectionSource(SourceRDD):
 
 
 class RangeSource(SourceRDD):
-    def __init__(self, from_, to, step=1):
-        super(RangeSource, self).__init__()
+    def __init__(self, context, from_, to, step=1):
+        super(RangeSource, self).__init__(context)
         self.from_ = from_
         self.to = to
         self.step = step
@@ -548,8 +547,8 @@ class RangeSource(SourceRDD):
 
 
 class GeneratorSource(SourceRDD):
-    def __init__(self, func):
-        super(GeneratorSource, self).__init__()
+    def __init__(self, context, func):
+        super(GeneratorSource, self).__init__(context)
         self.func = func
 
     def self_hash(self):
