@@ -5,9 +5,12 @@ extern "C" {
 #include <cstddef>
 #include <cstring>
 #include <iostream>
+#include <sstream>
 #include <tuple>
 #include <unordered_map>
 #include <utility>
+
+#include <json.hpp>
 
 #include "IR_analyzer/SchemaInference.h"
 #include "code_gen/common/BackEnd.hpp"
@@ -19,8 +22,12 @@ extern "C" {
 #include "utils/utils.h"
 
 extern "C" {
-int generate_dag_plan(const char *const dagstr,
+int generate_dag_plan(const char *const conf, const char *const dagstr,
                       const unsigned long counter) {  // NOLINT
+    // Parse configuration
+    nlohmann::json json;
+    std::istringstream(conf) >> json;
+    json = json.flatten();
 
     // Parse DAG
     std::unique_ptr<DAG> dag(parse_dag(std::string(dagstr)));
@@ -34,12 +41,14 @@ int generate_dag_plan(const char *const dagstr,
     opt.run(dag.get());
 
     // Select code gen back-end
+    // TODO(ingo): pass back-end-specific config to back-end
     using CodeGenBackEnd = std::unique_ptr<code_gen::common::BackEnd>;
     std::unordered_map<std::string, CodeGenBackEnd> code_generators;
     code_generators.emplace("cpp",
                             CodeGenBackEnd(new code_gen::cpp::BackEnd()));
 
-    const auto code_gen_backend = code_generators.at("cpp").get();
+    const std::string codegen_backend = json.value("/codegen/backend", "cpp");
+    const auto code_gen_backend = code_generators.at(codegen_backend).get();
 
     // Generate code
     code_gen_backend->GenerateCode(dag.get());

@@ -1,8 +1,14 @@
+import jsonmerge
+
 from jitq.rdd import CollectionSource, RangeSource, GeneratorSource
 
 
 class JitqContext:
-    def __init__(self):
+    default_conf = {}
+
+    def __init__(self, **kwargs):
+        conf = kwargs.get('conf', {})
+        self.conf = jsonmerge.merge(JitqContext.default_conf, conf)
         self.serialization_cache = {}
         self.executor_cache = {}
 

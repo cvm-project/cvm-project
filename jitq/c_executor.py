@@ -65,25 +65,28 @@ class Executor:
         def __init__(self):
             self.lib_counter = 0
 
-        def get_executor(self, context, dag_str):
-            executor = context.executor_cache.get(dag_str, None)
+        def get_executor(self, context, dag_str, conf_str):
+            cache_key = dag_str + conf_str
+            executor = context.executor_cache.get(cache_key, None)
             if not executor:
                 ffi = FFI()
                 generator = load_cffi(CPP_DIR + "src/" + GEN_HEADER_FILE,
                                       CPP_DIR + "build/" + GENERATE_LIB,
                                       ffi)
                 dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
+                conf_c = ffi.new('char[]', conf_str.encode('utf-8'))
 
                 timer = Timer()
                 timer.start()
-                generator.generate_dag_plan(dag_c, self.lib_counter)
+                generator.generate_dag_plan(
+                    conf_c, dag_c, self.lib_counter)
                 timer.end()
                 print("time: calling make " + str(timer.diff()))
                 executor = load_cffi(
                     GEN_DIR + EXECUTOR_HEADER_FILE,
                     GEN_DIR + EXECUTE_LIB + str(self.lib_counter), ffi)
                 self.lib_counter += 1
-                context.executor_cache[dag_str] = executor
+                context.executor_cache[cache_key] = executor
             return executor
 
         def execute(self, context, dag_dict, inputs):
@@ -96,8 +99,9 @@ class Executor:
                 args.append(inpt[1])
 
             dag_str = json.dumps(dag_dict, cls=RDDEncoder)
+            conf_str = json.dumps(context.conf)
 
-            executor = self.get_executor(context, dag_str)
+            executor = self.get_executor(context, dag_str, conf_str)
 
             timer = Timer()
             timer.start()
