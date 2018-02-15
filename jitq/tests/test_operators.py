@@ -123,7 +123,7 @@ class TestFilter(unittest.TestCase):
 
 class TestMap(unittest.TestCase):
     def test_map_collect(self):
-        jitq_context = JitqContext
+        jitq_context = JitqContext()
         data = jitq_context.collection(range(
             0, 10)).map(lambda t: (t, (t, t * 10)))
         res = data.collect()
@@ -131,7 +131,7 @@ class TestMap(unittest.TestCase):
                              [(t, t, t * 10) for t in range(0, 10)])
 
     def test_map_count(self):
-        jitq_context = JitqContext
+        jitq_context = JitqContext()
         data = jitq_context.collection(range(0, 10)).map(lambda t: (t, t * 10))
         res = data.count()
         self.assertEqual(res, 10)
@@ -236,25 +236,25 @@ class TestCartesian(unittest.TestCase):
 class TestCache(unittest.TestCase):
     def test_map1(self):
         for _ in range(2):
-            context = JitqContext
+            context = JitqContext()
             res = context.collection(range(0,
                                            10)).map(lambda t: t + 1).collect()
             self.assertListEqual(list(res), list(range(1, 11)))
 
     def test_map2(self):
-        context = JitqContext
+        context = JitqContext()
         res = context.collection(range(0, 10)).map(lambda t: t + 2).collect()
         self.assertListEqual(list(res), list(range(2, 12)))
 
     def test_filter1(self):
         for _ in range(2):
-            context = JitqContext
+            context = JitqContext()
             res = context.collection(range(
                 0, 10)).filter(lambda t: t % 2 == 0).collect()
             self.assertListEqual(list(res), list(range(0, 10, 2)))
 
     def test_filter2(self):
-        context = JitqContext
+        context = JitqContext()
         res = context.collection(range(
             0, 10)).filter(lambda t: t % 2 == 1).collect()
         self.assertListEqual(list(res), list(range(1, 10, 2)))
