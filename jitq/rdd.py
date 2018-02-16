@@ -102,13 +102,10 @@ class RDD(object):
 
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, parents):
         self.dic = None
         self._cache = False
-        if parent:
-            self.parents = [parent]
-        else:
-            self.parents = []
+        self.parents = parents
         self.output_type = None
         self.hash = None
 
@@ -203,7 +200,23 @@ class RDD(object):
         return self.flatten().map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
 
 
-class PipeRDD(RDD):
+class SourceRDD(RDD):
+    def __init__(self):
+        super(SourceRDD, self).__init__([])
+
+
+class UnaryRDD(RDD):
+    def __init__(self, parent):
+        super(UnaryRDD, self).__init__([parent])
+
+
+class BinaryRDD(RDD):
+    def __init__(self, parents):
+        super(BinaryRDD, self).__init__(parents)
+        assert len(parents) == 2
+
+
+class PipeRDD(UnaryRDD):
     def __init__(self, parent, func):
         super(PipeRDD, self).__init__(parent)
         self.func = func
@@ -212,10 +225,6 @@ class PipeRDD(RDD):
         file_ = io.StringIO()
         dis.dis(self.func, file=file_)
         return hash(file_.getvalue())
-
-
-class ShuffleRDD(RDD):
-    pass
 
 
 class Map(PipeRDD):
@@ -259,21 +268,20 @@ class FlatMap(PipeRDD):
         return cur_index
 
 
-class Flatten(RDD):
+class Flatten(UnaryRDD):
     def write_dag(self, daglist, index, empty=False):
         cur_index = super(Flatten, self).write_dag(daglist, index, True)
         self.output_type = make_tuple(flatten(self.parents[0].output_type))
         return cur_index
 
 
-class Join(ShuffleRDD):
+class Join(BinaryRDD):
     """
     the first element in a tuple is the key
     """
 
     def __init__(self, left, right):
-        super(Join, self).__init__(parent=left)
-        self.parents.append(right)
+        super(Join, self).__init__([left, right])
 
     def compute_output_type(self):
         par_output_type1 = self.parents[0].output_type
@@ -316,10 +324,9 @@ class Join(ShuffleRDD):
         return cur_index
 
 
-class Cartesian(ShuffleRDD):
+class Cartesian(BinaryRDD):
     def __init__(self, left, right):
-        super(Cartesian, self).__init__(parent=left)
-        self.parents.append(right)
+        super(Cartesian, self).__init__([left, right])
 
     def compute_output_type(self):
         parent_type_1 = make_tuple(self.parents[0].output_type) if len(
@@ -340,7 +347,7 @@ class Cartesian(ShuffleRDD):
         return cur_index
 
 
-class Reduce(ShuffleRDD):
+class Reduce(UnaryRDD):
     """
     binary function must be commutative and associative
     the return value type should be the same as its arguments
@@ -376,7 +383,7 @@ class Reduce(ShuffleRDD):
         return cur_index
 
 
-class ReduceByKey(ShuffleRDD):
+class ReduceByKey(UnaryRDD):
     """
     binary function must be commutative and associative
     the return value type should be the same as its arguments minus the key
@@ -429,7 +436,7 @@ class ReduceByKey(ShuffleRDD):
         return cur_index
 
 
-class CSVSource(RDD):
+class CSVSource(SourceRDD):
     def __init__(self, path, delimiter=",", dtype=None, add_index=False):
         super(CSVSource, self).__init__()
         self.path = path
@@ -466,7 +473,7 @@ class CSVSource(RDD):
         return cur_index
 
 
-class CollectionSource(RDD):
+class CollectionSource(SourceRDD):
     """
     accepts any python collections, numpy arrays or pandas dataframes
 
@@ -515,7 +522,7 @@ class CollectionSource(RDD):
         return [(self.data_ptr, self.size)]
 
 
-class RangeSource(RDD):
+class RangeSource(SourceRDD):
     def __init__(self, from_, to, step=1):
         super(RangeSource, self).__init__()
         self.from_ = from_
@@ -540,7 +547,7 @@ class RangeSource(RDD):
         return cur_index
 
 
-class GeneratorSource(RDD):
+class GeneratorSource(SourceRDD):
     def __init__(self, func):
         super(GeneratorSource, self).__init__()
         self.func = func
