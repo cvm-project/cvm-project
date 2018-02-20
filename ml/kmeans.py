@@ -1,20 +1,16 @@
-from math import sqrt
-
-import sys
 from six import string_types
 from sklearn.metrics import euclidean_distances
 from sklearn.utils import check_random_state
 from sklearn.utils.extmath import row_norms, squared_norm
 from sklearn.utils.sparsefuncs import mean_variance_axis
 
-import numba
+from numba import njit
+
 import numpy as np
 import scipy.sparse as sp
 
 from jitq.ast_optimizer import unroll_loops
-from jitq.benchmarks.timer import Timer
 from jitq.jitq_context import JitqContext
-from numba import njit
 
 
 def _tolerance(X, tol):
@@ -27,19 +23,25 @@ def _tolerance(X, tol):
 
 
 @njit(cache=True)
-def _euclidian_dist(t1, t2):
+def _euclidian_dist(tuple_1, tuple_2):
     dist = 0
-    for i in range(len(t1)):
-        _x1 = t1[i]
-        _x2 = t2[i]
-        dist += (_x1 - _x2) ** 2
+    # pylint: disable=consider-using-enumerate
+    # sabir 19 Feb 2018: this form is easier for numba
+    for i in range(len(tuple_1)):
+        _x1 = tuple_1[i]
+        _x2 = tuple_2[i]
+        dist += (_x1 - _x2)**2
     return dist
 
-_metric = _euclidian_dist
 
-class KMeans():
-    def __init__(self, n_clusters=8, n_init=10,
-                 max_iter=300, tol=1e-4, random_state=None, init='kmeans++', metric="euclidian"):
+class KMeans:
+    def __init__(self,
+                 n_clusters=8,
+                 n_init=10,
+                 max_iter=300,
+                 random_state=None,
+                 init='kmeans++',
+                 metric="euclidian"):
         self.n_clusters = n_clusters
         self.n_init = n_init
         self.max_iter = max_iter
@@ -47,69 +49,67 @@ class KMeans():
         self.random_state = random_state
         self.cluster_centers_ = []
         self.init = init
-        global _metric
+        self.inertia_ = None
+        self._context = JitqContext()
+
         if metric == "euclidian":
-            _metric = _euclidian_dist
+            self._metric = _euclidian_dist
         else:
             if not hasattr(metric, "__call__"):
-                raise AttributeError("metric must be \"euclidian\" or a callable")
-            _metric = njit(metric, cache=True)
+                raise AttributeError(
+                    "metric must be \"euclidian\" or a callable")
+            self._metric = njit(metric, cache=True)
 
-    def fit(self, X, y=None):
+    # pylint: disable=too-many-locals
+    # sabir 19 Feb 2018: TODO reformat
+    def fit(self, X, _=None):
         n_cols = len(X[0])
-        n_samples = len(X[1])
-        bc = JitqContext()
-        old_centroids = _init_centroids(X, self.n_clusters, init=self.init, random_state=self.random_state)
-        centroids = bc.collection(old_centroids, add_index=True)
+        old_centroids = _init_centroids(
+            X, self.n_clusters, init=self.init, random_state=self.random_state)
+        centroids = self._context.collection(old_centroids, add_index=True)
         old_centroids = centroids.collect()
         self.tol = _tolerance(X, self.tol)
-        in_ = bc.collection(X, add_index=True)
+        in_ = self._context.collection(X, add_index=True)
+        metric = self._metric
 
-        def reduce_1(t1, t2):
-            point = t1[0][:]
-            old_centre = t1[1][:]
-            old_dist = t1[2]
+        def reduce_1(tuple_1, tuple_2):
+            point = tuple_1[0][:]
+            old_centre = tuple_1[1][:]
+            old_dist = tuple_1[2]
 
-            new_centre = t2[1][:]
+            new_centre = tuple_2[1][:]
 
-            new_dist = t2[2]
+            new_dist = tuple_2[2]
             if new_dist < old_dist:
                 return point, new_centre, new_dist
-            else:
-                return point, old_centre, old_dist
+            return point, old_centre, old_dist
 
         @unroll_loops
-        def reduce_2(t1, t2):
-            sum_ = t1[1]
-            mean_c = t1[0][:]
-            new_point = t2[2][:]
+        def reduce_2(tuple_1, tuple_2):
+            sum_ = tuple_1[1]
+            mean_c = tuple_1[0][:]
+            new_point = tuple_2[2][:]
             res = ()
             for z in range(n_cols):
-                n = mean_c[z] + new_point[z]
-                res += (n,)
-            return res, sum_ + t2[1], new_point
+                point_ = mean_c[z] + new_point[z]
+                res += (point_, )
+            return res, sum_ + tuple_2[1], new_point
 
         @unroll_loops
-        def map_1(t):
-            s = t[1]
-            center = t[0][1:]
+        def map_1(tuple_):
+            accumulator = tuple_[1]
+            center = tuple_[0][1:]
             res = ()
-            for z in range(n_cols):
-                n = center[z] / s
-                res += (n,)
-            return t[0][0], res
+            for i in range(n_cols):
+                res += (center[i] / accumulator, )
+            return tuple_[0][0], res
 
         @unroll_loops
-        def map_0(t1, t2):
-            # dist = 0
-            # for j in range(n_cols):
-            #     _x1 = t1[1:][j]
-            #     _x2 = t2[1:][j]
-            #     dist += (_x1 - _x2) ** 2
-            # return t2, t1, dist
-            return t2, t1, _metric(t1[1:], t2[1:])
+        def map_0(tuple_1, tuple_2):
+            return tuple_2, tuple_1, metric(tuple_1[1:], tuple_2[1:])
 
-        for i in range(self.max_iter):
+        # pylint: disable=no-member
+        for _ in range(self.max_iter):
             # iteration time: 7000
             cart = centroids.cartesian(in_)
             # put points first to reduce on them
@@ -125,26 +125,31 @@ class KMeans():
             centroids = centr_pnt.map(map_1)
             # # compute the error
             new_centroids = centroids.collect()
-            centroids = bc.collection(new_centroids)
-            shift = squared_norm(new_centroids.view(np.float64) - old_centroids.view(np.float64))
+            centroids = self._context.collection(new_centroids)
+            shift = squared_norm(
+                new_centroids.view(np.float64) -
+                old_centroids.view(np.float64))
             old_centroids = new_centroids
             if shift < self.tol:
                 break
 
-        print("total iterations solrd: " + str(i + 1))
-        self.cluster_centers_ = old_centroids[list(old_centroids.dtype.names[1:])].view(np.float64).reshape(
-            (self.n_clusters, n_cols))
+        self.cluster_centers_ = old_centroids[list(
+            old_centroids.dtype.names[1:])].view(np.float64).reshape(
+                (self.n_clusters, n_cols))
         # compute labels and inertia
-        cart = bc.collection(old_centroids).cartesian(in_)
+        cart = self._context.collection(old_centroids).cartesian(in_)
         # put points first to reduce on them
         cart = cart.map(map_0)
         # for every point compute the closest centroid (E step)
         pnt_center_distance = cart.reduce_by_key(reduce_1).collect()
 
         last_col_index = pnt_center_distance.dtype.names[-1]
-        self.inertia_ = np.sum(pnt_center_distance[last_col_index], dtype=np.float64)
+        self.inertia_ = np.sum(
+            pnt_center_distance[last_col_index], dtype=np.float64)
 
 
+# pylint: disable=too-many-locals
+# sabir 19 Feb 2018: should be safe, code comes from sci-kit
 def _k_init(X, n_clusters, x_squared_norms, random_state, n_local_trials=None):
     """Init n_clusters seeds according to k-means++
 
@@ -201,12 +206,14 @@ def _k_init(X, n_clusters, x_squared_norms, random_state, n_local_trials=None):
 
     # Initialize list of closest distances and calculate current potential
     closest_dist_sq = euclidean_distances(
-        centers[0, np.newaxis], X, Y_norm_squared=x_squared_norms,
+        centers[0, np.newaxis],
+        X,
+        Y_norm_squared=x_squared_norms,
         squared=True)
     current_pot = closest_dist_sq.sum()
 
     # Pick the remaining n_clusters-1 points
-    for c in range(1, n_clusters):
+    for i in range(1, n_clusters):
         # Choose center candidates by sampling with probability proportional
         # to the squared distance to the closest existing center
         rand_vals = random_state.random_sample(n_local_trials) * current_pot
@@ -234,9 +241,9 @@ def _k_init(X, n_clusters, x_squared_norms, random_state, n_local_trials=None):
 
         # Permanently add best center candidate found in local tries
         if sp.issparse(X):
-            centers[c] = X[best_candidate].toarray()
+            centers[i] = X[best_candidate].toarray()
         else:
-            centers[c] = X[best_candidate]
+            centers[i] = X[best_candidate]
         current_pot = best_pot
         closest_dist_sq = best_dist_sq
 
@@ -247,17 +254,16 @@ def _validate_center_shape(X, n_centers, centers):
     """Check if centers is compatible with X and n_centers"""
     if len(centers) != n_centers:
         raise ValueError('The shape of the initial centers (%s) '
-                         'does not match the number of clusters %i'
-                         % (centers.shape, n_centers))
+                         'does not match the number of clusters %i' %
+                         (centers.shape, n_centers))
     if centers.shape[1] != X.shape[1]:
         raise ValueError(
             "The number of features of the initial centers %s "
-            "does not match the number of features of the data %s."
-            % (centers.shape[1], X.shape[1]))
+            "does not match the number of features of the data %s." %
+            (centers.shape[1], X.shape[1]))
 
 
-def _init_centroids(X, k, init='k-means++', random_state=None, x_squared_norms=None,
-                    init_size=None):
+def _init_centroids(X, k, init='k-means++', random_state=None):
     """Compute the initial centroids
 
     Parameters
@@ -295,8 +301,8 @@ def _init_centroids(X, k, init='k-means++', random_state=None, x_squared_norms=N
     x_squared_norms = row_norms(X, squared=True)
 
     if isinstance(init, string_types) and init == 'k-means++':
-        centers = _k_init(X, k, random_state=random_state,
-                          x_squared_norms=x_squared_norms)
+        centers = _k_init(
+            X, k, random_state=random_state, x_squared_norms=x_squared_norms)
     elif isinstance(init, string_types) and init == 'random':
         seeds = random_state.permutation(n_samples)[:k]
         centers = X[seeds]

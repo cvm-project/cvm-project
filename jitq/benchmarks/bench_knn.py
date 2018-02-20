@@ -2,104 +2,125 @@ from scipy.spatial import distance
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.neighbors import KNeighborsClassifier
 
-from jitq.benchmarks.timer import timer
-n_features = 5
-n_samples = 1 << 12
-n_clusters = 5
+from jitq.benchmarks.timer import measure_time
 
-n_neighbours = 5
-random_state = 100
+N_FEATURES = 10
+N_SAMPLES = 1 << 10
+N_CLUSTERS = 5
 
-x, y = make_blobs(n_samples, n_features, n_clusters, random_state=random_state)
-print("generated data")
+N_NEIGHBOURS = 5
+RANDOM_STATE = 100
+RUNS = 3
+
+X, Y = make_blobs(N_SAMPLES, N_FEATURES, N_CLUSTERS, random_state=RANDOM_STATE)
+print("generated benchmark data")
 
 
-def chebyshev_dist(t1, t2):
+def chebyshev_dist(tuple_1, tuple_2):
     max_ = 0
-    n_cols = len(t1)
+    n_cols = len(tuple_1)
     for i in range(n_cols):
-        dist = abs(t1[i] - t2[i])
+        dist = abs(tuple_1[i] - tuple_2[i])
         max_ = max(dist, max_)
     return max_
 
 
-def euclidian_dist(t1, t2):
+def euclidian_dist(tuple_1, tuple_2):
     dist = 0
-    for i in range(len(t1)):
-        _x1 = t1[i]
-        _x2 = t2[i]
-        dist += (_x1 - _x2) ** 2
+    for _x1, _x2 in zip(tuple_1, tuple_2):
+        dist += (_x1 - _x2)**2
     return dist
 
 
-def bench_sklearn_knn():
-    classifier = KNeighborsClassifier(n_neighbors=n_neighbours)
-    classifier.fit(x, y)
+def builtin_euclidian():
+    classifier = KNeighborsClassifier(n_neighbors=N_NEIGHBOURS)
+    classifier.fit(X, Y)
 
     def run():
-        return classifier.predict(x)
-        pass
+        classifier.fit(X, Y)
+        return classifier.predict(X)
 
     return run
 
 
-def bench_sklearn_knn_custom_metric():
-    classifier = KNeighborsClassifier(n_neighbors=n_neighbours, metric=euclidian_dist)
-    classifier.fit(x, y)
+def builtin_chebyshev():
+    classifier = KNeighborsClassifier(
+        n_neighbors=N_NEIGHBOURS, metric="chebyshev")
+    classifier.fit(X, Y)
 
     def run():
-        return classifier.predict(x)
-        pass
+        classifier.fit(X, Y)
+        return classifier.predict(X)
 
     return run
 
 
-def bench_sklearn_knn_custom_metric_numpy():
-    classifier = KNeighborsClassifier(n_neighbors=n_neighbours, metric=distance.sqeuclidean)
-    classifier.fit(x, y)
+def custom_metric_python():
+    classifier = KNeighborsClassifier(
+        n_neighbors=N_NEIGHBOURS, metric=euclidian_dist)
+    classifier.fit(X, Y)
 
     def run():
-        return classifier.predict(x)
-        pass
+        classifier.fit(X, Y)
+        return classifier.predict(X)
 
     return run
 
 
-def bench_sklearn_knn_custom_metric_chebyshev():
-    classifier = KNeighborsClassifier(n_neighbors=n_neighbours, metric=chebyshev_dist)
-    classifier.fit(x, y)
+def custom_metric_numpy():
+    classifier = KNeighborsClassifier(
+        n_neighbors=N_NEIGHBOURS, metric=distance.sqeuclidean)
+    classifier.fit(X, Y)
 
     def run():
-        return classifier.predict(x)
-        pass
+        classifier.fit(X, Y)
+        return classifier.predict(X)
 
     return run
 
 
-def bench_sklearn_knn_custom_metric_numpy_chebyshev():
-    classifier = KNeighborsClassifier(n_neighbors=n_neighbours, metric=distance.chebyshev)
-    classifier.fit(x, y)
+def custom_metric_chebyshev():
+    classifier = KNeighborsClassifier(
+        n_neighbors=N_NEIGHBOURS, metric=chebyshev_dist)
+    classifier.fit(X, Y)
 
     def run():
-        return classifier.predict(x)
-        pass
+        classifier.fit(X, Y)
+        return classifier.predict(X)
 
     return run
 
 
-runs = 3
-#
-t = timer(bench_sklearn_knn(), runs)
-print("knn default " + str(t))
-#
-t = timer(bench_sklearn_knn_custom_metric_numpy(), runs)
-print("knn custom metric numpy " + str(t))
-#
-t = timer(bench_sklearn_knn_custom_metric(), runs)
-print("knn custom metric python " + str(t))
+def custom_metric_numpy_chebyshev():
+    classifier = KNeighborsClassifier(
+        n_neighbors=N_NEIGHBOURS, metric=distance.chebyshev)
 
-t = timer(bench_sklearn_knn_custom_metric_numpy_chebyshev(), runs)
-print("knn custom metric numpy chebyshev " + str(t))
+    def run():
+        classifier.fit(X, Y)
+        return classifier.predict(X)
 
-t = timer(bench_sklearn_knn_custom_metric_chebyshev(), runs)
-print("knn custom metric python chebyshev " + str(t))
+    return run
+
+
+def run_benchmarks():
+    elapsed_time = measure_time(builtin_euclidian(), RUNS)
+    print("knn built-in euclidian " + str(elapsed_time))
+
+    elapsed_time = measure_time(builtin_chebyshev(), RUNS)
+    print("knn built-in chebyshev " + str(elapsed_time))
+
+    elapsed_time = measure_time(custom_metric_numpy(), RUNS)
+    print("knn custom metric numpy " + str(elapsed_time))
+
+    elapsed_time = measure_time(custom_metric_python(), RUNS)
+    print("knn custom metric python " + str(elapsed_time))
+
+    elapsed_time = measure_time(custom_metric_numpy_chebyshev(), RUNS)
+    print("knn custom metric numpy chebyshev " + str(elapsed_time))
+
+    elapsed_time = measure_time(custom_metric_chebyshev(), RUNS)
+    print("knn custom metric python chebyshev " + str(elapsed_time))
+
+
+if __name__ == '__main__':
+    run_benchmarks()

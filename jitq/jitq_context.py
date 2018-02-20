@@ -1,10 +1,10 @@
-from jitq.rdd import CollectionSource, RangeSource, GeneratorSource, CSVSource
+from jitq.rdd import CollectionSource, RangeSource, GeneratorSource
 
 
 class JitqContext:
     @staticmethod
     def read_csv(path, dtype=None):
-        raise NotImplemented
+        raise NotImplementedError
 
     @staticmethod
     def collection(values, add_index=False):

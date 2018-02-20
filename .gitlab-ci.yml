@@ -11,6 +11,19 @@ format:
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
     - make check-format
 
+format-python:
+  stage: build
+  image: ingomuellernet/buildenv
+  before_script:
+    - apt-get update && apt-get install -y python3-pip
+    - pip3 install pylint
+    - pylint --version
+    - pip3 install -r requirements.txt
+    - pip3 install -r jitq/benchmarks/requirements.txt
+  script:
+    - pylint jitq ml -f colorized
+
+
 build:
   stage: build
   image: ingomuellernet/buildenv

@@ -1,46 +1,52 @@
 import pandas as pd
 import numpy as np
+from numba import njit
 
 from jitq.benchmarks.timer import Timer
 from jitq.jitq_context import JitqContext
 
-size = 1 << 27
-data = np.random.rand(size)
+SIZE = 1 << 27
+DATA = np.random.rand(SIZE)
 print("data generated ")
-t = Timer()
-
-t.start()
-r = data[data > 0].sum()
-t.end()
-
-print("numpy time: " + t.diff())
 
 
-#
-# @njit(fastmath=False, cache=True)
-# def numba(data_):
-#     d = 0
-#     for el in data_:
-#         if el > 0:
-#             d += el
-#     return d
-#
-#
-# t.start()
-# numba(data)
-# t.end()
-#
-# print("numba time: " + t.diff())
-bc = JitqContext()
-t.start()
-bc.collection(data).filter(lambda x: x > 0).reduce(lambda a, b: a + b)
-t.end()
-#
-# print("jitq time: " + t.diff())
+def bench_numpy():
+    timer_ = Timer()
+    timer_.start()
+    DATA[DATA > 0].sum()
+    timer_.end()
+    print("numpy time: " + timer_.diff())
 
-# pandas
-pd_df = pd.DataFrame(data, dtype=float)
-t.start()
-pd_res = pd_df[pd_df > 0].sum()
-t.end()
-print("pandas time: " + t.diff())
+
+def bench_numba():
+    @njit(fastmath=False, cache=True)
+    def numba(data_):
+        acc = 0
+        for elem in data_:
+            if elem > 0:
+                acc += elem
+        return acc
+
+    timer_ = Timer()
+    timer_.start()
+    numba(DATA)
+    timer_.end()
+    print("numba time: " + timer_.diff())
+
+def bench_jitq():
+    context = JitqContext()
+    timer_ = Timer()
+    timer_.start()
+    context.collection(DATA).filter(lambda x: x > 0).reduce(lambda a, b: a + b)
+    timer_.end()
+
+    print("jitq time: " + timer_.diff())
+
+
+def bench_pandas():
+    timer_ = Timer()
+    pd_df = pd.DataFrame(DATA, dtype=float)
+    timer_.start()
+    pd_df[pd_df > 0].sum()
+    timer_.end()
+    print("pandas time: " + timer_.diff())

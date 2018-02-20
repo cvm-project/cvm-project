@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 
-from jitq.benchmarks.timer import timer
+from jitq.benchmarks.timer import measure_time
 
 MAX = 1 << 27
-join1 = 1 << 15
-join2 = 1 << 20
+JOIN_1 = 1 << 15
+JOIN_2 = 1 << 20
 
 
 def bench_sum():
@@ -21,9 +21,9 @@ def bench_map_filter():
     input_ = pd.DataFrame(np.random.rand(MAX))
 
     def run():
-        d = input_
-        d = d * 3 + 7
-        return d[d > 0.5]
+        result = input_
+        result = result * 3 + 7
+        return result[result > 0.5]
 
     return run
 
@@ -47,8 +47,8 @@ def bench_filter():
 
 
 def bench_join():
-    input1 = pd.DataFrame(np.random.randint(0, 1000, size=(join1, 2)))
-    input2 = pd.DataFrame(np.random.randint(0, 1000, size=(join2, 2)))
+    input1 = pd.DataFrame(np.random.randint(0, 1000, size=(JOIN_1, 2)))
+    input2 = pd.DataFrame(np.random.randint(0, 1000, size=(JOIN_2, 2)))
 
     def run():
         return pd.merge(input1, input2, on=[0], sort=False)
@@ -57,12 +57,12 @@ def bench_join():
 
 
 def bench_map_filter_join():
-    input1 = pd.DataFrame(np.random.randint(0, 1000, size=(join1, 2)))
-    input2 = pd.DataFrame(np.random.randint(0, 1000, size=(join2, 2)))
+    input1 = pd.DataFrame(np.random.randint(0, 1000, size=(JOIN_1, 2)))
+    input2 = pd.DataFrame(np.random.randint(0, 1000, size=(JOIN_2, 2)))
 
     def run():
-        d2 = input2 * 3 + 7
-        return pd.merge(input1, d2[d2 > 0.5], on=[0], sort=False)
+        result = input2 * 3 + 7
+        return pd.merge(input1, result[result > 0.5], on=[0], sort=False)
 
     return run
 
@@ -80,9 +80,9 @@ def bench_map_reduce_by_key():
     input_ = pd.DataFrame(np.random.randint(0, 10, size=(MAX >> 1, 2)))
 
     def run():
-        d = input_
-        d[1] = d[1] * 3 + 7
-        return d.groupby([0]).sum()
+        result = input_
+        result[1] = result[1] * 3 + 7
+        return result.groupby([0]).sum()
 
     return run
 
@@ -91,18 +91,18 @@ def bench_map_reduce_by_key_map():
     input_ = pd.DataFrame(np.random.randint(0, 10, size=(MAX >> 1, 2)))
 
     def run():
-        d = input_
-        d = d * 3 + 7
-        g = d.groupby([0]).sum()
-        g['bitmap'] = g > 0
+        result = input_
+        result = result * 3 + 7
+        grouped = result.groupby([0]).sum()
+        grouped['bitmap'] = grouped > 0
         return
 
     return run
 
 
 def bench_map_join():
-    input1 = pd.DataFrame(np.random.randint(0, 1000, size=(join1, 2)))
-    input2 = pd.DataFrame(np.random.randint(0, 1000, size=(join2, 2)))
+    input1 = pd.DataFrame(np.random.randint(0, 1000, size=(JOIN_1, 2)))
+    input2 = pd.DataFrame(np.random.randint(0, 1000, size=(JOIN_2, 2)))
 
     def run():
         input2[1] = input2[1] * 3 + 7
@@ -111,34 +111,12 @@ def bench_map_join():
     return run
 
 
-print("benchmarking pandas")
-print("--*--" * 10)
+def run_benchmarks():
+    print("benchmarking pandas")
+    print("--*--" * 10)
 
-# t = timer(bench_map())
-# print("time map " + str(t))
-#
-# t = timer(bench_filter())
-# print("time filter " + str(t))
-#
-# t_sum = timer(bench_sum())
-# print("time sum " + str(t_sum))
+    print("time map join  " + str(measure_time(bench_map_join())))
 
-# map_filter
-# t_sum = timer(bench_map_filter())
-# print("time map_filter " + str(t_sum))
 
-# join
-# t_sum = timer(bench_join())
-# print("time join " + str(t_sum))
-#
-# t = timer(bench_reduce_by_key())
-# print("time reduce by key " + str(t))
-
-# t = timer(bench_map_filter_join())
-# print("time map filter join " + str(t))
-
-t = timer(bench_map_join())
-print("time map join  " + str(t))
-#
-# t = timer(bench_map_reduce_by_key())
-# print("time map rbk  " + str(t))
+if __name__ == '__main__':
+    run_benchmarks()

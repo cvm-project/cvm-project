@@ -1,28 +1,33 @@
+import dis
 import json
+
+import io
 import re
-
-from numpy import ndarray
-from pandas import DataFrame
-
-from jitq.ast_optimizer import *
-from jitq.benchmarks.timer import Timer
-from jitq.c_executor import execute
-from jitq.config import DUMP_DAG, FAST_MATH
-
-from jitq.utils import *
-from jitq.libs.numba.llvm_ir import cfunc
-from jitq.constants import *
 
 import numba
 import numba.types as types
-from numba.types.containers import *
+from numba import typeof
 
-import dis, io
+import numpy as np
 
-def cleanRDDs(rdd):
+from pandas import DataFrame
+
+from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
+from jitq.benchmarks.timer import Timer
+from jitq.c_executor import Executor
+from jitq.config import DUMP_DAG, FAST_MATH
+from jitq.constant_strings import ID, PREDS, DAG, OP, MAP, FUNC, \
+    OUTPUT_TYPE, FILTER, FLAT_MAP, REDUCE, REDUCEBYKEY, DATA_PATH, ADD_INDEX, \
+    FROM, TO, STEP
+from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
+    make_tuple, flatten, numba_type_to_dtype
+from jitq.libs.numba.llvm_ir import cfunc
+
+
+def clean_rdds(rdd):
     rdd.dic = None
     for par in rdd.parents:
-        cleanRDDs(par)
+        clean_rdds(par)
 
 
 def numba_abi_to_llvm_abi(type_):
@@ -52,9 +57,11 @@ def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
     timer = Timer()
     timer.start()
     if isinstance(input_type, list):
-        dec_func = numba.njit(tuple(input_type), fastmath=FAST_MATH, parallel=True)(func)
+        dec_func = numba.njit(
+            tuple(input_type), fastmath=FAST_MATH, parallel=True)(func)
     else:
-        dec_func = numba.njit((input_type,), fastmath=FAST_MATH, parallel=True)(func)
+        dec_func = numba.njit(
+            (input_type, ), fastmath=FAST_MATH, parallel=True)(func)
     timer.end()
     output_type = dec_func.nopython_signatures[0].return_type
 
@@ -65,8 +72,10 @@ def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
     cfunc_code = cfunc(output_type(*input_type), fastmath=FAST_MATH)(func)
     code = cfunc_code.inspect_llvm()
     # Extract just the code of the function
-    m = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
-    code_string = m.group(0)
+    # pylint: disable=no-member
+    # sabir 14.02.18: somehow pylint does not understand S = DOTALL = ... in re
+    code_group = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
+    code_string = code_group.group(0)
     code_string = re.sub("attributes.*}", "", code_string)
 
     # make the function name not unique
@@ -75,7 +84,7 @@ def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
     return code_string, output_type
 
 
-def get_llvm_ir_output_type_generator(func):
+def get_llvm_ir_for_generator(func):
     dec_func = numba.njit(())(func)
     output_type = dec_func.nopython_signatures[0].return_type
     llvm = dec_func.inspect_llvm()[()]
@@ -83,10 +92,16 @@ def get_llvm_ir_output_type_generator(func):
     return llvm, output_type
 
 
-rdd_dag_cache = {}
+RDD_DAG_CACHE = {}
 
 
 class RDD(object):
+    """
+    Dataset representation.
+    RDDs represent dataflow operators.
+
+    """
+
     def __init__(self, parent=None):
         self.dic = None
         self._cache = False
@@ -98,16 +113,16 @@ class RDD(object):
         self.hash = None
 
     def cache(self):
-        self.cache = True
+        self._cache = True
         return self
 
-    def writeDAG(self, daglist, index, empty = False):
+    def write_dag(self, daglist, index, empty=False):
         if self.dic:
             return self.dic[ID]
         cur_index = index
         preds_index = []
         for par in self.parents:
-            pred_index = par.writeDAG(daglist, cur_index)
+            pred_index = par.write_dag(daglist, cur_index)
             cur_index = max(pred_index + int(not empty), cur_index)
             preds_index.append(pred_index)
 
@@ -119,41 +134,42 @@ class RDD(object):
             daglist.append(dic)
         return cur_index
 
-    def executeDAG(self):
+    def execute_dag(self):
         hash_ = str(hash(self))
-        dagdict = rdd_dag_cache.get(hash_, None)
+        dag_dict = RDD_DAG_CACHE.get(hash_, None)
         inputs = self.get_inputs()
-        if dagdict:
-            return execute(dagdict, hash_, inputs)
+        if dag_dict:
+            return Executor().execute(dag_dict, hash_, inputs)
         else:
-            dagdict = dict()
-            dagdict[DAG] = []
+            dag_dict = dict()
+            dag_dict[DAG] = []
 
-            cleanRDDs(self)
+            clean_rdds(self)
 
-            self.writeDAG(dagdict[DAG], 0)
+            self.write_dag(dag_dict[DAG], 0)
 
-            rdd_dag_cache[hash_] = dagdict
+            RDD_DAG_CACHE[hash_] = dag_dict
             # write to file
             if DUMP_DAG:
-                with open(getProjectPath() + '/dag.json', 'w') as fp:
-                    json.dump(dagdict, fp=fp, cls=RDDEncoder)
-            return execute(dagdict, hash_, inputs)
+                with open(get_project_path() + '/dag.json', 'w') as fp:
+                    json.dump(dag_dict, fp=fp, cls=RDDEncoder)
+            return Executor().execute(dag_dict, hash_, inputs)
 
     def __hash__(self):
         if not self.hash:
-            parent_hashes = "#".join([ str(hash(p)) for p in self.parents ])
+            parent_hashes = "#".join([str(hash(p)) for p in self.parents])
             self_hash = str(self.self_hash())
             self.hash = hash(type(self).__name__ + parent_hashes + self_hash)
         return self.hash
 
+    # pylint: disable=no-self-use
     def self_hash(self):
         return hash("")
 
     def get_inputs(self):
         ret = []
-        for p in self.parents:
-            ret += p.get_inputs()
+        for parent in self.parents:
+            ret += parent.get_inputs()
         return ret
 
     def map(self, map_func):
@@ -181,24 +197,10 @@ class RDD(object):
         return Cartesian(self, other)
 
     def collect(self):
-        return self.executeDAG()
+        return self.execute_dag()
 
     def count(self):
         return self.flatten().map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
-
-    def accept(self, visitor):
-
-        def convert(name):
-            s1 = first_cap_re.sub(r'\1_\2', name)
-            return all_cap_re.sub(r'\1_\2', s1).lower()
-
-        method_name = 'visit_{}'.format(convert(self.__class__.__name__))
-        visit = getattr(visitor, method_name)
-        return visit(self)
-
-
-first_cap_re = re.compile('(.)([A-Z][a-z]+)')
-all_cap_re = re.compile('([a-z0-9])([A-Z])')
 
 
 class PipeRDD(RDD):
@@ -207,9 +209,9 @@ class PipeRDD(RDD):
         self.func = func
 
     def self_hash(self):
-        f = io.StringIO()
-        dis.dis(self.func, file=f)
-        return hash(f.getvalue())
+        file_ = io.StringIO()
+        dis.dis(self.func, file=file_)
+        return hash(file_.getvalue())
 
 
 class ShuffleRDD(RDD):
@@ -217,45 +219,49 @@ class ShuffleRDD(RDD):
 
 
 class Map(PipeRDD):
-    def writeDAG(self, daglist, index):
-        cur_index = super(Map, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(Map, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = MAP
-        dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
+        dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
+            self.func, self.parents[0].output_type)
         # TODO(ingo): what output types are valid here?
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
 class Filter(PipeRDD):
-    def writeDAG(self, daglist, index):
-        cur_index = super(Filter, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(Filter, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = FILTER
-        dic[FUNC], return_type = get_llvm_ir_and_output_type(self.func, self.parents[0].output_type)
+        dic[FUNC], return_type = get_llvm_ir_and_output_type(
+            self.func, self.parents[0].output_type)
         if str(return_type) != "bool":
             raise BaseException(
-                    "Function given to reduce_by_key has the wrong return type:\n"
-                    "  expected: {0}\n"
-                    "  found:    {1}".format("bool", return_type))
+                "Function given to reduce_by_key has the wrong return type:\n"
+                "  expected: {0}\n"
+                "  found:    {1}".format("bool", return_type))
         self.output_type = self.parents[0].output_type
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
 class FlatMap(PipeRDD):
-    def writeDAG(self, daglist, index):
-        cur_index = super(FlatMap, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        if self.dic:
+            return self.dic[ID]
+        cur_index = super(FlatMap, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = FLAT_MAP
-        dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
+        dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
 
 class Flatten(RDD):
-    def writeDAG(self, daglist, index):
-        cur_index = super(Flatten, self).writeDAG(daglist, index, True)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(Flatten, self).write_dag(daglist, index, True)
         self.output_type = make_tuple(flatten(self.parents[0].output_type))
         return cur_index
 
@@ -273,14 +279,14 @@ class Join(ShuffleRDD):
         par_output_type1 = self.parents[0].output_type
         par_output_type2 = self.parents[1].output_type
 
-        if isinstance(par_output_type1, BaseTuple):
+        if isinstance(par_output_type1, types.BaseTuple):
             key_type = par_output_type1[0]
             output1 = [t for t in par_output_type1.types[1:]]
         else:
             key_type = par_output_type1
             output1 = None
 
-        if isinstance(par_output_type2, BaseTuple):
+        if isinstance(par_output_type2, types.BaseTuple):
             output2 = [t for t in par_output_type2.types[1:]]
         else:
             output2 = None
@@ -288,18 +294,20 @@ class Join(ShuffleRDD):
         if output1 is None:
             if output2 is None:
                 return key_type
-            else:
-                output2.insert(0, key_type)
-                return Tuple(output2)
-        else:
-            if output2 is None:
-                output1.insert(0, key_type)
-                return Tuple(output1)
-            else:
-                return Tuple([key_type, Tuple(flatten(output1) + flatten(output2))])
+            output2.insert(0, key_type)
+            return types.Tuple(output2)
+        if output2 is None:
+            output1.insert(0, key_type)
+            return types.Tuple(output1)
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(Join, self).writeDAG(daglist, index)
+        return types.Tuple(
+            [key_type,
+             types.Tuple(flatten(output1) + flatten(output2))])
+
+    def write_dag(self, daglist, index, empty=False):
+        if self.dic:
+            return self.dic[ID]
+        cur_index = super(Join, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = 'join'
 
@@ -314,14 +322,16 @@ class Cartesian(ShuffleRDD):
         self.parents.append(right)
 
     def compute_output_type(self):
-        p1 = make_tuple(self.parents[0].output_type) if len(self.parents[0].output_type) == 1 else self.parents[
-            0].output_type
-        p2 = make_tuple(self.parents[1].output_type) if len(self.parents[1].output_type) == 1 else self.parents[
-            1].output_type
-        return [p1, p2]
+        parent_type_1 = make_tuple(self.parents[0].output_type) if len(
+            self.parents[0].output_type) == 1 else self.parents[0].output_type
+        parent_type_2 = make_tuple(self.parents[1].output_type) if len(
+            self.parents[1].output_type) == 1 else self.parents[1].output_type
+        return [parent_type_1, parent_type_2]
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(Cartesian, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        if self.dic:
+            return self.dic[ID]
+        cur_index = super(Cartesian, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = 'cartesian'
 
@@ -342,25 +352,26 @@ class Reduce(ShuffleRDD):
         self.func = func
 
     def self_hash(self):
-        f = io.StringIO()
-        dis.dis(self.func, file=f)
-        return hash(f.getvalue())
+        file_ = io.StringIO()
+        dis.dis(self.func, file=file_)
+        return hash(file_.getvalue())
 
-    def computeInputType(self):
+    def _compute_input_type(self):
         # repeat the input type two times
         return [self.parents[0].output_type, self.parents[0].output_type]
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(Reduce, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(Reduce, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = REDUCE
-        input_type = self.computeInputType()
-        dic[FUNC], self.output_type = get_llvm_ir_and_output_type(self.func, input_type)
+        input_type = self._compute_input_type()
+        dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
+            self.func, input_type)
         if str(input_type[0]) != str(self.output_type):
             raise BaseException(
-                    "Function given to reduce_by_key has the wrong return type:\n"
-                    "  expected: {0}\n"
-                    "  found:    {1}".format(input_type[0], self.output_type))
+                "Function given to reduce_by_key has the wrong return type:\n"
+                "  expected: {0}\n"
+                "  found:    {1}".format(input_type[0], self.output_type))
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
 
@@ -377,9 +388,9 @@ class ReduceByKey(ShuffleRDD):
         self.func = func
 
     def self_hash(self):
-        f = io.StringIO()
-        dis.dis(self.func, file=f)
-        return hash(f.getvalue())
+        file_ = io.StringIO()
+        dis.dis(self.func, file=file_)
+        return hash(file_.getvalue())
 
     def _compute_input_type(self):
         # repeat the input type two times minus the key
@@ -387,10 +398,9 @@ class ReduceByKey(ShuffleRDD):
 
         def remove_key(type_):
             try:
-                t = type_[0]
-                if isinstance(t, BaseTuple):
-                    r = remove_key(type_[0])
-                    type_ = make_tuple([r] + list(type_[1:]))
+                if isinstance(type_[0], types.BaseTuple):
+                    inner_key_type = remove_key(type_[0])
+                    type_ = make_tuple([inner_key_type] + list(type_[1:]))
                 else:
                     type_ = make_tuple(type_[1:])
             except TypeError:
@@ -402,17 +412,18 @@ class ReduceByKey(ShuffleRDD):
             return [par_type[0], par_type[0]]
         return [par_type, par_type]
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(ReduceByKey, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(ReduceByKey, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = REDUCEBYKEY
         input_type = self._compute_input_type()
-        dic[FUNC], output_type = get_llvm_ir_and_output_type(self.func, input_type)
+        dic[FUNC], output_type = get_llvm_ir_and_output_type(
+            self.func, input_type)
         if str(input_type[0]) != str(output_type):
             raise BaseException(
-                    "Function given to reduce_by_key has the wrong return type:\n"
-                    "  expected: {0}\n"
-                    "  found:    {1}".format(input_type[0], output_type))
+                "Function given to reduce_by_key has the wrong return type:\n"
+                "  expected: {0}\n"
+                "  found:    {1}".format(input_type[0], output_type))
         self.output_type = self.parents[0].output_type
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         return cur_index
@@ -427,21 +438,26 @@ class CSVSource(RDD):
         self.delimiter = delimiter
 
     def self_hash(self):
-        hash_objects = [self.path, str(self.dtype), str(self.add_index), delimiter,
-                        self.compute_output()]
+        hash_objects = [
+            self.path,
+            str(self.dtype),
+            str(self.add_index), self.delimiter,
+            self.compute_output()
+        ]
         return hash("#".join(hash_objects))
 
     def compute_output(self):
-        df = np.genfromtxt(self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
+        df = np.genfromtxt(
+            self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
 
         try:
             self.output_type = replace_unituple(typeof(tuple(df[0])))
         except TypeError:  # scalar type
             self.output_type = typeof(df[0])
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(CSVSource, self).writeDAG(daglist, index)
-        self.output_type = self.compute_output()
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(CSVSource, self).write_dag(daglist, index)
+        self.compute_output()
         dic = self.dic
         dic[OP] = 'csv_source'
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
@@ -464,18 +480,20 @@ class CollectionSource(RDD):
 
         if isinstance(values, DataFrame):
             self.array = values.values.ravel(order='C').reshape(values.shape)
-        elif isinstance(values, ndarray):
+        elif isinstance(values, np.ndarray):
             self.array = values
         else:
             self.output_type = replace_unituple(typeof(values[0]))
-            self.array = np.array(values, dtype=numba_type_to_dtype(self.output_type))
+            self.array = np.array(
+                values, dtype=numba_type_to_dtype(self.output_type))
         assert self.array.size > 0, "Empty collection not allowed"
         try:
             self.output_type = replace_unituple(typeof(tuple(self.array[0])))
         except TypeError:  # scalar type
             self.output_type = typeof(self.array[0])
         if add_index:
-            self.output_type = replace_unituple(Tuple(flatten([numba.typeof(1), self.output_type])))
+            self.output_type = replace_unituple(
+                types.Tuple(flatten([numba.typeof(1), self.output_type])))
         self.data_ptr = self.array.__array_interface__['data'][0]
         self.size = self.array.shape[0]
         self.add_index = add_index
@@ -484,8 +502,8 @@ class CollectionSource(RDD):
         hash_objects = [str(self.output_type), str(self.add_index)]
         return hash("#".join(hash_objects))
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(CollectionSource, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(CollectionSource, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = 'collection_source'
         dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
@@ -506,11 +524,13 @@ class RangeSource(RDD):
         self.output_type = typeof(step + from_)
 
     def self_hash(self):
-        hash_objects = [str(o) for o in [self.from_, self.to, self.step, self.output_type]]
+        hash_objects = [
+            str(o) for o in [self.from_, self.to, self.step, self.output_type]
+        ]
         return hash("#".join(hash_objects))
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(RangeSource, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(RangeSource, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = 'range_source'
         dic[FROM] = self.from_
@@ -526,14 +546,14 @@ class GeneratorSource(RDD):
         self.func = func
 
     def self_hash(self):
-        f = io.StringIO()
-        dis.dis(self.func, file=f)
-        return hash(f.getvalue())
+        file_ = io.StringIO()
+        dis.dis(self.func, file=file_)
+        return hash(file_.getvalue())
 
-    def writeDAG(self, daglist, index):
-        cur_index = super(GeneratorSource, self).writeDAG(daglist, index)
+    def write_dag(self, daglist, index, empty=False):
+        cur_index = super(GeneratorSource, self).write_dag(daglist, index)
         dic = self.dic
         dic[OP] = 'generator_source'
-        dic[FUNC], self.output_type = get_llvm_ir_output_type_generator(self.func)
+        dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
         dic[OUTPUT_TYPE] = self.output_type
         return cur_index

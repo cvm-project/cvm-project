@@ -1,31 +1,29 @@
-import os
-import time
 from json import JSONEncoder
+import os
+import sys
+import time
 
 import numba
-
 import numba.types as nb_types
-import sys
-
 from numba import typeof
 
 
-def mean(l):
-    return sum(l) / len(l)
+def mean(lst):
+    return sum(lst) / len(lst)
 
 
 def timer(func, max_rep=3):
     res = []
-    for r in range(0, max_rep):
-        t1 = time.perf_counter()
+    for _ in range(0, max_rep):
+        time_1 = time.perf_counter()
         resu = func()
-        t2 = time.perf_counter()
-        res.append(t2 - t1)
+        time_2 = time.perf_counter()
+        res.append(time_2 - time_1)
         print(resu)
     return mean(res)
 
 
-CTypeMap = {
+C_TYPE_MAP = {
     'float32': 'float',
     'float64': 'double',
     'int32': 'int',
@@ -37,12 +35,12 @@ CTypeMap = {
 
 def numba_to_c_types(numba_type):
     numba_type = str(numba_type)
-    for k, v in CTypeMap.items():
-        numba_type = numba_type.replace(k, v)
+    for k, val in C_TYPE_MAP.items():
+        numba_type = numba_type.replace(k, val)
     return numba_type
 
 
-numpyDtypeMap = {
+NUMPY_DTYPE_MAP = {
     'float32': 'f4',
     'float64': 'f8',
     'int32': 'i4',
@@ -55,25 +53,22 @@ numpyDtypeMap = {
 def numba_type_to_dtype(type_):
     if isinstance(type_, nb_types.Tuple):
         types = []
-        for t in type_.types:
-            w = numba_type_to_dtype(t)
-            types.append(w)
+        for typ in type_.types:
+            dtype = numba_type_to_dtype(typ)
+            types.append(dtype)
         return ",".join(types)
-    else:
-        return numpyDtypeMap[type_.name]
+    return NUMPY_DTYPE_MAP[type_.name]
 
 
 def dtype_to_numba(type_):
     if type_.fields:
         # composite type
         types = []
-        for _, v in type_.fields.items():
-            w = dtype_to_numba(v[0])
-            types.append(w)
+        for _, val in type_.fields.items():
+            numba_type = dtype_to_numba(val[0])
+            types.append(numba_type)
         return "(" + ",".join(types) + ")"
-    else:
-        return typeof(type_.name)
-        # return type_.name
+    return typeof(type_.name)
 
 
 def get_type_size(type_):
@@ -90,13 +85,16 @@ def get_type_size(type_):
 
 
 class RDDEncoder(JSONEncoder):
+
+    # pylint: disable=method-hidden
+    # sabir 14.02.18: JSONEncoder overwrites this method, nothing we can do
     def default(self, o):
         if isinstance(o, numba.types.Type):
             return numba_to_c_types(o.name)
         return JSONEncoder.default(self, o)
 
 
-def eprint(*args, **kwargs):
+def error_print(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
@@ -119,11 +117,6 @@ def replace_unituple(type_):
         out.name = "(%s)" % ', '.join(str(i) for i in child_types)
         out.count = len(child_types)
     elif isinstance(type_, nb_types.UniTuple):
-        # type_type = nb_types.Tuple([])
-        # type_type.types = (replace_unituple(type_.dtype),) * type_.count
-        # type_type.count = type_.count
-        # type_type.name = "(%s)" % ', '.join(str(i) for i in type_type.types)
-        # out = type_type
         child_types = []
         for child_type in type_.types:
             child_types.append(replace_unituple(child_type))
@@ -133,18 +126,19 @@ def replace_unituple(type_):
         out.count = len(child_types)
 
     elif isinstance(type_, tuple):
-        out = tuple(map(lambda t: replace_unituple(t), type_))
+        out = tuple(map(replace_unituple, type_))
     elif isinstance(type_, list):
-        out = list(map(lambda t: replace_unituple(t), type_))
+        out = list(map(replace_unituple, type_))
     return out
 
 
-def getProjectPath():
+def get_project_path():
     path = ""
     try:
         path = os.environ['JITQPATH']
     except KeyError:
-        eprint("JITQPATH is not defined, set it to your jitq installation path")
+        error_print(
+            "JITQPATH is not defined, set it to your jitq installation path")
         exit(1)
     return path
 
@@ -165,6 +159,7 @@ def flatten(iterable_):
             else:
                 yield i
 
-    if not isinstance(iterable_, (tuple, list, nb_types.UniTuple, nb_types.Tuple)):
-        return (iterable_,)
+    if not isinstance(iterable_,
+                      (tuple, list, nb_types.UniTuple, nb_types.Tuple)):
+        return iterable_,
     return tuple(rec(iterable_))

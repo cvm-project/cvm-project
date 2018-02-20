@@ -1,23 +1,16 @@
-import os
-import math
-from functools import reduce
 import numpy as np
-import sys
-
-sys.path.insert(0, "/home/sabir/projects/jitq")
-
 from jitq.jitq_context import JitqContext
-from jitq.benchmarks.timer import timer
+from jitq.benchmarks.timer import measure_time
 
 MAX = 1 << 27
-join1 = 1 << 15
-join2 = 1 << 20
+JOIN_1 = 1 << 15
+JOIN_2 = 1 << 20
 
 
 def bench_sum():
-    bc = JitqContext()
+    context = JitqContext()
     input_ = np.random.rand(MAX)
-    dag = bc.collection(input_)
+    dag = context.collection(input_)
 
     def run():
         return dag.reduce(lambda t1, t2: t1 + t2)
@@ -26,9 +19,10 @@ def bench_sum():
 
 
 def bench_map_filter():
-    bc = JitqContext()
+    context = JitqContext()
     input_ = np.random.rand(MAX)
-    dag = bc.collection(input_).map(lambda t: t * 3 + 7).filter(lambda t: t > 0.5)
+    dag = context.collection(input_).map(lambda t: t * 3 + 7).filter(
+        lambda t: t > 0.5)
 
     def run():
         return dag.collect()
@@ -37,9 +31,9 @@ def bench_map_filter():
 
 
 def bench_map():
-    bc = JitqContext()
+    context = JitqContext()
     input_ = np.random.rand(MAX)
-    dag = bc.collection(input_).map(lambda t: t * 3 + 7)
+    dag = context.collection(input_).map(lambda t: t * 3 + 7)
 
     def run():
         return dag.collect()
@@ -48,9 +42,9 @@ def bench_map():
 
 
 def bench_filter():
-    bc = JitqContext()
+    context = JitqContext()
     input_ = np.random.rand(MAX)
-    dag = bc.collection(input_).filter(lambda t: t > 0.5)
+    dag = context.collection(input_).filter(lambda t: t > 0.5)
 
     def run():
         return dag.collect()
@@ -59,14 +53,14 @@ def bench_filter():
 
 
 def bench_join():
-    bc = JitqContext()
+    context = JitqContext()
 
-    input1 = np.random.randint(0, 1000, size=(join1, 2))
-    input2 = np.random.randint(0, 1000, size=(join2, 2))
+    input1 = np.random.randint(0, 1000, size=(JOIN_1, 2))
+    input2 = np.random.randint(0, 1000, size=(JOIN_2, 2))
 
-    inRDD1 = bc.collection(input1)
-    inRDD2 = bc.collection(input2)
-    dag = inRDD1.join(inRDD2)
+    in_rdd_1 = context.collection(input1)
+    in_rdd_2 = context.collection(input2)
+    dag = in_rdd_1.join(in_rdd_2)
 
     def run():
         return dag.collect()
@@ -75,14 +69,15 @@ def bench_join():
 
 
 def bench_map_filter_join():
-    bc = JitqContext()
+    context = JitqContext()
 
-    input1 = np.random.randint(0, 1000, size=(join1, 2))
-    input2 = np.random.randint(0, 1000, size=join2)
+    input1 = np.random.randint(0, 1000, size=(JOIN_1, 2))
+    input2 = np.random.randint(0, 1000, size=JOIN_2)
 
-    inRDD1 = bc.collection(input1)
-    inRDD2 = bc.collection(input2).map(lambda t: (t, t * 3 + 7)).filter(lambda t: t[0] > 50.0 / 100)
-    dag = inRDD1.join(inRDD2)
+    in_rdd_1 = context.collection(input1)
+    in_rdd_2 = context.collection(input2).map(lambda t: (t, t * 3 + 7)).filter(
+        lambda t: t[0] > 50.0 / 100)
+    dag = in_rdd_1.join(in_rdd_2)
 
     def run():
         return dag.collect()
@@ -91,9 +86,9 @@ def bench_map_filter_join():
 
 
 def bench_reduce_by_key():
-    bc = JitqContext()
+    context = JitqContext()
     input_ = np.random.randint(0, 10, size=(MAX >> 1, 2))
-    dag = bc.collection(input_)
+    dag = context.collection(input_)
 
     def run():
         return dag.reduce_by_key(lambda t1, t2: t1 + t2).collect()
@@ -102,14 +97,14 @@ def bench_reduce_by_key():
 
 
 def bench_map_join():
-    bc = JitqContext()
+    context = JitqContext()
 
-    input1 = np.random.randint(0, 1000, size=(join1, 2))
-    input2 = np.random.randint(0, 1000, size=join2)
+    input1 = np.random.randint(0, 1000, size=(JOIN_1, 2))
+    input2 = np.random.randint(0, 1000, size=JOIN_2)
 
-    inRDD1 = bc.collection(input1)
-    inRDD2 = bc.collection(input2).map(lambda t: (t, t * 3 + 7))
-    dag = inRDD1.join(inRDD2)
+    in_rdd_1 = context.collection(input1)
+    in_rdd_2 = context.collection(input2).map(lambda t: (t, t * 3 + 7))
+    dag = in_rdd_1.join(in_rdd_2)
 
     def run():
         return dag.collect()
@@ -118,44 +113,24 @@ def bench_map_join():
 
 
 def bench_map_reduce_by_key():
-    bc = JitqContext()
+    context = JitqContext()
     input_ = np.random.randint(0, 10, size=(MAX >> 1, 2))
-    dag = bc.collection(input_)
+    dag = context.collection(input_)
 
     def run():
-        return dag.map(lambda t: (t[0], t[1] * 3 + 7)).reduce_by_key(lambda t1, t2: t1 + t2).collect()
+        return dag.map(lambda t: (t[0], t[1] * 3 + 7)).reduce_by_key(
+            lambda t1, t2: t1 + t2).collect()
 
     return run
 
 
-print("benchmarking our")
-print("--*--" * 10)
+def run_benchmarks():
+    print("benchmarking jitq")
+    print("--*--" * 10)
 
-# t = timer(bench_sum())
-# print("time sum " + str(t))
-#
-# t = timer(bench_map())
-# print("time map " + str(t))
-#
-# t = timer(bench_filter())
-# print("time filter " + str(t))
-#
-#
-# #
-# t = timer(bench_join())
-# print("time join " + str(t))
-#
-# t = timer(bench_reduce_by_key())
-# print("time reduce by key " + str(t))
+    print("time map reduce by key " +
+          str(measure_time(bench_map_reduce_by_key())))
 
-# t = timer(bench_map_filter())
-# print("time map_filter " + str(t))
-#
-# t = timer(bench_map_filter_join())
-# print("time map filter join " + str(t))
 
-t = timer(bench_map_reduce_by_key())
-print("time map reduce by key " + str(t))
-
-# t = timer(bench_map_join())
-# print("time map join  " + str(t))
+if __name__ == '__main__':
+    run_benchmarks()

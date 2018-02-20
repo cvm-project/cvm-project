@@ -1,9 +1,6 @@
 import numpy as np
-import sys
 
-sys.path.insert(0, "/home/sabir/projects/jitq")
-
-from jitq.benchmarks.timer import timer
+from jitq.benchmarks.timer import measure_time
 
 MAX = 1 << 27
 
@@ -21,9 +18,9 @@ def bench_map_filter():
     input_ = np.random.rand(MAX)
 
     def run():
-        d = input_ + 3
-        d *= 7
-        return d[d > 0.5]
+        result = input_ + 3
+        result *= 7
+        return result[result > 0.5]
 
     return run
 
@@ -32,10 +29,9 @@ def bench_map():
     input_ = np.random.rand(MAX)
 
     def run():
-        d = input_ + 3
-        d *= 7
-        # return np.add(input_ * 3, 7, out=input_)
-        return d
+        result = input_ + 3
+        result *= 7
+        return result
 
     return run
 
@@ -49,17 +45,12 @@ def bench_filter():
     return run
 
 
-print("benchmarking numpy")
-print("--*--" * 10)
+def run_benchmarks():
+    print("benchmarking numpy")
+    print("--*--" * 10)
 
-# t = timer(bench_map())
-# print("time map " + str(t))
-#
-# t = timer(bench_filter(), 3)
-# print("time filter " + str(t))
+    print("time map_filter " + str(measure_time(bench_map_filter())))
 
-# t = timer(bench_sum(), 3)
-# print("time sum " + str(t))
 
-t = timer(bench_map_filter())
-print("time map_filter " + str(t))
+if __name__ == '__main__':
+    run_benchmarks()

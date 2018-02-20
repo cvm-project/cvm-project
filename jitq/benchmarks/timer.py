@@ -1,20 +1,19 @@
 import time
 
 
-def mean(l):
-    return sum(l) / len(l)
+def mean(input_):
+    return sum(input_) / len(input_)
 
 
-def timer(func, max_rep=3, show_runs=False):
+def measure_time(func, max_rep=3, show_runs=False):
     res = []
-    for r in range(0, max_rep):
-        # print("run timer")
-        t1 = time.perf_counter()
-        resu = func()
-        t2 = time.perf_counter()
-        res.append(t2 - t1)
+    for i in range(0, max_rep):
+        time_1 = time.perf_counter()
+        func()
+        time_2 = time.perf_counter()
+        res.append(time_2 - time_1)
         if show_runs:
-            print("run " + str(r) + " " + str(t2 - t1))
+            print("run " + str(i) + " " + str(time_2 - time_1))
     return mean(res) * 1000
 
 

@@ -9,7 +9,7 @@ import ctypes
 from llvmlite import ir
 from llvmlite.ir import VoidType
 
-from numba import config, sigutils, utils, compiler, void
+from numba import sigutils, utils, compiler
 from numba.caching import NullCache, FunctionCache
 from numba.dispatcher import _FunctionCompiler
 from numba.targets import registry
@@ -22,7 +22,7 @@ from jitq.utils import get_type_size, replace_unituple, flatten
 MINIMAL_TYPE_SIZE = 16
 
 
-def cfunc(sig, locals={}, cache=False, **options):
+def cfunc(sig, locals_=None, cache=False, **options):
     """
     This decorator is used to compile a Python function into a C callback
     usable with foreign C libraries.
@@ -34,9 +34,11 @@ def cfunc(sig, locals={}, cache=False, **options):
 
     """
     sig = sigutils.normalize_signature(sig)
+    if not locals_:
+        locals_ = {}
 
     def wrapper(func):
-        res = CFunc(func, sig, locals=locals, options=options)
+        res = CFunc(func, sig, locals_=locals_, options=options)
         if cache:
             res.enable_caching()
         res.compile()
@@ -59,13 +61,14 @@ class _CFuncCompiler(_FunctionCompiler):
         return flags
 
 
+# pylint: disable=too-many-instance-attributes
 class CFunc(object):
     """
     A compiled C callback, as created by the @cfunc decorator.
     """
     _targetdescr = registry.cpu_target
 
-    def __init__(self, pyfunc, sig, locals, options):
+    def __init__(self, pyfunc, sig, locals_, options):
         args, return_type = sig
         if return_type is None:
             raise TypeError("C callback needs an explicit return type")
@@ -81,18 +84,21 @@ class CFunc(object):
         # abi compliance
         # if the return type is small enough we have to return a struct
         # otherwise a return pointer is used
-        self.is_small_return_type = get_type_size(return_type) <= MINIMAL_TYPE_SIZE
+        self.is_small_return_type = get_type_size(
+            return_type) <= MINIMAL_TYPE_SIZE
 
         self._pyfunc = pyfunc
         self._sig = signature(return_type, *args)
 
-        self._compiler = _CFuncCompiler(pyfunc, self._targetdescr,
-                                        options, locals)
+        self._compiler = _CFuncCompiler(pyfunc, self._targetdescr, options,
+                                        locals_)
 
         self._wrapper_name = None
         self._wrapper_address = None
+        self._library = None
         self._cache = NullCache()
         self._cache_hits = 0
+        self.cres = None
 
     def enable_caching(self):
         self._cache = FunctionCache(self._pyfunc)
@@ -101,7 +107,8 @@ class CFunc(object):
         # Use cache and compiler in a critical section
         with compiler.lock_compiler:
             # Try to load from cache
-            cres = self._cache.load_overload(self._sig, self._targetdescr.target_context)
+            cres = self._cache.load_overload(self._sig,
+                                             self._targetdescr.target_context)
             if cres is None:
                 cres = self._compile_uncached()
                 self._cache.save_overload(self._sig, cres)
@@ -110,7 +117,8 @@ class CFunc(object):
 
             self._library = cres.library
             self._wrapper_name = cres.fndesc.llvm_cfunc_wrapper_name
-            self._wrapper_address = self._library.get_pointer_to_function(self._wrapper_name)
+            self._wrapper_address = self._library.get_pointer_to_function(
+                self._wrapper_name)
 
     def _compile_uncached(self):
         sig = self._sig
@@ -128,6 +136,8 @@ class CFunc(object):
         module = library.create_ir_module(fndesc.unique_name)
         context = cres.target_context
 
+        self.cres = cres
+
         ll_argtypes = [context.get_value_type(ty) for ty in flatten(sig.args)]
         if not self.is_small_return_type:
             resptr = context.call_conv.get_return_type(sig.return_type)
@@ -136,36 +146,40 @@ class CFunc(object):
             ll_return_type = VoidType()
 
             wrapty = ir.FunctionType(ll_return_type, ll_argtypes)
-            wrapfn = module.add_function(wrapty, fndesc.llvm_cfunc_wrapper_name)
+            wrapfn = module.add_function(wrapty,
+                                         fndesc.llvm_cfunc_wrapper_name)
             builder = ir.IRBuilder(wrapfn.append_basic_block('entry'))
 
             # omit the first argument which is the res ptr
-            self._build_c_wrapper(context, builder, cres, wrapfn.args[1:], wrapfn.args[0])
+            self._build_c_wrapper(context, builder, wrapfn.args[1:],
+                                  wrapfn.args[0])
         else:
             ll_return_type = context.get_value_type(sig.return_type)
 
             wrapty = ir.FunctionType(ll_return_type, ll_argtypes)
-            wrapfn = module.add_function(wrapty, fndesc.llvm_cfunc_wrapper_name)
+            wrapfn = module.add_function(wrapty,
+                                         fndesc.llvm_cfunc_wrapper_name)
             builder = ir.IRBuilder(wrapfn.append_basic_block('entry'))
 
-            self._build_c_wrapper(context, builder, cres, wrapfn.args)
+            self._build_c_wrapper(context, builder, wrapfn.args)
 
         library.add_ir_module(module)
         library.finalize()
 
         return cres
 
-    def _build_c_wrapper(self, context, builder, cres, c_args, retptr=None):
+    def _build_c_wrapper(self, context, builder, c_args, retptr=None):
         sig = self._sig
-        pyapi = context.get_python_api(builder)
+        context.get_python_api(builder)
 
         fnty = context.call_conv.get_function_type(sig.return_type, sig.args)
-        fn = builder.module.add_function(fnty, cres.fndesc.llvm_func_name)
+        function_ir = builder.module.add_function(
+            fnty, self.cres.fndesc.llvm_func_name)
 
         # sig.args and c_args should both be flatten
         sig.args = flatten(sig.args)
-        status, out = context.call_conv.call_function(
-            builder, fn, sig.return_type, sig.args, c_args, env=None)
+        _, out = context.call_conv.call_function(
+            builder, function_ir, sig.return_type, sig.args, c_args, env=None)
         if not self.is_small_return_type:
 
             # the out must be written to the retptr
@@ -222,4 +236,4 @@ class CFunc(object):
         return self._cache_hits
 
     def __repr__(self):
-        return "<Numba C callback %r>" % (self.__qualname__,)
+        return "<Numba C callback %r>" % (self.__qualname__, )
