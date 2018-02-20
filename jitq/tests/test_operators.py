@@ -3,6 +3,8 @@
 import unittest
 import argparse
 import sys
+
+import pandas
 from functools import reduce
 from itertools import groupby
 from operator import itemgetter
@@ -42,6 +44,14 @@ class TestCollection(unittest.TestCase):
         res = [tuple(r) for r in res]
         ref = [(i, ) + r for i, r in enumerate(collection)]
         self.assertListEqual(res, ref)
+
+    def test_pandas_dataframe(self):
+        context = JitqContext()
+        array = pandas.DataFrame([(i, 2 * i) for i in range(10)])
+        res = context.collection(array).collect()
+        res = [tuple(r) for r in res]
+        truth = [tuple(r) for r in array.values.tolist()]
+        self.assertListEqual(truth, res)
 
 
 class TestRange(unittest.TestCase):
@@ -165,8 +175,7 @@ class TestReduceByKey(unittest.TestCase):
     def test_grouped(self):
         jitq_context = JitqContext()
         input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
-        reduce_func = lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1], t1[2]
-                                      + t2[2], t1[3] + t2[3], t1[4] + t2[4])
+        reduce_func = lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1], t1[2] + t2[2], t1[3] + t2[3], t1[4] + t2[4])
 
         enumerated_input = [(i, ) + t for i, t in enumerate(input_)]
         cart = [t1 + t2 for t1 in enumerated_input for t2 in enumerated_input]
