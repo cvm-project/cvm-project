@@ -77,22 +77,22 @@ def with_dask():
 
     features_raw['temp'] = features_raw['temp'] * 1.8 + 32
     features_raw['weather1'] = 3.2 * features_raw['temp']**3 + 7.5 \
-                                    * features_raw['hum']**3 + 2.3 \
-                                    * features_raw['discomf']**3 + 5.3 \
-                                    * features_raw['daylight']**3 + 8.6 \
-                                    * features_raw['moon']**3
+        * features_raw['hum']**3 + 2.3 \
+        * features_raw['discomf']**3 + 5.3 \
+        * features_raw['daylight']**3 + 8.6 \
+        * features_raw['moon']**3
 
     features_raw['weather2'] = 3.2 * features_raw['temp'] ** 2 + 7.5 \
-                                    * features_raw['hum'] ** 2 + 2.3 \
-                                    * features_raw['discomf'] ** 2 + 5.3  \
-                                    * features_raw['daylight'] ** 2 + 8.6 \
-                                    * features_raw['moon'] ** 2
+        * features_raw['hum'] ** 2 + 2.3 \
+        * features_raw['discomf'] ** 2 + 5.3  \
+        * features_raw['daylight'] ** 2 + 8.6 \
+        * features_raw['moon'] ** 2
 
     features_raw['weather3'] = 3.2 * features_raw['temp'] ** 4 + 7.5 \
-                                    * features_raw['hum'] ** 4 + 2.3 \
-                                    * features_raw['discomf'] ** 4 + 5.3 \
-                                    * features_raw['daylight'] ** 4 + 8.6 \
-                                    *features_raw['moon'] ** 4
+        * features_raw['hum'] ** 4 + 2.3 \
+        * features_raw['discomf'] ** 4 + 5.3 \
+        * features_raw['daylight'] ** 4 + 8.6 \
+        * features_raw['moon'] ** 4
 
     features_raw = dd.merge(features_raw, static_feat, on=['grid_id'])
     features_raw = dd.merge(features_raw, census, on=['grid_id'])

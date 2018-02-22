@@ -33,6 +33,7 @@ def bench_numba():
     timer_.end()
     print("numba time: " + timer_.diff())
 
+
 def bench_jitq():
     context = JitqContext()
     timer_ = Timer()

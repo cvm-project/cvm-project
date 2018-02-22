@@ -175,7 +175,9 @@ class TestReduceByKey(unittest.TestCase):
     def test_grouped(self):
         jitq_context = JitqContext()
         input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
-        reduce_func = lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1], t1[2] + t2[2], t1[3] + t2[3], t1[4] + t2[4])
+
+        def reduce_func(t1, t2): return (t1[0] + t2[0], t1[1] + t2[1], t1[2]
+                                         + t2[2], t1[3] + t2[3], t1[4] + t2[4])
 
         enumerated_input = [(i, ) + t for i, t in enumerate(input_)]
         cart = [t1 + t2 for t1 in enumerated_input for t2 in enumerated_input]
@@ -252,9 +254,12 @@ class TestIntegration(unittest.TestCase):
     def test_map_filter_map(self):
         jitq_context = JitqContext()
         input_ = range(0, 10)
-        map_1 = lambda w: (w, w * 3)
-        filter_1 = lambda w: w[0] % 2 == 0
-        map_2 = lambda w: w[0]
+
+        def map_1(w): return (w, w * 3)
+
+        def filter_1(w): return w[0] % 2 == 0
+
+        def map_2(w): return w[0]
         data = jitq_context.collection(input_).map(map_1).filter(filter_1).map(
             map_2)
         res = data.collect()
