@@ -14,9 +14,9 @@
 
 #include "utils/utils.h"
 
+using boost::adaptors::transformed;
 using boost::algorithm::join;
 using boost::format;
-using boost::adaptors::transformed;
 
 std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
     // TODO(sabir): this should be an operator

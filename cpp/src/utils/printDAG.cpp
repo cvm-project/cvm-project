@@ -59,10 +59,11 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
     deadVars.pop_back();
     //    label += "\n" + deadVars;
 
-    Agnode_t *n = agnode(
-            g, const_cast<char *>(
-                       (op->name() + "_" + std::to_string(op->id)).c_str()),
-            1);
+    Agnode_t *n =
+            agnode(g,
+                   const_cast<char *>(
+                           (op->name() + "_" + std::to_string(op->id)).c_str()),
+                   1);
     agsafeset(n, "shape", "polygon", "polygon");
 
     for (auto pred : op->predecessors) {
