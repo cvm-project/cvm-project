@@ -9,7 +9,7 @@ include_directories("${PROJECT_SOURCE_DIR}")
 include (ReleaseAsDefault)
 
 # Setup clang-format
-find_package (ClangFormat 4.0)
+find_package (ClangFormat 5.0 EXACT)
 if(ClangFormat_FOUND)
     enable_clang_format_targets()
 endif()
