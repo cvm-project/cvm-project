@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
-import unittest
 import argparse
 import sys
-
-import pandas
-from functools import reduce
+import unittest
 from itertools import groupby
+
+from functools import reduce
 from operator import itemgetter
 
 import numpy as np
+import pandas
 
 from jitq.jitq_context import JitqContext
 
@@ -79,10 +79,10 @@ class TestRange(unittest.TestCase):
 class TestJoin(unittest.TestCase):
     def test_overlap(self):
         jitq_context = JitqContext()
-        input1 = [(r, r * 10) for r in range(10)]
-        input2 = [(r, r * 13, r + 100) for r in range(5, 15)]
-        data1 = jitq_context.collection(input1)
-        data2 = jitq_context.collection(input2)
+        input_1 = [(r, r * 10) for r in range(10)]
+        input_2 = [(r, r * 13, r + 100) for r in range(5, 15)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
 
         joined = data1.join(data2)
         res = joined.collect()
@@ -91,10 +91,10 @@ class TestJoin(unittest.TestCase):
 
     def test_repeated_keys(self):
         jitq_context = JitqContext()
-        input1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
-        input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
-        data1 = jitq_context.collection(input1)
-        data2 = jitq_context.collection(input2)
+        input_1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        input_2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
 
         joined = data1.join(data2)
         res = joined.collect()
@@ -141,14 +141,17 @@ class TestReduce(unittest.TestCase):
     def test_reduce_sum(self):
         jitq_context = JitqContext()
         inpt = range(0, 10)
-        data = jitq_context.collection(inpt).reduce(lambda t1, t2: t1 + t2)
+        data = jitq_context.collection(inpt).reduce(
+            lambda tuple_1, tuple_2: tuple_1 + tuple_2)
         self.assertEqual(data, sum(inpt))
 
     def test_reduce_tuple(self):
         jitq_context = JitqContext()
         inpt = [(r, r * 10) for r in range(0, 10)]
         res = jitq_context.collection(inpt).reduce(
-            lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1]))
+            lambda tuple_1, tuple_2: (
+                tuple_1[0] + tuple_2[0], tuple_1[1] + tuple_2[1])
+        )
         res = tuple(res)
         truth = (sum(map(lambda t: t[0], inpt)), sum(
             map(lambda t: t[1], inpt)))
@@ -160,7 +163,7 @@ class TestReduceByKey(unittest.TestCase):
         jitq_context = JitqContext()
         inpt = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
         data = jitq_context.collection(inpt).reduce_by_key(
-            lambda t1, t2: t1 + t2).collect()
+            lambda tuple_1, tuple_2: tuple_1 + tuple_2).collect()
         truth = {(0, 2), (1, 3)}
         self.assertSetEqual(set(tuple(t) for t in data), truth)
 
@@ -168,7 +171,9 @@ class TestReduceByKey(unittest.TestCase):
         jitq_context = JitqContext()
         input_ = [(0, 1, 2), (1, 1, 2), (1, 1, 2), (0, 1, 2), (1, 1, 2)]
         data = jitq_context.collection(input_).reduce_by_key(
-            lambda t1, t2: (t1[0] + t2[0], t1[1] + t2[1])).collect()
+            lambda tuple_1, tuple_2: (
+                tuple_1[0] + tuple_2[0], tuple_1[1] + tuple_2[1])
+        ).collect()
         truth = [(0, 2, 4), (1, 3, 6)]
         self.assertEqual(sorted([tuple(t) for t in data]), sorted(truth))
 
@@ -176,16 +181,23 @@ class TestReduceByKey(unittest.TestCase):
         jitq_context = JitqContext()
         input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
 
-        def reduce_func(t1, t2): return (t1[0] + t2[0], t1[1] + t2[1], t1[2]
-                                         + t2[2], t1[3] + t2[3], t1[4] + t2[4])
+        def reduce_func(tuple_1, tuple_2):
+            return (tuple_1[0] + tuple_2[0], tuple_1[1] + tuple_2[1],
+                    tuple_1[2] + tuple_2[2], tuple_1[3] + tuple_2[3],
+                    tuple_1[4] + tuple_2[4])
 
-        enumerated_input = [(i, ) + t for i, t in enumerate(input_)]
-        cart = [t1 + t2 for t1 in enumerated_input for t2 in enumerated_input]
-        truth = [
-            reduce(lambda t1, t2: (t1[0], ) + reduce_func(t1[1:], t2[1:]),
-                   group)
-            for _, group in groupby(sorted(cart), key=itemgetter(0))
+        enumerated_input = [(i,) + t for i, t in enumerate(input_)]
+        cart = [
+            tuple_1 + tuple_2 for tuple_1 in enumerated_input
+            for tuple_2 in enumerated_input
         ]
+        truth = [reduce(lambda tuple_1,
+                        tuple_2: (tuple_1[0],
+                                  ) + reduce_func(tuple_1[1:],
+                                                  tuple_2[1:]),
+                        group) for _,
+                 group in groupby(sorted(cart),
+                                  key=itemgetter(0))]
 
         data = jitq_context.collection(input_, add_index=True).cartesian(
             jitq_context.collection(input_, add_index=True)) \
@@ -197,10 +209,10 @@ class TestReduceByKey(unittest.TestCase):
 class TestCartesian(unittest.TestCase):
     def test_count(self):
         jitq_context = JitqContext()
-        input1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
-        input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
-        data1 = jitq_context.collection(input1)
-        data2 = jitq_context.collection(input2)
+        input_1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        input_2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
 
         joined = data1.cartesian(data2)
         res = joined.count()
@@ -209,10 +221,10 @@ class TestCartesian(unittest.TestCase):
 
     def test_collect(self):
         jitq_context = JitqContext()
-        input1 = [(1, 2), (1, 3)]
-        input2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77)]
-        data1 = jitq_context.collection(input1)
-        data2 = jitq_context.collection(input2)
+        input_1 = [(1, 2), (1, 3)]
+        input_2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
 
         joined = data1.cartesian(data2)
         res = joined.collect()
@@ -247,7 +259,7 @@ class TestCache(unittest.TestCase):
             0, 10)).filter(lambda t: t % 2 == 1).collect()
         self.assertListEqual(list(res), list(range(1, 10, 2)))
 
-    # TODO(sabir): test cases for the caching mechanism of all operators
+        # TODO(sabir): test cases for the caching mechanism of all operators
 
 
 class TestIntegration(unittest.TestCase):
@@ -255,11 +267,15 @@ class TestIntegration(unittest.TestCase):
         jitq_context = JitqContext()
         input_ = range(0, 10)
 
-        def map_1(w): return (w, w * 3)
+        def map_1(in_):
+            return in_, in_ * 3
 
-        def filter_1(w): return w[0] % 2 == 0
+        def filter_1(in_):
+            return in_[0] % 2 == 0
 
-        def map_2(w): return w[0]
+        def map_2(in_):
+            return in_[0]
+
         data = jitq_context.collection(input_).map(map_1).filter(filter_1).map(
             map_2)
         res = data.collect()
@@ -268,14 +284,15 @@ class TestIntegration(unittest.TestCase):
 
     def test_all_operators(self):
         context = JitqContext()
-        input1 = context.range_(0, 10).map(lambda i: (i, 1))
-        input2 = context.collection(range(0, 10)).map(lambda i: (2 * i, i))
+        input_1 = context.range_(0, 10).map(lambda i: (i, 1))
+        input_2 = context.collection(range(0, 10)).map(lambda i: (2 * i, i))
         input3 = context.collection(range(0, 10)).map(lambda i: (1, 1))
-        step1 = input1.join(
-            input2).map(lambda t: (t[0], t[1][1])).reduce_by_key(
-                lambda a, b: a + b).cartesian(input3)
+        step1 = input_1.join(
+            input_2).map(lambda t: (t[0], t[1][1])).reduce_by_key(
+            lambda a, b: a + b).cartesian(input3)
         step2 = step1.filter(lambda t, s: t[0] % 3 == 0).map(
-            lambda s, t: t[0]).reduce(lambda t1, t2: t1 + t2)
+            lambda s, t: t[0]).reduce(
+            lambda tuple_1, tuple_2: tuple_1 + tuple_2)
         self.assertEqual(step2, 20)
 
 
