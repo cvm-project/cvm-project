@@ -1,7 +1,7 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
-format:
+format-cpp:
   stage: build
   image: ingomuellernet/buildenv
   before_script:
@@ -16,13 +16,12 @@ format-python:
   image: ingomuellernet/buildenv
   before_script:
     - apt-get update && apt-get install -y python3-pip
-    - pip3 install pylint
-    - pylint --version
+    - pip3 install --upgrade pylint autopep8
     - pip3 install -r requirements.txt
     - pip3 install -r jitq/benchmarks/requirements.txt
   script:
-    - pylint jitq ml -f colorized
-
+    - tools/check_format_python.sh
+    - tools/check_pylint.sh
 
 build:
   stage: build
