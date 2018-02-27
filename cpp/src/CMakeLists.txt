@@ -85,7 +85,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 
 # Set up benchmark utils
 add_executable(benchmark benchmarks/main.cpp)
-add_test(benchmark benchmark)
 
 add_executable(max_memory benchmarks/max_memory.c)
 
