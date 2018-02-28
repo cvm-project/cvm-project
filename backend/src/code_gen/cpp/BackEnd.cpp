@@ -48,7 +48,7 @@ std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
 }
 
 void BackEnd::GenerateCode(DAG *const dag) {
-    const std::string genDir = get_lib_path() + "/cpp/gen/";
+    const std::string genDir = get_lib_path() + "/backend/gen/";
     exec(("bash -c 'rm -r -f " + genDir + "/*'").c_str());
 
     // Create output directory
@@ -131,8 +131,8 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
 void BackEnd::Compile(const uint64_t counter) {
     exec(("cd " + get_lib_path() +
-          "/cpp/gen && make LIB_ID=" + std::to_string(counter) + " -f " +
-          get_lib_path() + "/cpp/src/code_gen/cpp/Makefile -j")
+          "/backend/gen && make LIB_ID=" + std::to_string(counter) + " -f " +
+          get_lib_path() + "/backend/src/code_gen/cpp/Makefile -j")
                  .c_str());
 }
 

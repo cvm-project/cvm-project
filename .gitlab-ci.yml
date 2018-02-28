@@ -5,7 +5,7 @@ format-cpp:
   stage: build
   image: ingomuellernet/buildenv-jitq
   script:
-    - cd cpp/build
+    - cd backend/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
     - make check-format
 
@@ -23,19 +23,19 @@ build:
   stage: build
   image: ingomuellernet/buildenv-jitq
   script:
-    - cd cpp/build
+    - cd backend/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
     - make
   artifacts:
     paths:
-      - cpp/build/*
+      - backend/build/*
 
 clang-tidy:
   stage: build
   image: ingomuellernet/buildenv-jitq
   script:
-    - cd cpp/build
-    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_CXX_CLANG_TIDY:STRING="clang-tidy-5.0;-extra-arg=-I/opt/clang+llvm-5.0.0/lib/clang/5.0.0;-header-filter=/builds/OU-SYSTEMS/msc-sakhadov/cpp/src/"
+    - cd backend/build
+    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_CXX_CLANG_TIDY:STRING="clang-tidy-5.0;-extra-arg=-I/opt/clang+llvm-5.0.0/lib/clang/5.0.0;-header-filter=/builds/OU-SYSTEMS/jitq/backend/src/"
     - make
 
 cppcheck:
@@ -44,7 +44,7 @@ cppcheck:
     - build
   image: ingomuellernet/buildenv-jitq
   script:
-    - cd cpp/build
+    - cd backend/build
     - make cppcheck
 
 python-tests:
@@ -58,7 +58,7 @@ python-tests:
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev
     - pip3 install -r requirements.txt
-    - echo -e "CC=clang-5.0\nCXX=clang++-5.0" > cpp/src/code_gen/cpp/Makefile.local
+    - echo -e "CC=clang-5.0\nCXX=clang++-5.0" > backend/src/code_gen/cpp/Makefile.local
   script:
     - cd python
     - python3 -m unittest discover -v -s jitq/tests
@@ -69,5 +69,5 @@ cpp-test:
     - build
   image: ingomuellernet/buildenv-jitq
   script:
-    - cd cpp/build
+    - cd backend/build
     - ctest -V

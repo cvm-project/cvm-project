@@ -15,7 +15,7 @@ function run_checker {
 
 run_checker "${ROOT_PATH}"/tools/check_format_python.sh
 run_checker "${ROOT_PATH}"/tools/check_pylint.sh
-run_checker make -C "${ROOT_PATH}"/cpp/build/ check-format
-run_checker make -C "${ROOT_PATH}"/cpp/build/ cppcheck
+run_checker make -C "${ROOT_PATH}"/backend/build/ check-format
+run_checker make -C "${ROOT_PATH}"/backend/build/ cppcheck
 
 exit $rc

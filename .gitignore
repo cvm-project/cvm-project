@@ -1,5 +1,5 @@
 #generated query code
-/cpp/gen/
+/backend/gen/
 
 # benchmark data
 /python/benchmarks/crime_data/

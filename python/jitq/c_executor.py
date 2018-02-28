@@ -9,8 +9,8 @@ from jitq.benchmarks.timer import Timer
 from jitq.utils import get_project_path, RDDEncoder, get_type_size
 
 JITQ_PATH = get_project_path()
-CPP_DIR = JITQ_PATH + "/cpp/"
-GEN_DIR = JITQ_PATH + "/cpp/gen/"
+CPP_DIR = JITQ_PATH + "/backend/"
+GEN_DIR = JITQ_PATH + "/backend/gen/"
 GEN_HEADER_FILE = "generate_dag_plan.h"
 EXECUTOR_HEADER_FILE = "execute.h"
 GENERATE_LIB = "libgenerate"
