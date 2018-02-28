@@ -13,9 +13,9 @@ function run_checker {
   rc="$([ $rc -eq 0 -a $? -eq 0 ]; echo $?)"
 }
 
-run_checker "${ROOT_PATH}"/tools/check_format_cpp.sh
 run_checker "${ROOT_PATH}"/tools/check_format_python.sh
 run_checker "${ROOT_PATH}"/tools/check_pylint.sh
+run_checker make -C "${ROOT_PATH}"/cpp/build/ check-format
 run_checker make -C "${ROOT_PATH}"/cpp/build/ cppcheck
 
 exit $rc
