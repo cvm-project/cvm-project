@@ -5,7 +5,10 @@
 #ifndef OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H
 #define OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H
 
+#include <vector>
+
 #include "dag/DAG.h"
+#include "dag/DAGFilter.h"
 #include "utils/DAGVisitor.h"
 
 // cppcheck-suppress noConstructor
