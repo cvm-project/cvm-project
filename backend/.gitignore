@@ -2,7 +2,6 @@
 CMakeFiles/
 CMakeTmp/
 src/CMakeCache.txt
-Makefile
 cmake-build-debug
 cmake-build-release
 cmake_install.cmake
