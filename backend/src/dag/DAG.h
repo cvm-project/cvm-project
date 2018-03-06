@@ -39,6 +39,7 @@ public:
     }
 
     void addOperator(DAGOperator *op);
+    void addOperator(DAGOperator *op, size_t id);
 
     DAGOperator *sink{};
 

@@ -5,6 +5,7 @@
 #ifndef OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H
 #define OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H
 
+#include <memory>
 #include <vector>
 
 #include "dag/DAG.h"
@@ -19,7 +20,7 @@ public:
     void visit(DAGFilter *op) override;
 
 private:
-    std::vector<DAGFilter *> filters;
+    std::vector<std::unique_ptr<DAGFilter>> filters;
     DAG *dag{};
 };
 

@@ -12,10 +12,8 @@
 #include <json.hpp>
 
 #include "dag/Column.h"
-#include "dag/DAG.h"
 #include "dag/TupleField.h"
 
-class DAG;
 class DAGVisitor;
 
 // cppcheck-suppress noConstructor
@@ -32,8 +30,6 @@ public:
     size_t id{};
 
     virtual ~DAGOperator() = default;
-
-    virtual void Init(DAG *dag) { dag_ = dag; }
 
     // free only this operator
     void freeThisOperator() {
@@ -57,14 +53,6 @@ public:
         }
         return ret;
     }
-
-    DAG *dag() const {
-        assert(dag_ != nullptr);
-        return dag_;
-    }
-
-private:
-    DAG *dag_{};
 };
 
 template <class OperatorType>

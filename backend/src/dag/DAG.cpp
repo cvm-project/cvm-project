@@ -9,8 +9,11 @@
 #include "DAGOperator.h"
 
 void DAG::addOperator(DAGOperator *const op) {
-    assert(op->dag() == this);
+    addOperator(op, last_operator_id() + 1);
+}
 
+void DAG::addOperator(DAGOperator *const op, const size_t id) {
+    op->id = id;
     auto ret = this->operator_ids_.insert(op->id);
     assert(ret.second == true);
 
@@ -38,8 +41,7 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
             std::unique_ptr<DAGOperator> op_ptr(get_operator(op_name));
             op = op_ptr.get();
             ::from_json(it, *op_ptr);
-            op_ptr->Init(dag.get());
-            dag->addOperator(op_ptr.release());
+            dag->addOperator(op_ptr.release(), op->id);
         }
         operators.emplace(op->id, op);
 

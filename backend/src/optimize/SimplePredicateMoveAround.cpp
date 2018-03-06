@@ -15,7 +15,7 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
     this->visitDag(dag);
     // 2. for every filter go up the dag and insert them
 
-    for (auto filter : filters) {
+    for (const auto &filter : filters) {
         std::vector<DAGOperator *> q;
         q.push_back(dag->sink);
         while (!q.empty()) {
@@ -28,6 +28,7 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
             for (auto c : filter->read_set) {
                 if (currentOp->writeSetContains(c)) {
                     DAGFilter *filt = filter->copy();
+                    dag->addOperator(filt);
                     // insert the filter after this operator
                     filt->predecessors.push_back(currentOp);
                     filt->successors = currentOp->successors;
@@ -64,17 +65,18 @@ void SimplePredicateMoveAround::optimize(DAG *dag_) {
             }
         }
     }
-    for (auto filter : filters) {
+    for (const auto &filter : filters) {
         filter->freeThisOperator();
     }
 }
 
 void SimplePredicateMoveAround::visit(DAGFilter *op) {
     DAGFilter *filt = op->copy();
-    DAGOperator *pred = op->predecessors[0];
+    filters.emplace_back(filt);
 
     // connect the predecessors and successors
     // if this is the sink, reassign the sink
+    DAGOperator *pred = op->predecessors[0];
     if (op->successors.empty()) {
         pred->successors.clear();
         dag->sink = pred;
@@ -88,5 +90,4 @@ void SimplePredicateMoveAround::visit(DAGFilter *op) {
         succ->predecessors[index] = pred;
     }
     op->freeThisOperator();
-    filters.push_back(filt);
 }
