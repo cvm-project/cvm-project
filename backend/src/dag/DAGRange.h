@@ -9,8 +9,6 @@
 
 #include "DAGOperator.h"
 
-class DAGVisitor;
-
 class DAGRange : public DAGOperatorBase<DAGRange> {
 public:
     void to_json(nlohmann::json *json) const override;

@@ -9,7 +9,6 @@
 
 #include "DAGOperator.h"
 
-class DAGVisitor;
 class DAGMap : public DAGOperatorBase<DAGMap> {
 public:
     constexpr static const char *kName = "map";

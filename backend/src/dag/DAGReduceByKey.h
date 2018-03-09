@@ -6,7 +6,6 @@
 #define DAG_DAGREDUCEBYKEY_H
 
 #include "DAGOperator.h"
-class DAGVisitor;
 
 class DAGReduceByKey : public DAGOperatorBase<DAGReduceByKey> {
 public:

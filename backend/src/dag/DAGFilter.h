@@ -7,8 +7,6 @@
 
 #include "DAGOperator.h"
 
-class DAGVisitor;
-
 class DAGFilter : public DAGOperatorBase<DAGFilter> {
 public:
     constexpr static const char *kName = "filter";
