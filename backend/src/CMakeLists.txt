@@ -61,6 +61,7 @@ set(SOURCE_FILES
         dag/DAGOperator.cpp
         dag/DAGRange.cpp
         IR_analyzer/LLVMParser.cpp
+        IR_analyzer/SchemaInference.cpp
         optimize/Optimizer.cpp
         optimize/SimplePredicateMoveAround.cpp
         utils/c_type_to_llvm.cpp
