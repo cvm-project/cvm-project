@@ -461,6 +461,48 @@ class TestCache(unittest.TestCase):
 
 class TestIntegration(unittest.TestCase):
 
+    @unittest.skip("Backend does not support non-tree DAGs yet")
+    def test_reexecute_dag(self):
+        jitq_context = JitqContext()
+        input_ = jitq_context.collection(range(0, 2))
+        res1 = input_.collect()
+        res2 = input_.collect()
+        self.assertListEqual(res1.astuplelist(), res2.astuplelist())
+
+    @unittest.skip("Backend does not support non-tree DAGs yet")
+    def test_reuse_and_modify_dag(self):
+        jitq_context = JitqContext()
+        input_ = jitq_context.collection(range(0, 2))
+        res1 = input_.collect()
+        res2 = input_.filter(lambda t: True).collect()
+        self.assertListEqual(res1.astuplelist(), res2.astuplelist())
+
+    @unittest.skip("Backend does not support non-tree DAGs yet")
+    def test_dag_explosion(self):
+        jitq_context = JitqContext()
+        input_ = range(0, 10)
+        operator = jitq_context.collection(input_)
+        for _ in range(10):
+            operator = operator.join(operator)
+        res = operator.collect()
+        self.assertListEqual(res.astuplelist(), list(input_))
+
+    @unittest.skip("Backend does not support non-tree DAGs yet")
+    def test_dag1(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 2))
+        result = input1.cartesian(input1).collect()
+        truth = [(0, 0), (0, 1), (1, 0), (1, 1)]
+        self.assertListEqual(sorted(list(result)), sorted(truth))
+
+    @unittest.skip("Backend does not support non-tree DAGs yet")
+    def test_dag2(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 2)).filter(lambda t: True)
+        result = input1.cartesian(input1).collect()
+        truth = [(0, 0), (0, 1), (1, 0), (1, 1)]
+        self.assertListEqual(sorted(list(result)), sorted(truth))
+
     def test_map_filter_map(self):
         jitq_context = JitqContext()
         input_ = range(0, 10)
