@@ -43,6 +43,6 @@ def attach_test_cases():
         setattr(TestParser, "test_" + test_name, make_test_func(test_name))
 
 
+attach_test_cases()
 if __name__ == '__main__':
-    attach_test_cases()
     unittest.main()
