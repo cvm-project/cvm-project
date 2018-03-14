@@ -15,7 +15,8 @@ from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
     OUTPUT_TYPE, DATA_PATH, ADD_INDEX, FROM, TO, STEP
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
-    make_tuple, flatten, numba_type_to_dtype, Timer
+    make_tuple, item_typeof, flatten, numba_type_to_dtype, is_item_type, \
+    Timer
 from jitq.libs.numba.llvm_ir import cfunc
 
 
@@ -43,23 +44,21 @@ def numba_abi_to_llvm_abi(type_):
     return out
 
 
-def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
+def get_llvm_ir_and_output_type(func, arg_types=None, opts=None):
     opts_ = {OPT_CONST_PROPAGATE}
     if opts is not None:
         opts_ += opts
+    if arg_types is None:
+        arg_types = []
     func = ast_optimize(func, opts_)
-    input_type = replace_unituple(input_type)
+
     timer = Timer()
     timer.start()
-    if isinstance(input_type, list):
-        dec_func = numba.njit(
-            tuple(input_type), fastmath=FAST_MATH, parallel=True)(func)
-    else:
-        dec_func = numba.njit(
-            (input_type,), fastmath=FAST_MATH, parallel=True)(func)
+    dec_func = numba.njit(
+        tuple(arg_types), fastmath=FAST_MATH, parallel=True)(func)
     timer.end()
-    output_type = dec_func.nopython_signatures[0].return_type
 
+    output_type = dec_func.nopython_signatures[0].return_type
     output_type = replace_unituple(output_type)
 
     input_type = dec_func.nopython_signatures[0].args
@@ -127,6 +126,8 @@ class RDD(object):
         self.dic = dict()
         empty = self.self_write_dag(self.dic)
         cur_index += int(not empty)
+        assert is_item_type(self.output_type), \
+            "Expected valid nested tuple type."
 
         if not empty:
             self.dic[ID] = cur_index
@@ -240,7 +241,11 @@ class Map(PipeRDD):
 
     def self_write_dag(self, dic):
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
-            self.func, self.parents[0].output_type)
+            self.func, [self.parents[0].output_type])
+        if not is_item_type(self.output_type):
+            raise BaseException(
+                "Function given to map has the wrong return type:\n"
+                "  found:    {0}".format(self.output_type))
 
 
 class Filter(PipeRDD):
@@ -248,7 +253,7 @@ class Filter(PipeRDD):
 
     def self_write_dag(self, dic):
         dic[FUNC], return_type = get_llvm_ir_and_output_type(
-            self.func, self.parents[0].output_type)
+            self.func, [self.parents[0].output_type])
         if str(return_type) != "bool":
             raise BaseException(
                 "Function given to reduce_by_key has the wrong return type:\n"
@@ -283,36 +288,27 @@ class Join(BinaryRDD):
         super(Join, self).__init__(context, [left, right])
 
     def compute_output_type(self):
-        par_output_type1 = self.parents[0].output_type
-        par_output_type2 = self.parents[1].output_type
+        left_type = self.parents[0].output_type
+        right_type = self.parents[1].output_type
+        if not isinstance(left_type, types.Tuple):
+            left_type = make_tuple([left_type])
+        if not isinstance(right_type, types.Tuple):
+            right_type = make_tuple([right_type])
 
-        if isinstance(par_output_type1, types.BaseTuple):
-            key_type = par_output_type1[0]
-            output1 = [t for t in par_output_type1.types[1:]]
-        else:
-            key_type = par_output_type1
-            output1 = None
+        # Special case: two scalar inputs produce a scalar output
+        if not isinstance(self.parents[0].output_type, types.Tuple) and \
+           not isinstance(self.parents[1].output_type, types.Tuple):
+            return self.parents[0].output_type
 
-        if isinstance(par_output_type2, types.BaseTuple):
-            output2 = [t for t in par_output_type2.types[1:]]
-        else:
-            output2 = None
+        # Common case: concatenate tuples
+        key_type = left_type[0]
+        left_payload = left_type.types[1:]
+        right_payload = right_type.types[1:]
 
-        if output1 is None:
-            if output2 is None:
-                return key_type
-            output2.insert(0, key_type)
-            return types.Tuple(output2)
-        if output2 is None:
-            output1.insert(0, key_type)
-            return types.Tuple(output1)
-
-        return types.Tuple(
-            [key_type,
-             types.Tuple(flatten(output1) + flatten(output2))])
+        return make_tuple((key_type,) + left_payload + right_payload)
 
     def self_write_dag(self, dic):
-        self.output_type = replace_unituple(self.compute_output_type())
+        self.output_type = self.compute_output_type()
 
 
 class Cartesian(BinaryRDD):
@@ -322,14 +318,16 @@ class Cartesian(BinaryRDD):
         super(Cartesian, self).__init__(context, [left, right])
 
     def compute_output_type(self):
-        parent_type_1 = make_tuple(self.parents[0].output_type) if len(
-            self.parents[0].output_type) == 1 else self.parents[0].output_type
-        parent_type_2 = make_tuple(self.parents[1].output_type) if len(
-            self.parents[1].output_type) == 1 else self.parents[1].output_type
-        return [parent_type_1, parent_type_2]
+        left_type = self.parents[0].output_type
+        right_type = self.parents[1].output_type
+        if not isinstance(left_type, types.Tuple):
+            left_type = make_tuple([left_type])
+        if not isinstance(right_type, types.Tuple):
+            right_type = make_tuple([right_type])
+        return make_tuple(left_type.types + right_type.types)
 
     def self_write_dag(self, dic):
-        self.output_type = replace_unituple(self.compute_output_type())
+        self.output_type = self.compute_output_type()
 
 
 class Reduce(UnaryRDD):
@@ -350,19 +348,15 @@ class Reduce(UnaryRDD):
         dis.dis(self.func, file=file_)
         return hash(file_.getvalue())
 
-    def _compute_input_type(self):
-        # repeat the input type two times
-        return [self.parents[0].output_type, self.parents[0].output_type]
-
     def self_write_dag(self, dic):
-        input_type = self._compute_input_type()
+        aggregate_type = self.parents[0].output_type
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
-            self.func, input_type)
-        if str(input_type[0]) != str(self.output_type):
+            self.func, [aggregate_type, aggregate_type])
+        if str(aggregate_type) != str(self.output_type):
             raise BaseException(
                 "Function given to reduce_by_key has the wrong return type:\n"
                 "  expected: {0}\n"
-                "  found:    {1}".format(input_type[0], self.output_type))
+                "  found:    {1}".format(aggregate_type, self.output_type))
 
 
 class ReduceByKey(UnaryRDD):
@@ -383,35 +377,17 @@ class ReduceByKey(UnaryRDD):
         dis.dis(self.func, file=file_)
         return hash(file_.getvalue())
 
-    def _compute_input_type(self):
-        # repeat the input type two times minus the key
-        par_type = self.parents[0].output_type
-
-        def remove_key(type_):
-            try:
-                if isinstance(type_[0], types.BaseTuple):
-                    inner_key_type = remove_key(type_[0])
-                    type_ = make_tuple([inner_key_type] + list(type_[1:]))
-                else:
-                    type_ = make_tuple(type_[1:])
-            except TypeError:
-                pass
-            return type_
-
-        par_type = remove_key(par_type)
-        if len(par_type) == 1:
-            return [par_type[0], par_type[0]]
-        return [par_type, par_type]
-
     def self_write_dag(self, dic):
-        input_type = self._compute_input_type()
+        aggregate_type = make_tuple(self.parents[0].output_type.types[1:])
+        if len(aggregate_type) == 1:
+            aggregate_type = aggregate_type.types[0]
         dic[FUNC], output_type = get_llvm_ir_and_output_type(
-            self.func, input_type)
-        if str(input_type[0]) != str(output_type):
+            self.func, [aggregate_type, aggregate_type])
+        if str(aggregate_type) != str(output_type):
             raise BaseException(
                 "Function given to reduce_by_key has the wrong return type:\n"
                 "  expected: {0}\n"
-                "  found:    {1}".format(input_type[0], output_type))
+                "  found:    {1}".format(aggregate_type, output_type))
         self.output_type = self.parents[0].output_type
 
 
@@ -431,21 +407,14 @@ class CSVSource(SourceRDD):
             self.path,
             str(self.dtype),
             str(self.add_index), self.delimiter,
-            self.compute_output()
+            self.output_type
         ]
         return hash("#".join(hash_objects))
 
-    def compute_output(self):
+    def self_write_dag(self, dic):
         df = np.genfromtxt(
             self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
-
-        try:
-            self.output_type = replace_unituple(typeof(tuple(df[0])))
-        except TypeError:  # scalar type
-            self.output_type = typeof(df[0])
-
-    def self_write_dag(self, dic):
-        self.compute_output()
+        self.output_type = item_typeof(df[0])
         dic[DATA_PATH] = self.path
         dic[ADD_INDEX] = self.add_index
 
@@ -466,20 +435,23 @@ class CollectionSource(SourceRDD):
 
         if isinstance(values, DataFrame):
             self.array = values.values.ravel(order='C').reshape(values.shape)
+            self.output_type = item_typeof(self.array[0])
         elif isinstance(values, np.ndarray):
             self.array = values
+            self.output_type = item_typeof(self.array[0])
         else:
-            self.output_type = replace_unituple(typeof(values[0]))
+            # Any subscriptable iterator should work here
+            self.output_type = item_typeof(values[0])
             self.array = np.array(
                 values, dtype=numba_type_to_dtype(self.output_type))
-        assert self.array.size > 0, "Empty collection not allowed"
-        try:
-            self.output_type = replace_unituple(typeof(tuple(self.array[0])))
-        except TypeError:  # scalar type
-            self.output_type = typeof(self.array[0])
         if add_index:
-            self.output_type = replace_unituple(
-                types.Tuple(flatten([numba.typeof(1), self.output_type])))
+            if isinstance(self.output_type, types.Tuple):
+                child_types = self.output_type.types
+            else:
+                child_types = (self.output_type,)
+            self.output_type = make_tuple((typeof(0),) + child_types)
+
+        assert self.array.size > 0, "Empty collection not allowed"
         self.data_ptr = self.array.__array_interface__['data'][0]
         self.size = self.array.shape[0]
         self.add_index = add_index
@@ -503,7 +475,7 @@ class RangeSource(SourceRDD):
         self.from_ = from_
         self.to = to
         self.step = step
-        self.output_type = typeof(step + from_)
+        self.output_type = item_typeof(step + from_)
 
     def self_hash(self):
         hash_objects = [

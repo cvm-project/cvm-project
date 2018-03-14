@@ -78,7 +78,7 @@ class CFunc(object):
         # replace the unituple with tuple
         # abi compliance
         return_type = replace_unituple(return_type)
-        args = replace_unituple(args)
+        args = tuple([replace_unituple(arg) for arg in args])
 
         # abi compliance
         # if the return type is small enough we have to return a struct

@@ -50,7 +50,19 @@ NUMPY_DTYPE_MAP = {
 }
 
 
+def is_item_type(type_):
+    if str(type_) in NUMPY_DTYPE_MAP:
+        return True
+    if not isinstance(type_, nb.types.Tuple):
+        return False
+    for child_type in type_.types:
+        if not is_item_type(child_type):
+            return False
+    return True
+
+
 def numba_type_to_dtype(type_):
+    assert is_item_type(type_), "Expected valid nested tuple type."
     if isinstance(type_, nb.types.Tuple):
         child_types = [numba_type_to_dtype(t) for t in type_.types]
         fields = [('f%i' % i, t) for i, t in enumerate(child_types)]
@@ -96,11 +108,18 @@ def error_print(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
+def item_typeof(expression):
+    if isinstance(expression, np.ndarray):
+        return item_typeof(tuple(expression))
+    return replace_unituple(typeof(expression))
+
+
 def make_tuple(child_types):
     out = nb.types.Tuple([])
     out.types = tuple(child_types)
     out.name = "(%s)" % ', '.join(str(i) for i in child_types)
     out.count = len(child_types)
+    assert is_item_type(out), "Expected valid nested tuple type."
     return out
 
 
@@ -110,10 +129,6 @@ def replace_unituple(type_):
         return make_tuple(child_types)
     if str(type_) in NUMPY_DTYPE_MAP:
         return type_
-    if isinstance(type_, tuple):
-        return tuple(map(replace_unituple, type_))
-    if isinstance(type_, list):
-        return list(map(replace_unituple, type_))
     raise TypeError("Can only replace UniTuple on valid nested tuples.")
 
 
