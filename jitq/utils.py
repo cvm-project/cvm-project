@@ -3,8 +3,7 @@ import os
 import sys
 import time
 
-import numba
-import numba.types as nb_types
+import numba as nb
 from numba import typeof
 
 
@@ -51,7 +50,7 @@ NUMPY_DTYPE_MAP = {
 
 
 def numba_type_to_dtype(type_):
-    if isinstance(type_, nb_types.Tuple):
+    if isinstance(type_, nb.types.Tuple):
         types = []
         for typ in type_.types:
             dtype = numba_type_to_dtype(typ)
@@ -76,10 +75,10 @@ def get_type_size(type_):
     try:
         size = int(type_.bitwidth / 8)
     except AttributeError:
-        if isinstance(type_, nb_types.Tuple):
+        if isinstance(type_, nb.types.Tuple):
             for child_type in type_.types:
                 size += get_type_size(child_type)
-        elif isinstance(type_, nb_types.UniTuple):
+        elif isinstance(type_, nb.types.UniTuple):
             size = get_type_size(type_.dtype) * type_.count
     return size
 
@@ -89,7 +88,7 @@ class RDDEncoder(JSONEncoder):
     # pylint: disable=method-hidden
     # sabir 14.02.18: JSONEncoder overwrites this method, nothing we can do
     def default(self, o):
-        if isinstance(o, numba.types.Type):
+        if isinstance(o, nb.types.Type):
             return numba_to_c_types(o.name)
         return JSONEncoder.default(self, o)
 
@@ -99,7 +98,7 @@ def error_print(*args, **kwargs):
 
 
 def make_tuple(child_types):
-    out = nb_types.Tuple([])
+    out = nb.types.Tuple([])
     out.types = tuple(child_types)
     out.name = "(%s)" % ', '.join(str(i) for i in child_types)
     out.count = len(child_types)
@@ -108,19 +107,19 @@ def make_tuple(child_types):
 
 def replace_unituple(type_):
     out = type_
-    if isinstance(type_, nb_types.Tuple):
+    if isinstance(type_, nb.types.Tuple):
         child_types = []
         for child_type in type_.types:
             child_types.append(replace_unituple(child_type))
-        out = nb_types.Tuple([])
+        out = nb.types.Tuple([])
         out.types = tuple(child_types)
         out.name = "(%s)" % ', '.join(str(i) for i in child_types)
         out.count = len(child_types)
-    elif isinstance(type_, nb_types.UniTuple):
+    elif isinstance(type_, nb.types.UniTuple):
         child_types = []
         for child_type in type_.types:
             child_types.append(replace_unituple(child_type))
-        out = nb_types.Tuple([])
+        out = nb.types.Tuple([])
         out.types = tuple(child_types)
         out.name = "(%s)" % ', '.join(str(i) for i in child_types)
         out.count = len(child_types)
@@ -153,13 +152,13 @@ def flatten(iterable_):
             if isinstance(i, (tuple, list)):
                 for j in rec(i):
                     yield j
-            elif isinstance(i, (nb_types.UniTuple, nb_types.Tuple)):
+            elif isinstance(i, (nb.types.UniTuple, nb.types.Tuple)):
                 for j in rec(i.types):
                     yield j
             else:
                 yield i
 
     if not isinstance(iterable_,
-                      (tuple, list, nb_types.UniTuple, nb_types.Tuple)):
+                      (tuple, list, nb.types.UniTuple, nb.types.Tuple)):
         return iterable_,
     return tuple(rec(iterable_))
