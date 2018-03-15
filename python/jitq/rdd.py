@@ -296,6 +296,13 @@ class Join(BinaryRDD):
         if not isinstance(right_type, types.Tuple):
             right_type = make_tuple([right_type])
 
+        if str(left_type[0]) != str(right_type[0]):
+            raise TypeError(
+                "Join keys must be of matching type.\n"
+                "  found left:    {0}\n"
+                "  found right:   {1}"
+                .format(left_type[0], right_type[0]))
+
         # Special case: two scalar inputs produce a scalar output
         if not isinstance(self.parents[0].output_type, types.Tuple) and \
            not isinstance(self.parents[1].output_type, types.Tuple):

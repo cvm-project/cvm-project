@@ -167,6 +167,15 @@ class TestOperators(unittest.TestCase):
         truth = [t for t in input_1 if t[0] in input_2]
         self.assertListEqual(res.astuplelist(), truth)
 
+    def test_join_nonmatching_keys(self):
+        input_1 = list(enumerate(range(10)))
+        input_2 = [(float(a), b) for a, b in input_1]
+
+        jitq_context = JitqContext()
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+        self.assertRaises(TypeError, data1.join(data2).collect)
+
     def test_join_overlap(self):
         jitq_context = JitqContext()
         input_1 = [(r, r * 10) for r in range(10)]
