@@ -268,7 +268,7 @@ class TestOperators(unittest.TestCase):
         res = jitq_context.collection(range(0, 10)) \
             .map(lambda i: (i, (i, i * 10))) \
             .collect()
-        truth = [(i, i, i * 10) for i in range(0, 10)]
+        truth = [(i, (i, i * 10)) for i in range(0, 10)]
         self.assertListEqual(res.astuplelist(), truth)
 
     def test_map_tuple_to_scalar(self):
