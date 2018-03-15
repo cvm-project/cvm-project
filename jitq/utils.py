@@ -106,29 +106,16 @@ def make_tuple(child_types):
 
 
 def replace_unituple(type_):
-    out = type_
-    if isinstance(type_, nb.types.Tuple):
-        child_types = []
-        for child_type in type_.types:
-            child_types.append(replace_unituple(child_type))
-        out = nb.types.Tuple([])
-        out.types = tuple(child_types)
-        out.name = "(%s)" % ', '.join(str(i) for i in child_types)
-        out.count = len(child_types)
-    elif isinstance(type_, nb.types.UniTuple):
-        child_types = []
-        for child_type in type_.types:
-            child_types.append(replace_unituple(child_type))
-        out = nb.types.Tuple([])
-        out.types = tuple(child_types)
-        out.name = "(%s)" % ', '.join(str(i) for i in child_types)
-        out.count = len(child_types)
-
-    elif isinstance(type_, tuple):
-        out = tuple(map(replace_unituple, type_))
-    elif isinstance(type_, list):
-        out = list(map(replace_unituple, type_))
-    return out
+    if isinstance(type_, nb.types.BaseAnonymousTuple):
+        child_types = [replace_unituple(t) for t in type_.types]
+        return make_tuple(child_types)
+    if str(type_) in NUMPY_DTYPE_MAP:
+        return type_
+    if isinstance(type_, tuple):
+        return tuple(map(replace_unituple, type_))
+    if isinstance(type_, list):
+        return list(map(replace_unituple, type_))
+    raise TypeError("Can only replace UniTuple on valid nested tuples.")
 
 
 def get_project_path():
