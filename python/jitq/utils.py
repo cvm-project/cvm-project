@@ -5,6 +5,7 @@ import time
 
 import numba as nb
 from numba import typeof
+import numpy as np
 
 
 def mean(lst):
@@ -51,12 +52,10 @@ NUMPY_DTYPE_MAP = {
 
 def numba_type_to_dtype(type_):
     if isinstance(type_, nb.types.Tuple):
-        types = []
-        for typ in type_.types:
-            dtype = numba_type_to_dtype(typ)
-            types.append(dtype)
-        return ",".join(types)
-    return NUMPY_DTYPE_MAP[type_.name]
+        child_types = [numba_type_to_dtype(t) for t in type_.types]
+        fields = [('f%i' % i, t) for i, t in enumerate(child_types)]
+        return np.dtype(fields)
+    return np.dtype(NUMPY_DTYPE_MAP[type_.name])
 
 
 def dtype_to_numba(type_):
