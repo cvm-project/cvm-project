@@ -28,7 +28,7 @@ C_TYPE_MAP = {
     'int32': 'int',
     'int64': 'long',
     'boolean': 'bool',
-    'bool_': 'bool',
+    'bool': 'bool',
 }
 
 
@@ -45,7 +45,7 @@ NUMPY_DTYPE_MAP = {
     'int32': 'i4',
     'int64': 'i8',
     'boolean': 'b1',
-    'bool_': 'b1',
+    'bool': 'b1',
 }
 
 
