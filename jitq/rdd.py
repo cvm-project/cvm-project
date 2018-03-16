@@ -16,10 +16,8 @@ from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
 from jitq.benchmarks.timer import Timer
 from jitq.c_executor import Executor
 from jitq.config import DUMP_DAG, FAST_MATH
-from jitq.constant_strings import ID, PREDS, DAG, OP, MAP, FUNC, \
-    OUTPUT_TYPE, FILTER, FLAT_MAP, REDUCE, REDUCEBYKEY, DATA_PATH, ADD_INDEX, \
-    FROM, TO, STEP, COLLECTION_SOURCE, JOIN, RANGE_SOURCE, CARTESIAN, \
-    GENERATOR_SOURCE
+from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
+    OUTPUT_TYPE, DATA_PATH, ADD_INDEX, FROM, TO, STEP
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
     make_tuple, flatten, numba_type_to_dtype
 from jitq.libs.numba.llvm_ir import cfunc
@@ -94,6 +92,8 @@ def get_llvm_ir_for_generator(func):
 
 
 class RDD(object):
+    NAME = 'abstract'
+
     """
     Dataset representation.
     RDDs represent dataflow operators.
@@ -135,6 +135,7 @@ class RDD(object):
         if not empty:
             self.dic[ID] = cur_index
             self.dic[PREDS] = preds_index
+            self.dic[OP] = self.NAME
             self.dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
             daglist.append(self.dic)
 
@@ -239,15 +240,17 @@ class PipeRDD(UnaryRDD):
 
 
 class Map(PipeRDD):
+    NAME = 'map'
+
     def self_write_dag(self, dic):
-        dic[OP] = MAP
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
             self.func, self.parents[0].output_type)
 
 
 class Filter(PipeRDD):
+    NAME = 'filter'
+
     def self_write_dag(self, dic):
-        dic[OP] = FILTER
         dic[FUNC], return_type = get_llvm_ir_and_output_type(
             self.func, self.parents[0].output_type)
         if str(return_type) != "bool":
@@ -259,18 +262,23 @@ class Filter(PipeRDD):
 
 
 class FlatMap(PipeRDD):
+    NAME = 'flat_map'
+
     def self_write_dag(self, dic):
-        dic[OP] = FLAT_MAP
         dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
 
 
 class Flatten(UnaryRDD):
+    NAME = 'flatten'
+
     def self_write_dag(self, dic):
         self.output_type = make_tuple(flatten(self.parents[0].output_type))
         return True
 
 
 class Join(BinaryRDD):
+    NAME = 'join'
+
     """
     the first element in a tuple is the key
     """
@@ -308,11 +316,12 @@ class Join(BinaryRDD):
              types.Tuple(flatten(output1) + flatten(output2))])
 
     def self_write_dag(self, dic):
-        dic[OP] = JOIN
         self.output_type = replace_unituple(self.compute_output_type())
 
 
 class Cartesian(BinaryRDD):
+    NAME = 'cartesian'
+
     def __init__(self, context, left, right):
         super(Cartesian, self).__init__(context, [left, right])
 
@@ -324,11 +333,12 @@ class Cartesian(BinaryRDD):
         return [parent_type_1, parent_type_2]
 
     def self_write_dag(self, dic):
-        dic[OP] = CARTESIAN
         self.output_type = replace_unituple(self.compute_output_type())
 
 
 class Reduce(UnaryRDD):
+    NAME = 'reduce'
+
     """
     binary function must be commutative and associative
     the return value type should be the same as its arguments
@@ -349,7 +359,6 @@ class Reduce(UnaryRDD):
         return [self.parents[0].output_type, self.parents[0].output_type]
 
     def self_write_dag(self, dic):
-        dic[OP] = REDUCE
         input_type = self._compute_input_type()
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
             self.func, input_type)
@@ -361,6 +370,8 @@ class Reduce(UnaryRDD):
 
 
 class ReduceByKey(UnaryRDD):
+    NAME = 'reduce_by_key'
+
     """
     binary function must be commutative and associative
     the return value type should be the same as its arguments minus the key
@@ -397,7 +408,6 @@ class ReduceByKey(UnaryRDD):
         return [par_type, par_type]
 
     def self_write_dag(self, dic):
-        dic[OP] = REDUCEBYKEY
         input_type = self._compute_input_type()
         dic[FUNC], output_type = get_llvm_ir_and_output_type(
             self.func, input_type)
@@ -410,6 +420,8 @@ class ReduceByKey(UnaryRDD):
 
 
 class CSVSource(SourceRDD):
+    NAME = 'csv_source'
+
     def __init__(self, context, path, delimiter=",",
                  dtype=None, add_index=False):
         super(CSVSource, self).__init__(context)
@@ -438,12 +450,13 @@ class CSVSource(SourceRDD):
 
     def self_write_dag(self, dic):
         self.compute_output()
-        dic[OP] = 'csv_source'
         dic[DATA_PATH] = self.path
         dic[ADD_INDEX] = self.add_index
 
 
 class CollectionSource(SourceRDD):
+    NAME = 'collection_source'
+
     """
     accepts any python collections, numpy arrays or pandas dataframes
 
@@ -480,7 +493,6 @@ class CollectionSource(SourceRDD):
         return hash("#".join(hash_objects))
 
     def self_write_dag(self, dic):
-        dic[OP] = COLLECTION_SOURCE
         dic[ADD_INDEX] = self.add_index
 
     def get_inputs(self):
@@ -488,6 +500,8 @@ class CollectionSource(SourceRDD):
 
 
 class RangeSource(SourceRDD):
+    NAME = 'range_source'
+
     def __init__(self, context, from_, to, step=1):
         super(RangeSource, self).__init__(context)
         self.from_ = from_
@@ -502,13 +516,14 @@ class RangeSource(SourceRDD):
         return hash("#".join(hash_objects))
 
     def self_write_dag(self, dic):
-        dic[OP] = RANGE_SOURCE
         dic[FROM] = self.from_
         dic[TO] = self.to
         dic[STEP] = self.step
 
 
 class GeneratorSource(SourceRDD):
+    NAME = 'generator_source'
+
     def __init__(self, context, func):
         super(GeneratorSource, self).__init__(context)
         self.func = func
@@ -519,5 +534,4 @@ class GeneratorSource(SourceRDD):
         return hash(file_.getvalue())
 
     def self_write_dag(self, dic):
-        dic[OP] = GENERATOR_SOURCE
         dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
