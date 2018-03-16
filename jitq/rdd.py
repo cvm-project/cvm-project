@@ -18,7 +18,8 @@ from jitq.c_executor import Executor
 from jitq.config import DUMP_DAG, FAST_MATH
 from jitq.constant_strings import ID, PREDS, DAG, OP, MAP, FUNC, \
     OUTPUT_TYPE, FILTER, FLAT_MAP, REDUCE, REDUCEBYKEY, DATA_PATH, ADD_INDEX, \
-    FROM, TO, STEP
+    FROM, TO, STEP, COLLECTION_SOURCE, JOIN, RANGE_SOURCE, CARTESIAN, \
+    GENERATOR_SOURCE
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
     make_tuple, flatten, numba_type_to_dtype
 from jitq.libs.numba.llvm_ir import cfunc
@@ -113,23 +114,35 @@ class RDD(object):
         self._cache = True
         return self
 
-    def write_dag(self, daglist, index, empty=False):
+    def write_dag(self, daglist, index):
+        # Try to answer from cache
         if self.dic:
             return self.dic[ID]
+
+        # Compute parents
         cur_index = index
         preds_index = []
         for par in self.parents:
             pred_index = par.write_dag(daglist, cur_index)
-            cur_index = max(pred_index + int(not empty), cur_index)
+            cur_index = max(pred_index, cur_index)
             preds_index.append(pred_index)
 
+        # Compute this node
+        self.dic = dict()
+        empty = self.self_write_dag(self.dic)
+        cur_index += int(not empty)
+
         if not empty:
-            dic = dict()
-            dic[ID] = cur_index
-            dic[PREDS] = preds_index
-            self.dic = dic
-            daglist.append(dic)
+            self.dic[ID] = cur_index
+            self.dic[PREDS] = preds_index
+            self.dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
+            daglist.append(self.dic)
+
         return cur_index
+
+    # pylint: disable=no-self-use
+    def self_write_dag(self, dic):
+        pass
 
     def execute_dag(self):
         hash_ = str(hash(self))
@@ -226,21 +239,14 @@ class PipeRDD(UnaryRDD):
 
 
 class Map(PipeRDD):
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(Map, self).write_dag(daglist, index)
-        dic = self.dic
+    def self_write_dag(self, dic):
         dic[OP] = MAP
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
             self.func, self.parents[0].output_type)
-        # TODO(ingo): what output types are valid here?
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        return cur_index
 
 
 class Filter(PipeRDD):
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(Filter, self).write_dag(daglist, index)
-        dic = self.dic
+    def self_write_dag(self, dic):
         dic[OP] = FILTER
         dic[FUNC], return_type = get_llvm_ir_and_output_type(
             self.func, self.parents[0].output_type)
@@ -250,27 +256,18 @@ class Filter(PipeRDD):
                 "  expected: {0}\n"
                 "  found:    {1}".format("bool", return_type))
         self.output_type = self.parents[0].output_type
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        return cur_index
 
 
 class FlatMap(PipeRDD):
-    def write_dag(self, daglist, index, empty=False):
-        if self.dic:
-            return self.dic[ID]
-        cur_index = super(FlatMap, self).write_dag(daglist, index)
-        dic = self.dic
+    def self_write_dag(self, dic):
         dic[OP] = FLAT_MAP
         dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        return cur_index
 
 
 class Flatten(UnaryRDD):
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(Flatten, self).write_dag(daglist, index, True)
+    def self_write_dag(self, dic):
         self.output_type = make_tuple(flatten(self.parents[0].output_type))
-        return cur_index
+        return True
 
 
 class Join(BinaryRDD):
@@ -310,16 +307,9 @@ class Join(BinaryRDD):
             [key_type,
              types.Tuple(flatten(output1) + flatten(output2))])
 
-    def write_dag(self, daglist, index, empty=False):
-        if self.dic:
-            return self.dic[ID]
-        cur_index = super(Join, self).write_dag(daglist, index)
-        dic = self.dic
-        dic[OP] = 'join'
-
+    def self_write_dag(self, dic):
+        dic[OP] = JOIN
         self.output_type = replace_unituple(self.compute_output_type())
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        return cur_index
 
 
 class Cartesian(BinaryRDD):
@@ -333,16 +323,9 @@ class Cartesian(BinaryRDD):
             self.parents[1].output_type) == 1 else self.parents[1].output_type
         return [parent_type_1, parent_type_2]
 
-    def write_dag(self, daglist, index, empty=False):
-        if self.dic:
-            return self.dic[ID]
-        cur_index = super(Cartesian, self).write_dag(daglist, index)
-        dic = self.dic
-        dic[OP] = 'cartesian'
-
+    def self_write_dag(self, dic):
+        dic[OP] = CARTESIAN
         self.output_type = replace_unituple(self.compute_output_type())
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        return cur_index
 
 
 class Reduce(UnaryRDD):
@@ -365,9 +348,7 @@ class Reduce(UnaryRDD):
         # repeat the input type two times
         return [self.parents[0].output_type, self.parents[0].output_type]
 
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(Reduce, self).write_dag(daglist, index)
-        dic = self.dic
+    def self_write_dag(self, dic):
         dic[OP] = REDUCE
         input_type = self._compute_input_type()
         dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
@@ -377,8 +358,6 @@ class Reduce(UnaryRDD):
                 "Function given to reduce_by_key has the wrong return type:\n"
                 "  expected: {0}\n"
                 "  found:    {1}".format(input_type[0], self.output_type))
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        return cur_index
 
 
 class ReduceByKey(UnaryRDD):
@@ -417,9 +396,7 @@ class ReduceByKey(UnaryRDD):
             return [par_type[0], par_type[0]]
         return [par_type, par_type]
 
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(ReduceByKey, self).write_dag(daglist, index)
-        dic = self.dic
+    def self_write_dag(self, dic):
         dic[OP] = REDUCEBYKEY
         input_type = self._compute_input_type()
         dic[FUNC], output_type = get_llvm_ir_and_output_type(
@@ -430,8 +407,6 @@ class ReduceByKey(UnaryRDD):
                 "  expected: {0}\n"
                 "  found:    {1}".format(input_type[0], output_type))
         self.output_type = self.parents[0].output_type
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        return cur_index
 
 
 class CSVSource(SourceRDD):
@@ -461,15 +436,11 @@ class CSVSource(SourceRDD):
         except TypeError:  # scalar type
             self.output_type = typeof(df[0])
 
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(CSVSource, self).write_dag(daglist, index)
+    def self_write_dag(self, dic):
         self.compute_output()
-        dic = self.dic
         dic[OP] = 'csv_source'
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
         dic[DATA_PATH] = self.path
         dic[ADD_INDEX] = self.add_index
-        return cur_index
 
 
 class CollectionSource(SourceRDD):
@@ -508,14 +479,9 @@ class CollectionSource(SourceRDD):
         hash_objects = [str(self.output_type), str(self.add_index)]
         return hash("#".join(hash_objects))
 
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(CollectionSource, self).write_dag(daglist, index)
-        dic = self.dic
-        dic[OP] = 'collection_source'
-        dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
+    def self_write_dag(self, dic):
+        dic[OP] = COLLECTION_SOURCE
         dic[ADD_INDEX] = self.add_index
-
-        return cur_index
 
     def get_inputs(self):
         return [(self.data_ptr, self.size)]
@@ -535,15 +501,11 @@ class RangeSource(SourceRDD):
         ]
         return hash("#".join(hash_objects))
 
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(RangeSource, self).write_dag(daglist, index)
-        dic = self.dic
-        dic[OP] = 'range_source'
+    def self_write_dag(self, dic):
+        dic[OP] = RANGE_SOURCE
         dic[FROM] = self.from_
         dic[TO] = self.to
         dic[STEP] = self.step
-        dic[OUTPUT_TYPE] = self.output_type
-        return cur_index
 
 
 class GeneratorSource(SourceRDD):
@@ -556,10 +518,6 @@ class GeneratorSource(SourceRDD):
         dis.dis(self.func, file=file_)
         return hash(file_.getvalue())
 
-    def write_dag(self, daglist, index, empty=False):
-        cur_index = super(GeneratorSource, self).write_dag(daglist, index)
-        dic = self.dic
-        dic[OP] = 'generator_source'
+    def self_write_dag(self, dic):
+        dic[OP] = GENERATOR_SOURCE
         dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
-        dic[OUTPUT_TYPE] = self.output_type
-        return cur_index
