@@ -7,8 +7,7 @@ if [ $# -eq 0 ]
     # Run from root
     echo "No argument passed, running on all python files"
     find \
-        "${ROOT_PATH}"/jitq \
-        "${ROOT_PATH}"/ml \
+        "${ROOT_PATH}"/python \
       -name "*.py" | xargs pylint -f colorized --rcfile="${ROOT_PATH}"/.pylintrc 
   else
     # Run on files

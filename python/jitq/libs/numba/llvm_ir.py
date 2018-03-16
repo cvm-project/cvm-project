@@ -8,7 +8,6 @@ import ctypes
 
 from llvmlite import ir
 from llvmlite.ir import VoidType
-
 from numba import sigutils, utils, compiler
 from numba.caching import NullCache, FunctionCache
 from numba.dispatcher import _FunctionCompiler

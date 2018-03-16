@@ -3,21 +3,17 @@ import json
 
 import io
 import re
-
 import numba
 import numba.types as types
 from numba import typeof
-
 import numpy as np
-
 from pandas import DataFrame
-
 from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
-from jitq.benchmarks.timer import Timer
 from jitq.c_executor import Executor
 from jitq.config import DUMP_DAG, FAST_MATH
 from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
     OUTPUT_TYPE, DATA_PATH, ADD_INDEX, FROM, TO, STEP
+from jitq.benchmarks.timer import Timer
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
     make_tuple, flatten, numba_type_to_dtype
 from jitq.libs.numba.llvm_ir import cfunc

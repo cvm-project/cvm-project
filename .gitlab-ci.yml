@@ -14,7 +14,7 @@ format-python:
   image: ingomuellernet/buildenv-jitq
   before_script:
     - pip3 install -r requirements.txt
-    - pip3 install -r jitq/benchmarks/requirements.txt
+    - pip3 install -r python/jitq/benchmarks/requirements.txt
   script:
     - tools/check_format_python.sh
     - tools/check_pylint.sh
@@ -60,8 +60,8 @@ python-tests:
     - pip3 install -r requirements.txt
     - echo -e "CC=clang-5.0\nCXX=clang++-5.0" > cpp/src/code_gen/cpp/Makefile.local
   script:
-    - cd jitq/tests
-    - python3 -m unittest discover -v
+    - cd python
+    - python3 -m unittest discover -v -s jitq/tests
 
 cpp-test:
   stage: test

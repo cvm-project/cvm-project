@@ -1,11 +1,12 @@
 from multiprocessing.pool import ThreadPool
 from subprocess import call
-import pandas as pd
-import dask.dataframe as dd
-import dask
 
-from jitq.jitq_context import JitqContext
+import dask
+import dask.dataframe as dd
+import pandas as pd
+
 from jitq.benchmarks.timer import measure_time, Timer
+from jitq.jitq_context import JitqContext
 
 dask.set_options(pool=ThreadPool(1))
 

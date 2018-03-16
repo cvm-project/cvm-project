@@ -2,11 +2,11 @@
 /cpp/gen/
 
 # benchmark data
-/jitq/benchmarks/crime_data/
+/python/benchmarks/crime_data/
 *.h5
 
 # generated dag file
-/jitq/dag.json
+/python/dag.json
 /dag.json
 
 # Byte-compiled / optimized / DLL files

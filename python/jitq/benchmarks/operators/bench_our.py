@@ -1,6 +1,7 @@
 import numpy as np
-from jitq.jitq_context import JitqContext
+
 from jitq.benchmarks.timer import measure_time
+from jitq.jitq_context import JitqContext
 
 MAX = 1 << 27
 JOIN_1 = 1 << 15

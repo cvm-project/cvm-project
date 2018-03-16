@@ -9,8 +9,8 @@ import unittest
 
 SCRIPT_DIR = realpath(dirname(__file__))
 TEST_DIR = join(SCRIPT_DIR, "test_dag_parser")
-TEST_EXE = join(
-    dirname(dirname(SCRIPT_DIR)), "cpp", "build", "dag_parser_tests")
+TEST_EXE = join(dirname(dirname(dirname(SCRIPT_DIR))),
+                "cpp", "build", "dag_parser_tests")
 
 
 # Factory for generic test cases

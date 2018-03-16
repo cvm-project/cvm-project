@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import operator_test_base
+from jitq.tests import operator_test_base
+from jitq.tests.helpers import run_tests
 
-from helpers import run_tests
 from jitq.jitq_context import JitqContext
 
 

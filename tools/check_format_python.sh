@@ -6,8 +6,8 @@ if [ $# -eq 0 ]
   then
     # Run from root
     echo "No argument passed, running on all python files"
-    echo autopep8 -d -r "${ROOT_PATH}"/jitq "${ROOT_PATH}"/ml
-    output=$(autopep8 -a -d -r "${ROOT_PATH}"/jitq "${ROOT_PATH}"/ml)
+    echo autopep8 -d -r "${ROOT_PATH}"/python
+    output=$(autopep8 -a -d -r "${ROOT_PATH}"/python)
   else
     # Run on files
     output=$(autopep8 -a -d "$@")

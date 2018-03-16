@@ -5,7 +5,6 @@ from itertools import groupby
 
 from functools import reduce
 from operator import itemgetter
-
 import numpy as np
 import pandas as pd
 

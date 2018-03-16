@@ -1,14 +1,12 @@
+import json
 from sys import platform
 
-import json
-
-from cffi import FFI
-
 import numpy as np
-
-from jitq.utils import get_project_path, RDDEncoder, get_type_size
+from cffi import FFI
 from jitq.rdd_result import NumpyResult
+
 from jitq.benchmarks.timer import Timer
+from jitq.utils import get_project_path, RDDEncoder, get_type_size
 
 JITQ_PATH = get_project_path()
 CPP_DIR = JITQ_PATH + "/cpp/"
