@@ -1,12 +1,10 @@
-from sklearn.datasets.samples_generator import make_blobs
-from sklearn.cluster import KMeans as sk_KMeans
-
 import matplotlib.pyplot as plt
-
 import numpy as np
+from sklearn.cluster import KMeans as sk_KMeans
+from sklearn.datasets.samples_generator import make_blobs
 
 from jitq.benchmarks.timer import measure_time
-from ml.kmeans import KMeans
+from jitq.ml.kmeans import KMeans
 
 N_FEATURES = 30
 N_SAMPLES = 1 << 16

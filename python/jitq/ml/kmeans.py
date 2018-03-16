@@ -1,14 +1,14 @@
 import numpy as np
 import scipy.sparse as sp
 from numba import njit
-from python.ast_optimizer import unroll_loops
 from six import string_types
 from sklearn.metrics import euclidean_distances
 from sklearn.utils import check_random_state
 from sklearn.utils.extmath import row_norms, squared_norm
 from sklearn.utils.sparsefuncs import mean_variance_axis
 
-from python.jitq.jitq_context import JitqContext
+from jitq.jitq_context import JitqContext
+from jitq.ast_optimizer import unroll_loops
 
 
 def _tolerance(X, tol):
