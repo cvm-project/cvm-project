@@ -6,7 +6,7 @@ import pyspark.sql.types as tp
 # sabir 19 Feb 2018: col is created dynamically
 from pyspark.sql.functions import rand, col
 
-from jitq.benchmarks.timer import measure_time
+from jitq.utils import measure_time
 
 MAX = 1 << 22
 JOIN_1 = 1 << 7

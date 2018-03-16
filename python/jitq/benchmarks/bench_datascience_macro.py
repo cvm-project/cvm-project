@@ -5,7 +5,7 @@ import dask
 import dask.dataframe as dd
 import pandas as pd
 
-from jitq.benchmarks.timer import measure_time, Timer
+from jitq.utils import measure_time, Timer
 from jitq.jitq_context import JitqContext
 
 dask.set_options(pool=ThreadPool(1))

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from jitq.benchmarks.timer import measure_time
+from jitq.utils import measure_time
 from jitq.jitq_context import JitqContext
 
 MIN_SAL = 1

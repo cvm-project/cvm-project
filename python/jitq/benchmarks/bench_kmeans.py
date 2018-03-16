@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.cluster import KMeans as sk_KMeans
 from sklearn.datasets.samples_generator import make_blobs
 
-from jitq.benchmarks.timer import measure_time
+from jitq.utils import measure_time
 from jitq.ml.kmeans import KMeans
 
 N_FEATURES = 30

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from jitq.benchmarks.timer import measure_time
+from jitq.utils import measure_time
 
 MAX = 1 << 27
 JOIN_1 = 1 << 15

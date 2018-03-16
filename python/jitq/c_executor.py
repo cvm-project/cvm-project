@@ -5,8 +5,7 @@ import numpy as np
 from cffi import FFI
 from jitq.rdd_result import NumpyResult
 
-from jitq.benchmarks.timer import Timer
-from jitq.utils import get_project_path, RDDEncoder, get_type_size
+from jitq.utils import get_project_path, RDDEncoder, get_type_size, Timer
 
 JITQ_PATH = get_project_path()
 CPP_DIR = JITQ_PATH + "/backend/"

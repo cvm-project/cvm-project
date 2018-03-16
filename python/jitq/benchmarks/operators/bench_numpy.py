@@ -1,6 +1,6 @@
 import numpy as np
 
-from jitq.benchmarks.timer import measure_time
+from jitq.utils import measure_time
 
 MAX = 1 << 27
 

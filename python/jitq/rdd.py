@@ -8,14 +8,14 @@ import numba.types as types
 from numba import typeof
 import numpy as np
 from pandas import DataFrame
+
 from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
 from jitq.c_executor import Executor
-from jitq.config import DUMP_DAG, FAST_MATH
+from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
     OUTPUT_TYPE, DATA_PATH, ADD_INDEX, FROM, TO, STEP
-from jitq.benchmarks.timer import Timer
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
-    make_tuple, flatten, numba_type_to_dtype
+    make_tuple, flatten, numba_type_to_dtype, Timer
 from jitq.libs.numba.llvm_ir import cfunc
 
 
@@ -56,7 +56,7 @@ def get_llvm_ir_and_output_type(func, input_type=None, opts=None):
             tuple(input_type), fastmath=FAST_MATH, parallel=True)(func)
     else:
         dec_func = numba.njit(
-            (input_type, ), fastmath=FAST_MATH, parallel=True)(func)
+            (input_type,), fastmath=FAST_MATH, parallel=True)(func)
     timer.end()
     output_type = dec_func.nopython_signatures[0].return_type
 

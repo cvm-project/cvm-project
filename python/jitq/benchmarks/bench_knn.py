@@ -2,7 +2,7 @@ from scipy.spatial import distance
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.neighbors import KNeighborsClassifier
 
-from jitq.benchmarks.timer import measure_time
+from jitq.utils import measure_time
 
 N_FEATURES = 10
 N_SAMPLES = 1 << 10
