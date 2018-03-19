@@ -371,7 +371,6 @@ class TestOperators(unittest.TestCase):
                  for _, group in grouped]
         data = jitq_context.collection(input_, add_index=True) \
             .cartesian(jitq_context.collection(input_, add_index=True)) \
-            .flatten() \
             .reduce_by_key(reduce_func) \
             .collect()
 

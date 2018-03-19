@@ -124,17 +124,16 @@ class RDD(object):
 
         # Compute this node
         self.dic = dict()
-        empty = self.self_write_dag(self.dic)
-        cur_index += int(not empty)
+        self.self_write_dag(self.dic)
+        cur_index += 1
         assert is_item_type(self.output_type), \
             "Expected valid nested tuple type."
 
-        if not empty:
-            self.dic[ID] = cur_index
-            self.dic[PREDS] = preds_index
-            self.dic[OP] = self.NAME
-            self.dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-            daglist.append(self.dic)
+        self.dic[ID] = cur_index
+        self.dic[PREDS] = preds_index
+        self.dic[OP] = self.NAME
+        self.dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
+        daglist.append(self.dic)
 
         return cur_index
 
@@ -182,9 +181,6 @@ class RDD(object):
     def map(self, map_func):
         return Map(self.context, self, map_func)
 
-    def flatten(self):
-        return Flatten(self.context, self)
-
     def filter(self, predicate):
         return Filter(self.context, self, predicate)
 
@@ -207,7 +203,7 @@ class RDD(object):
         return self.execute_dag()
 
     def count(self):
-        return self.flatten().map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
+        return self.map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
 
 
 class SourceRDD(RDD):
@@ -268,14 +264,6 @@ class FlatMap(PipeRDD):
 
     def self_write_dag(self, dic):
         dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
-
-
-class Flatten(UnaryRDD):
-    NAME = 'flatten'
-
-    def self_write_dag(self, dic):
-        self.output_type = make_tuple(flatten(self.parents[0].output_type))
-        return True
 
 
 class Join(BinaryRDD):
