@@ -95,6 +95,19 @@ class RDD(object):
 
     """
 
+    class Visitor(object):
+        def __init__(self, func):
+            self.func = func
+            self.visited = set()
+
+        def visit(self, operator):
+            if str(operator) in self.visited:
+                return
+            self.visited.add(str(operator))
+            for parent in operator.parents:
+                self.visit(parent)
+            self.func(operator)
+
     def __init__(self, context, parents):
         self.dic = None
         self._cache = False
@@ -109,33 +122,25 @@ class RDD(object):
         self._cache = True
         return self
 
-    def write_dag(self, daglist, index):
-        # Try to answer from cache
-        if self.dic:
-            return self.dic[ID]
+    def write_dag(self):
+        op_dicts = dict()
 
-        # Compute parents
-        cur_index = index
-        preds_index = []
-        for par in self.parents:
-            pred_index = par.write_dag(daglist, cur_index)
-            cur_index = max(pred_index, cur_index)
-            preds_index.append(pred_index)
+        def collect_operators(operator):
+            op_dict = {}
+            operator.self_write_dag(op_dict)
+            assert is_item_type(operator.output_type), \
+                "Expected valid nested tuple type."
 
-        # Compute this node
-        self.dic = dict()
-        self.self_write_dag(self.dic)
-        cur_index += 1
-        assert is_item_type(self.output_type), \
-            "Expected valid nested tuple type."
+            op_dict[ID] = len(op_dicts)
+            op_dict[PREDS] = [op_dicts[str(p)][ID] for p in operator.parents]
+            op_dict[OP] = operator.NAME
+            op_dict[OUTPUT_TYPE] = make_tuple(flatten(operator.output_type))
+            op_dicts[str(operator)] = op_dict
 
-        self.dic[ID] = cur_index
-        self.dic[PREDS] = preds_index
-        self.dic[OP] = self.NAME
-        self.dic[OUTPUT_TYPE] = make_tuple(flatten(self.output_type))
-        daglist.append(self.dic)
-
-        return cur_index
+        visitor = RDD.Visitor(collect_operators)
+        visitor.visit(self)
+        ret = list(op_dicts.values())
+        return sorted(ret, key=lambda d: d[ID])
 
     # pylint: disable=no-self-use
     def self_write_dag(self, dic):
@@ -144,39 +149,54 @@ class RDD(object):
     def execute_dag(self):
         hash_ = str(hash(self))
         dag_dict = self.context.serialization_cache.get(hash_, None)
-        inputs = self.get_inputs()
         if not dag_dict:
             dag_dict = dict()
-            dag_dict[DAG] = []
 
             clean_rdds(self)
 
-            self.write_dag(dag_dict[DAG], 0)
+            dag_dict[DAG] = self.write_dag()
 
             self.context.serialization_cache[hash_] = dag_dict
             # write to file
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
                     json.dump(dag_dict, fp=fp, cls=RDDEncoder)
+        inputs = self.get_inputs()
         return Executor().execute(self.context, dag_dict, inputs,
                                   numba_type_to_dtype(self.output_type))
 
     def __hash__(self):
-        if not self.hash:
-            parent_hashes = "#".join([str(hash(p)) for p in self.parents])
-            self_hash = str(self.self_hash())
-            self.hash = hash(type(self).__name__ + parent_hashes + self_hash)
-        return self.hash
+        hashes = []
+
+        def collect_hashes(operator):
+            op_hash = str(operator.self_hash())
+            operator.hash = hash(type(operator).__name__ + op_hash)
+            hashes.append(str(operator.hash))
+
+        visitor = RDD.Visitor(collect_hashes)
+        visitor.visit(self)
+        return hash('#'.join(hashes))
 
     # pylint: disable=no-self-use
     def self_hash(self):
         return hash("")
 
     def get_inputs(self):
-        ret = []
-        for parent in self.parents:
-            ret += parent.get_inputs()
-        return ret
+        inputs = []
+
+        def collect_inputs(operator):
+            op_inputs = operator.self_get_inputs()
+            if op_inputs is None:
+                return
+            inputs.append(op_inputs)
+
+        visitor = RDD.Visitor(collect_inputs)
+        visitor.visit(self)
+        return inputs
+
+    # pylint: disable=no-self-use
+    def self_get_inputs(self):
+        pass
 
     def map(self, map_func):
         return Map(self.context, self, map_func)
@@ -459,8 +479,8 @@ class CollectionSource(SourceRDD):
     def self_write_dag(self, dic):
         dic[ADD_INDEX] = self.add_index
 
-    def get_inputs(self):
-        return [(self.data_ptr, self.size)]
+    def self_get_inputs(self):
+        return (self.data_ptr, self.size)
 
 
 class RangeSource(SourceRDD):
