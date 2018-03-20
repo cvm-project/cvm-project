@@ -5,7 +5,7 @@ import numpy as np
 from cffi import FFI
 from jitq.rdd_result import NumpyResult
 
-from jitq.utils import get_project_path, RDDEncoder, get_type_size, Timer
+from jitq.utils import get_project_path, RDDEncoder, Timer
 
 JITQ_PATH = get_project_path()
 CPP_DIR = JITQ_PATH + "/backend/"
@@ -41,12 +41,9 @@ def load_cffi(header, lib_path, ffi):
 
 
 def wrap_result(res, type_, ffi):
-    buffer_size = res.size * get_type_size(type_)
-    c_buffer = ffi.buffer(res.data, buffer_size)
-    np_arr = np.frombuffer(
-        c_buffer,
-        dtype=str(type_).replace("(", "").replace(")", ""),
-        count=res.size)
+    output_type_size = ffi.sizeof(ffi.typeof(res.data[0]))
+    c_buffer = ffi.buffer(res.data, res.size * output_type_size)
+    np_arr = np.frombuffer(c_buffer, dtype=type_, count=res.size)
     np_arr = np_arr.view(NumpyResult)
     np_arr.ptr = res
     return np_arr
@@ -86,7 +83,7 @@ class Executor:
                 context.executor_cache[cache_key] = executor
             return executor
 
-        def execute(self, context, dag_dict, inputs):
+        def execute(self, context, dag_dict, inputs, output_type):
             ffi = FFI()
 
             args = []
@@ -103,14 +100,16 @@ class Executor:
             timer = Timer()
             timer.start()
             res = executor.execute(*args)
+            # Add a free function to the result object that allows the C++
+            # layer to clean up
             res = ffi.gc(res, executor.free_result)
 
             timer.end()
             print("execute " + str(timer.diff()))
-            # add a free function to the gc on the result object
-            res = wrap_result(res, dag_dict['dag'][-1]['output_type'], ffi)
+            res = wrap_result(res, output_type, ffi)
 
-            # keep the reference of ffi object to prevent gc
+            # Keep the reference of FFI library, which contains the free
+            # function that is called by GC when the object goes out of scope
             res.ex = executor
 
             return res

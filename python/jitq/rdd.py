@@ -159,7 +159,8 @@ class RDD(object):
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
                     json.dump(dag_dict, fp=fp, cls=RDDEncoder)
-        return Executor().execute(self.context, dag_dict, inputs)
+        return Executor().execute(self.context, dag_dict, inputs,
+                                  numba_type_to_dtype(self.output_type))
 
     def __hash__(self):
         if not self.hash:
