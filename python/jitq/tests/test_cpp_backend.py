@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-from jitq.tests import operator_test_base
 from jitq.tests.helpers import run_tests
 
-from jitq.jitq_context import JitqContext
+# pylint: disable=wildcard-import, unused-wildcard-import
+# OK for test cases
+from jitq.tests.operator_test_base import *
 
 
-class TestOperators(operator_test_base.TestOperators):
-    def setUp(self):
-        JitqContext.default_conf = {"codegen": {"backend": "cpp"}}
+def set_up():
+    JitqContext.default_conf = {"codegen": {"backend": "cpp"}}
 
 
 if __name__ == '__main__':
+    set_up()
     run_tests()
