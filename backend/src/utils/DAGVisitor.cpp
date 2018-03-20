@@ -4,14 +4,16 @@
 #include "dag/DAGOperator.h"
 #include "utils/debug_print.h"
 
-void visit_impl(const DAG *const dag, DAGVisitor *const v,
-                DAGOperator *const op) {
-    DEBUG_PRINT(("Visiting " + std::to_string(op->id) + " (" + op->name() + ")")
-                        .c_str());
-    for (const auto &f : dag->in_flows(op)) {
-        visit_impl(dag, v, f.source);
-    }
-    op->accept(v);
-}
+#include <boost/function_output_iterator.hpp>
+#include <boost/graph/reverse_graph.hpp>
+#include <boost/graph/topological_sort.hpp>
 
-void DAGVisitor::StartVisit() { visit_impl(dag_, this, dag_->sink); }
+void DAGVisitor::StartVisit() {
+    const auto reverse_graph = boost::make_reverse_graph(dag_->graph());
+    boost::topological_sort(
+            reverse_graph,
+            boost::make_function_output_iterator([this](const auto v) {
+                const auto op = this->dag_->to_operator(v);
+                op->accept(this);
+            }));
+}
