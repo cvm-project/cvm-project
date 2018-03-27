@@ -33,8 +33,8 @@ int generate_dag_plan(const char *const conf, const char *const dagstr,
     std::unique_ptr<DAG> dag(parse_dag(std::string(dagstr)));
 
     // Schema inference
-    SchemaInference si;
-    si.visitDag(dag.get());
+    SchemaInference si(dag.get());
+    si.StartVisit();
 
     // Optimize
     Optimizer opt;

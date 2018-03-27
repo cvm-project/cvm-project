@@ -12,7 +12,7 @@
 #include "dag/DAGOperator.h"
 #include "utils/utils.h"
 
-Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
+Agnode_t *buildDOT(DAG *dag, DAGOperator *op, Agraph_t *g) {
     std::string label = op->name() + "_" + std::to_string(op->id);
 
     std::string outCols = "columns:  ";
@@ -66,8 +66,9 @@ Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g) {
                    1);
     agsafeset(n, "shape", "polygon", "polygon");
 
-    for (auto pred : op->predecessors) {
-        agedge(g, buildDOT(pred, g), n, "", 1);
+    // TODO(sabir): this should be implemented with DAGVisitor
+    for (const auto &f : dag->in_flows(op)) {
+        agedge(g, buildDOT(dag, f.source, g), n, "", 1);
     }
 
     (void)label;
@@ -78,7 +79,7 @@ void printDAG(DAG *dag) {
     Agraph_t *g;
     GVC_t *gvc;
     g = agopen("g", Agdirected, &AgDefaultDisc);
-    buildDOT(dag->sink, g);
+    buildDOT(dag, dag->sink, g);
     gvc = gvContext();
     gvLayout(gvc, g, "dot");
     FILE *fp;

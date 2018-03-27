@@ -3,8 +3,6 @@
 
 #include <memory>
 
-#include "dag/DAG.h"
-
 DAGFilter *DAGFilter::copy() {
     std::unique_ptr<DAGFilter> filt(new DAGFilter());
     filt->fields = fields;

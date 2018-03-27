@@ -38,9 +38,6 @@ void to_json(nlohmann::json &json, const DAGOperator &op) {
         json.emplace("func", op.llvm_ir);
     }
     json.emplace("output_type", op.output_type);
-    std::vector<size_t> predecessors;
-    for (const auto &p : op.predecessors) predecessors.emplace_back(p->id);
-    json.emplace("predecessors", predecessors);
     json.emplace("op", op.name());
     op.to_json(&json);
 }

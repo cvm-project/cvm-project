@@ -65,8 +65,8 @@ void BackEnd::GenerateCode(DAG *const dag) {
     std::stringstream planBody;
     std::stringstream planDeclarations;
 
-    CodeGenVisitor visitor(planBody, planDeclarations, llvmCode);
-    visitor.visitDag(dag);
+    CodeGenVisitor visitor(dag, planBody, planDeclarations, llvmCode);
+    visitor.StartVisit();
 
     // Compute execute function parameters
     const auto input_formatter = [](auto i) {

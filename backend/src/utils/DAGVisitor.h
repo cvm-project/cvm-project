@@ -17,14 +17,19 @@ class DAGRange;
 class DAGReduce;
 class DAGReduceByKey;
 
+// TODO(ingo): there should be a const version of DAGVisitor
 class DAGVisitor {
 public:
     template <class OperatorType>
     friend class DAGOperatorBase;
 
-    virtual void visitDag(DAG *dag) final;
+    explicit DAGVisitor(const DAG *const dag) : dag_(dag) {}
+
+    virtual void StartVisit() final;
 
 protected:
+    const DAG *dag() { return dag_; }
+
     virtual void visit(DAGCollection * /*op*/) {}
     virtual void visit(DAGRange * /*op*/) {}
     virtual void visit(DAGFilter * /*op*/) {}
@@ -33,6 +38,9 @@ protected:
     virtual void visit(DAGReduce * /*op*/) {}
     virtual void visit(DAGReduceByKey * /*op*/) {}
     virtual void visit(DAGCartesian * /*op*/) {}
+
+private:
+    const DAG *const dag_;
 };
 
 template <class OperatorType>

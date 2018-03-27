@@ -19,8 +19,6 @@ class DAGVisitor;
 // cppcheck-suppress noConstructor
 class DAGOperator {
 public:
-    std::vector<DAGOperator *> predecessors;
-    std::vector<DAGOperator *> successors;
     std::vector<TupleField> fields;
     std::set<Column *> read_set;
     std::set<Column *> write_set;
@@ -30,12 +28,6 @@ public:
     size_t id{};
 
     virtual ~DAGOperator() = default;
-
-    // free only this operator
-    void freeThisOperator() {
-        predecessors.clear();
-        successors.clear();
-    }
 
     virtual std::string name() const = 0;
 

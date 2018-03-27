@@ -40,9 +40,10 @@ public:
         TupleTypeDesc return_type;
     };
 
-    CodeGenVisitor(std::ostream &planBody, std::ostream &planDeclarations,
-                   std::ostream &llvmCode)
-        : planBody_(planBody),
+    CodeGenVisitor(const DAG *const dag, std::ostream &planBody,
+                   std::ostream &planDeclarations, std::ostream &llvmCode)
+        : DAGVisitor(dag),
+          planBody_(planBody),
           planDeclarations_(planDeclarations),
           llvmCode_(llvmCode) {}
 

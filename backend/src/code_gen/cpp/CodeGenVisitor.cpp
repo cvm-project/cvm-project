@@ -90,7 +90,7 @@ void CodeGenVisitor::visit(DAGMap *op) {
             CodeGenVisitor::visit_common(op, "MapOperator");
 
     auto input_type =
-            operatorNameTupleTypeMap[op->predecessors[0]->id].return_type;
+            operatorNameTupleTypeMap[dag()->predecessor(op)->id].return_type;
     auto return_type = operatorNameTupleTypeMap[op->id].return_type;
     const std::string functor =
             visitLLVMFunc(*op, {input_type}, return_type.name);
@@ -122,7 +122,7 @@ void CodeGenVisitor::visit(DAGFilter *op) {
             CodeGenVisitor::visit_common(op, "FilterOperator");
 
     auto input_type =
-            operatorNameTupleTypeMap[op->predecessors[0]->id].return_type;
+            operatorNameTupleTypeMap[dag()->predecessor(op)->id].return_type;
     const std::string functor = visitLLVMFunc(*op, {input_type}, "bool");
 
     emitOperatorMake(var_name, "FilterOperator", op, {}, {functor});
@@ -134,9 +134,9 @@ void CodeGenVisitor::visit(DAGJoin *op) {
 
     // Build key and value types
     const auto up1Type =
-            operatorNameTupleTypeMap[op->predecessors[0]->id].return_type;
+            operatorNameTupleTypeMap[dag()->predecessor(op, 0)->id].return_type;
     const auto up2Type =
-            operatorNameTupleTypeMap[op->predecessors[1]->id].return_type;
+            operatorNameTupleTypeMap[dag()->predecessor(op, 1)->id].return_type;
 
     // TODO(sabir): This currently only works for keys of size 1
     TupleTypeDesc key_type = up1Type.computeHeadType();
@@ -159,7 +159,8 @@ void CodeGenVisitor::visit(DAGCartesian *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CartesianOperator");
     std::string pred2Tuple =
-            operatorNameTupleTypeMap[op->predecessors[1]->id].return_type.name;
+            operatorNameTupleTypeMap[dag()->predecessor(op, 1)->id]
+                    .return_type.name;
     std::vector<std::string> template_args = {pred2Tuple};
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
 };
@@ -237,9 +238,10 @@ void CodeGenVisitor::emitOperatorMake(
 
     // Default input arguments: references to predecessors
     std::vector<std::string> args;
-    std::transform(op->predecessors.begin(), op->predecessors.end(),
-                   std::back_inserter(args), [this](auto op) {
-                       return "&" + operatorNameTupleTypeMap[op->id].var_name;
+    std::transform(dag()->in_flows(op).begin(), dag()->in_flows(op).end(),
+                   std::back_inserter(args), [this](const auto &f) {
+                       return "&" +
+                              operatorNameTupleTypeMap[f.source->id].var_name;
                    });
 
     // Take over extra arguments

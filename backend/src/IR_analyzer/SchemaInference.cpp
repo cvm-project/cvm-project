@@ -47,9 +47,9 @@ void SchemaInference::visit(DAGFilter *op) {
     LLVMParser parser(op->llvm_ir);
     // copy output columns and fields from the predecessor
     for (size_t i = 0; i < op->fields.size(); i++) {
-        Column *col = op->predecessors[0]->fields[i].column;
+        Column *col = dag()->predecessor(op)->fields[i].column;
         op->fields[i].column = col;
-        op->fields[i].properties = op->predecessors[0]->fields[i].properties;
+        op->fields[i].properties = dag()->predecessor(op)->fields[i].properties;
 
         if (parser.is_argument_read(i)) {
             op->read_set.insert(col);
@@ -61,11 +61,11 @@ void SchemaInference::visit(DAGCartesian *op) {
     DEBUG_PRINT("schema inference cartesian");
 
     // copy output columns and fields from the predecessors
-    for (size_t i = 0; i < op->predecessors[0]->fields.size(); i++) {
-        Column *col = op->predecessors[0]->fields[i].column;
+    for (size_t i = 0; i < dag()->predecessor(op, 0)->fields.size(); i++) {
+        Column *col = dag()->predecessor(op, 0)->fields[i].column;
         op->fields[i].column = col;
         auto field = &(op->fields[i]);
-        field->properties = op->predecessors[0]->fields[i].properties;
+        field->properties = dag()->predecessor(op, 0)->fields[i].properties;
         // TODO(sabir): could still keep the props if the other side has
         // size 1
         if (op->stream_right) {
@@ -78,11 +78,12 @@ void SchemaInference::visit(DAGCartesian *op) {
         }
     }
 
-    for (size_t i = 0; i < op->predecessors[1]->fields.size(); i++) {
-        Column *col = op->predecessors[1]->fields[i].column;
-        auto field = &(op->fields[i + op->predecessors[0]->fields.size()]);
+    for (size_t i = 0; i < dag()->predecessor(op, 1)->fields.size(); i++) {
+        Column *col = dag()->predecessor(op, 1)->fields[i].column;
+        auto field =
+                &(op->fields[i + dag()->predecessor(op, 0)->fields.size()]);
         field->column = col;
-        field->properties = op->predecessors[1]->fields[i].properties;
+        field->properties = dag()->predecessor(op, 1)->fields[i].properties;
         if (!op->stream_right) {
             field->properties->erase(FL_SORTED);
             field->properties->erase(FL_UNIQUE);
@@ -95,11 +96,11 @@ void SchemaInference::visit(DAGCartesian *op) {
 
 void SchemaInference::visit(DAGJoin *op) {
     DEBUG_PRINT("schema inference visiting join");
-    DAGOperator *builtPred = op->predecessors[0];
-    DAGOperator *streamPred = op->predecessors[1];
+    DAGOperator *builtPred = dag()->predecessor(op, 0);
+    DAGOperator *streamPred = dag()->predecessor(op, 1);
     if (!op->stream_right) {
-        builtPred = op->predecessors[1];
-        streamPred = op->predecessors[0];
+        builtPred = dag()->predecessor(op, 1);
+        streamPred = dag()->predecessor(op, 0);
     }
     Column *keyCol = builtPred->fields[0].column;
     auto keyField = &(builtPred->fields[0]);
@@ -151,7 +152,7 @@ void SchemaInference::visit(DAGMap *op) {
     LLVMParser parser(op->llvm_ir);
 
     size_t c = 0;
-    for (auto arg : op->predecessors[0]->fields) {
+    for (auto arg : dag()->predecessor(op)->fields) {
         bool used = false;
         for (auto pos : parser.get_output_positions(c)) {
             // every output in the list now has the same column type as this
@@ -189,7 +190,7 @@ void SchemaInference::visit(DAGReduceByKey *op) {
     DEBUG_PRINT("schema inference visiting reduce_by_key");
 
     // keep the key column
-    DAGOperator *pred = op->predecessors[0];
+    DAGOperator *pred = dag()->predecessor(op);
     auto firstField = &(op->fields[0]);
 
     firstField->column = pred->fields[0].column;
@@ -205,7 +206,7 @@ void SchemaInference::visit(DAGReduceByKey *op) {
         // check which of the columns are read from the second input
 
         size_t arg_pos = i + op->fields.size() - 2;
-        auto arg = op->predecessors[0]->fields[i];
+        auto arg = dag()->predecessor(op)->fields[i];
         if (parser.is_argument_read(arg_pos)) {
             op->read_set.insert(arg.column);
         } else {

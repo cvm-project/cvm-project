@@ -158,8 +158,8 @@ bool LLVMParser::is_argument_read(size_t arg_pos) {
     return used;
 }
 
-std::string LLVMParser::adjust_filter_signature(DAGFilter *pFilter) {
-    DAGOperator *predecessor = pFilter->predecessors[0];
+std::string LLVMParser::adjust_filter_signature(
+        DAGFilter *const pFilter, const DAGOperator *const predecessor) {
     llvm::Module *new_mod = new llvm::Module("filter", Context);
 
     std::vector<llvm::Type *> types;

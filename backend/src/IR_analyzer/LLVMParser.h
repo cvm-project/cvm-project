@@ -34,7 +34,8 @@ public:
      */
     bool is_argument_read(size_t arg_pos);
 
-    std::string adjust_filter_signature(DAGFilter *pFilter);
+    std::string adjust_filter_signature(DAGFilter *pFilter,
+                                        const DAGOperator *predecessor);
 
 private:
     // these 3 fields must be declared in this order

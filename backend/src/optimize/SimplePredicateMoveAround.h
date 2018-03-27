@@ -9,19 +9,16 @@
 #include <vector>
 
 #include "dag/DAG.h"
-#include "dag/DAGFilter.h"
-#include "utils/DAGVisitor.h"
 
 // cppcheck-suppress noConstructor
-class SimplePredicateMoveAround : public DAGVisitor {
+class SimplePredicateMoveAround {
 public:
-    void optimize(DAG *dag_);
+    explicit SimplePredicateMoveAround(DAG* const dag) : dag_(dag) {}
 
-    void visit(DAGFilter *op) override;
+    void optimize();
 
 private:
-    std::vector<std::unique_ptr<DAGFilter>> filters;
-    DAG *dag{};
+    DAG* const dag_;
 };
 
 #endif  // OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H

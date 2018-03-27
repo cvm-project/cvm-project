@@ -6,6 +6,6 @@
 #include "SimplePredicateMoveAround.h"
 
 void Optimizer::run(DAG *dag) {
-    SimplePredicateMoveAround opt;
-    opt.optimize(dag);
+    SimplePredicateMoveAround opt(dag);
+    opt.optimize();
 }
