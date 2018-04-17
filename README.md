@@ -3,6 +3,11 @@ JITQ is a dataflow framework featuring just-in-time compilation and query optimi
 
 ## Installation
 
+0. Git submodules
+```
+git submodule update --recursive --init
+```
+
 1. Python requirements<br/>
 ```
 pip install -r requirements.txt
@@ -110,7 +115,7 @@ make
 2. Run tests and format checkers before commit<br>
 ```
 tools/check_all.sh
-cd python/tests
+cd python/jitq/tests
 python3 -m unittest discover -v
 cd backend/build
 ctest -V
