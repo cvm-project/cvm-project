@@ -1,3 +1,4 @@
+import abc
 import dis
 import json
 
@@ -86,7 +87,7 @@ def get_llvm_ir_for_generator(func):
     return llvm, output_type
 
 
-class RDD(object):
+class RDD(abc.ABC):
     NAME = 'abstract'
 
     """
@@ -142,10 +143,6 @@ class RDD(object):
         ret = list(op_dicts.values())
         return sorted(ret, key=lambda d: d[ID])
 
-    # pylint: disable=no-self-use
-    def self_write_dag(self, dic):
-        pass
-
     def execute_dag(self):
         hash_ = str(hash(self))
         dag_dict = self.context.serialization_cache.get(hash_, None)
@@ -194,7 +191,10 @@ class RDD(object):
         visitor.visit(self)
         return inputs
 
-    # pylint: disable=no-self-use
+    @abc.abstractmethod
+    def self_write_dag(self, dic):
+        pass
+
     def self_get_inputs(self):
         pass
 
@@ -230,10 +230,18 @@ class SourceRDD(RDD):
     def __init__(self, context):
         super(SourceRDD, self).__init__(context, [])
 
+    @abc.abstractmethod
+    def self_write_dag(self, dic):
+        pass
+
 
 class UnaryRDD(RDD):
     def __init__(self, context, parent):
         super(UnaryRDD, self).__init__(context, [parent])
+
+    @abc.abstractmethod
+    def self_write_dag(self, dic):
+        pass
 
 
 class BinaryRDD(RDD):
@@ -241,11 +249,19 @@ class BinaryRDD(RDD):
         super(BinaryRDD, self).__init__(context, parents)
         assert len(parents) == 2
 
+    @abc.abstractmethod
+    def self_write_dag(self, dic):
+        pass
+
 
 class PipeRDD(UnaryRDD):
     def __init__(self, context, parent, func):
         super(PipeRDD, self).__init__(context, parent)
         self.func = func
+
+    @abc.abstractmethod
+    def self_write_dag(self, dic):
+        pass
 
     def self_hash(self):
         file_ = io.StringIO()
@@ -313,7 +329,7 @@ class Join(BinaryRDD):
 
         # Special case: two scalar inputs produce a scalar output
         if not isinstance(self.parents[0].output_type, types.Tuple) and \
-           not isinstance(self.parents[1].output_type, types.Tuple):
+                not isinstance(self.parents[1].output_type, types.Tuple):
             return self.parents[0].output_type
 
         # Common case: concatenate tuples
