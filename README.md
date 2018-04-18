@@ -115,8 +115,7 @@ make
 2. Run tests and format checkers before commit<br>
 ```
 tools/check_all.sh
-cd python/jitq/tests
-python3 -m unittest discover -v
+python3 -m unittest discover -v -s python/jitq/tests
 cd backend/build
 ctest -V
 ```
