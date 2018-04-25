@@ -23,25 +23,17 @@ namespace code_gen {
 namespace cpp {
 
 std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
-    // TODO(sabir): this should be an operator
     return (format("/** collecting the result **/"
-                   "%1%.open();"
-                   "size_t allocatedSize = 2;"
-                   "size_t resSize = 0;"
-                   "%2% *result = (%2% *) malloc(sizeof(%2%) * allocatedSize);"
-                   "while (auto res = %1%.next()) {"
-                   "    if (allocatedSize <= resSize) {"
-                   "        allocatedSize *= 2;"
-                   "        result = (%2% *) realloc(result, sizeof(%2%) * "
-                   "allocatedSize);"
-                   "    }"
-                   "    result[resSize] = res.value;"
-                   "    resSize++;"
-                   "}"
-                   "%1%.close();"
+                   "struct tuple_mat { %2%* v0; size_t v1; };"
+                   "auto materialize_op = "
+                   "        makeMaterializeRowVectorOperator<tuple_mat,"
+                   "                                         %2%>(&%1%);"
+                   "materialize_op.open();"
+                   "const auto result = materialize_op.next().value;"
                    "auto ret = (result_type*)malloc(sizeof(result_type));"
-                   "ret->data = result;"
-                   "ret->size = resSize;"
+                   "ret->data = result.v0;"
+                   "ret->size = result.v1;"
+                   "materialize_op.close();"
                    "return ret;") %
             sink.var_name % sink.return_type.name)
             .str();
