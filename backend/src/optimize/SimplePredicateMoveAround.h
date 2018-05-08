@@ -5,9 +5,6 @@
 #ifndef OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H
 #define OPTIMIZE_SIMPLEPREDICATEMOVEAROUND_H
 
-#include <memory>
-#include <vector>
-
 #include "dag/DAG.h"
 
 // cppcheck-suppress noConstructor
