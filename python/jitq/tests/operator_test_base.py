@@ -493,7 +493,7 @@ class TestIntegration(unittest.TestCase):
         input1 = jitq_context.collection(range(0, 2))
         result = input1.cartesian(input1).collect()
         truth = [(0, 0), (0, 1), (1, 0), (1, 1)]
-        self.assertListEqual(sorted(list(result)), sorted(truth))
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
 
     @unittest.skip("Backend does not support non-tree DAGs yet")
     def test_dag2(self):
@@ -501,7 +501,7 @@ class TestIntegration(unittest.TestCase):
         input1 = jitq_context.collection(range(0, 2)).filter(lambda t: True)
         result = input1.cartesian(input1).collect()
         truth = [(0, 0), (0, 1), (1, 0), (1, 1)]
-        self.assertListEqual(sorted(list(result)), sorted(truth))
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
 
     def test_map_filter_map(self):
         jitq_context = JitqContext()
