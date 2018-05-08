@@ -30,6 +30,7 @@ private:
                 allocated_size *= 2;
                 result_ptr = reinterpret_cast<InnerTuple *>(realloc(
                         result_ptr, sizeof(InnerTuple) * allocated_size));
+                if (result_ptr == nullptr) throw "out of memory";
             }
             result_ptr[result_size] = tuple.value;
             result_size++;
