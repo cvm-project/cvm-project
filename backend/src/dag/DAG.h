@@ -173,7 +173,7 @@ public:
     Edge AddFlow(const DAGOperator *source, const DAGOperator *target,
                  int target_port = 0);
     Edge AddFlow(const DAGOperator *source, int source_port,
-                 const DAGOperator *target, int target_port);
+                 const DAGOperator *target, int target_port = 0);
     void RemoveFlow(const Flow &f) { RemoveFlow(f.e); }
     void RemoveFlow(const Edge &e);
 
