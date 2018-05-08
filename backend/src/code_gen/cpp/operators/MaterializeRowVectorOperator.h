@@ -35,6 +35,9 @@ private:
             result_ptr[result_size] = tuple.value;
             result_size++;
         }
+        result_ptr = reinterpret_cast<InnerTuple *>(
+                realloc(result_ptr,
+                        sizeof(InnerTuple) * std::max(size_t(1), result_size)));
         upstream->close();
     }
 
