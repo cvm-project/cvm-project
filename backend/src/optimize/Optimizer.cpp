@@ -7,6 +7,7 @@
 #include "attribute_id_tracking.hpp"
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
+#include "materialize_multiple_reads.hpp"
 #include "type_inference.hpp"
 
 #include "SimplePredicateMoveAround.h"
@@ -14,7 +15,15 @@
 void Optimizer::run(DAG *dag) {
     // Verify tuple types
     TypeInference ti_check(dag, true);
+    TypeInference ti(dag);
     ti_check.optimize();
+
+    // Materialize results that are consumed multiple times
+    MaterializeMultipleReads mmr(dag);
+    mmr.optimize();
+
+    // Recompute output types
+    ti.optimize();
 
     // Column tracking
     AttributeIdTracking ct(dag);
@@ -24,8 +33,8 @@ void Optimizer::run(DAG *dag) {
 #endif  // NDEBUG
 
     // Move around filters
-    SimplePredicateMoveAround opt(dag);
-    opt.optimize();
+    SimplePredicateMoveAround spma(dag);
+    spma.optimize();
 #ifndef NDEBUG
     ti_check.optimize();
 #endif  // NDEBUG

@@ -115,6 +115,7 @@ set(SOURCE_FILES
         llvm_helpers/function.cpp
         optimize/attribute_id_tracking.cpp
         optimize/determine_sortedness.cpp
+        optimize/materialize_multiple_reads.cpp
         optimize/Optimizer.cpp
         optimize/type_inference.cpp
         optimize/grouped_reduce_by_key.cpp
