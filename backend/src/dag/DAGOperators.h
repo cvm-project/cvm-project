@@ -7,6 +7,7 @@
 #include "DAGFilter.h"
 #include "DAGJoin.h"
 #include "DAGMap.h"
+#include "DAGMaterializeRowVector.h"
 #include "DAGParameterLookup.h"
 #include "DAGRange.h"
 #include "DAGReduce.h"

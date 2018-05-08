@@ -14,6 +14,7 @@ class DAGConstantTuple;
 class DAGFilter;
 class DAGJoin;
 class DAGMap;
+class DAGMaterializeRowVector;
 class DAGParameterLookup;
 class DAGRange;
 class DAGReduce;
@@ -39,6 +40,7 @@ protected:
     virtual void visit(DAGFilter * /*op*/) {}
     virtual void visit(DAGJoin * /*op*/) {}
     virtual void visit(DAGMap * /*op*/) {}
+    virtual void visit(DAGMaterializeRowVector * /*op*/) {}
     virtual void visit(DAGParameterLookup * /*op*/) {}
     virtual void visit(DAGReduce * /*op*/) {}
     virtual void visit(DAGReduceByKey * /*op*/) {}

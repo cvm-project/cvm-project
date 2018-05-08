@@ -29,6 +29,7 @@ void DagFactory::load_operators() {
     load_operator<DAGFilter>();
     load_operator<DAGJoin>();
     load_operator<DAGMap>();
+    load_operator<DAGMaterializeRowVector>();
     load_operator<DAGParameterLookup>();
     load_operator<DAGRange>();
     load_operator<DAGReduce>();

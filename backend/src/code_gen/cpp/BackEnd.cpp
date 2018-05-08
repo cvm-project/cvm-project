@@ -24,18 +24,14 @@ namespace cpp {
 
 std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
     return (format("/** collecting the result **/"
-                   "struct tuple_mat { %2%* v0; size_t v1; };"
-                   "auto materialize_op = "
-                   "        makeMaterializeRowVectorOperator<tuple_mat,"
-                   "                                         %2%>(&%1%);"
-                   "materialize_op.open();"
-                   "const auto result = materialize_op.next().value;"
+                   "%1%.open();"
+                   "const auto result = %1%.next().value;"
                    "auto ret = (result_type*)malloc(sizeof(result_type));"
                    "ret->data = result.v0;"
                    "ret->size = result.v1;"
-                   "materialize_op.close();"
+                   "%1%.close();"
                    "return ret;") %
-            sink.var_name % sink.return_type.name)
+            sink.var_name)
             .str();
 }
 
@@ -70,7 +66,9 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
     // Generate typedef for result wrapper
     auto sink = visitor.operatorNameTupleTypeMap[dag->sink->id];
-    auto return_type = sink.return_type;
+    auto return_type =
+            visitor.operatorNameTupleTypeMap[dag->predecessor(dag->sink)->id]
+                    .return_type;
 
     const std::string result_wrapper = (format("typedef struct {"
                                                "   unsigned long size;"

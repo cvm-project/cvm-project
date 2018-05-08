@@ -131,6 +131,22 @@ void CodeGenVisitor::visit(DAGMap *op) {
     emitOperatorMake(var_name, "MapOperator", op, {}, {functor});
 }
 
+void CodeGenVisitor::visit(DAGMaterializeRowVector *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
+
+    auto tuple_type = operatorNameTupleTypeMap[op->id].return_type;
+    auto return_type =
+            TupleTypeDesc{"", {tuple_type.name + "*", "size_t"}, {"v0", "v1"}};
+    return_type.name = emitTupleDefinition(return_type);
+    operatorNameTupleTypeMap[op->id].return_type = return_type;
+
+    auto input_type =
+            operatorNameTupleTypeMap[dag()->predecessor(op)->id].return_type;
+    emitOperatorMake(var_name, "MaterializeRowVectorOperator", op,
+                     {input_type.name}, {});
+}
+
 void CodeGenVisitor::visit(DAGParameterLookup *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");

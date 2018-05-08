@@ -189,7 +189,7 @@ class RDD(abc.ABC):
         return Cartesian(self.context, self, other)
 
     def collect(self):
-        return self.execute_dag()
+        return MaterializeRowVector(self.context, self).execute_dag()
 
     def count(self):
         return self.map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
@@ -248,6 +248,20 @@ class Map(PipeRDD):
             raise BaseException(
                 "Function given to map has the wrong return type:\n"
                 "  found:    {0}".format(self.output_type))
+
+
+class MaterializeRowVector(UnaryRDD):
+    NAME = 'materialize_row_vector'
+
+    def __init__(self, context, parent):
+        # XXX: This is necessary because MaterializeRowVectors are constructed
+        #      on the fly for every call to collect and for a cached RDD,
+        #      self_write_dag is not executed.
+        super(MaterializeRowVector, self).__init__(context, parent)
+        self.output_type = self.parents[0].output_type
+
+    def self_write_dag(self, dic):
+        self.output_type = self.parents[0].output_type
 
 
 class Filter(PipeRDD):
