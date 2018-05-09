@@ -655,10 +655,62 @@ class TestFilterPushDown(unittest.TestCase):
         truth = [(2, 4, 4), (2, 4, 6), (2, 6, 4), (2, 6, 6)]
         self.assertListEqual(sorted(res.astuplelist()), sorted(truth))
 
+    def test_dag1(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 2))
+        result = input1.map(lambda t: t).filter(lambda i: i == 0) \
+                       .cartesian(input1).collect()
+        truth = [(0, 0), (0, 1)]
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+
+    def test_dag2(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 2))
+        result = input1.cartesian(input1) \
+                       .filter(lambda t: t[0] == 0) \
+                       .collect()
+        truth = [(0, 0), (0, 1)]
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+
+    def test_dag3(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 2))
+        result = input1.cartesian(input1) \
+                       .filter(lambda t: t[1] == 0) \
+                       .collect()
+        truth = [(0, 0), (1, 0)]
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+
+    def test_dag4(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 4)).map(lambda i: (i, i + 1))
+        result = input1.join(input1.map(lambda t: (t[1], t[0]))) \
+                       .filter(lambda t: t[0] == 2) \
+                       .collect()
+        truth = [(2, 3, 1)]
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+
+    def test_dag5(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 4)).map(lambda i: (i, i + 1))
+        result = input1.join(input1.map(lambda t: (t[1], t[0]))) \
+                       .filter(lambda t: t[1] == 2) \
+                       .collect()
+        truth = [(1, 2, 0)]
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+
+    def test_dag6(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 4)).map(lambda i: (i, i + 1))
+        result = input1.join(input1.map(lambda t: (t[1], t[0]))) \
+                       .filter(lambda t: t[2] == 2) \
+                       .collect()
+        truth = [(3, 4, 2)]
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+
 
 class TestIntegration(unittest.TestCase):
 
-    @unittest.skip("Backend does not support non-tree DAGs yet")
     def test_reexecute_dag(self):
         jitq_context = JitqContext()
         input_ = jitq_context.collection(range(0, 2))
@@ -666,7 +718,6 @@ class TestIntegration(unittest.TestCase):
         res2 = input_.collect()
         self.assertListEqual(res1.astuplelist(), res2.astuplelist())
 
-    @unittest.skip("Backend does not support non-tree DAGs yet")
     def test_reuse_and_modify_dag(self):
         jitq_context = JitqContext()
         input_ = jitq_context.collection(range(0, 2))
@@ -674,7 +725,6 @@ class TestIntegration(unittest.TestCase):
         res2 = input_.filter(lambda t: True).collect()
         self.assertListEqual(res1.astuplelist(), res2.astuplelist())
 
-    @unittest.skip("Backend does not support non-tree DAGs yet")
     def test_dag_explosion(self):
         jitq_context = JitqContext()
         input_ = range(0, 10)
@@ -684,7 +734,6 @@ class TestIntegration(unittest.TestCase):
         res = operator.collect()
         self.assertListEqual(res.astuplelist(), list(input_))
 
-    @unittest.skip("Backend does not support non-tree DAGs yet")
     def test_dag1(self):
         jitq_context = JitqContext()
         input1 = jitq_context.collection(range(0, 2))
@@ -692,7 +741,6 @@ class TestIntegration(unittest.TestCase):
         truth = [(0, 0), (0, 1), (1, 0), (1, 1)]
         self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
 
-    @unittest.skip("Backend does not support non-tree DAGs yet")
     def test_dag2(self):
         jitq_context = JitqContext()
         input1 = jitq_context.collection(range(0, 2)).filter(lambda t: True)
