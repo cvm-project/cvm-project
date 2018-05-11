@@ -265,6 +265,26 @@ class TestFilter(unittest.TestCase):
         truth = [(0, 0), (0, 2), (0, 4), (0, 6), (0, 8)]
         self.assertListEqual(res.astuplelist(), truth)
 
+    def test_multiple_writers1(self):
+        jitq_context = JitqContext()
+        input_ = list(range(10))
+        res = jitq_context.collection(input_) \
+            .map(lambda t: (t, t + 1)) \
+            .filter(lambda t: (t[0] + t[1]) % 3 == 0) \
+            .collect()
+        truth = [(1, 2), (4, 5), (7, 8)]
+        self.assertListEqual(res.astuplelist(), truth)
+
+    def test_multiple_writers2(self):
+        jitq_context = JitqContext()
+        input_ = list(range(10))
+        res = jitq_context.collection(input_) \
+            .map(lambda t: (t, t)) \
+            .filter(lambda t: t[0] + t[1] < 10) \
+            .collect()
+        truth = list(enumerate(range(5)))
+        self.assertListEqual(res.astuplelist(), truth)
+
 
 class TestMap(unittest.TestCase):
 
