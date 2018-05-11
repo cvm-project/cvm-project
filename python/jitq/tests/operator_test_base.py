@@ -255,6 +255,14 @@ class TestFilter(unittest.TestCase):
         truth = list(filter(lambda w: w[0] % 2 == 0, input_))
         self.assertListEqual(res.astuplelist(), truth)
 
+    def test_constant_false(self):
+        jitq_context = JitqContext()
+        input_ = list(enumerate(range(10)))
+        res = jitq_context.collection(input_) \
+            .filter(lambda t: False) \
+            .collect()
+        self.assertListEqual(res.astuplelist(), [])
+
     def test_move_around(self):
         jitq_context = JitqContext()
         input_ = list(range(10))
