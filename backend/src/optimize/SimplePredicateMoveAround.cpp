@@ -57,8 +57,11 @@ void SimplePredicateMoveAround::optimize() {
 
             // Only add if this operator produced one of the fields (otherwise,
             // push further up)
+            // Exception: if the filter doesn't read any field, it is constant,
+            // and can be added everywhere.
             if (!std::any_of(filter->read_set.begin(), filter->read_set.end(),
-                             [&](auto c) { return currentOp->Writes(c); })) {
+                             [&](auto c) { return currentOp->Writes(c); }) &&
+                !filter->read_set.empty()) {
                 continue;
             }
 
