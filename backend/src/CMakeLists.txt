@@ -92,11 +92,9 @@ add_executable(max_memory benchmarks/max_memory.c)
 # Set up LLVMParser unit tests
 add_executable(LLVMParser_tests
         tests/LLVMParser.cpp
-        IR_analyzer/LLVMParser.cpp
-        utils/c_type_to_llvm.cpp
     )
 target_link_libraries(LLVMParser_tests PUBLIC
-        ${LLVM_LIBS}
+        generate
     )
 add_test(LLVMParser LLVMParser_tests)
 
