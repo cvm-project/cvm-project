@@ -4,6 +4,7 @@
 
 #include "SimplePredicateMoveAround.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "IR_analyzer/LLVMParser.h"
@@ -47,38 +48,44 @@ void SimplePredicateMoveAround::optimize() {
             for (const auto &in_flow : dag_->in_flows(currentOp)) {
                 q.push_back(in_flow.source);
             }
-            // check if at least one of filter's reads is in this op's write set
-            for (auto c : filter->read_set) {
-                if (currentOp->writeSetContains(c)) {
-                    DAGFilter *filt = filter->copy();
-                    dag_->AddOperator(filt);
-                    // insert the filter after this operator
-                    if (currentOp == dag_->sink) {
-                        // reassign sink to the filter
-                        dag_->sink = filt;
-                    } else {
-                        const auto out_flow = dag_->out_flow(currentOp, 0);
-                        dag_->RemoveFlow(out_flow);
-                        dag_->AddFlow(filt, 0, out_flow.target,
-                                      out_flow.target_port);
-                    }
-                    dag_->AddFlow(currentOp, 0, filt, 0);
 
-                    // change the llvm ir signature
-                    LLVMParser parser(filt->llvm_ir);
-                    filt->llvm_ir = parser.adjust_filter_signature(
-                            filt, dag_->predecessor(filt));
-
-                    // copy the output fields
-                    filt->fields.clear();
-                    for (const auto &f : currentOp->fields) {
-                        filt->fields.push_back(f);
-                    }
-                    filt->output_type = currentOp->output_type;
-
-                    break;
-                }
+            // Make sure filter can read all required fields
+            if (std::any_of(filter->read_set.begin(), filter->read_set.end(),
+                            [&](auto c) { return !currentOp->CanRead(c); })) {
+                continue;
             }
+
+            // Only add if this operator produced one of the fields (otherwise,
+            // push further up)
+            if (!std::any_of(filter->read_set.begin(), filter->read_set.end(),
+                             [&](auto c) { return currentOp->Writes(c); })) {
+                continue;
+            }
+
+            DAGFilter *filt = filter->copy();
+            dag_->AddOperator(filt);
+            // insert the filter after this operator
+            if (currentOp == dag_->sink) {
+                // reassign sink to the filter
+                dag_->sink = filt;
+            } else {
+                const auto out_flow = dag_->out_flow(currentOp, 0);
+                dag_->RemoveFlow(out_flow);
+                dag_->AddFlow(filt, 0, out_flow.target, out_flow.target_port);
+            }
+            dag_->AddFlow(currentOp, 0, filt, 0);
+
+            // change the llvm ir signature
+            LLVMParser parser(filt->llvm_ir);
+            filt->llvm_ir = parser.adjust_filter_signature(
+                    filt, dag_->predecessor(filt));
+
+            // copy the output fields
+            filt->fields.clear();
+            for (const auto &f : currentOp->fields) {
+                filt->fields.push_back(f);
+            }
+            filt->output_type = currentOp->output_type;
         }
 
         // 2c. remove the filter

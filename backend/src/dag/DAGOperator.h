@@ -35,17 +35,9 @@ public:
     virtual void to_json(nlohmann::json *json) const = 0;
     virtual void from_json(const nlohmann::json &json) = 0;
 
-    bool writeSetContains(Column *c) {
-        bool ret = false;
-        for (auto col : write_set) {
-            if (col->operator==(*c)) {
-                ret = true;
-                break;
-            }
-        }
-        return ret;
-    }
+    bool CanRead(const Column *c) const;
     bool Reads(const Column *c) const;
+    bool Writes(const Column *c) const;
 };
 
 template <class OperatorType>
