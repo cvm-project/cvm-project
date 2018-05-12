@@ -24,7 +24,13 @@ void LLVMParser::parse(const std::string &ir) {
             for (auto i = b.begin(), ie = b.end(); i != ie; i++) {
                 if (auto instr = llvm::cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::InsertValue) {
-                        ret_instruction_ids.push_back(instr->getName());
+                        auto insert = llvm::cast<llvm::InsertValueInst>(instr);
+                        assert(insert->getIndices().size() == 1);
+                        const size_t pos = *(insert->idx_begin());
+                        if (pos + 1 > ret_instruction_ids.size()) {
+                            ret_instruction_ids.resize(pos + 1);
+                        }
+                        ret_instruction_ids[pos] = instr->getName();
                     }
                 }
             }
