@@ -45,6 +45,7 @@ public:
         }
         return ret;
     }
+    bool Reads(const Column *c) const;
 };
 
 template <class OperatorType>

@@ -5,6 +5,7 @@
 
 #include <json.hpp>
 
+#include "Column.h"
 #include "TupleField.h"
 #include "utils/utils.h"
 
@@ -48,4 +49,11 @@ void to_json(nlohmann::json &json, const DAGOperator *op) {
 
 void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op) {
     to_json(json, *op);
+}
+
+bool DAGOperator::Reads(const Column *const c) const {
+    for (auto const &col : read_set) {
+        if (*col == *c) return true;
+    }
+    return false;
 }

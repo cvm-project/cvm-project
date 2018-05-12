@@ -4,6 +4,7 @@
 
 #include "LLVMParser.h"
 
+#include <algorithm>
 #include <regex>
 
 #include <llvm/Transforms/Utils/Cloning.h>
@@ -189,26 +190,23 @@ std::string LLVMParser::adjust_filter_signature(
          it != filter_predicate->arg_end(); it++) {
         it->setName("." + std::to_string(counter++));
     }
-    // go over the read set
-    for (auto c : pFilter->read_set) {
-        size_t oldPos = 0;
-        for (auto f : pFilter->fields) {
-            if (*f.column == *c) {
-                oldPos = f.position;
-                break;
-            }
-        }
-        size_t newPos = 0;
-        for (auto f : predecessor->fields) {
-            if (*f.column == *c) {
-                newPos = f.position;
-                break;
-            }
-        }
+    // In the IR, replace all fields with their new positions
+    for (auto f : pFilter->fields) {
+        if (!pFilter->Reads(f.column)) continue;
+        const size_t old_pos = f.position;
+
+        const auto input_field = std::find_if(
+                predecessor->fields.begin(), predecessor->fields.end(),
+                [&](auto const &input_f) {
+                    return *(f.column) == *(input_f.column);
+                });
+        assert(input_field != predecessor->fields.end());
+        const auto new_pos = input_field->position;
+
         // replace all uses of oldPos argument to use of newPos argument
-        auto oldArg = old_function->arg_begin() + oldPos;
-        auto newArg = filter_predicate->arg_begin() + newPos;
-        oldArg->replaceAllUsesWith(newArg);
+        auto old_arg = old_function->arg_begin() + old_pos;
+        auto new_arg = filter_predicate->arg_begin() + new_pos;
+        old_arg->replaceAllUsesWith(new_arg);
     }
     std::string ret;
     llvm::raw_string_ostream OS(ret);
