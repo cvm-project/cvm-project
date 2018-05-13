@@ -6,6 +6,7 @@
 
 #include "dag/DAG.h"
 #include "dag/DAGCreation.hpp"
+#include "optimize/Optimizer.h"
 
 namespace po = boost::program_options;
 
@@ -13,10 +14,14 @@ int main(int argc, char* argv[]) {
     // Read command line parameters
     std::string input_file_name;
     std::string output_file_name;
+    size_t opt_level = 0;
 
-    po::options_description desc("Deserialize and serialize a DAG");
+    po::options_description desc("Deserialize, optimize, and serialize a DAG");
     desc.add_options()                             //
             ("help", "Produce this help message")  //
+            ("optimization-level,O",
+             po::value<size_t>(&opt_level)->default_value(0),
+             "Optimization level")  //
             ("input,i", po::value<std::string>(&input_file_name),
              "Path to input file")  //
             ("output,o", po::value<std::string>(&output_file_name),
@@ -41,6 +46,12 @@ int main(int argc, char* argv[]) {
 
     // Read file content and parse
     std::unique_ptr<DAG> dag(parse_dag(&input));
+
+    if (opt_level > 0) {
+        // Optimize
+        Optimizer opt;
+        opt.run(dag.get());
+    }
 
     // Convert back to JSON
     nlohmann::json json(dag);

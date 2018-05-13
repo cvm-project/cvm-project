@@ -100,11 +100,14 @@ target_link_libraries(LLVMParser_tests PUBLIC
     )
 add_test(LLVMParser LLVMParser_tests)
 
-# Set up DAG parser unit test
-add_executable(dag_parser_tests
-        tests/TestDagParser.cpp
+# Set up optimizer command line tool
+add_executable(opt-cli
+        tools/opt.cpp
     )
-target_link_libraries(dag_parser_tests PUBLIC
+set_target_properties(opt-cli PROPERTIES
+        OUTPUT_NAME "opt"
+    )
+target_link_libraries(opt-cli PUBLIC
         ${Boost_LIBRARIES}
         generate
     )
