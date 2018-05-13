@@ -3,9 +3,17 @@
 //
 
 #include "Optimizer.h"
+
 #include "SimplePredicateMoveAround.h"
 
+#include "IR_analyzer/SchemaInference.h"
+
 void Optimizer::run(DAG *dag) {
+    // Schema inference
+    SchemaInference si(dag);
+    si.StartVisit();
+
+    // Move around filters
     SimplePredicateMoveAround opt(dag);
     opt.optimize();
 }

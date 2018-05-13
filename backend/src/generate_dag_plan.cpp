@@ -12,7 +12,6 @@ extern "C" {
 
 #include <json.hpp>
 
-#include "IR_analyzer/SchemaInference.h"
 #include "code_gen/common/BackEnd.hpp"
 #include "code_gen/cpp/BackEnd.hpp"
 #include "dag/DAGCreation.hpp"
@@ -31,10 +30,6 @@ int generate_dag_plan(const char *const conf, const char *const dagstr,
 
     // Parse DAG
     std::unique_ptr<DAG> dag(parse_dag(std::string(dagstr)));
-
-    // Schema inference
-    SchemaInference si(dag.get());
-    si.StartVisit();
 
     // Optimize
     Optimizer opt;
