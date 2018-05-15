@@ -1,0 +1,13 @@
+{
+    "dag": [
+        {
+            "from": 10.5,
+            "id": 0,
+            "op": "range_source",
+            "output_type": "(double)",
+            "predecessors": [],
+            "step": 2.0,
+            "to": 20.0
+        }
+    ]
+}

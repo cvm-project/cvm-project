@@ -1,0 +1,38 @@
+{
+    "dag": [
+        {
+            "add_index": false,
+            "id": 0,
+            "op": "collection_source",
+            "output_type": "(long)",
+            "predecessors": []
+        },
+        {
+            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = mul nsw i64 %.1, 3\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.14.i, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+            "id": 1,
+            "op": "map",
+            "output_type": "(long, long)",
+            "predecessors": [
+                0
+            ]
+        },
+        {
+            "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.41.i = srem i64 %.1, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  ret i1 %.74.i\n}\n\n\n\n",
+            "id": 2,
+            "op": "filter",
+            "output_type": "(long, long)",
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
+            "id": 3,
+            "op": "map",
+            "output_type": "(long)",
+            "predecessors": [
+                2
+            ]
+        }
+    ]
+}

@@ -83,6 +83,12 @@ class TestParser(unittest.TestCase, TestBase):
     TEST_OPTIONS = []
 
 
+# Test class instantiation for optimizer
+class TestOptimizer(unittest.TestCase, TestBase):
+    TEST_DIR = join(TEST_BASE_DIR, "test_optimizer")
+    TEST_OPTIONS = ["-O1"]
+
+
 # Factory for generic test cases
 def make_test_func(test_name):
     # Implementation of generic test case
@@ -95,6 +101,14 @@ def make_test_func(test_name):
     return test_func
 
 
+TEST_CLASSES = [TestParser, TestOptimizer]
+
+
+def attach_test_cases():
+    for cls in TEST_CLASSES:
+        cls.attach_test_cases()
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Test case for DAG parsing and optimizing.')
@@ -104,12 +118,13 @@ def main():
     args, unit_args = parser.parse_known_args()
 
     if args.write_outputs:
-        TestParser.write_outputs()
+        for cls in TEST_CLASSES:
+            cls.write_outputs()
     else:
         unit_args.insert(0, "placeholder")  # unittest ignores first arg
         unittest.main(argv=unit_args)
 
 
-TestParser.attach_test_cases()
+attach_test_cases()
 if __name__ == '__main__':
     main()
