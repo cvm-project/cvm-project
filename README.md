@@ -107,12 +107,19 @@ sudo apt-get install libgraphviz-dev
 ## Development
 1. Build<br>
 ```
-cd backend/build
+cd jitq/backend/build
 cmake ../src/
 make
+cd ../../
 ```
 
-2. Run tests and format checkers before commit<br>
+2. Set PYTHONPATH and JITQPATH
+```
+export JITQPATH=$PWD
+export PYTHONPATH=$PWD/python
+```
+
+3. Run tests and format checkers before commit<br>
 ```
 tools/check_all.sh
 python3 -m unittest discover -v -s python/jitq/tests
