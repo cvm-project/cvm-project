@@ -233,3 +233,27 @@ void SchemaInference::visit(DAGReduceByKey *op) {
         op->write_set.insert(c);
     }
 }
+
+void SchemaInference::visit(DAGReduce *op) {
+    LLVMParser parser(op->llvm_ir);
+
+    for (size_t i = 0; i < op->fields.size(); i++) {
+        // TODO(sabir):
+        // check which of the columns are read from the second input
+
+        size_t arg_pos = i + op->fields.size();
+        auto arg = dag()->predecessor(op)->fields[i];
+        if (parser.is_argument_read(arg_pos)) {
+            op->read_set.insert(arg.column);
+        } else {
+            // add to the dead set
+            op->dead_set.insert(arg);
+        }
+
+        // generate a new column for every output
+        Column *c = Column::makeColumn();
+        c->addField(&(op->fields[i]));
+        // add all cols to the write set
+        op->write_set.insert(c);
+    }
+}

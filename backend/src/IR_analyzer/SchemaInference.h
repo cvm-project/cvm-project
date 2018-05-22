@@ -25,6 +25,7 @@ public:
     void visit(DAGMap *op) override;
     void visit(DAGRange *op) override;
     void visit(DAGReduceByKey *op) override;
+    void visit(DAGReduce *op) override;
 };
 
 #endif  // IR_ANALYZER_SCHEMAINFERENCE_H
