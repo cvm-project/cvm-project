@@ -19,12 +19,23 @@ format-python:
     - tools/check_format_python.sh
     - tools/check_pylint.sh
 
-build:
+rel-build:
   stage: build
   image: ingomuellernet/buildenv-jitq
   script:
     - cd backend/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
+    - make
+  artifacts:
+    paths:
+      - backend/build/*
+
+dbg-build:
+  stage: build
+  image: ingomuellernet/buildenv-jitq
+  script:
+    - cd backend/build
+    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug
     - make
   artifacts:
     paths:
@@ -41,7 +52,7 @@ clang-tidy:
 cppcheck:
   stage: test
   dependencies:
-    - build
+    - dbg-build
   image: ingomuellernet/buildenv-jitq
   script:
     - cd backend/build
@@ -50,7 +61,7 @@ cppcheck:
 python-tests:
   stage: test
   dependencies:
-    - build
+    - dbg-build
   image: ingomuellernet/buildenv-jitq
   variables:
     PYTHONPATH: $CI_PROJECT_DIR
@@ -66,7 +77,7 @@ python-tests:
 cpp-test:
   stage: test
   dependencies:
-    - build
+    - dbg-build
   image: ingomuellernet/buildenv-jitq
   script:
     - cd backend/build
