@@ -16,6 +16,8 @@ class SchemaInference : public DAGVisitor {
 public:
     explicit SchemaInference(const DAG *const dag) : DAGVisitor(dag) {}
 
+    void Run();
+
     void visit(DAGCartesian *op) override;
     void visit(DAGCollection *op) override;
     void visit(DAGFilter *op) override;

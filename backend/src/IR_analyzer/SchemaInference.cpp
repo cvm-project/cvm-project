@@ -4,12 +4,24 @@
 
 #include "SchemaInference.h"
 
+#include <cassert>
+
 #include "IR_analyzer/LLVMParser.h"
 #include "dag/DAG.h"
 #include "dag/DAGOperators.h"
 #include "dag/TupleField.h"
 #include "utils/DAGVisitor.h"
 #include "utils/debug_print.h"
+
+void SchemaInference::Run() {
+    this->StartVisit();
+
+    for (auto const op : dag()->operators()) {
+        for (auto const &f : op->fields) {
+            assert(f.column != nullptr);
+        }
+    }
+}
 
 void SchemaInference::visit(DAGCollection *op) {
     DEBUG_PRINT("schema inference visiting collection");

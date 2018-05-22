@@ -11,7 +11,7 @@
 void Optimizer::run(DAG *dag) {
     // Schema inference
     SchemaInference si(dag);
-    si.StartVisit();
+    si.Run();
 
     // Move around filters
     SimplePredicateMoveAround opt(dag);
