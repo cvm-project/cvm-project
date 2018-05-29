@@ -1,12 +1,16 @@
 #ifndef UTILS_PRINTDAG_H
 #define UTILS_PRINTDAG_H
 
-#include <graphviz/gvc.h>
+#include <cstdio>
+
+#include <ostream>
+#include <string>
 
 #include "dag/DAG.h"
-#include "dag/DAGOperator.h"
 
-Agnode_t *buildDOT(DAGOperator *op, Agraph_t *g);
-void printDAG(DAG *dag);
+std::string ToDotString(const DAG *dag);
+const char *ToDotCharPtr(const DAG *dag);
+void ToDotFile(const DAG *dag, FILE *outfile);
+void ToDotStream(const DAG *dag, std::ostream *outstream);
 
 #endif  // UTILS_PRINTDAG_H
