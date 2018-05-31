@@ -242,11 +242,11 @@ void CodeGenVisitor::emitOperatorMake(
 
     // Default input arguments: references to predecessors
     std::vector<std::string> args;
-    std::transform(dag()->in_flows(op).begin(), dag()->in_flows(op).end(),
-                   std::back_inserter(args), [this](const auto &f) {
-                       return "&" +
-                              operatorNameTupleTypeMap[f.source->id].var_name;
-                   });
+    for (size_t i = 0; i < op->num_in_ports(); i++) {
+        const auto pred = dag()->predecessor(op, i);
+        const auto arg = "&" + operatorNameTupleTypeMap[pred->id].var_name;
+        args.emplace_back(arg);
+    }
 
     // Take over extra arguments
     args.insert(args.end(), extra_args.begin(), extra_args.end());

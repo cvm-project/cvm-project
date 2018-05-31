@@ -264,8 +264,8 @@ void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(
 
         // Add predecessors
         auto jpreds = nlohmann::json::array();
-        for (const auto &f : dag->in_flows(op)) {
-            jpreds.push_back(f.source->id);
+        for (size_t i = 0; i < op->num_in_ports(); i++) {
+            jpreds.push_back(dag->predecessor(op, i)->id);
         }
         jop.emplace("predecessors", jpreds);
 
