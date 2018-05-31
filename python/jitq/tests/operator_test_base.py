@@ -2,9 +2,9 @@
 
 import unittest
 from itertools import groupby
-
 from functools import reduce
 from operator import itemgetter
+from numpy.testing import assert_array_equal
 import numpy as np
 import pandas as pd
 
@@ -101,9 +101,72 @@ class TestCollection(unittest.TestCase):
         truth = [(i, ) + r for i, r in enumerate(input_)]
         self.assertListEqual(res.astuplelist(), truth)
 
+    @unittest.skip("Not implemented")
+    def test_array_tuple_hetosize(self):
+        context = JitqContext()
+        input_ = [(i, 2 * i) for i in range(10)] + \
+                 [(i, i + 1, i * 2) for i in range(5)]
+        res = context.collection(np.array(input_)).collect()
+        self.assertListEqual(res.astuplelist(), input_)
+
+    # pylint: disable=no-self-use
+    @unittest.skip("Not implemented")
+    def test_array_record(self):
+        context = JitqContext()
+        input_ = np.array(
+            [(1, 2 * 2)], dtype=[('first_int', 'i4'), ('second_float', 'f4')])
+        res = context.collection(np.array(input_)).collect()
+        assert_array_equal(res, input_)
+
+    @unittest.skip("Not implemented")
+    def test_2darray(self):
+        context = JitqContext()
+        input_ = np.array([np.array(range(10)), np.array(range(10))])
+        res = context.collection(np.array(input_)).collect()
+        assert_array_equal(res, input_)
+
+    @unittest.skip("Not implemented")
+    def test_2darray_record(self):
+        context = JitqContext()
+        input_ = np.array(
+            np.array([np.array([(i, i * 2)], dtype=[
+                ('int', 'i4'), ('float', 'f4')]) for i in range(5)]))
+        res = context.collection(np.array(input_)).collect()
+        assert_array_equal(res, input_)
+
+    @unittest.skip("Not implemented")
+    def test_array_record_array(self):
+        context = JitqContext()
+        input_ = np.array([(1, [[1, 2, 3], [4, 5, 6]])], dtype=[
+                          ('first_int', 'i4'), ('second_array', '(2,3)f4')])
+        res = context.collection(np.array(input_)).collect()
+        assert_array_equal(res, input_)
+
+    # pylint: disable=no-self-use
+    @unittest.skip("Not implemented")
+    def test_array_record_tuple(self):
+        context = JitqContext()
+        input_ = np.array([(1, (2, 3))], dtype=[
+                          ('first_int', 'i4'), ('second_record', 'f4,f4')])
+        res = context.collection(np.array(input_)).collect()
+        assert_array_equal(res, input_)
+
+    @unittest.skip("Not implemented")
+    def test_array_nested_record(self):
+        context = JitqContext()
+        engine_dt = np.dtype([('volume', float), ('cylinders', int)])
+        # nest the dtypes
+        car_dt = np.dtype([('color', int, 3), ('engine', engine_dt)])
+
+        cars = np.array([
+            ([255, 0, 0], (1.5, 8)),
+            ([255, 0, 255], (5, 24)),
+        ], dtype=car_dt)
+        res = context.collection(np.array(cars)).collect()
+        assert_array_equal(res, cars)
+
 
 class TestRange(unittest.TestCase):
-
     def test_simple(self):
         context = JitqContext()
         res = context.range_(0, 10).collect()
