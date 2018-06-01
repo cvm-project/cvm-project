@@ -16,7 +16,7 @@ from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
     OUTPUT_TYPE, DATA_PATH, ADD_INDEX, FROM, TO, STEP
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
-    make_tuple, item_typeof, flatten, numba_type_to_dtype, is_item_type, \
+    make_tuple, item_typeof, numba_type_to_dtype, is_item_type, \
     Timer
 from jitq.libs.numba.llvm_ir import cfunc
 
@@ -135,7 +135,7 @@ class RDD(abc.ABC):
             op_dict[ID] = len(op_dicts)
             op_dict[PREDS] = [op_dicts[str(p)][ID] for p in operator.parents]
             op_dict[OP] = operator.NAME
-            op_dict[OUTPUT_TYPE] = make_tuple(flatten(operator.output_type))
+            op_dict[OUTPUT_TYPE] = operator.output_type
             op_dicts[str(operator)] = op_dict
 
         visitor = RDD.Visitor(collect_operators)
@@ -463,10 +463,13 @@ class CollectionSource(SourceRDD):
     """
 
     def __init__(self, context, values, add_index=False):
+        # pylint: disable=len-as-condition
+        # values could also be a numpy array
+        assert len(values) > 0, "Empty collection not allowed"
         super(CollectionSource, self).__init__(context)
 
         if isinstance(values, DataFrame):
-            self.array = values.values.ravel(order='C').reshape(values.shape)
+            self.array = values.to_records(index=False)
             self.output_type = item_typeof(self.array[0])
         elif isinstance(values, np.ndarray):
             self.array = values
@@ -479,11 +482,19 @@ class CollectionSource(SourceRDD):
         if add_index:
             if isinstance(self.output_type, types.Tuple):
                 child_types = self.output_type.types
+                self.output_type = make_tuple((typeof(0),) + child_types)
+            elif isinstance(self.output_type, types.Record):
+                fields = self.output_type.dtype.descr
+                # Compute unique key name by extending
+                # the longest existing field name
+                longest_key = max(fields, key=lambda f: len(f[0]))[0]
+                dtypes = [(longest_key + "0", "i8")] + fields
+                numba_type = numba.from_dtype(np.dtype(dtypes))
+                self.output_type = numba_type
             else:
                 child_types = (self.output_type,)
-            self.output_type = make_tuple((typeof(0),) + child_types)
+                self.output_type = make_tuple((typeof(0),) + child_types)
 
-        assert self.array.size > 0, "Empty collection not allowed"
         self.data_ptr = self.array.__array_interface__['data'][0]
         self.size = self.array.shape[0]
         self.add_index = add_index

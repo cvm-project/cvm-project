@@ -4,7 +4,8 @@ import sys
 import time
 
 import numba as nb
-from numba import typeof
+from numba import from_dtype, typeof
+from numba.numpy_support import as_dtype
 import numpy as np
 
 
@@ -49,25 +50,39 @@ NUMPY_DTYPE_MAP = {
     'bool': 'b1',
 }
 
+ALLOWED_ROW_TYPES = [nb.types.Tuple, nb.types.Array, nb.types.Record]
+
 
 def is_item_type(type_):
     if str(type_) in NUMPY_DTYPE_MAP:
         return True
-    if not isinstance(type_, nb.types.Tuple):
-        return False
-    for child_type in type_.types:
-        if not is_item_type(child_type):
-            return False
-    return True
+    if isinstance(type_, nb.types.Tuple):
+        if all(map(is_item_type, type_.types)):
+            return True
+    if isinstance(type_, nb.types.Array):
+        if is_item_type(type_.dtype):
+            return True
+    if isinstance(type_, nb.types.Record):
+        if all(map(lambda tp: is_item_type(tp[0]), type_.fields.values())):
+            return True
+    return False
 
 
 def numba_type_to_dtype(type_):
-    assert is_item_type(type_), "Expected valid nested tuple type."
+    if str(type_) in NUMPY_DTYPE_MAP:
+        return as_dtype(type_)
     if isinstance(type_, nb.types.Tuple):
         child_types = [numba_type_to_dtype(t) for t in type_.types]
         fields = [('f%i' % i, t) for i, t in enumerate(child_types)]
         return np.dtype(fields)
-    return np.dtype(NUMPY_DTYPE_MAP[type_.name])
+    if isinstance(type_, nb.types.Array):
+        return np.dtype(object)
+    if isinstance(type_, nb.types.Record):
+        fields = sorted(type_.fields.items(), key=lambda f: f[1][1])
+        fields = [(k, numba_type_to_dtype(v[0])) for k, v in fields]
+        return np.dtype(fields)
+    assert not is_item_type(type_)
+    raise TypeError("Expected valid nested tuple type.")
 
 
 def dtype_to_numba(type_):
@@ -99,9 +114,25 @@ class RDDEncoder(JSONEncoder):
     # pylint: disable=method-hidden
     # sabir 14.02.18: JSONEncoder overwrites this method, nothing we can do
     def default(self, o):
-        if isinstance(o, nb.types.Type):
-            return numba_to_c_types(o.name)
-        return JSONEncoder.default(self, o)
+        # recursive inner will return a list
+        return "(%s)" % ",".join([i for i in self._rec(o)])
+
+    def _rec(self, obj):
+        if isinstance(obj, (nb.types.Number, nb.types.Boolean)):
+            # at this point the tuple type should be flat right?
+            return [numba_to_c_types(obj.name)]
+        if isinstance(obj, nb.types.Tuple):
+            return flatten(list((map(self._rec, obj.types))))
+        if isinstance(obj, nb.types.Record):
+            # record has a numpy dtype
+            # same output as for a tuple
+            fields_sorted = sorted(obj.dtype.fields.values(),
+                                   key=lambda v: v[1])
+            return self._rec(make_tuple(list(map(lambda v: from_dtype(v[0]),
+                                                 fields_sorted))))
+        if isinstance(obj, nb.types.Array):
+            raise NotImplementedError("Cannot have arrays as item type yet")
+        return JSONEncoder.default(self, obj)
 
 
 def error_print(*args, **kwargs):
@@ -109,8 +140,6 @@ def error_print(*args, **kwargs):
 
 
 def item_typeof(expression):
-    if isinstance(expression, np.ndarray):
-        return item_typeof(tuple(expression))
     return replace_unituple(typeof(expression))
 
 
@@ -127,6 +156,11 @@ def replace_unituple(type_):
     if isinstance(type_, nb.types.BaseAnonymousTuple):
         child_types = [replace_unituple(t) for t in type_.types]
         return make_tuple(child_types)
+    if isinstance(type_, nb.types.Array):
+        raise NotImplementedError("Cannot have arrays as item type yet")
+    # Record numba type cannot contain numba Tuple type
+    if isinstance(type_, nb.types.Record):
+        return type_
     if str(type_) in NUMPY_DTYPE_MAP:
         return type_
     raise TypeError("Can only replace UniTuple on valid nested tuples.")
