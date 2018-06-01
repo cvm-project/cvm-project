@@ -163,7 +163,7 @@ def replace_unituple(type_):
         return type_
     if str(type_) in NUMPY_DTYPE_MAP:
         return type_
-    raise TypeError("Can only replace UniTuple on valid nested tuples.")
+    raise TypeError("Can only replace UniTuple on valid nested objects.")
 
 
 def get_project_path():
@@ -192,7 +192,6 @@ def flatten(iterable_):
                     yield j
             else:
                 yield i
-
     if not isinstance(iterable_,
                       (tuple, list, nb.types.UniTuple, nb.types.Tuple)):
         return iterable_,

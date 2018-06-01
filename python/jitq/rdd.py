@@ -157,8 +157,9 @@ class RDD(abc.ABC):
             # write to file
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
-                    json.dump(dag_dict, fp=fp, cls=RDDEncoder)
+                    json.dump(dag_dict, fp=fp, cls=RDDEncoder, indent=3)
         inputs = self.get_inputs()
+        # TODO replace dtype with our output type
         return Executor().execute(self.context, dag_dict, inputs,
                                   numba_type_to_dtype(self.output_type))
 
@@ -289,7 +290,7 @@ class Filter(PipeRDD):
             self.func, [self.parents[0].output_type])
         if str(return_type) != "bool":
             raise BaseException(
-                "Function given to reduce_by_key has the wrong return type:\n"
+                "Function given to filter has the wrong return type:\n"
                 "  expected: {0}\n"
                 "  found:    {1}".format("bool", return_type))
         self.output_type = self.parents[0].output_type
@@ -386,7 +387,7 @@ class Reduce(UnaryRDD):
             self.func, [aggregate_type, aggregate_type])
         if str(aggregate_type) != str(self.output_type):
             raise BaseException(
-                "Function given to reduce_by_key has the wrong return type:\n"
+                "Function given to reduce has the wrong return type:\n"
                 "  expected: {0}\n"
                 "  found:    {1}".format(aggregate_type, self.output_type))
 
@@ -476,6 +477,8 @@ class CollectionSource(SourceRDD):
             self.output_type = item_typeof(self.array[0])
         else:
             # Any subscriptable iterator should work here
+            # Do not create numpy array directly
+            # It would infer the dtype incorrectly
             self.output_type = item_typeof(values[0])
             self.array = np.array(
                 values, dtype=numba_type_to_dtype(self.output_type))

@@ -43,6 +43,15 @@ def load_cffi(header, lib_path, ffi):
 def wrap_result(res, type_, ffi):
     output_type_size = ffi.sizeof(ffi.typeof(res.data[0]))
     c_buffer = ffi.buffer(res.data, res.size * output_type_size)
+
+    # TODO(sabir, 12.06.2018):
+    # if the row type is just an array and every row is of the same size
+    # we should reshape the array to 2d array ("collapse the two arrays")
+    # the dtype is then the dtype of the inner array
+    # otherwise the dtype should be object and every object is then a numpy
+    # array
+
+    # here we should cast it to the right dtype
     np_arr = np.frombuffer(c_buffer, dtype=type_, count=res.size)
     np_arr = np_arr.view(NumpyResult)
     np_arr.ptr = res
@@ -86,6 +95,7 @@ class Executor:
         def execute(self, context, dag_dict, inputs, output_type):
             ffi = FFI()
 
+            # here we should pass the actual C type for our input tuple
             args = []
             for inpt in inputs:
                 data_ptr = ffi.cast("void*", inpt[0])

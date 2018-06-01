@@ -55,16 +55,14 @@ class TestCollection(unittest.TestCase):
         res = context.collection(np.array(input_, dtype="i4,i4")).collect()
         self.assertListEqual(res.astuplelist(), input_)
 
-    def test_array_scalar_index(self): \
-            # pragma pylint: disable=invalid-name
+    def test_array_scalar_index(self):
         context = JitqContext()
         input_ = range(10)
         res = context.collection(np.array(input_), add_index=True) \
             .collect()
         self.assertListEqual(res.astuplelist(), list(enumerate(input_)))
 
-    def test_array_tuple_index(self): \
-            # pragma pylint: disable=invalid-name
+    def test_array_tuple_index(self):
         context = JitqContext()
         input_ = [(i, 2 * i) for i in range(10)]
         res = context.collection(np.array(input_, dtype="i4,i4"),
