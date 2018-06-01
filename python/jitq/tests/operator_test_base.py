@@ -51,7 +51,8 @@ class TestCollection(unittest.TestCase):
     def test_array_tuple(self):
         context = JitqContext()
         input_ = [(i, 2 * i) for i in range(10)]
-        res = context.collection(np.array(input_)).collect()
+        # make sure to get array of records
+        res = context.collection(np.array(input_, dtype="i4,i4")).collect()
         self.assertListEqual(res.astuplelist(), input_)
 
     def test_array_scalar_index(self): \
@@ -66,15 +67,16 @@ class TestCollection(unittest.TestCase):
             # pragma pylint: disable=invalid-name
         context = JitqContext()
         input_ = [(i, 2 * i) for i in range(10)]
-        res = context.collection(np.array(input_), add_index=True).collect()
-        truth = [(i, ) + r for i, r in enumerate(input_)]
+        res = context.collection(np.array(input_, dtype="i4,i4"),
+                                 add_index=True).collect()
+        truth = [(i,) + r for i, r in enumerate(input_)]
         self.assertListEqual(res.astuplelist(), truth)
 
     def test_pandas_scalar(self):
         context = JitqContext()
         input_ = range(10)
-        res = context.collection(pd.DataFrame(list(input_))) \
-            .map(lambda x: x[0] + 0).collect()
+        res = context.collection(pd.DataFrame(list(input_))[0]) \
+            .map(lambda x: x + 0).collect()
         self.assertListEqual(res.astuplelist(), list(input_))
 
     def test_pandas_tuple(self):
