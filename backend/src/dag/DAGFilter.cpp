@@ -1,13 +1,12 @@
 
 #include "dag/DAGFilter.h"
 
-#include <memory>
-
+using dag::collection::Tuple;
 DAGFilter *DAGFilter::copy() {
     std::unique_ptr<DAGFilter> filt(new DAGFilter());
-    filt->fields = fields;
+    std::shared_ptr<Tuple> out(new Tuple(*tuple));
+    filt->tuple = out;
     filt->read_set = read_set;
     filt->llvm_ir = llvm_ir;
-    filt->output_type = output_type;
     return filt.release();
 }

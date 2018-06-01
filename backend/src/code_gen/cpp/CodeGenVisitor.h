@@ -5,6 +5,7 @@
 #ifndef CODE_GEN_CPP_CODEGENVISITOR_H
 #define CODE_GEN_CPP_CODEGENVISITOR_H
 
+#include <boost/algorithm/string/join.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <set>
@@ -12,6 +13,7 @@
 #include <vector>
 
 #include "dag/DAG.h"
+#include "dag/collection/tuple.hpp"
 #include "utils/DAGVisitor.h"
 
 namespace code_gen {
@@ -23,8 +25,8 @@ public:
         std::string name;
         std::vector<std::string> types;
         std::vector<std::string> names;
-        static TupleTypeDesc fromTupleString(std::string &&name,
-                                             const std::string &s);
+        static TupleTypeDesc MakeFromCollection(
+                std::string &&name, const dag::collection::Tuple &tuple);
         std::string field_definitions() const;
         size_t num_fields() const {
             assert(types.size() == names.size());

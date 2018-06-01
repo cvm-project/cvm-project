@@ -36,12 +36,13 @@ char *to_char_ptr(const std::string &s) {
     return const_cast<char *>(s.c_str());
 }
 
-std::string short_property_label(const FieldProperty prop) {
-    const static std::unordered_map<FieldProperty, std::string, std::hash<int>>
+std::string short_property_label(const dag::collection::FieldProperty prop) {
+    const static std::unordered_map<dag::collection::FieldProperty, std::string,
+                                    std::hash<int>>
             property_labels = {
-                    {FL_UNIQUE, "u"},  //
-                    {FL_SORTED, "s"},  //
-                    {FL_GROUPED, "g"}  //
+                    {dag::collection::FL_UNIQUE, "u"},  //
+                    {dag::collection::FL_SORTED, "s"},  //
+                    {dag::collection::FL_GROUPED, "g"}  //
             };
     return property_labels.at(prop);
 }
@@ -54,12 +55,13 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
 
         // Fields
         std::vector<std::string> fields;
-        for (const auto &f : op->fields) {
-            const std::string column_name =
-                    f.attribute_id_ != nullptr ? f.attribute_id_->name() : "?";
+        for (const auto &f : op->tuple->fields) {
+            const std::string column_name = f->attribute_id() != nullptr
+                                                    ? f->attribute_id()->name()
+                                                    : "?";
 
             std::vector<std::string> property_flags;
-            boost::transform(boost::make_iterator_range(*f.properties),
+            boost::transform(boost::make_iterator_range(f->properties()),
                              std::back_inserter(property_flags),
                              short_property_label);
             const std::string property_label =

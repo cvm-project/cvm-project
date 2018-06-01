@@ -6,38 +6,37 @@
 #define DAG_COLUMN_H
 
 #include <iostream>
+#include <unordered_set>
 #include <vector>
 
-#include "dag/field/Field.h"
+#include "dag/collection/field.hpp"
+
+namespace dag {
 
 /**
  * part of the schema
  */
-class AttributeId {
+class AttributeId : public std::enable_shared_from_this<AttributeId> {
 public:
-    static AttributeId *makeAttributeId();
+    static std::shared_ptr<AttributeId> MakeAttributeId();
 
-    void addField(Field *field);
+    void AddField(collection::Field *field);
 
-    void addFields(const std::vector<Field *> &fields);
-
+    void MoveFields(AttributeId *other);
+    void RemoveField(collection::Field *field);
     bool operator==(const AttributeId &other) { return id_ == other.id_; }
 
     bool operator<(const AttributeId &other) { return id_ < other.id_; }
 
     std::string name() { return "c" + std::to_string(id_); }
 
-    static void delete_attribute_ids();
-
-    std::vector<Field *> fields();
-
 private:
-    AttributeId() { id_ = attribute_counter_++; }
+    AttributeId() { id_ = column_counter_++; }
 
     size_t id_;
-    std::vector<Field *> fields_;
-    static size_t attribute_counter_;
-    static std::vector<AttributeId *> all_attributes_;
+    std::unordered_set<collection::Field *> fields_{};
+    static size_t column_counter_;
 };
+}  // namespace dag
 
 #endif  // DAG_COLUMN_H

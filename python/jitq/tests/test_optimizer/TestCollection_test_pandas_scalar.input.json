@@ -1,20 +1,28 @@
 {
-    "dag": [
-        {
-            "add_index": false,
-            "id": 0,
-            "op": "collection_source",
-            "output_type": "(long)",
-            "predecessors": []
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
-            "id": 1,
-            "op": "map",
-            "output_type": "(long)",
-            "predecessors": [
-                0
-            ]
-        }
-    ]
+   "dag": [
+      {
+         "output_type": [
+            {
+               "type": "long"
+            }
+         ],
+         "add_index": false,
+         "id": 0,
+         "predecessors": [],
+         "op": "collection_source"
+      },
+      {
+         "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
+         "id": 1,
+         "predecessors": [
+            0
+         ],
+         "op": "map",
+         "output_type": [
+            {
+               "type": "long"
+            }
+         ]
+      }
+   ]
 }

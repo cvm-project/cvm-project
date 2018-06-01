@@ -8,7 +8,6 @@ extern "C" {
 #include <sstream>
 #include <tuple>
 #include <unordered_map>
-#include <utility>
 
 #include <json.hpp>
 
@@ -16,13 +15,12 @@ extern "C" {
 #include "code_gen/cpp/BackEnd.hpp"
 #include "dag/DAGCreation.hpp"
 #include "optimize/Optimizer.h"
-#include "utils/printDAG.h"
 #include "utils/timing.h"
-#include "utils/utils.h"
 
 extern "C" {
 int generate_dag_plan(const char *const conf, const char *const dagstr,
                       const unsigned long counter) {  // NOLINT
+
     // Parse configuration
     nlohmann::json json;
     std::istringstream(conf) >> json;

@@ -16,23 +16,25 @@ public:
     void visit(DAGRange * /*op*/) override {}
 
     void visit(DAGFilter *const op) override {
-        auto &input_fields = dag()->predecessor(op)->fields;
-        for (size_t i = 0; i < op->fields.size(); i++) {
-            op->fields[i].attribute_id_ = input_fields[i].attribute_id_;
+        auto &input_fields = dag()->predecessor(op)->tuple->fields;
+        for (size_t i = 0; i < op->tuple->fields.size(); i++) {
+            input_fields[i]->attribute_id()->AddField(
+                    op->tuple->fields[i].get());
         }
     }
 
     void visit(DAGCartesian *const op) override {
-        auto &left_input_fields = dag()->predecessor(op, 0)->fields;
-        auto &right_input_fields = dag()->predecessor(op, 1)->fields;
+        auto &left_input_fields = dag()->predecessor(op, 0)->tuple->fields;
+        auto &right_input_fields = dag()->predecessor(op, 1)->tuple->fields;
 
         for (size_t i = 0; i < left_input_fields.size(); i++) {
-            op->fields[i].attribute_id_ = left_input_fields[i].attribute_id_;
+            left_input_fields[i]->attribute_id()->AddField(
+                    op->tuple->fields[i].get());
         }
 
         for (size_t i = 0; i < right_input_fields.size(); i++) {
-            auto &field = op->fields[i + left_input_fields.size()];
-            field.attribute_id_ = right_input_fields[i].attribute_id_;
+            auto &field = op->tuple->fields[i + left_input_fields.size()];
+            right_input_fields[i]->attribute_id()->AddField(field.get());
         }
     }
 
@@ -41,32 +43,32 @@ public:
         auto right = dag()->predecessor(op, 1);
 
         // remap left input's key attribute_id to right input's one
-        *(right->fields[0].attribute_id_) = *(left->fields[0].attribute_id_);
-        left->fields[0].attribute_id_->addFields(
-                right->fields[0].attribute_id_->fields());
+        left->tuple->fields[0]->attribute_id()->MoveFields(
+                right->tuple->fields[0]->attribute_id().get());
 
-        auto &left_input_fields = dag()->predecessor(op, 0)->fields;
-        auto &right_input_fields = dag()->predecessor(op, 1)->fields;
+        auto &left_input_fields = dag()->predecessor(op, 0)->tuple->fields;
+        auto &right_input_fields = dag()->predecessor(op, 1)->tuple->fields;
 
         for (size_t i = 0; i < left_input_fields.size(); i++) {
-            op->fields[i].attribute_id_ = left_input_fields[i].attribute_id_;
+            left_input_fields[i]->attribute_id()->AddField(
+                    op->tuple->fields[i].get());
         }
 
         for (size_t i = 1; i < right_input_fields.size(); i++) {
-            auto &field = op->fields[i + left_input_fields.size() - 1];
-            field.attribute_id_ = right_input_fields[i].attribute_id_;
+            auto &field = op->tuple->fields[i + left_input_fields.size() - 1];
+            right_input_fields[i]->attribute_id()->AddField(field.get());
         }
     }
 
     void visit(DAGMap *const op) override {
         LLVMParser parser(op->llvm_ir);
 
-        auto &input_fields = dag()->predecessor(op)->fields;
+        auto &input_fields = dag()->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
             for (const auto pos : parser.get_output_positions(i)) {
-                auto &output_field = op->fields[pos];
-                output_field.attribute_id_ = input_fields[i].attribute_id_;
-                input_fields[i].attribute_id_->addField(&(output_field));
+                auto &output_field = op->tuple->fields[pos];
+                input_fields[i]->attribute_id()->AddField(output_field.get());
+                input_fields[i]->attribute_id()->AddField(output_field.get());
             }
         }
     }
@@ -74,13 +76,13 @@ public:
     void visit(DAGReduce * /*op*/) override {}
 
     void visit(DAGReduceByKey *const op) override {
-        auto &input_fields = dag()->predecessor(op)->fields;
-        op->fields[0].attribute_id_ = input_fields[0].attribute_id_;
+        auto &input_fields = dag()->predecessor(op)->tuple->fields;
+        input_fields[0]->attribute_id()->AddField(op->tuple->fields[0].get());
     }
 
     void visit(DAGReduceByKeyGrouped *const op) override {
-        auto &input_fields = dag()->predecessor(op)->fields;
-        op->fields[0].attribute_id_ = input_fields[0].attribute_id_;
+        auto &input_fields = dag()->predecessor(op)->tuple->fields;
+        input_fields[0]->attribute_id()->AddField(op->tuple->fields[0].get());
     }
 };
 
@@ -93,43 +95,43 @@ public:
 
     void visit(DAGFilter *const op) override {
         LLVMParser parser(op->llvm_ir);
-        auto &input_fields = dag()->predecessor(op)->fields;
+        auto &input_fields = dag()->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
             if (parser.is_argument_read(i)) {
-                op->read_set.insert(input_fields[i].attribute_id_);
+                op->read_set.insert(input_fields[i]->attribute_id());
             }
         }
     }
 
     void visit(DAGJoin *const op) override {
-        op->read_set.insert(op->fields[0].attribute_id_);
+        op->read_set.insert(op->tuple->fields[0]->attribute_id());
     }
 
     void visit(DAGMap *const op) override {
         LLVMParser parser(op->llvm_ir);
-        auto &input_fields = dag()->predecessor(op)->fields;
+        auto &input_fields = dag()->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
             if (parser.is_argument_read(i)) {
-                op->read_set.insert(input_fields[i].attribute_id_);
+                op->read_set.insert(input_fields[i]->attribute_id());
             }
         }
     }
 
     void visit(DAGReduce *const op) override {
-        for (auto const &field : op->fields) {
-            op->read_set.insert(field.attribute_id_);
+        for (auto const &field : op->tuple->fields) {
+            op->read_set.insert(field->attribute_id());
         }
     }
 
     void visit(DAGReduceByKey *const op) override {
-        for (auto const &field : op->fields) {
-            op->read_set.insert(field.attribute_id_);
+        for (auto const &field : op->tuple->fields) {
+            op->read_set.insert(field->attribute_id());
         }
     }
 
     void visit(DAGReduceByKeyGrouped *const op) override {
-        for (auto const &field : op->fields) {
-            op->read_set.insert(field.attribute_id_);
+        for (auto const &field : op->tuple->fields) {
+            op->read_set.insert(field->attribute_id());
         }
     }
 
@@ -153,17 +155,17 @@ void AttributeIdTracking::optimize() {
     for (const auto op : dag_->operators()) {
         op->write_set.clear();
 
-        std::unordered_set<const AttributeId *> input_attribute_ids;
+        std::unordered_set<const dag::AttributeId *> input_attribute_ids;
         for (const auto flow : dag_->in_flows(op)) {
             const auto input_op = flow.source;
-            for (const auto &field : input_op->fields) {
-                input_attribute_ids.insert(field.attribute_id_);
+            for (const auto &field : input_op->tuple->fields) {
+                input_attribute_ids.insert(field->attribute_id().get());
             }
         }
 
-        for (const auto &field : op->fields) {
-            if (input_attribute_ids.count(field.attribute_id_) == 0) {
-                op->write_set.insert(field.attribute_id_);
+        for (const auto &field : op->tuple->fields) {
+            if (input_attribute_ids.count(field->attribute_id().get()) == 0) {
+                op->write_set.insert(field->attribute_id());
             }
         }
     }

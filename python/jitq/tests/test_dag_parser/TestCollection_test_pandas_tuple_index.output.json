@@ -4,7 +4,17 @@
             "add_index": true,
             "id": 0,
             "op": "collection_source",
-            "output_type": "(long, long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": []
         }
     ]

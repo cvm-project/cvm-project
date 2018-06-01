@@ -4,14 +4,22 @@
             "add_index": false,
             "id": 0,
             "op": "collection_source",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": []
         },
         {
             "func": "define i1 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.28.i = srem i64 %.1, 2\n  %.30.i = icmp slt i64 %.28.i, 0\n  %.39.i = add nsw i64 %.28.i, 2\n  %.20.0.i = select i1 %.30.i, i64 %.39.i, i64 %.28.i\n  %.61.i = icmp eq i64 %.20.0.i, 0\n  ret i1 %.61.i\n}\n\n\n\n",
             "id": 1,
             "op": "filter",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 0
             ]
@@ -20,7 +28,11 @@
             "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
             "id": 2,
             "op": "map",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 1
             ]
@@ -29,7 +41,11 @@
             "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
             "id": 3,
             "op": "reduce",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 2
             ]

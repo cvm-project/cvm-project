@@ -31,7 +31,8 @@ void SimplePredicateMoveAround::optimize() {
         while (dag_->out_degree(tip) == 1 &&
                std::all_of(filter->read_set.begin(), filter->read_set.end(),
                            [&](auto c) {
-                               return dag_->successor(tip)->HasInOutput(c);
+                               return dag_->successor(tip)->HasInOutput(
+                                       c.get());
                            })) {
             tip = dag_->successor(tip);
         }
@@ -48,8 +49,9 @@ void SimplePredicateMoveAround::optimize() {
             for (auto const flow : dag_->in_flows(currentOp)) {
                 auto const pred = flow.source;
                 if (std::all_of(filter->read_set.begin(),
-                                filter->read_set.end(),
-                                [&](auto c) { return pred->HasInOutput(c); })) {
+                                filter->read_set.end(), [&](auto c) {
+                                    return pred->HasInOutput(c.get());
+                                })) {
                     // The predecessor can still read all fields
                     // --> push it further
                     q.push_back(pred);
@@ -67,7 +69,7 @@ void SimplePredicateMoveAround::optimize() {
 
             assert(std::all_of(
                     filter->read_set.begin(), filter->read_set.end(),
-                    [&](auto c) { return currentOp->HasInOutput(c); }));
+                    [&](auto c) { return currentOp->HasInOutput(c.get()); }));
 
             new_predecessors.insert(currentOp);
         }
@@ -113,11 +115,11 @@ void SimplePredicateMoveAround::optimize() {
                     filt, dag_->predecessor(filt));
 
             // copy the output fields
-            filt->fields.clear();
-            for (const auto &f : currentOp->fields) {
-                filt->fields.push_back(f);
+            filt->tuple->fields.clear();
+            for (const auto &f : currentOp->tuple->fields) {
+                filt->tuple->fields.push_back(f);
             }
-            filt->output_type = currentOp->output_type;
+            filt->tuple->type = currentOp->tuple->type;
         }
 
         // Remove the filter

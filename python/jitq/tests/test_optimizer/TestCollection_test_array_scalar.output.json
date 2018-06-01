@@ -4,14 +4,22 @@
             "add_index": false,
             "id": 0,
             "op": "collection_source",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": []
         },
         {
             "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
             "id": 1,
             "op": "map",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 0
             ]

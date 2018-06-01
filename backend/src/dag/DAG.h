@@ -53,9 +53,6 @@ BOOST_INSTALL_PROPERTY(edge, source_port);
 BOOST_INSTALL_PROPERTY(edge, target_port);
 }  // namespace boost
 
-/**
- * destructor responsible for freeing the attribute_ids and the dag operators
- */
 // TODO(sabir): refactor class in order to remove custom destructor
 class DAG {  // NOLINT hicpp-special-member-functions
 public:
@@ -161,7 +158,7 @@ public:
     DAG() = default;
     DAG(DAG &&other) = default;
 
-    ~DAG() { AttributeId::delete_attribute_ids(); }
+    ~DAG() = default;
 
     /*
      * Normal member functions

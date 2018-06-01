@@ -4,7 +4,11 @@
             "from": 0,
             "id": 0,
             "op": "range_source",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [],
             "step": 1,
             "to": 10
@@ -13,7 +17,14 @@
             "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.17.i = sitofp i64 %.1 to double\n  %.23.i = fmul fast double %.17.i, 5.000000e-01\n  %.30.i = fptosi double %.23.i to i64\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.30.i, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
             "id": 1,
             "op": "map",
-            "output_type": "(long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 0
             ]
@@ -22,7 +33,11 @@
             "from": 0,
             "id": 2,
             "op": "range_source",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [],
             "step": 1,
             "to": 10
@@ -30,7 +45,14 @@
         {
             "id": 3,
             "op": "join",
-            "output_type": "(long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 1,
                 2
@@ -40,7 +62,14 @@
             "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.16.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.2, 0\n  %.16.fca.1.insert = insertvalue { i64, i64 } %.16.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.16.fca.1.insert\n}\n\n\n\n",
             "id": 4,
             "op": "map",
-            "output_type": "(long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 3
             ]
@@ -49,7 +78,14 @@
             "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
             "id": 6,
             "op": "reduce_by_key_grouped",
-            "output_type": "(long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 4
             ]

@@ -9,7 +9,7 @@
 
 #include <llvm/Transforms/Utils/Cloning.h>
 
-#include "utils/c_type_to_llvm.h"
+#include "llvm_field_type_visitor.hpp"
 
 void LLVMParser::parse(const std::string &ir) {
     module = parseIR(
@@ -170,8 +170,9 @@ std::string LLVMParser::adjust_filter_signature(
     llvm::Module *new_mod = new llvm::Module("filter", Context);
 
     std::vector<llvm::Type *> types;
-    for (auto f : predecessor->fields) {
-        types.push_back(c_type_to_llvm(f.type, &Context));
+    for (const auto &f : predecessor->tuple->fields) {
+        IR_analyzer::LLVMFieldTypeVisitor visitor(&Context);
+        types.push_back(visitor.ComputeLLVMType(f.get()));
     }
 
     auto old_function = module->getFunctionList().begin();
@@ -191,17 +192,17 @@ std::string LLVMParser::adjust_filter_signature(
         it->setName("." + std::to_string(counter++));
     }
     // In the IR, replace all fields with their new positions
-    for (auto f : pFilter->fields) {
-        if (!pFilter->Reads(f.attribute_id_)) continue;
-        const size_t old_pos = f.position;
+    for (auto f : pFilter->tuple->fields) {
+        if (!pFilter->Reads(f->attribute_id().get())) continue;
+        const size_t old_pos = f->position();
 
         const auto input_field = std::find_if(
-                predecessor->fields.begin(), predecessor->fields.end(),
-                [&](auto const &input_f) {
-                    return *(f.attribute_id_) == *(input_f.attribute_id_);
+                predecessor->tuple->fields.begin(),
+                predecessor->tuple->fields.end(), [&](auto const &input_f) {
+                    return f->attribute_id() == input_f->attribute_id();
                 });
-        assert(input_field != predecessor->fields.end());
-        const auto new_pos = input_field->position;
+        assert(input_field != predecessor->tuple->fields.end());
+        const auto new_pos = input_field->get()->position();
 
         // replace all uses of oldPos argument to use of newPos argument
         auto old_arg = old_function->arg_begin() + old_pos;

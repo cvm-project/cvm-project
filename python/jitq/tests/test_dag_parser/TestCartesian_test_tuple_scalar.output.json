@@ -4,20 +4,41 @@
             "add_index": false,
             "id": 0,
             "op": "collection_source",
-            "output_type": "(long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": []
         },
         {
             "add_index": false,
             "id": 1,
             "op": "collection_source",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": []
         },
         {
             "id": 2,
             "op": "cartesian",
-            "output_type": "(long, long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 0,
                 1

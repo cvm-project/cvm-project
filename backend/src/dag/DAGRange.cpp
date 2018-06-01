@@ -7,9 +7,9 @@
 
 void DAGRange::from_json(const nlohmann::json &json) {
     // TODO(sabir): should not be stored as string (?)
-    this->from = json.at("from").dump();
-    this->to = json.at("to").dump();
-    this->step = json.at("step").dump();
+    this->from = json["from"].dump();
+    this->to = json["to"].dump();
+    this->step = json["step"].dump();
 }
 
 void DAGRange::to_json(nlohmann::json *json) const {

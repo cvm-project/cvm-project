@@ -8,7 +8,8 @@ public:
     explicit CollectReduceByKeyVisitor(DAG *const dag) : DAGVisitor(dag) {}
     void visit(DAGReduceByKey *op) override {
         auto const pred = dag()->predecessor(op);
-        if (pred->fields[0].properties->count(FL_GROUPED) > 0) {
+        if (pred->tuple->fields[0]->properties().count(
+                    dag::collection::FL_GROUPED) > 0) {
             reduce_by_keys_.emplace_back(op);
         }
     }
@@ -24,9 +25,8 @@ void GroupedReduceByKey::optimize() {
                 new DAGReduceByKeyGrouped());
         auto const new_op = new_op_ptr.get();
 
-        new_op->fields = op->fields;
+        new_op->tuple = op->tuple;
         new_op->llvm_ir = op->llvm_ir;
-        new_op->output_type = op->output_type;
 
         dag_->AddOperator(new_op_ptr.release());
 

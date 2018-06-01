@@ -6,24 +6,22 @@
 #define DAG_DAGOPERATOR_H
 
 #include <cstddef>
+#include <json.hpp>
 #include <set>
 #include <vector>
 
-#include <json.hpp>
-
 #include "dag/attribute_id.h"
-#include "dag/field/Field.h"
+#include "dag/collection/field.hpp"
+#include "dag/collection/tuple.hpp"
 
 class DAGVisitor;
-
 // cppcheck-suppress noConstructor
 class DAGOperator {
 public:
-    std::vector<Field> fields;
-    std::set<AttributeId *> read_set;
-    std::set<AttributeId *> write_set;
+    std::shared_ptr<dag::collection::Tuple> tuple;
+    std::set<std::shared_ptr<dag::AttributeId>> read_set;
+    std::set<std::shared_ptr<dag::AttributeId>> write_set;
     std::string llvm_ir;
-    std::string output_type;
     size_t id{};
 
     virtual ~DAGOperator() = default;
@@ -32,13 +30,13 @@ public:
     virtual size_t num_in_ports() const = 0;
     virtual size_t num_out_ports() const = 0;
 
-    virtual void accept(class DAGVisitor *v) = 0;
+    virtual void accept(DAGVisitor *v) = 0;
     virtual void to_json(nlohmann::json *json) const = 0;
     virtual void from_json(const nlohmann::json &json) = 0;
 
-    bool HasInOutput(const AttributeId *c) const;
-    bool Reads(const AttributeId *c) const;
-    bool Writes(const AttributeId *c) const;
+    bool HasInOutput(const dag::AttributeId *attribute) const;
+    bool Reads(const dag::AttributeId *attribute) const;
+    bool Writes(const dag::AttributeId *attribute) const;
 };
 
 template <class OperatorType>

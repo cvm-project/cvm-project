@@ -110,29 +110,24 @@ def get_type_size(type_):
 
 
 class RDDEncoder(JSONEncoder):
-
     # pylint: disable=method-hidden
     # sabir 14.02.18: JSONEncoder overwrites this method, nothing we can do
     def default(self, o):
-        # recursive inner will return a list
-        return "(%s)" % ",".join([i for i in self._rec(o)])
-
-    def _rec(self, obj):
-        if isinstance(obj, (nb.types.Number, nb.types.Boolean)):
+        if isinstance(o, (nb.types.Number, nb.types.Boolean)):
             # at this point the tuple type should be flat right?
-            return [numba_to_c_types(obj.name)]
-        if isinstance(obj, nb.types.Tuple):
-            return flatten(list((map(self._rec, obj.types))))
-        if isinstance(obj, nb.types.Record):
+            return [{'type': numba_to_c_types(o.name)}]
+        if isinstance(o, nb.types.Tuple):
+            return flatten(list((map(self.default, o.types))))
+        if isinstance(o, nb.types.Record):
             # record has a numpy dtype
             # same output as for a tuple
-            fields_sorted = sorted(obj.dtype.fields.values(),
+            fields_sorted = sorted(o.dtype.fields.values(),
                                    key=lambda v: v[1])
-            return self._rec(make_tuple(list(map(lambda v: from_dtype(v[0]),
-                                                 fields_sorted))))
-        if isinstance(obj, nb.types.Array):
+            return self.default(make_tuple(list(map(lambda v: from_dtype(v[0]),
+                                                    fields_sorted))))
+        if isinstance(o, nb.types.Array):
             raise NotImplementedError("Cannot have arrays as item type yet")
-        return JSONEncoder.default(self, obj)
+        return JSONEncoder.default(self, o)
 
 
 def error_print(*args, **kwargs):
@@ -192,6 +187,7 @@ def flatten(iterable_):
                     yield j
             else:
                 yield i
+
     if not isinstance(iterable_,
                       (tuple, list, nb.types.UniTuple, nb.types.Tuple)):
         return iterable_,

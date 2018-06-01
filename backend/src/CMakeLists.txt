@@ -43,7 +43,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 
 # Set up Boost
-find_package(Boost REQUIRED COMPONENTS
+find_package(Boost 1.58 REQUIRED COMPONENTS
         program_options
     )
 include_directories(${Boost_INCLUDE_DIRS})
@@ -60,7 +60,16 @@ set(SOURCE_FILES
         dag/DAGFilter.cpp
         dag/DAGOperator.cpp
         dag/DAGRange.cpp
+        dag/collection/field.cpp
+        dag/collection/array.cpp
+        dag/collection/tuple.cpp
+        dag/type/array.cpp
+        dag/type/atomic.cpp
+        dag/type/field_type.cpp
+        dag/type/type.cpp
+        dag/type/tuple.cpp
         IR_analyzer/LLVMParser.cpp
+        IR_analyzer/llvm_field_type_visitor.cpp
         optimize/attribute_id_tracking.cpp
         optimize/determine_sortedness.cpp
         optimize/Optimizer.cpp
@@ -70,7 +79,7 @@ set(SOURCE_FILES
         utils/DAGVisitor.cpp
         utils/printDAG.cpp
         utils/utils.cpp
-    )
+         )
 add_library(generate SHARED ${SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
         ${GRAPHVIZ_GVC_LIBRARY}

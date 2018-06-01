@@ -4,34 +4,40 @@
 
 #include "attribute_id.h"
 
-#include <vector>
+namespace dag {
 
-std::vector<AttributeId *> AttributeId::all_attributes_;
+size_t AttributeId::column_counter_ = 0;
 
-void AttributeId::addField(Field *field) {
-    fields_.push_back(field);
-    field->attribute_id_ = this;
+std::shared_ptr<AttributeId> AttributeId::MakeAttributeId() {
+    return std::shared_ptr<AttributeId>(new AttributeId);
 }
 
-void AttributeId::addFields(const std::vector<Field *> &fields) {
-    for (auto field : fields) {
-        addField(field);
+void AttributeId::AddField(collection::Field *field) {
+    if (field->attribute_id_ != nullptr) {
+        field->attribute_id_->RemoveField(field);
     }
+    fields_.insert(field);
+    field->attribute_id_ = shared_from_this();
 }
 
-size_t AttributeId::attribute_counter_ = 0;
-
-AttributeId *AttributeId::makeAttributeId() {
-    auto *c = new AttributeId();
-    AttributeId::all_attributes_.push_back(c);
-    return c;
+void AttributeId::RemoveField(collection::Field *field) {
+    this->fields_.erase(field);
+    field->attribute_id_ = nullptr;
 }
 
-void AttributeId::delete_attribute_ids() {
-    for (auto c : AttributeId::all_attributes_) {
-        delete (c);
+void AttributeId::MoveFields(AttributeId *other) {
+    auto count = other->fields_.size();
+    for (auto &field : other->fields_) {
+        fields_.insert(field);
+        field->attribute_id_ = shared_from_this();
+        // this is needed because reseting the attribute_id to this
+        // may incure gc on the other, breaking the iterator
+        count--;
+        if (count == 0) {
+            break;
+        }
     }
-    AttributeId::all_attributes_.clear();
+    other->fields_.clear();
 }
 
-std::vector<Field *> AttributeId::fields() { return fields_; }
+}  // namespace dag

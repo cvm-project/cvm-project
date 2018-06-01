@@ -1,31 +1,49 @@
 {
-    "dag": [
-        {
-            "from": 0,
-            "id": 0,
-            "op": "range_source",
-            "output_type": "(long)",
-            "predecessors": [],
-            "step": 1,
-            "to": 10
-        },
-        {
-            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
-            "id": 1,
-            "op": "map",
-            "output_type": "(long, long)",
-            "predecessors": [
-                0
-            ]
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-            "id": 2,
-            "op": "reduce_by_key",
-            "output_type": "(long, long)",
-            "predecessors": [
-                1
-            ]
-        }
-    ]
+   "dag": [
+      {
+         "to": 10,
+         "predecessors": [],
+         "output_type": [
+            {
+               "type": "long"
+            }
+         ],
+         "step": 1,
+         "id": 0,
+         "op": "range_source",
+         "from": 0
+      },
+      {
+         "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+         "id": 1,
+         "predecessors": [
+            0
+         ],
+         "op": "map",
+         "output_type": [
+            {
+               "type": "long"
+            },
+            {
+               "type": "long"
+            }
+         ]
+      },
+      {
+         "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+         "id": 2,
+         "predecessors": [
+            1
+         ],
+         "op": "reduce_by_key",
+         "output_type": [
+            {
+               "type": "long"
+            },
+            {
+               "type": "long"
+            }
+         ]
+      }
+   ]
 }

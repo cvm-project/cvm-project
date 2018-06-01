@@ -1,18 +1,15 @@
 #include "CodeGenVisitor.h"
 
-#include <algorithm>
-#include <cstdlib>
 #include <regex>
-#include <set>
-#include <stdexcept>
-#include <unordered_map>
-#include <utility>
+#include <string>
+#include <vector>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
 
-#include "dag/DAG.h"
 #include "dag/DAGOperators.h"
+#include "dag/collection/array.hpp"
+#include "dag/collection/atomic.hpp"
 #include "utils/utils.h"
 
 using boost::algorithm::join;
@@ -21,23 +18,54 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
-auto CodeGenVisitor::TupleTypeDesc::fromTupleString(std::string &&name,
-                                                    const std::string &s)
-        -> TupleTypeDesc {
-    // Types
-    std::string types_string = s;
-    types_string = string_replace(types_string, "(", "");
-    types_string = string_replace(types_string, ")", "");
-    types_string = string_replace(types_string, " ", "");
-    std::vector<std::string> types = split_string(types_string, ",");
+class FieldTypeVisitor : public utils::FieldVisitor {
+public:
+    std::string ComputeTypeString(dag::collection::Field *field) {
+        field->Accept(this);
+        return this->ret_type_string_;
+    }
 
-    // Names
+protected:
+    void Visit(dag::collection::Atomic *field) override {
+        this->ret_type_string_ = field->field_type()->type;
+    }
+    void Visit(dag::collection::Array *field) override {
+        std::vector<std::string> item_types;
+        for (auto pos = 0; pos < field->tuple()->fields.size(); pos++) {
+            auto f = field->tuple()->fields[pos];
+            f.get()->Accept(this);
+            auto item_type = this->ret_type_string_;
+            item_types.push_back(item_type + " v" + std::to_string(pos));
+            pos++;
+        }
+        std::vector<std::string> sizes;
+        for (size_t i = 0; i < field->field_type()->number_dim; i++) {
+            sizes.push_back("size_t size" + std::to_string(i));
+        }
+        this->ret_type_string_ =
+                (boost::basic_format<char>("struct { struct {%s;}* v0; %s;}") %
+                 join(item_types, ";") % join(sizes, ";"))
+                        .str();
+    }
+
+private:
+    std::string ret_type_string_;
+};
+
+auto CodeGenVisitor::TupleTypeDesc::MakeFromCollection(
+        std::string &&name, const dag::collection::Tuple &tuple)
+        -> TupleTypeDesc {
+    std::vector<std::string> types;
+
+    for (auto &ft : tuple.fields) {
+        FieldTypeVisitor visitor;
+        types.emplace_back(visitor.ComputeTypeString(ft.get()));
+    }
     std::vector<std::string> names;
     for (size_t i = 0; i < types.size(); i++) {
         names.emplace_back("v" + std::to_string(i));
     }
 
-    // Typed names
     return TupleTypeDesc{name, types, names};
 }
 
@@ -208,7 +236,7 @@ std::string CodeGenVisitor::visit_common(DAGOperator *op,
     planBody_ << format("/** %s **/\n") % operator_name;
     const std::string var_name = getNextOperatorName();
 
-    auto output_type = TupleTypeDesc::fromTupleString("", op->output_type);
+    auto output_type = TupleTypeDesc::MakeFromCollection("", *op->tuple);
     output_type.name = emitTupleDefinition(output_type);
 
     operatorNameTupleTypeMap.emplace(
@@ -284,7 +312,7 @@ void CodeGenVisitor::emitLLVMFunctionWrapper(
         const auto input_var_name = "t" + std::to_string(input_args.size());
         input_args.emplace_back(input_type.name + " " + input_var_name);
 
-        // Each field of all input tuples is one argument to the function
+        // Each collection of all input tuples is one argument to the function
         // --> construct values for the call
         for (auto const &field : input_type.names) {
             // NOLINTNEXTLINE performance-inefficient-string-concatenation

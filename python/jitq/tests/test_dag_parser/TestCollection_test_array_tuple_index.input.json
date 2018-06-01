@@ -1,11 +1,21 @@
 {
-    "dag": [
-        {
-            "add_index": true,
-            "id": 0,
-            "op": "collection_source",
-            "output_type": "(long, long, long)",
-            "predecessors": []
-        }
-    ]
+   "dag": [
+      {
+         "output_type": [
+            {
+               "type": "long"
+            },
+            {
+               "type": "int"
+            },
+            {
+               "type": "int"
+            }
+         ],
+         "add_index": true,
+         "id": 0,
+         "predecessors": [],
+         "op": "collection_source"
+      }
+   ]
 }

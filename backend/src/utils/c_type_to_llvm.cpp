@@ -1,6 +1,3 @@
-#ifndef UTILS_C_TYPE_TO_LLVM_H
-#define UTILS_C_TYPE_TO_LLVM_H
-
 //
 // Created by sabir on 29.08.17.
 //
@@ -9,11 +6,7 @@
 
 #include <string>
 
-#include <cassert>
-
 #include <llvm/IR/DerivedTypes.h>
-#include <llvm/IR/LLVMContext.h>
-#include <llvm/IR/Type.h>
 
 llvm::Type *c_type_to_llvm(const std::string &type_,
                            llvm::LLVMContext *context) {
@@ -25,5 +18,3 @@ llvm::Type *c_type_to_llvm(const std::string &type_,
     if (type_ == "double") return llvm::Type::getDoubleTy(*context);
     return llvm::Type::getDoubleTy(*context);
 }
-
-#endif

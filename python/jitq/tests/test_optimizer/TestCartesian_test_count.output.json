@@ -4,20 +4,53 @@
             "add_index": false,
             "id": 0,
             "op": "collection_source",
-            "output_type": "(long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": []
         },
         {
             "add_index": false,
             "id": 1,
             "op": "collection_source",
-            "output_type": "(long, long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": []
         },
         {
             "id": 2,
             "op": "cartesian",
-            "output_type": "(long, long, long, long, long)",
+            "output_type": [
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                },
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 0,
                 1
@@ -27,7 +60,11 @@
             "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
             "id": 3,
             "op": "map",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 2
             ]
@@ -36,7 +73,11 @@
             "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
             "id": 4,
             "op": "reduce",
-            "output_type": "(long)",
+            "output_type": [
+                {
+                    "type": "array"
+                }
+            ],
             "predecessors": [
                 3
             ]

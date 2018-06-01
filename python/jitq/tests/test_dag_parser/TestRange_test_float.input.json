@@ -1,13 +1,17 @@
 {
-    "dag": [
-        {
-            "from": 10.5,
-            "id": 0,
-            "op": "range_source",
-            "output_type": "(double)",
-            "predecessors": [],
-            "step": 2.0,
-            "to": 20.0
-        }
-    ]
+   "dag": [
+      {
+         "to": 20.0,
+         "predecessors": [],
+         "output_type": [
+            {
+               "type": "double"
+            }
+         ],
+         "step": 2.0,
+         "id": 0,
+         "op": "range_source",
+         "from": 10.5
+      }
+   ]
 }
