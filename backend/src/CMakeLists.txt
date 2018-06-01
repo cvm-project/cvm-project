@@ -53,7 +53,7 @@ set(SOURCE_FILES
         generate_dag_plan.cpp
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/BackEnd.cpp
-        dag/Column.cpp
+        dag/attribute_id.cpp
         dag/DAG.cpp
         dag/DAGCollection.cpp
         dag/DAGCreation.cpp
@@ -61,7 +61,7 @@ set(SOURCE_FILES
         dag/DAGOperator.cpp
         dag/DAGRange.cpp
         IR_analyzer/LLVMParser.cpp
-        optimize/column_tracking.cpp
+        optimize/attribute_id_tracking.cpp
         optimize/determine_sortedness.cpp
         optimize/Optimizer.cpp
         optimize/grouped_reduce_by_key.cpp

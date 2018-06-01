@@ -11,17 +11,17 @@
 
 #include <json.hpp>
 
-#include "dag/Column.h"
-#include "dag/TupleField.h"
+#include "dag/attribute_id.h"
+#include "dag/field/Field.h"
 
 class DAGVisitor;
 
 // cppcheck-suppress noConstructor
 class DAGOperator {
 public:
-    std::vector<TupleField> fields;
-    std::set<Column *> read_set;
-    std::set<Column *> write_set;
+    std::vector<Field> fields;
+    std::set<AttributeId *> read_set;
+    std::set<AttributeId *> write_set;
     std::string llvm_ir;
     std::string output_type;
     size_t id{};
@@ -36,9 +36,9 @@ public:
     virtual void to_json(nlohmann::json *json) const = 0;
     virtual void from_json(const nlohmann::json &json) = 0;
 
-    bool HasInOutput(const Column *c) const;
-    bool Reads(const Column *c) const;
-    bool Writes(const Column *c) const;
+    bool HasInOutput(const AttributeId *c) const;
+    bool Reads(const AttributeId *c) const;
+    bool Writes(const AttributeId *c) const;
 };
 
 template <class OperatorType>

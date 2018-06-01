@@ -93,11 +93,11 @@ public:
     void visit(DAGMap *op) override {
         auto const &input_fields = dag()->predecessor(op)->fields;
         for (const auto &field : op->fields) {
-            auto const input_field_it =
-                    std::find_if(input_fields.begin(), input_fields.end(),
-                                 [&](auto const &other) {
-                                     return *(field.column) == *(other.column);
-                                 });
+            auto const input_field_it = std::find_if(
+                    input_fields.begin(), input_fields.end(),
+                    [&](auto const &other) {
+                        return *(field.attribute_id_) == *(other.attribute_id_);
+                    });
             if (input_field_it != input_fields.end()) {
                 *(field.properties) = *(input_field_it->properties);
             }

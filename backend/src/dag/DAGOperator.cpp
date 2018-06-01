@@ -5,16 +5,16 @@
 
 #include <json.hpp>
 
-#include "Column.h"
-#include "TupleField.h"
+#include "attribute_id.h"
+#include "dag/field/Field.h"
 #include "utils/utils.h"
 
-std::vector<TupleField> parse_output_type(const std::string &output) {
+std::vector<Field> parse_output_type(const std::string &output) {
     std::string type_ = string_replace(output, "(", "");
     type_ = string_replace(type_, ")", "");
     type_ = string_replace(type_, " ", "");
     std::vector<std::string> types = split_string(type_, ",");
-    std::vector<TupleField> ret;
+    std::vector<Field> ret;
     size_t pos = 0;
     for (auto t : types) {
         ret.emplace_back(t, pos);
@@ -32,8 +32,8 @@ void from_json(const nlohmann::json &json, DAGOperator &op) {
     op.fields = parse_output_type(op.output_type);
 
     for (auto &field : op.fields) {
-        field.column = Column::makeColumn();
-        field.column->addField(&field);
+        field.attribute_id_ = AttributeId::makeAttributeId();
+        field.attribute_id_->addField(&field);
     }
 
     op.from_json(json);
@@ -57,21 +57,21 @@ void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op) {
     to_json(json, *op);
 }
 
-bool DAGOperator::HasInOutput(const Column *const c) const {
+bool DAGOperator::HasInOutput(const AttributeId *const c) const {
     for (auto const &f : fields) {
-        if (*(f.column) == *c) return true;
+        if (*(f.attribute_id_) == *c) return true;
     }
     return false;
 }
 
-bool DAGOperator::Reads(const Column *const c) const {
+bool DAGOperator::Reads(const AttributeId *const c) const {
     for (auto const &col : read_set) {
         if (*col == *c) return true;
     }
     return false;
 }
 
-bool DAGOperator::Writes(const Column *const c) const {
+bool DAGOperator::Writes(const AttributeId *const c) const {
     for (auto const &col : write_set) {
         if (*col == *c) return true;
     }

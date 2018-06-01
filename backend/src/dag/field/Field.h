@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 
-class Column;
+class AttributeId;
 
 /**
  * Properties specific for each field
@@ -18,21 +18,21 @@ class Column;
  */
 enum FieldProperty { FL_GROUPED, FL_SORTED, FL_UNIQUE };
 
-class TupleField {
+class Field {
 public:
     std::shared_ptr<std::set<FieldProperty>> properties;
 
     // cppcheck-suppress passedByValue
-    TupleField(std::string type, size_t pos)
+    Field(std::string type, size_t pos)
         : properties(new std::set<FieldProperty>),
           type(std::move(type)),
           position(pos) {}
 
     std::string type;
-    Column *column = nullptr;
+    AttributeId *attribute_id_ = nullptr;
     size_t position;
 
-    const bool operator<(const TupleField &other) const {
+    const bool operator<(const Field &other) const {
         return position < other.position;
     }
 };

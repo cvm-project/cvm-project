@@ -56,7 +56,7 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
         std::vector<std::string> fields;
         for (const auto &f : op->fields) {
             const std::string column_name =
-                    f.column != nullptr ? f.column->get_name() : "?";
+                    f.attribute_id_ != nullptr ? f.attribute_id_->name() : "?";
 
             std::vector<std::string> property_flags;
             boost::transform(boost::make_iterator_range(*f.properties),
@@ -75,13 +75,13 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
         std::vector<std::string> read_set;
         std::transform(op->read_set.begin(), op->read_set.end(),
                        std::back_inserter(read_set),
-                       [](const auto &c) { return c->get_name(); });
+                       [](const auto &c) { return c->name(); });
 
         // Write set
         std::vector<std::string> write_set;
         std::transform(op->write_set.begin(), op->write_set.end(),
                        std::back_inserter(write_set),
-                       [](const auto &c) { return c->get_name(); });
+                       [](const auto &c) { return c->name(); });
 
         // Input ports
         const auto input_ports =

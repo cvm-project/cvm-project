@@ -17,7 +17,7 @@
 
 #include <json.hpp>
 
-#include "Column.h"
+#include "attribute_id.h"
 
 class DAG;
 class DAGOperator;
@@ -54,7 +54,7 @@ BOOST_INSTALL_PROPERTY(edge, target_port);
 }  // namespace boost
 
 /**
- * destructor responsible for freeing the columns and the dag operators
+ * destructor responsible for freeing the attribute_ids and the dag operators
  */
 // TODO(sabir): refactor class in order to remove custom destructor
 class DAG {  // NOLINT hicpp-special-member-functions
@@ -161,7 +161,7 @@ public:
     DAG() = default;
     DAG(DAG &&other) = default;
 
-    ~DAG() { Column::delete_columns(); }
+    ~DAG() { AttributeId::delete_attribute_ids(); }
 
     /*
      * Normal member functions

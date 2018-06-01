@@ -192,13 +192,13 @@ std::string LLVMParser::adjust_filter_signature(
     }
     // In the IR, replace all fields with their new positions
     for (auto f : pFilter->fields) {
-        if (!pFilter->Reads(f.column)) continue;
+        if (!pFilter->Reads(f.attribute_id_)) continue;
         const size_t old_pos = f.position;
 
         const auto input_field = std::find_if(
                 predecessor->fields.begin(), predecessor->fields.end(),
                 [&](auto const &input_f) {
-                    return *(f.column) == *(input_f.column);
+                    return *(f.attribute_id_) == *(input_f.attribute_id_);
                 });
         assert(input_field != predecessor->fields.end());
         const auto new_pos = input_field->position;

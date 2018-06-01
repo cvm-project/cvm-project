@@ -4,7 +4,7 @@
 
 #include "Optimizer.h"
 
-#include "column_tracking.hpp"
+#include "attribute_id_tracking.hpp"
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
 
@@ -12,7 +12,7 @@
 
 void Optimizer::run(DAG *dag) {
     // Column tracking
-    ColumnTracking ct(dag);
+    AttributeIdTracking ct(dag);
     ct.optimize();
 
     // Move around filters
