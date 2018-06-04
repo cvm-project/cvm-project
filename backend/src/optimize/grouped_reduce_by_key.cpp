@@ -8,9 +8,7 @@ public:
     explicit CollectReduceByKeyVisitor(DAG *const dag) : DAGVisitor(dag) {}
     void visit(DAGReduceByKey *op) override {
         auto const pred = dag()->predecessor(op);
-        if (pred->fields[0].properties->count(FL_GROUPED) > 0 ||
-            pred->fields[0].properties->count(FL_UNIQUE) > 0 ||
-            pred->fields[0].properties->count(FL_SORTED) > 0) {
+        if (pred->fields[0].properties->count(FL_GROUPED) > 0) {
             reduce_by_keys_.emplace_back(op);
         }
     }

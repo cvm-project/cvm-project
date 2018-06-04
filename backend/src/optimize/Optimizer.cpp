@@ -4,6 +4,7 @@
 
 #include "Optimizer.h"
 
+#include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
 
 #include "SimplePredicateMoveAround.h"
@@ -18,6 +19,10 @@ void Optimizer::run(DAG *dag) {
     // Move around filters
     SimplePredicateMoveAround opt(dag);
     opt.optimize();
+
+    // Determine sortedness
+    DetermineSortedness sort(dag);
+    sort.optimize();
 
     // Replace GroupByKey with grouped variant
     GroupedReduceByKey grbk(dag);

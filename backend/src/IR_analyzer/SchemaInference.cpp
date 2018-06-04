@@ -32,10 +32,6 @@ void SchemaInference::visit(DAGCollection *op) {
         // add all cols to the write set
         op->write_set.insert(c);
     }
-    if (op->add_index) {
-        op->fields[0].properties->insert(FL_UNIQUE);
-        op->fields[0].properties->insert(FL_SORTED);
-    }
 }
 
 void SchemaInference::visit(DAGRange *op) {
@@ -45,8 +41,6 @@ void SchemaInference::visit(DAGRange *op) {
     for (size_t i = 0; i < op->fields.size(); i++) {
         auto field = &(op->fields[i]);
         Column *c = Column::makeColumn();
-        field->properties->insert(FL_UNIQUE);
-        field->properties->insert(FL_SORTED);
         c->addField(field);
         // add all cols to the write set
         op->write_set.insert(c);
@@ -61,7 +55,6 @@ void SchemaInference::visit(DAGFilter *op) {
     for (size_t i = 0; i < op->fields.size(); i++) {
         Column *col = dag()->predecessor(op)->fields[i].column;
         op->fields[i].column = col;
-        op->fields[i].properties = dag()->predecessor(op)->fields[i].properties;
 
         if (parser.is_argument_read(i)) {
             op->read_set.insert(col);
@@ -76,18 +69,6 @@ void SchemaInference::visit(DAGCartesian *op) {
     for (size_t i = 0; i < dag()->predecessor(op, 0)->fields.size(); i++) {
         Column *col = dag()->predecessor(op, 0)->fields[i].column;
         op->fields[i].column = col;
-        auto field = &(op->fields[i]);
-        field->properties = dag()->predecessor(op, 0)->fields[i].properties;
-        // TODO(sabir): could still keep the props if the other side has
-        // size 1
-        if (op->stream_right) {
-            // strip away properties
-            field->properties->erase(FL_SORTED);
-            field->properties->erase(FL_UNIQUE);
-            field->properties->erase(FL_GROUPED);
-        } else {
-            field->properties->erase(FL_UNIQUE);
-        }
     }
 
     for (size_t i = 0; i < dag()->predecessor(op, 1)->fields.size(); i++) {
@@ -95,66 +76,26 @@ void SchemaInference::visit(DAGCartesian *op) {
         auto field =
                 &(op->fields[i + dag()->predecessor(op, 0)->fields.size()]);
         field->column = col;
-        field->properties = dag()->predecessor(op, 1)->fields[i].properties;
-        if (!op->stream_right) {
-            field->properties->erase(FL_SORTED);
-            field->properties->erase(FL_UNIQUE);
-            field->properties->erase(FL_GROUPED);
-        } else {
-            field->properties->erase(FL_UNIQUE);
-        }
     }
 }
 
 void SchemaInference::visit(DAGJoin *op) {
     DEBUG_PRINT("schema inference visiting join");
-    DAGOperator *builtPred = dag()->predecessor(op, 0);
-    DAGOperator *streamPred = dag()->predecessor(op, 1);
-    if (!op->stream_right) {
-        builtPred = dag()->predecessor(op, 1);
-        streamPred = dag()->predecessor(op, 0);
-    }
-    Column *keyCol = builtPred->fields[0].column;
-    auto keyField = &(builtPred->fields[0]);
-    op->fields[0].column = keyCol;
 
-    // determine if the both sides keys were unique
-    auto streamPredKeyField = &(streamPred->fields[0]);
-    bool unique_key = keyField->properties->find(FL_UNIQUE) !=
-                              keyField->properties->end() &&
-                      streamPredKeyField->properties->find(FL_UNIQUE) !=
-                              streamPredKeyField->properties->end();
+    auto left = dag()->predecessor(op, 0);
+    auto right = dag()->predecessor(op, 1);
 
-    if (!unique_key) {
-        // with current implementation the other properties should be
-        // preserved
-        keyField->properties->erase(FL_UNIQUE);
-    }
-    // we can now assume that the key column is the same on the left and
-    // right
-    // remap streamPred inputs key column to builtPred
-    auto streamPredKeyCol = streamPredKeyField->column;
-    *(streamPredKeyCol) = *keyCol;
-    keyCol->addFields(streamPred->fields[0].column->getFields());
+    // remap left input's key column to right input's one
+    *(right->fields[0].column) = *(left->fields[0].column);
+    left->fields[0].column->addFields(right->fields[0].column->getFields());
 
-    auto left = builtPred;
-    auto right = streamPred;
-    if (!op->stream_right) {
-        left = streamPred;
-        right = builtPred;
-    }
-    for (size_t i = 1; i < op->fields.size(); i++) {
+    for (size_t i = 0; i < op->fields.size(); i++) {
         if (i < left->fields.size()) {
             auto predCol = left->fields[i].column;
             op->fields[i].column = predCol;
-            if (op->stream_right) {
-                // this is the build relation
-                // TODO(sabir):
-            }
         } else {
             auto predCol = right->fields[i - left->fields.size() + 1].column;
             op->fields[i].column = predCol;
-            // TODO(sabir): column properties
         }
     }
 }
@@ -171,7 +112,6 @@ void SchemaInference::visit(DAGMap *op) {
             // input
             arg.column->addField(&(op->fields[pos]));
 
-            *(op->fields[pos].properties) = *(arg.properties);
             used = true;
         }
         if (parser.is_argument_read(c)) {
@@ -208,8 +148,6 @@ void SchemaInference::visit(DAGReduceByKey *op) {
     firstField->column = pred->fields[0].column;
     // add key to the read set
     op->read_set.insert(firstField->column);
-    // alias the properties
-    firstField->properties = pred->fields[0].properties;
 
     LLVMParser parser(op->llvm_ir);
 
