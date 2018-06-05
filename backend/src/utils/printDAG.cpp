@@ -36,6 +36,16 @@ char *to_char_ptr(const std::string &s) {
     return const_cast<char *>(s.c_str());
 }
 
+std::string short_property_label(const FieldProperty prop) {
+    const static std::unordered_map<FieldProperty, std::string, std::hash<int>>
+            property_labels = {
+                    {FL_UNIQUE, "u"},  //
+                    {FL_SORTED, "s"},  //
+                    {FL_GROUPED, "g"}  //
+            };
+    return property_labels.at(prop);
+}
+
 void buildDOT(const DAG *const dag, Agraph_t *g) {
     // Compute nodes from operators
     std::unordered_map<const DAGOperator *, Agnode_t *> nodes;
@@ -44,11 +54,22 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
 
         // Fields
         std::vector<std::string> fields;
-        std::transform(op->fields.begin(), op->fields.end(),
-                       std::back_inserter(fields), [](const auto &f) {
-                           return f.column != nullptr ? f.column->get_name()
-                                                      : "?";
-                       });
+        for (const auto &f : op->fields) {
+            const std::string column_name =
+                    f.column != nullptr ? f.column->get_name() : "?";
+
+            std::vector<std::string> property_flags;
+            boost::transform(boost::make_iterator_range(*f.properties),
+                             std::back_inserter(property_flags),
+                             short_property_label);
+            const std::string property_label =
+                    property_flags.empty() ? ""
+                                           : (boost::format(" (%s)") %
+                                              boost::join(property_flags, ""))
+                                                     .str();
+
+            fields.emplace_back(column_name + property_label);
+        }
 
         // Read set
         std::vector<std::string> read_set;
