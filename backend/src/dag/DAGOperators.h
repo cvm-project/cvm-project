@@ -9,5 +9,6 @@
 #include "DAGRange.h"
 #include "DAGReduce.h"
 #include "DAGReduceByKey.h"
+#include "DAGReduceByKeyGrouped.h"
 
 #endif

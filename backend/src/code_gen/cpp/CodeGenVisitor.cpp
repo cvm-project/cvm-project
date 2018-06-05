@@ -165,17 +165,13 @@ void CodeGenVisitor::visit(DAGCartesian *op) {
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
 };
 
-void CodeGenVisitor::visit(DAGReduceByKey *op) {
-    // TODO(sabir): This should be done in some earlier optimizer pass
-    const auto &properties = op->fields[0].properties;
-    bool is_grouped = properties->count(FL_GROUPED) > 0 ||
-                      properties->count(FL_SORTED) > 0 ||
-                      properties->count(FL_UNIQUE) > 0;
-    // TODO(sabir): This should be done in some earlier optimizer pass
-    std::string operatorName =
-            is_grouped ? "ReduceByKeyGroupedOperator" : "ReduceByKeyOperator";
+void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
+                                         const std::string &operator_name) {
+    assert(dynamic_cast<DAGReduceByKey *>(op) != nullptr ||
+           dynamic_cast<DAGReduceByKeyGrouped *>(op) != nullptr);
 
-    const std::string var_name = CodeGenVisitor::visit_common(op, operatorName);
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, operator_name);
 
     // Build key and value types
     auto return_type = operatorNameTupleTypeMap[op->id].return_type;
@@ -195,8 +191,16 @@ void CodeGenVisitor::visit(DAGReduceByKey *op) {
     std::vector<std::string> template_args = {key_type.name, value_type.name};
 
     // Generate call
-    emitOperatorMake(var_name, operatorName, op, template_args, {functor});
-};
+    emitOperatorMake(var_name, operator_name, op, template_args, {functor});
+}
+
+void CodeGenVisitor::visit(DAGReduceByKey *op) {
+    visit_reduce_by_key(op, "ReduceByKeyOperator");
+}
+
+void CodeGenVisitor::visit(DAGReduceByKeyGrouped *op) {
+    visit_reduce_by_key(op, "ReduceByKeyGroupedOperator");
+}
 
 // TODO(ingo): This could be an independent visitor
 std::string CodeGenVisitor::visit_common(DAGOperator *op,

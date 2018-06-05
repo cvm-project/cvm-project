@@ -16,6 +16,7 @@ class DAGMap;
 class DAGRange;
 class DAGReduce;
 class DAGReduceByKey;
+class DAGReduceByKeyGrouped;
 
 // TODO(ingo): there should be a const version of DAGVisitor
 class DAGVisitor {
@@ -37,6 +38,7 @@ protected:
     virtual void visit(DAGMap * /*op*/) {}
     virtual void visit(DAGReduce * /*op*/) {}
     virtual void visit(DAGReduceByKey * /*op*/) {}
+    virtual void visit(DAGReduceByKeyGrouped * /*op*/) {}
     virtual void visit(DAGCartesian * /*op*/) {}
 
 private:

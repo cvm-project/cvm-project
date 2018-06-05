@@ -9,14 +9,7 @@
 
 #include <dirent.h>
 
-#include "DAGCartesian.h"
-#include "DAGCollection.h"
-#include "DAGFilter.h"
-#include "DAGJoin.h"
-#include "DAGMap.h"
-#include "DAGRange.h"
-#include "DAGReduce.h"
-#include "DAGReduceByKey.h"
+#include "DAGOperators.h"
 #include "utils/utils.h"
 
 // TODO(sabir): Implement proper singleton pattern
@@ -39,6 +32,7 @@ void load_operators() {
     load_operator<DAGRange>();
     load_operator<DAGReduce>();
     load_operator<DAGReduceByKey>();
+    load_operator<DAGReduceByKeyGrouped>();
 }
 
 DAGOperator *get_operator(const std::string &opName) {

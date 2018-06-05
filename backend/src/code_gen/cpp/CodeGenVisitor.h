@@ -58,6 +58,7 @@ public:
     void visit(DAGJoin *op) override;
     void visit(DAGCartesian *op) override;
     void visit(DAGReduceByKey *op) override;
+    void visit(DAGReduceByKeyGrouped *op) override;
 
     /*
      * These members are the "result" of the visitor
@@ -75,6 +76,7 @@ private:
      * Implementation helpers for visit functions
      */
     std::string visit_common(DAGOperator *op, const std::string &operator_name);
+    void visit_reduce_by_key(DAGOperator *op, const std::string &operator_name);
     std::string visitLLVMFunc(const DAGOperator &op,
                               const std::vector<TupleTypeDesc> &input_types,
                               const std::string &return_type);
