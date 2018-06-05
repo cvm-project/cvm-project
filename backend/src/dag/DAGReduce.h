@@ -10,6 +10,8 @@
 class DAGReduce : public DAGOperatorBase<DAGReduce> {
 public:
     constexpr static const char *kName = "reduce";
+    constexpr static size_t kNumInPorts = 1;
+    constexpr static size_t kNumOutPorts = 1;
 };
 
 #endif  // DAG_DAGREDUCE_H

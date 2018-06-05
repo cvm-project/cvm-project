@@ -10,6 +10,8 @@
 class DAGReduceByKey : public DAGOperatorBase<DAGReduceByKey> {
 public:
     constexpr static const char *kName = "reduce_by_key";
+    constexpr static size_t kNumInPorts = 1;
+    constexpr static size_t kNumOutPorts = 1;
 };
 
 #endif  // DAG_DAGREDUCEBYKEY_H

@@ -30,6 +30,8 @@ public:
     virtual ~DAGOperator() = default;
 
     virtual std::string name() const = 0;
+    virtual size_t num_in_ports() const = 0;
+    virtual size_t num_out_ports() const = 0;
 
     virtual void accept(class DAGVisitor *v) = 0;
     virtual void to_json(nlohmann::json *json) const = 0;
@@ -46,6 +48,8 @@ public:
     static DAGOperator *make_dag_operator() { return new OperatorType(); }
 
     std::string name() const override { return OperatorType::kName; }
+    size_t num_in_ports() const override { return OperatorType::kNumInPorts; }
+    size_t num_out_ports() const override { return OperatorType::kNumOutPorts; }
 
     void inline accept(DAGVisitor *v) override;
 

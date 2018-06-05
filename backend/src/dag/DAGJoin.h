@@ -14,6 +14,8 @@ public:
     bool stream_right = true;
 
     constexpr static const char *kName = "join";
+    constexpr static size_t kNumInPorts = 2;
+    constexpr static size_t kNumOutPorts = 1;
 };
 
 #endif  // DAG_DAGJOIN_H

@@ -19,6 +19,8 @@ public:
     std::string step = "1";
 
     constexpr static const char *kName = "range_source";
+    constexpr static size_t kNumInPorts = 0;
+    constexpr static size_t kNumOutPorts = 1;
 };
 
 #endif  // DAG_DAGRANGE_H

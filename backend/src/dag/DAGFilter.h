@@ -10,6 +10,8 @@
 class DAGFilter : public DAGOperatorBase<DAGFilter> {
 public:
     constexpr static const char *kName = "filter";
+    constexpr static size_t kNumInPorts = 1;
+    constexpr static size_t kNumOutPorts = 1;
 
     DAGFilter *copy();
 };
