@@ -19,21 +19,22 @@ public:
 
     void printName() { std::cout << "range op\n"; }
 
-    void open() {}
+    void open() { current = from; }
     void close() {}
 
     INLINE Optional<Tuple> next() {
-        if (from < to) {
-            from += step;
-            return Tuple{from - step};
+        if (current < to) {
+            current += step;
+            return Tuple{current - step};
         }
         return {};
     }
 
 private:
-    ValueType from;
-    ValueType to;
-    ValueType step;
+    const ValueType from;
+    const ValueType to;
+    const ValueType step;
+    ValueType current{};
 };
 
 template <class Tuple, typename ValueType>
