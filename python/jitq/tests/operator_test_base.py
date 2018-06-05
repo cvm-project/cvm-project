@@ -125,6 +125,13 @@ class TestRange(unittest.TestCase):
         self.assertListEqual(res.astuplelist(),
                              list(np.arange(10.5, 20.0, 2.0)))
 
+    def test_reiterable(self):
+        context = JitqContext()
+        res = context.range_(0, 10) \
+                     .cartesian(context.range_(0, 10)) \
+                     .count()
+        self.assertEqual(res, 100)
+
 
 class TestJoin(unittest.TestCase):
 
