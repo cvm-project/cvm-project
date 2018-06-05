@@ -510,6 +510,67 @@ class TestCache(unittest.TestCase):
         # TODO(sabir): test cases for the caching mechanism of all operators
 
 
+class TestSortedness(unittest.TestCase):
+    def test_index_grouped(self):
+        context = JitqContext()
+        res = context.collection(list(range(10)), add_index=True) \
+                     .reduce_by_key(lambda i1, i2: i1 + i2)\
+                     .collect()
+        truth = list(enumerate(range(10)))
+        self.assertListEqual(sorted(res.astuplelist()), truth)
+
+    def test_range_grouped(self):
+        context = JitqContext()
+        res = context.range_(0, 10) \
+                     .map(lambda i: (i, i)) \
+                     .reduce_by_key(lambda i1, i2: i1 + i2)\
+                     .collect()
+        truth = list(enumerate(range(10)))
+        self.assertListEqual(sorted(res.astuplelist()), truth)
+
+    def test_cartesian_grouped(self):
+        context = JitqContext()
+        res = context.collection(list(range(5))) \
+                     .cartesian(context.range_(0, 2)) \
+                     .map(lambda t: (t[1], t[0])) \
+                     .reduce_by_key(lambda i1, i2: i1 + i2)\
+                     .collect()
+        truth = [(i, sum(range(5))) for i in range(2)]
+        self.assertListEqual(sorted(res.astuplelist()), truth)
+
+    def test_join_right_grouped(self):
+        context = JitqContext()
+        res = context.range_(0, 10) \
+                     .map(lambda i: (int(i / 2), i)) \
+                     .join(context.range_(0, 10)) \
+                     .map(lambda t: (t[1], t[0])) \
+                     .reduce_by_key(lambda i1, i2: i1 + i2)\
+                     .collect()
+        truth = [(i, int(i / 2)) for i in range(10)]
+        self.assertListEqual(sorted(res.astuplelist()), truth)
+
+    def test_join_key_grouped(self):
+        context = JitqContext()
+        res = context.range_(0, 10) \
+                     .map(lambda i: (i, int(i / 2))) \
+                     .join(context.range_(0, 10)) \
+                     .reduce_by_key(lambda i1, i2: i1 + i2)\
+                     .collect()
+        truth = [(i, int(i / 2)) for i in range(10)]
+        self.assertListEqual(sorted(res.astuplelist()), truth)
+
+    def test_join_left_grouped(self):
+        context = JitqContext()
+        res = context.range_(0, 10) \
+                     .map(lambda i: (i, int(i / 2))) \
+                     .join(context.range_(0, 10)) \
+                     .map(lambda t: (t[1], t[0])) \
+                     .reduce_by_key(lambda i1, i2: i1 + i2)\
+                     .collect()
+        truth = [(i, i * 4 + 1) for i in range(5)]
+        self.assertListEqual(sorted(res.astuplelist()), truth)
+
+
 class TestIntegration(unittest.TestCase):
 
     @unittest.skip("Backend does not support non-tree DAGs yet")
