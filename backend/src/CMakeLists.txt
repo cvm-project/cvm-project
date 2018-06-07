@@ -62,6 +62,7 @@ set(SOURCE_FILES
         dag/DAGRange.cpp
         IR_analyzer/LLVMParser.cpp
         IR_analyzer/SchemaInference.cpp
+        optimize/column_tracking.cpp
         optimize/determine_sortedness.cpp
         optimize/Optimizer.cpp
         optimize/grouped_reduce_by_key.cpp

@@ -26,11 +26,9 @@ void SchemaInference::Run() {
 void SchemaInference::visit(DAGCollection *op) {
     DEBUG_PRINT("schema inference visiting collection");
     // for every output produce a new column
-    for (size_t i = 0; i < op->fields.size(); i++) {
+    for (auto &field : op->fields) {
         Column *c = Column::makeColumn();
-        c->addField(&(op->fields[i]));
-        // add all cols to the write set
-        op->write_set.insert(c);
+        c->addField(&field);
     }
 }
 
@@ -38,12 +36,9 @@ void SchemaInference::visit(DAGRange *op) {
     DEBUG_PRINT("schema inference visiting range");
 
     // for every output produce a new column
-    for (size_t i = 0; i < op->fields.size(); i++) {
-        auto field = &(op->fields[i]);
+    for (auto &field : op->fields) {
         Column *c = Column::makeColumn();
-        c->addField(field);
-        // add all cols to the write set
-        op->write_set.insert(c);
+        c->addField(&field);
     }
 }
 
@@ -123,7 +118,6 @@ void SchemaInference::visit(DAGMap *op) {
         if (op->fields[pos].column == nullptr) {
             Column *c = Column::makeColumn();
             c->addField(&(op->fields[pos]));
-            op->write_set.insert(c);
         }
     }
 }
@@ -154,8 +148,6 @@ void SchemaInference::visit(DAGReduceByKey *op) {
         // generate a new column for every output
         Column *c = Column::makeColumn();
         c->addField(&(op->fields[i]));
-        // add all cols to the write set
-        op->write_set.insert(c);
     }
 }
 
@@ -175,7 +167,5 @@ void SchemaInference::visit(DAGReduce *op) {
         // generate a new column for every output
         Column *c = Column::makeColumn();
         c->addField(&(op->fields[i]));
-        // add all cols to the write set
-        op->write_set.insert(c);
     }
 }
