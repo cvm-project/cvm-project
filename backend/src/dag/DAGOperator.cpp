@@ -30,6 +30,12 @@ void from_json(const nlohmann::json &json, DAGOperator &op) {
     }
     op.output_type = json.at("output_type").get<std::string>();
     op.fields = parse_output_type(op.output_type);
+
+    for (auto &field : op.fields) {
+        field.column = Column::makeColumn();
+        field.column->addField(&field);
+    }
+
     op.from_json(json);
 }
 

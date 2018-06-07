@@ -23,23 +23,12 @@ void SchemaInference::Run() {
     }
 }
 
-void SchemaInference::visit(DAGCollection *op) {
+void SchemaInference::visit(DAGCollection * /*op*/) {
     DEBUG_PRINT("schema inference visiting collection");
-    // for every output produce a new column
-    for (auto &field : op->fields) {
-        Column *c = Column::makeColumn();
-        c->addField(&field);
-    }
 }
 
-void SchemaInference::visit(DAGRange *op) {
+void SchemaInference::visit(DAGRange * /*op*/) {
     DEBUG_PRINT("schema inference visiting range");
-
-    // for every output produce a new column
-    for (auto &field : op->fields) {
-        Column *c = Column::makeColumn();
-        c->addField(&field);
-    }
 }
 
 void SchemaInference::visit(DAGFilter *op) {
@@ -99,18 +88,10 @@ void SchemaInference::visit(DAGMap *op) {
         for (auto pos : parser.get_output_positions(c)) {
             // every output in the list now has the same column type as this
             // input
+            op->fields[pos].column = arg.column;
             arg.column->addField(&(op->fields[pos]));
         }
         c++;
-    }
-    // all the outputs which do not have the column set yet, are written by
-    // the map
-    size_t size = op->fields.size();
-    for (size_t pos = 0; pos < size; pos++) {
-        if (op->fields[pos].column == nullptr) {
-            Column *c = Column::makeColumn();
-            c->addField(&(op->fields[pos]));
-        }
     }
 }
 
@@ -122,18 +103,6 @@ void SchemaInference::visit(DAGReduceByKey *op) {
     auto firstField = &(op->fields[0]);
 
     firstField->column = pred->fields[0].column;
-
-    for (size_t i = 1; i < op->fields.size(); i++) {
-        // generate a new column for every output
-        Column *c = Column::makeColumn();
-        c->addField(&(op->fields[i]));
-    }
 }
 
-void SchemaInference::visit(DAGReduce *op) {
-    for (auto &field : op->fields) {
-        // generate a new column for every output
-        Column *c = Column::makeColumn();
-        c->addField(&field);
-    }
-}
+void SchemaInference::visit(DAGReduce * /*op*/) {}
