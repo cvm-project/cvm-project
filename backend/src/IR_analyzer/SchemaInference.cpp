@@ -45,15 +45,10 @@ void SchemaInference::visit(DAGRange *op) {
 void SchemaInference::visit(DAGFilter *op) {
     DEBUG_PRINT("schema inference visiting filter");
 
-    LLVMParser parser(op->llvm_ir);
     // copy output columns and fields from the predecessor
     for (size_t i = 0; i < op->fields.size(); i++) {
         Column *col = dag()->predecessor(op)->fields[i].column;
         op->fields[i].column = col;
-
-        if (parser.is_argument_read(i)) {
-            op->read_set.insert(col);
-        }
     }
 }
 
@@ -106,9 +101,6 @@ void SchemaInference::visit(DAGMap *op) {
             // input
             arg.column->addField(&(op->fields[pos]));
         }
-        if (parser.is_argument_read(c)) {
-            op->read_set.insert(arg.column);
-        }
         c++;
     }
     // all the outputs which do not have the column set yet, are written by
@@ -130,21 +122,8 @@ void SchemaInference::visit(DAGReduceByKey *op) {
     auto firstField = &(op->fields[0]);
 
     firstField->column = pred->fields[0].column;
-    // add key to the read set
-    op->read_set.insert(firstField->column);
-
-    LLVMParser parser(op->llvm_ir);
 
     for (size_t i = 1; i < op->fields.size(); i++) {
-        // TODO(sabir):
-        // check which of the columns are read from the second input
-
-        size_t arg_pos = i + op->fields.size() - 2;
-        auto arg = dag()->predecessor(op)->fields[i];
-        if (parser.is_argument_read(arg_pos)) {
-            op->read_set.insert(arg.column);
-        }
-
         // generate a new column for every output
         Column *c = Column::makeColumn();
         c->addField(&(op->fields[i]));
@@ -152,20 +131,9 @@ void SchemaInference::visit(DAGReduceByKey *op) {
 }
 
 void SchemaInference::visit(DAGReduce *op) {
-    LLVMParser parser(op->llvm_ir);
-
-    for (size_t i = 0; i < op->fields.size(); i++) {
-        // TODO(sabir):
-        // check which of the columns are read from the second input
-
-        size_t arg_pos = i + op->fields.size();
-        auto arg = dag()->predecessor(op)->fields[i];
-        if (parser.is_argument_read(arg_pos)) {
-            op->read_set.insert(arg.column);
-        }
-
+    for (auto &field : op->fields) {
         // generate a new column for every output
         Column *c = Column::makeColumn();
-        c->addField(&(op->fields[i]));
+        c->addField(&field);
     }
 }
