@@ -10,7 +10,7 @@
 
 /**
  * assign schema for every operator
- * compute read, write and dead sets
+ * compute read and write sets
  */
 class SchemaInference : public DAGVisitor {
 public:

@@ -106,23 +106,13 @@ void SchemaInference::visit(DAGMap *op) {
 
     size_t c = 0;
     for (auto arg : dag()->predecessor(op)->fields) {
-        bool used = false;
         for (auto pos : parser.get_output_positions(c)) {
             // every output in the list now has the same column type as this
             // input
             arg.column->addField(&(op->fields[pos]));
-
-            used = true;
         }
         if (parser.is_argument_read(c)) {
             op->read_set.insert(arg.column);
-            used = true;
-        }
-
-        // all the inputs which are not in the read set and are not repeated
-        // are dead
-        if (!used) {
-            op->dead_set.insert(arg);
         }
         c++;
     }
@@ -159,9 +149,6 @@ void SchemaInference::visit(DAGReduceByKey *op) {
         auto arg = dag()->predecessor(op)->fields[i];
         if (parser.is_argument_read(arg_pos)) {
             op->read_set.insert(arg.column);
-        } else {
-            // add to the dead set
-            op->dead_set.insert(arg);
         }
 
         // generate a new column for every output
@@ -183,9 +170,6 @@ void SchemaInference::visit(DAGReduce *op) {
         auto arg = dag()->predecessor(op)->fields[i];
         if (parser.is_argument_read(arg_pos)) {
             op->read_set.insert(arg.column);
-        } else {
-            // add to the dead set
-            op->dead_set.insert(arg);
         }
 
         // generate a new column for every output

@@ -83,13 +83,6 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
                        std::back_inserter(write_set),
                        [](const auto &c) { return c->get_name(); });
 
-        // Dead set
-        std::vector<std::string> dead_set;
-        std::transform(op->dead_set.begin(), op->dead_set.end(),
-                       std::back_inserter(dead_set), [](const auto &f) {
-                           return "o_" + std::to_string(f.position);
-                       });
-
         // Input ports
         const auto input_ports =
                 boost::irange(size_t{0}, op->num_in_ports()) |
@@ -106,13 +99,11 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
         // Compute node label
         const std::string node_label =
                 (boost::format("{%s <header>%s | <fields> fields: "
-                               "%s&#92;nread: %s&#92;nwrite: %s&#92;ndead: "
-                               "%s&#92;n}") %
-                 input_port_label % op_name %    //
-                 boost::join(fields, ", ") %     //
-                 boost::join(read_set, ", ") %   //
-                 boost::join(write_set, ", ") %  //
-                 boost::join(dead_set, ", "))
+                               "%s&#92;nread: %s&#92;nwrite: %s&#92;n}") %
+                 input_port_label % op_name %   //
+                 boost::join(fields, ", ") %    //
+                 boost::join(read_set, ", ") %  //
+                 boost::join(write_set, ", "))
                         .str();
 
         // Create node

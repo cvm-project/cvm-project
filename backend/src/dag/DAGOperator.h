@@ -22,7 +22,6 @@ public:
     std::vector<TupleField> fields;
     std::set<Column *> read_set;
     std::set<Column *> write_set;
-    std::set<TupleField> dead_set;
     std::string llvm_ir;
     std::string output_type;
     size_t id{};
