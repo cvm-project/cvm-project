@@ -10,13 +10,7 @@
 
 #include "SimplePredicateMoveAround.h"
 
-#include "IR_analyzer/SchemaInference.h"
-
 void Optimizer::run(DAG *dag) {
-    // Schema inference
-    SchemaInference si(dag);
-    si.Run();
-
     // Column tracking
     ColumnTracking ct(dag);
     ct.optimize();
