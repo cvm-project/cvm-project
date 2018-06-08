@@ -5,6 +5,7 @@
 #include "SimplePredicateMoveAround.h"
 
 #include <algorithm>
+#include <unordered_set>
 #include <vector>
 
 #include "IR_analyzer/LLVMParser.h"
@@ -25,47 +26,74 @@ void SimplePredicateMoveAround::optimize() {
 
     // 2. for every filter move them up the dag
     for (const auto &filter : filter_collector.filters_) {
-        // 2a. bypass the filter, i.e., connect the predecessors and successors
-        //     if this is the sink, reassign the sink
-        const auto in_flow = dag_->in_flow(filter);
-        dag_->RemoveFlow(in_flow);
-
-        if (filter == dag_->sink) {
-            dag_->sink = in_flow.source;
-        } else {
-            const auto out_flow = dag_->out_flow(filter);
-            dag_->RemoveFlow(out_flow);
-            dag_->AddFlow(in_flow.source, in_flow.source_port, out_flow.target,
-                          out_flow.target_port);
+        // Go as high up as the filter could go
+        DAGOperator *tip = filter;
+        while (dag_->out_degree(tip) == 1 &&
+               std::all_of(filter->read_set.begin(), filter->read_set.end(),
+                           [&](auto c) {
+                               return dag_->successor(tip)->HasInOutput(c);
+                           })) {
+            tip = dag_->successor(tip);
         }
 
-        // 2b. add the filter up in the dag
+        // From the tip, push the filter down as far as possible
         std::vector<DAGOperator *> q;
-        q.push_back(dag_->sink);
+        std::unordered_set<DAGOperator *> new_predecessors;
+        q.push_back(tip);
         while (!q.empty()) {
             DAGOperator *currentOp = q.back();
             q.pop_back();
-            for (const auto &in_flow : dag_->in_flows(currentOp)) {
-                q.push_back(in_flow.source);
+
+            bool can_swap = false;
+            for (auto const flow : dag_->in_flows(currentOp)) {
+                auto const pred = flow.source;
+                if (std::all_of(filter->read_set.begin(),
+                                filter->read_set.end(),
+                                [&](auto c) { return pred->HasInOutput(c); })) {
+                    // The predecessor can still read all fields
+                    // --> push it further
+                    q.push_back(pred);
+                    can_swap = true;
+                }
             }
 
-            // Make sure filter can read all required fields
-            if (std::any_of(
-                        filter->read_set.begin(), filter->read_set.end(),
-                        [&](auto c) { return !currentOp->HasInOutput(c); })) {
+            // We could push it beyond some predecessor
+            // --> do not add filter here
+            if (can_swap) {
                 continue;
             }
 
-            // Only add if this operator produced one of the fields (otherwise,
-            // push further up)
-            // Exception: if the filter doesn't read any field, it is constant,
-            // and can be added everywhere.
-            if (!std::any_of(filter->read_set.begin(), filter->read_set.end(),
-                             [&](auto c) { return currentOp->Writes(c); }) &&
-                !filter->read_set.empty()) {
-                continue;
-            }
+            // Filter will be added after currentOp
 
+            assert(std::all_of(
+                    filter->read_set.begin(), filter->read_set.end(),
+                    [&](auto c) { return currentOp->HasInOutput(c); }));
+
+            new_predecessors.insert(currentOp);
+        }
+
+        const auto pred = dag_->predecessor(filter);
+        const bool keep_original = new_predecessors.count(pred) > 0;
+        new_predecessors.erase(pred);
+
+        // Bypass the filter, i.e., connect the predecessors and successors if
+        // this is the sink, reassign the sink
+        if (!keep_original) {
+            const auto in_flow = dag_->in_flow(filter);
+            dag_->RemoveFlow(in_flow);
+
+            if (filter == dag_->sink) {
+                dag_->sink = in_flow.source;
+            } else {
+                const auto out_flow = dag_->out_flow(filter);
+                dag_->RemoveFlow(out_flow);
+                dag_->AddFlow(in_flow.source, in_flow.source_port,
+                              out_flow.target, out_flow.target_port);
+            }
+        }
+
+        // Add copy of the filter into the new places
+        for (auto const currentOp : new_predecessors) {
             DAGFilter *filt = filter->copy();
             dag_->AddOperator(filt);
             // insert the filter after this operator
@@ -92,7 +120,9 @@ void SimplePredicateMoveAround::optimize() {
             filt->output_type = currentOp->output_type;
         }
 
-        // 2c. remove the filter
-        dag_->RemoveOperator(filter);
+        // Remove the filter
+        if (!keep_original) {
+            dag_->RemoveOperator(filter);
+        }
     }
 }
