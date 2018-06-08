@@ -658,6 +658,16 @@ class TestIntegration(unittest.TestCase):
         truth = list(map(map_2, filter(filter_1, map(map_1, input_))))
         self.assertListEqual(list(res), truth)
 
+    def test_join_input_order(self):
+        jitq_context = JitqContext()
+        input1 = jitq_context.collection(range(0, 4)).map(lambda i: (i, i + 1))
+        input2 = jitq_context.collection(range(0, 4)).map(lambda i: (i, i + 1))
+        result = input1.join(input2.map(lambda t: (t[1], t[0]))) \
+                       .filter(lambda t: t[1] == 2) \
+                       .collect()
+        truth = [(1, 2, 0)]
+        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+
     def test_all_operators(self):
         context = JitqContext()
         input_1 = context.range_(0, 10).map(lambda i: (i, 1))
