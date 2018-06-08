@@ -571,6 +571,28 @@ class TestSortedness(unittest.TestCase):
         self.assertListEqual(sorted(res.astuplelist()), truth)
 
 
+class TestFilterPushDown(unittest.TestCase):
+    def test_push_down_bifurcation(self):
+        context = JitqContext()
+        input_ = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        res = context.collection(input_) \
+                     .join(context.collection(input_)) \
+                     .filter(lambda a: a[1] == a[2]) \
+                     .collect()
+        truth = [(c, a, a) for c, a in input_]
+        self.assertListEqual(sorted(res.astuplelist()), sorted(truth))
+
+    def test_push_up(self):
+        context = JitqContext()
+        input_ = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        res = context.collection(input_) \
+                     .filter(lambda a: a[0] % 2 == 0) \
+                     .join(context.collection(input_)) \
+                     .collect()
+        truth = [(2, 4, 4), (2, 4, 6), (2, 6, 4), (2, 6, 6)]
+        self.assertListEqual(sorted(res.astuplelist()), sorted(truth))
+
+
 class TestIntegration(unittest.TestCase):
 
     @unittest.skip("Backend does not support non-tree DAGs yet")
