@@ -50,8 +50,9 @@ void SimplePredicateMoveAround::optimize() {
             }
 
             // Make sure filter can read all required fields
-            if (std::any_of(filter->read_set.begin(), filter->read_set.end(),
-                            [&](auto c) { return !currentOp->CanRead(c); })) {
+            if (std::any_of(
+                        filter->read_set.begin(), filter->read_set.end(),
+                        [&](auto c) { return !currentOp->HasInOutput(c); })) {
                 continue;
             }
 

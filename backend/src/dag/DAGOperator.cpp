@@ -57,7 +57,7 @@ void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op) {
     to_json(json, *op);
 }
 
-bool DAGOperator::CanRead(const Column *const c) const {
+bool DAGOperator::HasInOutput(const Column *const c) const {
     for (auto const &f : fields) {
         if (*(f.column) == *c) return true;
     }
