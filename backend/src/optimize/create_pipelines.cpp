@@ -15,7 +15,8 @@ using dag::utils::IsInstanceOf;
 bool IsPipelineDriver(DAGOperator *const op) {
     return IsInstanceOf<              //
             DAGMaterializeRowVector,  //
-            DAGEnsureSingleTuple      //
+            DAGEnsureSingleTuple,     //
+            DAGParallelMap            //
             >(op);
 }
 

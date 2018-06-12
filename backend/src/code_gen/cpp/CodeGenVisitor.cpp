@@ -156,6 +156,34 @@ void CodeGenVisitor::operator()(DAGCartesian *op) {
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
 };
 
+void CodeGenVisitor::operator()(DAGParallelMap *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ParallelMapOperator");
+
+    // Call nested code gen
+    const auto inner_plan =
+            GenerateExecuteTuples(dag_->inner_dag(op), context_);
+
+    emitOperatorMake(var_name, "ParallelMapOperator", op, {},
+                     {inner_plan.name});
+}
+
+void CodeGenVisitor::operator()(DAGSplitCollection *const op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "SplitCollectionOperator");
+
+    emitOperatorMake(var_name, "SplitCollectionOperator", op, {},
+                     {"omp_get_num_threads()"});
+}
+
+void CodeGenVisitor::operator()(DAGSplitRange *const op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "SplitRangeOperator");
+
+    emitOperatorMake(var_name, "SplitRangeOperator", op, {},
+                     {"omp_get_num_threads()"});
+}
+
 void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
                                          const std::string &operator_name) {
     assert(dynamic_cast<DAGReduceByKey *>(op) != nullptr ||

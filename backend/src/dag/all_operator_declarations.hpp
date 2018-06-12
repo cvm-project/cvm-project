@@ -16,12 +16,15 @@ class DAGFilter;
 class DAGJoin;
 class DAGMap;
 class DAGMaterializeRowVector;
+class DAGParallelMap;
 class DAGParameterLookup;
 class DAGPipeline;
 class DAGRange;
 class DAGReduce;
 class DAGReduceByKey;
 class DAGReduceByKeyGrouped;
+class DAGSplitCollection;
+class DAGSplitRange;
 
 namespace dag {
 
@@ -35,12 +38,15 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGJoin,                            //
         DAGMap,                             //
         DAGMaterializeRowVector,            //
+        DAGParallelMap,                     //
         DAGParameterLookup,                 //
         DAGPipeline,                        //
         DAGRange,                           //
         DAGReduce,                          //
         DAGReduceByKey,                     //
-        DAGReduceByKeyGrouped               //
+        DAGReduceByKeyGrouped,              //
+        DAGSplitCollection,                 //
+        DAGSplitRange                       //
         >::type;
 
 using AllOperatorPointerTypes = typename boost::mpl::transform_view<

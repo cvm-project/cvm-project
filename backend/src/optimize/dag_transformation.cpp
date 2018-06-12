@@ -11,6 +11,7 @@
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
 #include "materialize_multiple_reads.hpp"
+#include "parallelize.hpp"
 #include "simple_predicate_move_around.hpp"
 #include "type_inference.hpp"
 
@@ -58,6 +59,7 @@ void LoadDagTransformations() {
     RegisterDefault(new DetermineSortedness());
     RegisterDefault(new GroupedReduceByKey());
     RegisterDefault(new MaterializeMultipleReads());
+    RegisterDefault(new Parallelize());
     RegisterDefault(new SimplePredicateMoveAround());
     RegisterDefault(new TypeInference());
     Register("type_check", new TypeInference(true));

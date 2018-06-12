@@ -42,6 +42,7 @@ public:
     void operator()(DAGConstantTuple *op);
     void operator()(DAGMap *op);
     void operator()(DAGMaterializeRowVector *op);
+    void operator()(DAGParallelMap *op);
     void operator()(DAGParameterLookup *op);
     void operator()(DAGPipeline *op);
     void operator()(DAGReduce *op);
@@ -52,6 +53,8 @@ public:
     void operator()(DAGCartesian *op);
     void operator()(DAGReduceByKey *op);
     void operator()(DAGReduceByKeyGrouped *op);
+    void operator()(DAGSplitCollection *op);
+    void operator()(DAGSplitRange *op);
     void operator()(DAGOperator *op);
 
     /*

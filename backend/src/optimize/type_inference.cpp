@@ -133,6 +133,12 @@ const Tuple *ComputeOutputType(const DAG *const dag,
                     {Array::MakeArray(element_type, ArrayLayout::kC, 1)});
         }
 
+        const Tuple *operator()(const DAGParallelMap *const op) const {
+            assert(dag_->has_inner_dag(op));
+            auto const inner_dag = dag_->inner_dag(op);
+            return inner_dag->output().op->tuple->type;
+        }
+
         const Tuple *operator()(const DAGParameterLookup *const op) const {
             return op->tuple->type;
         }
@@ -198,6 +204,14 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             }
 
             return input_type;
+        }
+
+        const Tuple *operator()(const DAGSplitCollection *const op) const {
+            return dag_->predecessor(op)->tuple->type;
+        }
+
+        const Tuple *operator()(const DAGSplitRange *const op) const {
+            return dag_->predecessor(op)->tuple->type;
         }
 
         const Tuple *operator()(const DAGOperator *const op) const {

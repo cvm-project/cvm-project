@@ -63,6 +63,12 @@ void Optimizer::Run(DAG *const dag) {
 #endif  // NDEBUG
     }
 
+    // Parallelize
+    if (config.value("/optimizations/parallelize", false)) {
+        transformations.emplace_back("parallelize");
+        transformations.emplace_back("type_inference");
+    }
+
     // Replace GroupByKey with grouped variant
     if (config.value("/optimizations/grouped-reduce-by-key", false)) {
         transformations.emplace_back("attribute_id_tracking");
