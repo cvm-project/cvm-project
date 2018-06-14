@@ -16,32 +16,31 @@ public:
     ReduceOperator(Upstream *const upstream, Function func)
         : upstream_(upstream), has_returned_(false), function_(func) {}
 
-    INLINE Optional<Tuple> next() {
-        if (has_returned_) {
-            return {};
-        }
-        while (auto ret = upstream_->next()) {
-            acc_ = function_(acc_, ret);
-        }
-        has_returned_ = true;
-        return acc_;
-    }
+    INLINE void open() { has_returned_ = false; }
 
-    INLINE void open() {
+    INLINE Optional<Tuple> next() {
+        if (has_returned_) return {};
+        has_returned_ = true;
+
         upstream_->open();
 
-        if (auto ret = upstream_->next()) {
-            acc_ = ret;
-        } else {
-            throw std::logic_error("Cannot apply reduce on empty input");
+        auto ret = upstream_->next();
+        if (!ret) return {};
+
+        Tuple acc = ret;
+        while (auto ret = upstream_->next()) {
+            acc = function_(acc, ret);
         }
+
+        upstream_->close();
+
+        return acc;
     }
 
-    INLINE void close() { upstream_->close(); }
+    INLINE void close() {}
 
 private:
     Upstream *const upstream_;
-    Tuple acc_;
     bool has_returned_;
     Function function_;
 };
