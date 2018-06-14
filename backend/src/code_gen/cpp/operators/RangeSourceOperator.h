@@ -17,8 +17,6 @@ public:
     RangeSourceOperator(ValueType start, ValueType end, ValueType step)
         : from(start), to(end), step(step) {}
 
-    void printName() { std::cout << "range op\n"; }
-
     void open() { current = from; }
     void close() {}
 
