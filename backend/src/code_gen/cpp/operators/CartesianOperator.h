@@ -5,14 +5,9 @@
 #ifndef CPP_CARTESIANOPERATOR_H
 #define CPP_CARTESIANOPERATOR_H
 
-#include <iostream>
-#include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "Operator.h"
-
-using std::vector;
 
 /**
  * Assumes the left operator is the smaller relation
