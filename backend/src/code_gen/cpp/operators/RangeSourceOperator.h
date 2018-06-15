@@ -9,15 +9,24 @@
 
 #include "Operator.h"
 
-template <class Tuple>
+template <class Upstream, class Tuple>
 class RangeSourceOperator : public Operator {
 public:
     typedef decltype(Tuple().v0) ValueType;
 
-    RangeSourceOperator(ValueType start, ValueType end, ValueType step)
-        : from(start), to(end), step(step) {}
+    RangeSourceOperator(Upstream *const upstream) : upstream(upstream) {}
 
-    void open() { current = from; }
+    void open() {
+        upstream->open();
+
+        auto input_tuple = upstream->next().value;
+        current = input_tuple.v0;
+        to = input_tuple.v1;
+        step = input_tuple.v2;
+
+        upstream->close();
+    }
+
     void close() {}
 
     INLINE Optional<Tuple> next() {
@@ -29,16 +38,16 @@ public:
     }
 
 private:
-    const ValueType from;
-    const ValueType to;
-    const ValueType step;
+    Upstream *const upstream;
     ValueType current{};
+    ValueType to{};
+    ValueType step{};
 };
 
-template <class Tuple, typename ValueType>
-RangeSourceOperator<Tuple> makeRangeSourceOperator(ValueType from, ValueType to,
-                                                   ValueType step) {
-    return RangeSourceOperator<Tuple>(from, to, step);
+template <class Tuple, class Upstream>
+RangeSourceOperator<Upstream, Tuple> makeRangeSourceOperator(
+        Upstream *const upstream) {
+    return RangeSourceOperator<Upstream, Tuple>(upstream);
 };
 
 #endif  // CPP_RANGESOURCEOPERATOR_H

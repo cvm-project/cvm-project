@@ -3,6 +3,7 @@
 
 #include "DAGCartesian.h"
 #include "DAGCollection.h"
+#include "DAGConstantTuple.h"
 #include "DAGFilter.h"
 #include "DAGJoin.h"
 #include "DAGMap.h"

@@ -10,6 +10,7 @@
 class DAG;
 class DAGCartesian;
 class DAGCollection;
+class DAGConstantTuple;
 class DAGFilter;
 class DAGJoin;
 class DAGMap;
@@ -32,6 +33,7 @@ protected:
     const DAG *dag() { return dag_; }
 
     virtual void visit(DAGCollection * /*op*/) {}
+    virtual void visit(DAGConstantTuple * /*op*/) {}
     virtual void visit(DAGRange * /*op*/) {}
     virtual void visit(DAGFilter * /*op*/) {}
     virtual void visit(DAGJoin * /*op*/) {}

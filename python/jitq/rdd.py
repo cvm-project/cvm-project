@@ -13,7 +13,7 @@ from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
 from jitq.c_executor import Executor
 from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
-    OUTPUT_TYPE, DATA_PATH, ADD_INDEX, FROM, TO, STEP
+    OUTPUT_TYPE, DATA_PATH, ADD_INDEX
 from jitq.libs.numba.llvm_ir import get_llvm_ir
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
     make_tuple, item_typeof, numba_type_to_dtype, is_item_type
@@ -419,6 +419,21 @@ class CSVSource(SourceRDD):
         dic[ADD_INDEX] = self.add_index
 
 
+class ConstantTuple(SourceRDD):
+    NAME = 'constant_tuple'
+
+    def __init__(self, context, values):
+        super(ConstantTuple, self).__init__(context)
+        self.values = [str(v) for v in values]
+        self.output_type = item_typeof(values)
+
+    def self_hash(self):
+        return hash("#".join(self.values))
+
+    def self_write_dag(self, dic):
+        dic['values'] = self.values
+
+
 class CollectionSource(SourceRDD):
     NAME = 'collection_source'
 
@@ -480,26 +495,15 @@ class CollectionSource(SourceRDD):
         return (self.data_ptr, self.size)
 
 
-class RangeSource(SourceRDD):
+class Range(UnaryRDD):
     NAME = 'range_source'
 
-    def __init__(self, context, from_, to, step=1):
-        super(RangeSource, self).__init__(context)
-        self.from_ = from_
-        self.to = to
-        self.step = step
-        self.output_type = item_typeof(step + from_)
-
-    def self_hash(self):
-        hash_objects = [
-            str(o) for o in [self.from_, self.to, self.step, self.output_type]
-        ]
-        return hash("#".join(hash_objects))
+    def __init__(self, context, parent):
+        super(Range, self).__init__(context, parent)
+        self.output_type = parent.output_type[0]
 
     def self_write_dag(self, dic):
-        dic[FROM] = self.from_
-        dic[TO] = self.to
-        dic[STEP] = self.step
+        pass
 
 
 class GeneratorSource(SourceRDD):

@@ -25,6 +25,7 @@ DAG *DagFactory::ParseDag(const std::string &dagstr) {
 void DagFactory::load_operators() {
     load_operator<DAGCartesian>();
     load_operator<DAGCollection>();
+    load_operator<DAGConstantTuple>();
     load_operator<DAGFilter>();
     load_operator<DAGJoin>();
     load_operator<DAGMap>();

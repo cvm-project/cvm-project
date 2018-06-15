@@ -116,6 +116,17 @@ void CodeGenVisitor::visit(DAGCollection *op) {
              inputNamePair.second});
 }
 
+void CodeGenVisitor::visit(DAGConstantTuple *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
+
+    const auto return_type = operatorNameTupleTypeMap[op->id].return_type;
+    const auto tuple_arg =
+            (format("%s{%s}") % return_type.name % join(op->values, ",")).str();
+
+    emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {tuple_arg});
+}
+
 void CodeGenVisitor::visit(DAGMap *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
@@ -144,8 +155,7 @@ void CodeGenVisitor::visit(DAGRange *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "RangeSourceOperator");
 
-    emitOperatorMake(var_name, "RangeSourceOperator", op, {},
-                     {op->from, op->to, op->step});
+    emitOperatorMake(var_name, "RangeSourceOperator", op, {}, {});
 };
 
 void CodeGenVisitor::visit(DAGFilter *op) {

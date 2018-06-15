@@ -1,6 +1,6 @@
 import jsonmerge
 
-from jitq.rdd import CollectionSource, RangeSource, GeneratorSource
+from jitq.rdd import CollectionSource, ConstantTuple, Range, GeneratorSource
 
 
 class JitqContext:
@@ -19,7 +19,7 @@ class JitqContext:
         return CollectionSource(self, values, add_index)
 
     def range_(self, from_, to, step=1):
-        return RangeSource(self, from_, to, step)
+        return Range(self, ConstantTuple(self, (from_, to, step)))
 
     def generator(self, func):
         return GeneratorSource(self, func)

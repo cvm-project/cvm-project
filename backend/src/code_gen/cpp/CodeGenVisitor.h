@@ -53,6 +53,7 @@ public:
      * Implementation of DAGVisitor interface
      */
     void visit(DAGCollection *op) override;
+    void visit(DAGConstantTuple *op) override;
     void visit(DAGMap *op) override;
     void visit(DAGReduce *op) override;
     void visit(DAGRange *op) override;

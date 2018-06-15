@@ -54,12 +54,12 @@ set(SOURCE_FILES
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/BackEnd.cpp
         dag/attribute_id.cpp
+        dag/DAGConstantTuple.cpp
         dag/DAG.cpp
         dag/DAGCollection.cpp
         dag/dag_factory.cpp
         dag/DAGFilter.cpp
         dag/DAGOperator.cpp
-        dag/DAGRange.cpp
         dag/collection/field.cpp
         dag/collection/array.cpp
         dag/collection/tuple.cpp
