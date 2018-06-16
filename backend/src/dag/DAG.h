@@ -193,9 +193,16 @@ public:
     /*
      * Normal member functions
      */
+private:
+    Vertex AddOperator(DAGOperator *op, const VertexProperties &properties);
+    Vertex AddOperator(DAGOperator *op, size_t id,
+                       const VertexProperties &properties);
+
+public:
     Vertex AddOperator(DAGOperator *op, DAG *inner_dag = nullptr);
     Vertex AddOperator(DAGOperator *op, size_t id, DAG *inner_dag = nullptr);
     void RemoveOperator(const DAGOperator *op);
+    void MoveOperator(DAG *other_dag, DAGOperator *op);
 
     Edge AddFlow(const DAGOperator *source, const DAGOperator *target,
                  int target_port = 0);

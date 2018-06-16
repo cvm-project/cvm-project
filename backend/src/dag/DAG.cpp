@@ -15,24 +15,32 @@
 #include "DAGOperator.h"
 #include "dag_factory.hpp"
 
+auto DAG::AddOperator(DAGOperator *const op, const VertexProperties &properties)
+        -> Vertex {
+    return AddOperator(op, last_operator_id() + 1, properties);
+}
+
+auto DAG::AddOperator(DAGOperator *const op, const size_t id,
+                      const VertexProperties &properties) -> Vertex {
+    assert(op != nullptr);
+
+    op->id = id;
+    auto ret = this->operator_ids_.insert(op->id);
+    assert(ret.second == true);
+
+    return add_vertex(properties, graph_);
+}
+
 auto DAG::AddOperator(DAGOperator *const op, DAG *const inner_dag) -> Vertex {
     return AddOperator(op, last_operator_id() + 1, inner_dag);
 }
 
 auto DAG::AddOperator(DAGOperator *const op, const size_t id,
                       DAG *const inner_dag) -> Vertex {
-    assert(op != nullptr);
-
-    const std::shared_ptr<DAG> dag_ptr(inner_dag);
-    const std::shared_ptr<DAGOperator> op_ptr(op);
-    op_ptr->id = id;
-    auto ret = this->operator_ids_.insert(op_ptr->id);
-    assert(ret.second == true);
-
-    auto v =
-            add_vertex(VertexInnerDag(dag_ptr, VertexOperator(op_ptr)), graph_);
-
-    return v;
+    std::shared_ptr<DAGOperator> op_ptr(op);
+    std::shared_ptr<DAG> inner_dag_ptr(inner_dag);
+    return AddOperator(op, id,
+                       VertexInnerDag(inner_dag_ptr, VertexOperator(op_ptr)));
 }
 
 void DAG::RemoveOperator(const DAGOperator *const op) {
@@ -41,6 +49,14 @@ void DAG::RemoveOperator(const DAGOperator *const op) {
     assert(boost::distance(inputs(op)) == 0);
     assert(boost::distance(outputs(op)) == 0);
     boost::remove_vertex(v, graph_);
+}
+
+void DAG::MoveOperator(DAG *const other_dag, DAGOperator *const op) {
+    const auto v = to_vertex(op);
+    const auto properties_map = boost::get(boost::vertex_all_t(), graph_);
+    const auto properties = properties_map[v];
+    RemoveOperator(op);
+    other_dag->AddOperator(op, properties);
 }
 
 auto DAG::AddFlow(const DAGOperator *const source,
