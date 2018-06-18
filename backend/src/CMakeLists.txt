@@ -56,7 +56,7 @@ set(SOURCE_FILES
         dag/attribute_id.cpp
         dag/DAG.cpp
         dag/DAGCollection.cpp
-        dag/DAGCreation.cpp
+        dag/dag_factory.cpp
         dag/DAGFilter.cpp
         dag/DAGOperator.cpp
         dag/DAGRange.cpp

@@ -12,8 +12,8 @@
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
-#include "DAGCreation.hpp"
 #include "DAGOperator.h"
+#include "dag_factory.hpp"
 
 auto DAG::AddOperator(DAGOperator *const op) -> Vertex {
     return AddOperator(op, last_operator_id() + 1);
@@ -220,7 +220,8 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         std::string op_name = it.at("op");
         DAGOperator *op = nullptr;
         {
-            std::unique_ptr<DAGOperator> op_ptr(get_operator(op_name));
+            std::unique_ptr<DAGOperator> op_ptr(
+                    DagFactory::instance().MakeOperator(op_name));
             op = op_ptr.get();
             ::from_json(it, *op_ptr);
             dag->AddOperator(op_ptr.release(), op->id);

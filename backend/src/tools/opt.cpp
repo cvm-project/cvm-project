@@ -5,7 +5,7 @@
 #include <boost/program_options.hpp>
 
 #include "dag/DAG.h"
-#include "dag/DAGCreation.hpp"
+#include "dag/dag_factory.hpp"
 #include "generate_dag_plan.hpp"
 #include "optimize/Optimizer.h"
 #include "utils/printDAG.h"
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
                                                : std::cout.rdbuf());
 
     // Read file content and parse
-    std::unique_ptr<DAG> dag(parse_dag(&input));
+    std::unique_ptr<DAG> dag(DagFactory::instance().ParseDag(&input));
 
     if (opt_level > 0) {
         // Optimize

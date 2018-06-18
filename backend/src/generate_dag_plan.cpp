@@ -3,15 +3,13 @@
 #include <cstddef>
 #include <cstring>
 #include <iostream>
-#include <sstream>
-#include <tuple>
 #include <unordered_map>
 
 #include <json.hpp>
 
 #include "code_gen/common/BackEnd.hpp"
 #include "code_gen/cpp/BackEnd.hpp"
-#include "dag/DAGCreation.hpp"
+#include "dag/dag_factory.hpp"
 #include "optimize/Optimizer.h"
 #include "utils/timing.h"
 
@@ -25,7 +23,8 @@ int generate_dag_plan(const char *const conf, const char *const dagstr,
     json = json.flatten();
 
     // Parse DAG
-    std::unique_ptr<DAG> dag(parse_dag(std::string(dagstr)));
+    std::unique_ptr<DAG> dag(
+            DagFactory::instance().ParseDag(std::string(dagstr)));
 
     // Optimize
     Optimizer opt;
