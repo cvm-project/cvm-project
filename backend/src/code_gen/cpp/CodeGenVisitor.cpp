@@ -103,17 +103,8 @@ void CodeGenVisitor::visit(DAGCollection *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CollectionSourceOperator");
 
-    // TODO(sabir): Wrap input into (ptr, size) struct.
-    //              This should go along with a generalization of DAG inputs.
-    auto inputNamePair = getNextInputName();
-    inputNames.push_back(inputNamePair);
-    auto return_type = operatorNameTupleTypeMap[op->id].return_type;
-
-    emitOperatorMake(
-            var_name, "CollectionSourceOperator", op,
-            {op->add_index ? "true" : "false"},
-            {(format("(%s*)%s") % return_type.name % inputNamePair.first).str(),
-             inputNamePair.second});
+    emitOperatorMake(var_name, "CollectionSourceOperator", op,
+                     {op->add_index ? "true" : "false"}, {});
 }
 
 void CodeGenVisitor::visit(DAGConstantTuple *op) {
@@ -138,6 +129,28 @@ void CodeGenVisitor::visit(DAGMap *op) {
             visitLLVMFunc(*op, {input_type}, return_type.name);
 
     emitOperatorMake(var_name, "MapOperator", op, {}, {functor});
+}
+
+void CodeGenVisitor::visit(DAGParameterLookup *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
+
+    auto tuple_type = operatorNameTupleTypeMap[op->id].return_type;
+    auto return_type =
+            TupleTypeDesc{"", {tuple_type.name + "*", "size_t"}, {"v0", "v1"}};
+    return_type.name = emitTupleDefinition(return_type);
+    operatorNameTupleTypeMap[op->id].return_type = return_type;
+
+    auto input_name_pair = getNextInputName();
+    inputNames.push_back(input_name_pair);
+
+    const auto input_arg =
+            (boost::format("%1%{ reinterpret_cast<%2% *>(%3%), %4% }") %
+             return_type.name % tuple_type.name % input_name_pair.first %
+             input_name_pair.second)
+                    .str();
+
+    emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {input_arg});
 }
 
 void CodeGenVisitor::visit(DAGReduce *op) {

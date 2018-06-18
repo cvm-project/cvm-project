@@ -112,6 +112,7 @@ class RDD(abc.ABC):
 
     def execute_dag(self):
         hash_ = str(hash(self))
+        inputs = self.get_inputs()
         dag_dict = self.context.serialization_cache.get(hash_, None)
         if not dag_dict:
             dag_dict = dict()
@@ -125,7 +126,6 @@ class RDD(abc.ABC):
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
                     json.dump(dag_dict, fp=fp, cls=RDDEncoder, indent=3)
-        inputs = self.get_inputs()
         # TODO replace dtype with our output type
         return Executor().execute(self.context, dag_dict, inputs,
                                   numba_type_to_dtype(self.output_type))
@@ -153,6 +153,7 @@ class RDD(abc.ABC):
             op_inputs = operator.self_get_inputs()
             if op_inputs is None:
                 return
+            operator.parameter_num = len(inputs)
             inputs.append(op_inputs)
 
         visitor = RDD.Visitor(collect_inputs)
@@ -434,8 +435,8 @@ class ConstantTuple(SourceRDD):
         dic['values'] = self.values
 
 
-class CollectionSource(SourceRDD):
-    NAME = 'collection_source'
+class ParameterLookup(SourceRDD):
+    NAME = 'parameter_lookup'
 
     """
     accepts any python collections, numpy arrays or pandas dataframes
@@ -445,11 +446,12 @@ class CollectionSource(SourceRDD):
     to prevent freeing the input memory before the end of computation
     """
 
-    def __init__(self, context, values, add_index=False):
+    def __init__(self, context, values):
+        super(ParameterLookup, self).__init__(context)
+
         # pylint: disable=len-as-condition
         # values could also be a numpy array
         assert len(values) > 0, "Empty collection not allowed"
-        super(CollectionSource, self).__init__(context)
 
         if isinstance(values, DataFrame):
             self.array = values.to_records(index=False)
@@ -464,6 +466,31 @@ class CollectionSource(SourceRDD):
             self.output_type = item_typeof(values[0])
             self.array = np.array(
                 values, dtype=numba_type_to_dtype(self.output_type))
+
+        self.data_ptr = self.array.__array_interface__['data'][0]
+        self.size = self.array.shape[0]
+        self.parameter_num = -1
+
+    def self_hash(self):
+        hash_objects = [str(self.output_type)]
+        return hash("#".join(hash_objects))
+
+    def self_write_dag(self, dic):
+        dic['parameter_num'] = self.parameter_num
+
+    def self_get_inputs(self):
+        return (self.data_ptr, self.size)
+
+
+class CollectionSource(UnaryRDD):
+    NAME = 'collection_source'
+
+    def __init__(self, context, parent, add_index):
+        super(CollectionSource, self).__init__(context, parent)
+
+        self.output_type = self.parents[0].output_type
+        self.add_index = add_index
+
         if add_index:
             if isinstance(self.output_type, types.Tuple):
                 child_types = self.output_type.types
@@ -480,19 +507,12 @@ class CollectionSource(SourceRDD):
                 child_types = (self.output_type,)
                 self.output_type = make_tuple((typeof(0),) + child_types)
 
-        self.data_ptr = self.array.__array_interface__['data'][0]
-        self.size = self.array.shape[0]
-        self.add_index = add_index
-
     def self_hash(self):
         hash_objects = [str(self.output_type), str(self.add_index)]
         return hash("#".join(hash_objects))
 
     def self_write_dag(self, dic):
         dic[ADD_INDEX] = self.add_index
-
-    def self_get_inputs(self):
-        return (self.data_ptr, self.size)
 
 
 class Range(UnaryRDD):

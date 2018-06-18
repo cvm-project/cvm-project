@@ -48,7 +48,9 @@ void SimplePredicateMoveAround::optimize() {
             bool can_swap = false;
             for (auto const flow : dag_->in_flows(currentOp)) {
                 auto const pred = flow.source;
-                if (std::all_of(filter->read_set.begin(),
+                if (currentOp->name() != "collection_source" &&
+                    currentOp->name() != "range_source" &&
+                    std::all_of(filter->read_set.begin(),
                                 filter->read_set.end(), [&](auto c) {
                                     return pred->HasInOutput(c.get());
                                 })) {

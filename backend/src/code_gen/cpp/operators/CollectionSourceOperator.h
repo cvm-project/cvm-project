@@ -9,13 +9,21 @@
 
 #include "Operator.h"
 
-template <class Tuple, bool add_index = false>
+template <class Tuple, bool add_index, class Upstream>
 class CollectionSourceOperator : public Operator {
 public:
-    CollectionSourceOperator(Tuple *vals, size_t size)
-        : values(vals), size(size) {}
+    CollectionSourceOperator(Upstream *const upstream) : upstream(upstream) {}
 
-    INLINE void open() { index = 0; }
+    INLINE void open() {
+        upstream->open();
+        auto input_tuple = upstream->next().value;
+        upstream->close();
+        // XXX: This is currently a memory leak! We need a clear way to manage
+        //      memory that releases allocated memory as soon as it is not used
+        values = input_tuple.v0;
+        size = input_tuple.v1;
+        index = 0;
+    }
 
     INLINE Optional<Tuple> next() {
         if (index < size) {
@@ -29,9 +37,10 @@ public:
     INLINE void close() {}
 
 private:
-    const size_t size;
+    Upstream *const upstream;
+    size_t size;
     size_t index;
-    const void *values;
+    void *values;
 
     INLINE Tuple build_result() {
         Tuple res;
@@ -48,10 +57,10 @@ private:
     }
 };
 
-template <class Tuple, bool add_index = false>
-CollectionSourceOperator<Tuple, add_index> makeCollectionSourceOperator(
-        Tuple *data_ptr, size_t size) {
-    return CollectionSourceOperator<Tuple, add_index>(data_ptr, size);
-};
+template <class Tuple, bool add_index, class Upstream>
+CollectionSourceOperator<Tuple, add_index, Upstream>
+makeCollectionSourceOperator(Upstream *const upstream) {
+    return CollectionSourceOperator<Tuple, add_index, Upstream>(upstream);
+}
 
 #endif  // CPP_COLLECTIONSOURCEOPERATOR_H

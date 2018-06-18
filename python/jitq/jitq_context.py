@@ -1,6 +1,7 @@
 import jsonmerge
 
-from jitq.rdd import CollectionSource, ConstantTuple, Range, GeneratorSource
+from jitq.rdd import CollectionSource, ConstantTuple, GeneratorSource, \
+    Range, ParameterLookup
 
 
 class JitqContext:
@@ -16,7 +17,7 @@ class JitqContext:
         raise NotImplementedError
 
     def collection(self, values, add_index=False):
-        return CollectionSource(self, values, add_index)
+        return CollectionSource(self, ParameterLookup(self, values), add_index)
 
     def range_(self, from_, to, step=1):
         return Range(self, ConstantTuple(self, (from_, to, step)))
