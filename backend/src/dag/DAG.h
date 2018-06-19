@@ -53,8 +53,7 @@ BOOST_INSTALL_PROPERTY(edge, source_port);
 BOOST_INSTALL_PROPERTY(edge, target_port);
 }  // namespace boost
 
-// TODO(sabir): refactor class in order to remove custom destructor
-class DAG {  // NOLINT hicpp-special-member-functions
+class DAG {
 public:
     /*
      * Types related to the graph representation using the Boost graph library
@@ -151,14 +150,6 @@ public:
                                   const OutFlowRange>;
     using OperatorRange =
             boost::transformed_range<VertexToOperatorFunc, const VertexRange>;
-
-    /*
-     * Constructors/destructor
-     */
-    DAG() = default;
-    DAG(DAG &&other) = default;
-
-    ~DAG() = default;
 
     /*
      * Normal member functions
