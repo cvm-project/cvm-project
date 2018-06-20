@@ -25,7 +25,7 @@ void Tuple::from_json(const nlohmann::json &json) {
         std::shared_ptr<Field> field;
         auto field_type = this->type->field_types.at(pos);
         if (it.at("type") == "array") {
-            field = std::make_shared<Array>(field_type, it, pos);
+            field = std::make_shared<Array>(field_type, pos, it);
         } else {
             field = std::make_shared<Atomic>(field_type, pos);
         }

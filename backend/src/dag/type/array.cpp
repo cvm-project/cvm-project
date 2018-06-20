@@ -37,9 +37,9 @@ string Array::to_string() const {
 
 void Array::to_json(nlohmann::json *json) const {
     json->emplace("type", "array");
-    json->at("layout") = layout;
+    json->emplace("layout", layout);
     json->emplace("dim", number_dim);
-    json->at("type") = make_raw(tuple_type);
+    json->emplace("output_type", make_raw(tuple_type));
 }
 
 string to_string(const ArrayLayout &layout) {
@@ -63,7 +63,7 @@ string to_string(const ArrayLayout &layout) {
 raw_ptr<const Array> nlohmann::adl_serializer<raw_ptr<const Array>>::from_json(
         const nlohmann::json &json) {
     // tuple
-    raw_ptr<const dag::type::Tuple> tuple = json.at("type");
+    raw_ptr<const dag::type::Tuple> tuple = json.at("output_type");
     return raw_ptr<const Array>(
             Array::MakeArray(tuple.get(), json.at("layout"), json.at("dim")));
 }
