@@ -25,24 +25,6 @@ def clean_rdds(rdd):
         clean_rdds(par)
 
 
-def numba_abi_to_llvm_abi(type_):
-    if isinstance(type_, types.List):
-        inner_type = type_.dtype
-        out = types.List(numba_abi_to_llvm_abi(inner_type), reflected=False)
-    elif isinstance(type_, types.Tuple):
-        type_type = type(type_)
-        child_types = []
-        for child_type in type_.types:
-            child_types.append(numba_abi_to_llvm_abi(child_type))
-        out = type_type(child_types)
-    elif isinstance(type_, types.UniTuple):
-        type_type = type(type_)
-        out = type_type(numba_abi_to_llvm_abi(type_.dtype), type_.count)
-    else:
-        out = type_
-    return out
-
-
 def get_llvm_ir_and_output_type(func, arg_types=None, opts=None):
     opts_ = {OPT_CONST_PROPAGATE}
     if opts is not None:
