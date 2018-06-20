@@ -3,7 +3,6 @@ import dis
 import json
 
 import io
-import re
 import numba
 import numba.types as types
 from numba import typeof
@@ -15,10 +14,9 @@ from jitq.c_executor import Executor
 from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
     OUTPUT_TYPE, DATA_PATH, ADD_INDEX, FROM, TO, STEP
+from jitq.libs.numba.llvm_ir import get_llvm_ir
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
-    make_tuple, item_typeof, numba_type_to_dtype, is_item_type, \
-    Timer
-from jitq.libs.numba.llvm_ir import cfunc
+    make_tuple, item_typeof, numba_type_to_dtype, is_item_type
 
 
 def clean_rdds(rdd):
@@ -53,30 +51,17 @@ def get_llvm_ir_and_output_type(func, arg_types=None, opts=None):
         arg_types = []
     func = ast_optimize(func, opts_)
 
-    timer = Timer()
-    timer.start()
     dec_func = numba.njit(
         tuple(arg_types), fastmath=FAST_MATH, parallel=True)(func)
-    timer.end()
 
     output_type = dec_func.nopython_signatures[0].return_type
     output_type = replace_unituple(output_type)
 
     input_type = dec_func.nopython_signatures[0].args
 
-    cfunc_code = cfunc(output_type(*input_type), fastmath=FAST_MATH)(func)
-    code = cfunc_code.inspect_llvm()
-    # Extract just the code of the function
-    # pylint: disable=no-member
-    # sabir 14.02.18: somehow pylint does not understand S = DOTALL = ... in re
-    code_group = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
-    code_string = code_group.group(0)
-    code_string = re.sub("attributes.*}", "", code_string)
+    code = get_llvm_ir(output_type(*input_type), func, fastmath=FAST_MATH)
 
-    # make the function name not unique
-    code_string = re.sub("@.*\".*\"", "@cfuncnotuniquename", code_string)
-
-    return code_string, output_type
+    return code, output_type
 
 
 def get_llvm_ir_for_generator(func):
