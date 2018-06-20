@@ -42,9 +42,12 @@ protected:
         for (size_t i = 0; i < field->field_type()->number_dim; i++) {
             sizes.push_back("size_t size" + std::to_string(i));
         }
+
         this->ret_type_string_ =
-                (boost::basic_format<char>("struct { struct {%s;}* v0; %s;}") %
-                 join(item_types, ";") % join(sizes, ";"))
+                (boost::basic_format<char>(
+                         "struct { struct {%s;}* v0; size_t sizes [%s];}") %
+                 join(item_types, ";") %
+                 std::to_string(field->field_type()->number_dim))
                         .str();
     }
 
