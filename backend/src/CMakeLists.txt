@@ -7,6 +7,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/cmake/")
 include_directories("${PROJECT_SOURCE_DIR}")
 
 include (ReleaseAsDefault)
+include (ExternalProject)
 
 # Setup clang-format
 find_package (ClangFormat 5.0 EXACT)
@@ -47,6 +48,40 @@ find_package(Boost 1.58 REQUIRED COMPONENTS
         program_options
     )
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
+# Set up google unit test framework
+ExternalProject_Add(googletest
+        SOURCE_DIR      "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/googletest"
+        PREFIX          "${CMAKE_BINARY_DIR}/googletest"
+        TEST_COMMAND    ""
+        CMAKE_ARGS      "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER};-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER};-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/googletest"
+    )
+
+set(GTEST_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/googletest/include")
+include_directories(SYSTEM ${GTEST_INCLUDE_DIRS})
+
+ExternalProject_Get_Property(googletest INSTALL_DIR)
+set(GTEST_INSTALL_DIR ${INSTALL_DIR})
+
+set(GTEST_LIBRARY_GTEST gtest)
+set(GTEST_LIBRARY_GTESTMAIN gtest_main)
+set(GTEST_LIBRARY_GTEST_PATH "${GTEST_INSTALL_DIR}/lib/libgtest.a")
+set(GTEST_LIBRARY_GTESTMAIN_PATH "${GTEST_INSTALL_DIR}/lib/libgtest_main.a")
+add_library(${GTEST_LIBRARY_GTEST} UNKNOWN IMPORTED)
+add_library(${GTEST_LIBRARY_GTESTMAIN} UNKNOWN IMPORTED)
+set_property(TARGET ${GTEST_LIBRARY_GTEST} PROPERTY IMPORTED_LOCATION
+    ${GTEST_LIBRARY_GTEST_PATH} )
+set_property(TARGET ${GTEST_LIBRARY_GTESTMAIN} PROPERTY IMPORTED_LOCATION
+    ${GTEST_LIBRARY_GTESTMAIN_PATH} )
+add_dependencies(${GTEST_LIBRARY_GTEST} googletest)
+add_dependencies(${GTEST_LIBRARY_GTESTMAIN} googletest)
+set(GTEST_LIBRARIES
+        ${GTEST_LIBRARY_GTEST}
+        ${GTEST_LIBRARY_GTESTMAIN}
+        pthread
+)
+
+include(GoogleTest)
 
 # Set up library
 set(SOURCE_FILES
@@ -127,7 +162,15 @@ if(cppcheck_FOUND)
             "--inline-suppr"
             "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
             "--suppress='*:${GRAPHVIZ_INCLUDE_DIRS}/*'"
+            "--suppress='*:${GTEST_INCLUDE_DIRS}/*'"
             "--suppress='*:${CATCH_INCLUDE_DIRS}/*'"
             "--suppress='*:${JSONLIB_INCLUDE_DIRS}/*'"
         )
 endif()
+
+# Set up google unit test target
+add_executable(gtest_tests
+        tests/hello.cpp
+    )
+target_link_libraries(gtest_tests "${GTEST_LIBRARIES}")
+gtest_discover_tests(gtest_tests)
