@@ -170,7 +170,7 @@ endif()
 
 # Set up google unit test target
 add_executable(gtest_tests
-        tests/hello.cpp
+        tests/visitor_test.cpp
     )
 target_link_libraries(gtest_tests "${GTEST_LIBRARIES}")
 gtest_discover_tests(gtest_tests)
