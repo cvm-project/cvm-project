@@ -6,7 +6,7 @@
             "op": "collection_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": []
@@ -17,7 +17,7 @@
             "op": "range_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [],
@@ -29,10 +29,10 @@
             "op": "cartesian",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -46,10 +46,10 @@
             "op": "map",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -62,10 +62,10 @@
             "op": "reduce_by_key",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [

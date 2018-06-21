@@ -6,7 +6,7 @@
             "op": "range_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [],
@@ -19,10 +19,10 @@
             "op": "map",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -35,7 +35,7 @@
             "op": "collection_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": []
@@ -46,10 +46,10 @@
             "op": "map",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -61,13 +61,13 @@
             "op": "join",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -81,10 +81,10 @@
             "op": "map",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -97,10 +97,10 @@
             "op": "reduce_by_key",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -113,7 +113,7 @@
             "op": "collection_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": []
@@ -124,10 +124,10 @@
             "op": "map",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -139,16 +139,16 @@
             "op": "cartesian",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -162,16 +162,16 @@
             "op": "filter",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -184,7 +184,7 @@
             "op": "map",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -197,7 +197,7 @@
             "op": "reduce",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [

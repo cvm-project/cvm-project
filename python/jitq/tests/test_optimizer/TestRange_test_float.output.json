@@ -6,7 +6,7 @@
             "op": "range_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "double"
                 }
             ],
             "predecessors": [],

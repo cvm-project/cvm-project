@@ -6,13 +6,13 @@
             "op": "collection_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "int"
                 },
                 {
-                    "type": "array"
+                    "type": "int"
                 }
             ],
             "predecessors": []

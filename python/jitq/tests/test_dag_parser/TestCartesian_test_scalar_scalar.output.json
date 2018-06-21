@@ -6,7 +6,7 @@
             "op": "collection_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": []
@@ -17,7 +17,7 @@
             "op": "collection_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": []
@@ -27,10 +27,10 @@
             "op": "cartesian",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [

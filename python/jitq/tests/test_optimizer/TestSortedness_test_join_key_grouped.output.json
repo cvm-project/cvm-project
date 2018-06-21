@@ -6,7 +6,7 @@
             "op": "range_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [],
@@ -19,10 +19,10 @@
             "op": "map",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -35,7 +35,7 @@
             "op": "range_source",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [],
@@ -47,10 +47,10 @@
             "op": "join",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
@@ -64,10 +64,10 @@
             "op": "reduce_by_key_grouped",
             "output_type": [
                 {
-                    "type": "array"
+                    "type": "long"
                 },
                 {
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
