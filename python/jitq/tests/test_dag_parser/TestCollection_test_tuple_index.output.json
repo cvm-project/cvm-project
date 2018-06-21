@@ -1,8 +1,22 @@
 {
     "dag": [
         {
-            "add_index": true,
             "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "parameter_num": 0,
+            "predecessors": []
+        },
+        {
+            "add_index": true,
+            "id": 1,
             "op": "collection_source",
             "output_type": [
                 {
@@ -15,7 +29,9 @@
                     "type": "long"
                 }
             ],
-            "predecessors": []
+            "predecessors": [
+                0
+            ]
         }
     ]
 }

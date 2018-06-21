@@ -1,8 +1,22 @@
 {
     "dag": [
         {
-            "add_index": false,
             "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "parameter_num": 0,
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
             "op": "collection_source",
             "output_type": [
                 {
@@ -12,11 +26,13 @@
                     "type": "long"
                 }
             ],
-            "predecessors": []
+            "predecessors": [
+                0
+            ]
         },
         {
             "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.34.i = add nsw i64 %.2, %.1\n  ret i64 %.34.i\n}\n\n\n\n",
-            "id": 1,
+            "id": 2,
             "op": "map",
             "output_type": [
                 {
@@ -24,7 +40,7 @@
                 }
             ],
             "predecessors": [
-                0
+                1
             ]
         }
     ]

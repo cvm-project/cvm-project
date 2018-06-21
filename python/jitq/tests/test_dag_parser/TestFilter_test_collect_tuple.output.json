@@ -1,9 +1,8 @@
 {
     "dag": [
         {
-            "add_index": false,
             "id": 0,
-            "op": "collection_source",
+            "op": "parameter_lookup",
             "output_type": [
                 {
                     "type": "long"
@@ -12,12 +11,13 @@
                     "type": "long"
                 }
             ],
+            "parameter_num": 0,
             "predecessors": []
         },
         {
-            "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.41.i = srem i64 %.1, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  ret i1 %.74.i\n}\n\n\n\n",
+            "add_index": false,
             "id": 1,
-            "op": "filter",
+            "op": "collection_source",
             "output_type": [
                 {
                     "type": "long"
@@ -28,6 +28,22 @@
             ],
             "predecessors": [
                 0
+            ]
+        },
+        {
+            "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.41.i = srem i64 %.1, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  ret i1 %.74.i\n}\n\n\n\n",
+            "id": 2,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
             ]
         }
     ]

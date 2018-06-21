@@ -1,9 +1,8 @@
 {
     "dag": [
         {
-            "add_index": false,
             "id": 0,
-            "op": "collection_source",
+            "op": "parameter_lookup",
             "output_type": [
                 {
                     "type": "long"
@@ -12,6 +11,7 @@
                     "type": "long"
                 }
             ],
+            "parameter_num": 0,
             "predecessors": []
         },
         {
@@ -21,12 +21,41 @@
             "output_type": [
                 {
                     "type": "long"
+                },
+                {
+                    "type": "long"
                 }
             ],
-            "predecessors": []
+            "predecessors": [
+                0
+            ]
         },
         {
             "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "parameter_num": 1,
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 3,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2
+            ]
+        },
+        {
+            "id": 4,
             "op": "cartesian",
             "output_type": [
                 {
@@ -40,8 +69,8 @@
                 }
             ],
             "predecessors": [
-                0,
-                1
+                1,
+                3
             ]
         }
     ]

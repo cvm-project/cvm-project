@@ -1,9 +1,8 @@
 {
     "dag": [
         {
-            "add_index": false,
             "id": 0,
-            "op": "collection_source",
+            "op": "parameter_lookup",
             "output_type": [
                 {
                     "type": "long"
@@ -12,12 +11,13 @@
                     "type": "long"
                 }
             ],
+            "parameter_num": 0,
             "predecessors": []
         },
         {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+            "add_index": false,
             "id": 1,
-            "op": "reduce_by_key",
+            "op": "collection_source",
             "output_type": [
                 {
                     "type": "long"
@@ -28,6 +28,22 @@
             ],
             "predecessors": [
                 0
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+            "id": 2,
+            "op": "reduce_by_key",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
             ]
         }
     ]
