@@ -1,17 +1,37 @@
 {
     "dag": [
         {
-            "from": 10,
             "id": 0,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "10",
+                "20",
+                "1"
+            ]
+        },
+        {
+            "id": 1,
             "op": "range_source",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
-            "predecessors": [],
-            "step": 1,
-            "to": 20
+            "predecessors": [
+                0
+            ]
         }
     ]
 }

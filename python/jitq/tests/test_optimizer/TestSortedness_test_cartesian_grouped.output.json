@@ -12,20 +12,40 @@
             "predecessors": []
         },
         {
-            "from": 0,
             "id": 1,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "2",
+                "1"
+            ]
+        },
+        {
+            "id": 2,
             "op": "range_source",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
-            "predecessors": [],
-            "step": 1,
-            "to": 2
+            "predecessors": [
+                1
+            ]
         },
         {
-            "id": 2,
+            "id": 3,
             "op": "cartesian",
             "output_type": [
                 {
@@ -37,12 +57,12 @@
             ],
             "predecessors": [
                 0,
-                1
+                2
             ]
         },
         {
             "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.16.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.2, 0\n  %.16.fca.1.insert = insertvalue { i64, i64 } %.16.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.16.fca.1.insert\n}\n\n\n\n",
-            "id": 3,
+            "id": 4,
             "op": "map",
             "output_type": [
                 {
@@ -53,12 +73,12 @@
                 }
             ],
             "predecessors": [
-                2
+                3
             ]
         },
         {
             "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-            "id": 5,
+            "id": 6,
             "op": "reduce_by_key_grouped",
             "output_type": [
                 {
@@ -69,7 +89,7 @@
                 }
             ],
             "predecessors": [
-                3
+                4
             ]
         }
     ]

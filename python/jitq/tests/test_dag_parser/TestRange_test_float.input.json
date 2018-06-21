@@ -1,17 +1,37 @@
 {
     "dag": [
         {
-            "from": 10.5,
             "id": 0,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "double"
+                },
+                {
+                    "type": "double"
+                },
+                {
+                    "type": "double"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "10.5",
+                "20.0",
+                "2.0"
+            ]
+        },
+        {
+            "id": 1,
             "op": "range_source",
             "output_type": [
                 {
                     "type": "double"
                 }
             ],
-            "predecessors": [],
-            "step": 2.0,
-            "to": 20.0
+            "predecessors": [
+                0
+            ]
         }
     ]
 }
