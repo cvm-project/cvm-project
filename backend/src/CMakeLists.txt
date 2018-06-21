@@ -84,15 +84,6 @@ target_link_libraries(generate PUBLIC
         ${LLVM_LIBS}
     )
 
-# Set up main executable
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} PUBLIC
-        ${GRAPHVIZ_GVC_LIBRARY}
-        ${GRAPHVIZ_CGRAPH_LIBRARY}
-        ${LLVM_LIBS}
-        generate
-    )
-
 # Set up benchmark utils
 add_executable(benchmark benchmarks/main.cpp)
 

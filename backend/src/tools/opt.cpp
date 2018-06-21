@@ -6,13 +6,14 @@
 
 #include "dag/DAG.h"
 #include "dag/DAGCreation.hpp"
+#include "generate_dag_plan.hpp"
 #include "optimize/Optimizer.h"
 #include "utils/printDAG.h"
 
 namespace po = boost::program_options;
 
 // Enum and I/O of output formats
-enum class OutputFormat { kJson, kDot };
+enum class OutputFormat { kJson, kDot, kBin };
 
 std::istream& operator>>(std::istream& in, OutputFormat& format) {
     std::string token;
@@ -21,6 +22,8 @@ std::istream& operator>>(std::istream& in, OutputFormat& format) {
         format = OutputFormat::kJson;
     } else if (token == "DOT") {
         format = OutputFormat::kDot;
+    } else if (token == "BIN") {
+        format = OutputFormat::kBin;
     } else {
         in.setstate(std::ios_base::failbit);
     }
@@ -34,6 +37,9 @@ std::ostream& operator<<(std::ostream& out, const OutputFormat& format) {
             break;
         case OutputFormat::kDot:
             out << "DOT";
+            break;
+        case OutputFormat::kBin:
+            out << "BIN";
             break;
         default:
             out.setstate(std::ios_base::failbit);
@@ -61,7 +67,7 @@ int main(int argc, char* argv[]) {
             ("output-format,f",
              po::value<OutputFormat>(&output_format)
                      ->default_value(OutputFormat::kJson),
-             "Output format (JSON, DOT)");
+             "Output format (JSON, DOT, BIN)");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -97,6 +103,10 @@ int main(int argc, char* argv[]) {
         case OutputFormat::kDot:
             ToDotStream(dag.get(), &output);
             break;
+        case OutputFormat::kBin: {
+            nlohmann::json json(dag);
+            generate_dag_plan("{}", json.dump().c_str(), 0);
+        } break;
         default:
             throw std::runtime_error("Invalid output format");
     }
