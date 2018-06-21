@@ -1,10 +1,13 @@
 import argparse
+import json
 import sys
 import unittest
-from shutil import copyfile
 
-from jitq.tests.test_optimizer import TEST_CLASSES
 from jitq.utils import get_project_path
+
+
+def format_json(json_string):
+    return json.dumps(json.loads(json_string), sort_keys=True, indent=4)
 
 
 def enable_dag_dumping():
@@ -15,9 +18,12 @@ def enable_dag_dumping():
         cls = type(self).__name__
         # read generated json
         inp = get_project_path() + "/dag.json"
+        from jitq.tests.test_optimizer import TEST_CLASSES
         for t_cl in TEST_CLASSES:
             out = t_cl.TEST_DIR + "/" + cls + "_" + func + ".input.json"
-            copyfile(inp, out)
+            with open(inp, 'r')as input_file:
+                with open(out, 'w') as output_file:
+                    output_file.write(format_json(input_file.read()))
 
     def wrapper(func):
         def inner(self):

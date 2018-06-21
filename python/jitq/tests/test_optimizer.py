@@ -2,21 +2,17 @@
 
 import argparse
 import glob
-import json
 import subprocess
 import unittest
 
 from os.path import join, realpath, dirname, basename
 from abc import ABC, abstractproperty
+from jitq.tests.helpers import format_json
 
 SCRIPT_DIR = realpath(dirname(__file__))
 TEST_BASE_DIR = SCRIPT_DIR
 TEST_EXE = join(dirname(dirname(dirname(SCRIPT_DIR))),
                 "backend", "build", "opt")
-
-
-def format_json(json_string):
-    return json.dumps(json.loads(json_string), sort_keys=True, indent=4)
 
 
 class OptimizerTestCase:
