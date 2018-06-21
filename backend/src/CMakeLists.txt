@@ -21,22 +21,22 @@ message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
 add_definitions(${LLVM_DEFINITIONS})
-include_directories(${LLVM_INCLUDE_DIRS})
+include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
 llvm_map_components_to_libnames(LLVM_LIBS support core irreader)
 
 # Set up GraphViz
 find_package(GraphViz REQUIRED)
-include_directories(${GRAPHVIZ_INCLUDE_DIRS})
+include_directories(SYSTEM ${GRAPHVIZ_INCLUDE_DIRS})
 
 # Set up Catch (for unit tests)
 set(CATCH_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/catch/single_include")
 get_filename_component(CATCH_INCLUDE_DIRS "${CATCH_INCLUDE_DIRS}" ABSOLUTE)
-include_directories(${CATCH_INCLUDE_DIRS})
+include_directories(SYSTEM ${CATCH_INCLUDE_DIRS})
 
 # Set up JSON library
 set(JSONLIB_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/json/src")
 get_filename_component(JSONLIB_INCLUDE_DIRS "${JSONLIB_INCLUDE_DIRS}" ABSOLUTE)
-include_directories(${JSONLIB_INCLUDE_DIRS})
+include_directories(SYSTEM ${JSONLIB_INCLUDE_DIRS})
 
 # Set up compilation options
 set(CMAKE_CXX_STANDARD 14)
@@ -46,7 +46,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 find_package(Boost 1.58 REQUIRED COMPONENTS
         program_options
     )
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 # Set up library
 set(SOURCE_FILES
