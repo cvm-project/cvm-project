@@ -1,39 +1,39 @@
 {
-   "dag": [
-      {
-         "output_type": [
-            {
-               "type": "long"
-            }
-         ],
-         "add_index": false,
-         "id": 0,
-         "predecessors": [],
-         "op": "collection_source"
-      },
-      {
-         "output_type": [
-            {
-               "type": "long"
-            }
-         ],
-         "add_index": false,
-         "id": 1,
-         "predecessors": [],
-         "op": "collection_source"
-      },
-      {
-         "output_type": [
-            {
-               "type": "long"
-            }
-         ],
-         "id": 2,
-         "predecessors": [
-            0,
-            1
-         ],
-         "op": "join"
-      }
-   ]
+    "dag": [
+        {
+            "add_index": false,
+            "id": 0,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0,
+                1
+            ]
+        }
+    ]
 }

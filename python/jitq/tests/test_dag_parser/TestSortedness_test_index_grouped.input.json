@@ -1,34 +1,34 @@
 {
-   "dag": [
-      {
-         "output_type": [
-            {
-               "type": "long"
-            },
-            {
-               "type": "long"
-            }
-         ],
-         "add_index": true,
-         "id": 0,
-         "predecessors": [],
-         "op": "collection_source"
-      },
-      {
-         "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-         "id": 1,
-         "predecessors": [
-            0
-         ],
-         "op": "reduce_by_key",
-         "output_type": [
-            {
-               "type": "long"
-            },
-            {
-               "type": "long"
-            }
-         ]
-      }
-   ]
+    "dag": [
+        {
+            "add_index": true,
+            "id": 0,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+            "id": 1,
+            "op": "reduce_by_key",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0
+            ]
+        }
+    ]
 }

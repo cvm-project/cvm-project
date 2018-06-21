@@ -1,18 +1,18 @@
 {
-   "dag": [
-      {
-         "output_type": [
-            {
-               "type": "int"
-            },
-            {
-               "type": "int"
-            }
-         ],
-         "add_index": false,
-         "id": 0,
-         "predecessors": [],
-         "op": "collection_source"
-      }
-   ]
+    "dag": [
+        {
+            "add_index": false,
+            "id": 0,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                }
+            ],
+            "predecessors": []
+        }
+    ]
 }

@@ -1,17 +1,17 @@
 {
-   "dag": [
-      {
-         "to": 10,
-         "predecessors": [],
-         "output_type": [
-            {
-               "type": "long"
-            }
-         ],
-         "step": 1,
-         "id": 0,
-         "op": "range_source",
-         "from": 0
-      }
-   ]
+    "dag": [
+        {
+            "from": 0,
+            "id": 0,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "step": 1,
+            "to": 10
+        }
+    ]
 }
