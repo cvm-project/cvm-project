@@ -55,9 +55,12 @@ class TestBase(ABC):
         pass
 
     @classmethod
+    def input_files(cls):
+        return glob.glob(join(cls.TEST_DIR, "*.input.json"))
+
+    @classmethod
     def test_names(cls):
-        input_files = glob.glob(join(cls.TEST_DIR, "*.input.json"))
-        return (basename(f)[:-len(".input.json")] for f in input_files)
+        return (basename(f)[:-len(".input.json")] for f in cls.input_files())
 
     # Attach a test case for each input file
     @classmethod
@@ -77,6 +80,13 @@ class TestBase(ABC):
 class TestParser(unittest.TestCase, TestBase):
     TEST_DIR = join(TEST_BASE_DIR, "test_dag_parser")
     TEST_OPTIONS = []
+
+    def test_sanity(self):
+        for fname in self.input_files():
+            with open(fname) as input_file:
+                output_file_name = fname[:-len(".input.json")] + ".output.json"
+                with open(output_file_name) as output_file:
+                    self.assertEqual(input_file.read(), output_file.read())
 
 
 # Test class instantiation for optimizer
