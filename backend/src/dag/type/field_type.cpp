@@ -25,6 +25,5 @@ raw_ptr<const FieldType> nlohmann::adl_serializer<
 
 void nlohmann::adl_serializer<raw_ptr<const FieldType>>::to_json(
         nlohmann::json &json, raw_ptr<const FieldType> type) {
-    json.emplace("type", "array");
     type->to_json(&json);
 }
