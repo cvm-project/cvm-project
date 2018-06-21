@@ -77,12 +77,10 @@ set(SOURCE_FILES
         optimize/SimplePredicateMoveAround.cpp
         utils/c_type_to_llvm.cpp
         utils/DAGVisitor.cpp
-        utils/printDAG.cpp
         utils/utils.cpp
          )
 add_library(generate SHARED ${SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
-        ${GRAPHVIZ_GVC_LIBRARY}
         ${LLVM_LIBS}
     )
 
@@ -112,11 +110,14 @@ add_test(LLVMParser LLVMParser_tests)
 # Set up optimizer command line tool
 add_executable(opt-cli
         tools/opt.cpp
+        utils/printDAG.cpp
     )
 set_target_properties(opt-cli PROPERTIES
         OUTPUT_NAME "opt"
     )
 target_link_libraries(opt-cli PUBLIC
+        ${GRAPHVIZ_CGRAPH_LIBRARY}
+        ${GRAPHVIZ_GVC_LIBRARY}
         ${Boost_LIBRARIES}
         generate
     )
