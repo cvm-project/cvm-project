@@ -89,6 +89,7 @@ int main(int argc, char* argv[]) {
     // Read file content and parse
     std::unique_ptr<DAG> dag(DagFactory::instance().ParseDag(&input));
 
+    // cppcheck-suppress knownConditionTrueFalse
     if (opt_level > 0) {
         // Optimize
         Optimizer opt;
