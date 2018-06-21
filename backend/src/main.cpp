@@ -1,7 +1,4 @@
-extern "C" {
-#include "generate_dag_plan.h"
-}
-
+#include "generate_dag_plan.hpp"
 #include "utils/utils.h"
 
 #include <fstream>
