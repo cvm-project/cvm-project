@@ -8,21 +8,25 @@
 #include <unordered_set>
 #include <vector>
 
+#include <boost/mpl/list.hpp>
+
 #include "IR_analyzer/LLVMParser.h"
 #include "dag/DAGFilter.h"
-#include "utils/DAGVisitor.h"
+#include "utils/visitor.hpp"
 
-class CollectFiltersVisitor : public DAGVisitor {
-public:
-    explicit CollectFiltersVisitor(DAG *const dag) : DAGVisitor(dag) {}
-    void visit(DAGFilter *op) override { filters_.emplace_back(op); }
+struct CollectFiltersVisitor
+    : public Visitor<CollectFiltersVisitor, DAGOperator,
+                     boost::mpl::list<DAGFilter>> {
+    void operator()(DAGFilter *op) { filters_.emplace_back(op); }
     std::vector<DAGFilter *> filters_;
 };
 
 void SimplePredicateMoveAround::optimize() {
     // 1. gather filters
-    CollectFiltersVisitor filter_collector(dag_);
-    filter_collector.StartVisit();
+    CollectFiltersVisitor filter_collector;
+    for (auto const op : dag_->operators()) {
+        filter_collector.Visit(op);
+    }
 
     // 2. for every filter move them up the dag
     for (const auto &filter : filter_collector.filters_) {
