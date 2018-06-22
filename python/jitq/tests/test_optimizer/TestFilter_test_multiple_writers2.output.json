@@ -37,12 +37,27 @@
                 }
             ],
             "predecessors": [
-                4
+                5
+            ]
+        },
+        {
+            "id": 4,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2
             ]
         },
         {
             "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.34.i = add nsw i64 %.1, %.1\n  %.47.i = icmp slt i64 %.34.i, 10\n  ret i1 %.47.i\n}\n",
-            "id": 4,
+            "id": 5,
             "op": "filter",
             "output_type": [
                 {

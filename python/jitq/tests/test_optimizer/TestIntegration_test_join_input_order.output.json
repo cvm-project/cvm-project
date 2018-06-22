@@ -111,13 +111,31 @@
                 }
             ],
             "predecessors": [
-                9,
+                10,
                 6
             ]
         },
         {
-            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1, i64 %.2) {\nentry:\n  %.28.i = icmp eq i64 %.2, 2\n  ret i1 %.28.i\n}\n",
             "id": 9,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                7
+            ]
+        },
+        {
+            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1, i64 %.2) {\nentry:\n  %.28.i = icmp eq i64 %.2, 2\n  ret i1 %.28.i\n}\n",
+            "id": 10,
             "op": "filter",
             "output_type": [
                 {

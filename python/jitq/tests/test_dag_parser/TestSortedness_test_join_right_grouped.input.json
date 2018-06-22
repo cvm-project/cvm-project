@@ -129,6 +129,21 @@
             "predecessors": [
                 6
             ]
+        },
+        {
+            "id": 8,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                7
+            ]
         }
     ]
 }
