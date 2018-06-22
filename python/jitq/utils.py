@@ -76,11 +76,10 @@ def numba_type_to_dtype(type_):
         fields = [('f%i' % i, t) for i, t in enumerate(child_types)]
         return np.dtype(fields)
     if isinstance(type_, nb.types.Array):
-        return np.dtype(object)
+        return numba_type_to_dtype(type_.dtype)
+    # for some reason record dtype is numpy dtype and arrays is not
     if isinstance(type_, nb.types.Record):
-        fields = sorted(type_.fields.items(), key=lambda f: f[1][1])
-        fields = [(k, numba_type_to_dtype(v[0])) for k, v in fields]
-        return np.dtype(fields)
+        return type_.dtype
     assert not is_item_type(type_)
     raise TypeError("Expected valid nested tuple type.")
 
@@ -126,7 +125,9 @@ class RDDEncoder(JSONEncoder):
             return self.default(make_tuple(list(map(lambda v: from_dtype(v[0]),
                                                     fields_sorted))))
         if isinstance(o, nb.types.Array):
-            raise NotImplementedError("Cannot have arrays as item type yet")
+            return [{'type': "array", 'dim': o.ndim, 'layout': o.layout,
+                     "output_type":
+                         self.default(o.dtype)}]
         return JSONEncoder.default(self, o)
 
 
@@ -151,10 +152,8 @@ def replace_unituple(type_):
     if isinstance(type_, nb.types.BaseAnonymousTuple):
         child_types = [replace_unituple(t) for t in type_.types]
         return make_tuple(child_types)
-    if isinstance(type_, nb.types.Array):
-        raise NotImplementedError("Cannot have arrays as item type yet")
-    # Record numba type cannot contain numba Tuple type
-    if isinstance(type_, nb.types.Record):
+    # This numba numpy types cannot contain numba Tuple type
+    if isinstance(type_, (nb.types.Array, nb.types.Record)):
         return type_
     if str(type_) in NUMPY_DTYPE_MAP:
         return type_
