@@ -1,24 +1,30 @@
 #include "grouped_reduce_by_key.hpp"
 
-#include "dag/DAGOperators.h"
-#include "utils/DAGVisitor.h"
+#include <boost/mpl/list.hpp>
 
-class CollectReduceByKeyVisitor : public DAGVisitor {
-public:
-    explicit CollectReduceByKeyVisitor(DAG *const dag) : DAGVisitor(dag) {}
-    void visit(DAGReduceByKey *op) override {
-        auto const pred = dag()->predecessor(op);
+#include "dag/DAGOperators.h"
+#include "utils/visitor.hpp"
+
+struct CollectReduceByKeyVisitor
+    : public Visitor<CollectReduceByKeyVisitor, DAGOperator,
+                     boost::mpl::list<DAGReduceByKey>> {
+    explicit CollectReduceByKeyVisitor(const DAG *const dag) : dag_(dag) {}
+    void operator()(DAGReduceByKey *op) {
+        auto const pred = dag_->predecessor(op);
         if (pred->tuple->fields[0]->properties().count(
                     dag::collection::FL_GROUPED) > 0) {
             reduce_by_keys_.emplace_back(op);
         }
     }
     std::vector<DAGReduceByKey *> reduce_by_keys_;
+    const DAG *const dag_;
 };
 
 void GroupedReduceByKey::optimize() {
     CollectReduceByKeyVisitor visitor(dag_);
-    visitor.StartVisit();
+    for (auto const op : dag_->operators()) {
+        visitor.Visit(op);
+    }
 
     for (auto const op : visitor.reduce_by_keys_) {
         std::unique_ptr<DAGReduceByKeyGrouped> new_op_ptr(
