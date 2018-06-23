@@ -14,6 +14,10 @@
 
 #include "dag/type/field_type.hpp"
 
+namespace utils {
+class FieldVisitor;
+}  // namespace utils
+
 namespace dag {
 
 class AttributeId;

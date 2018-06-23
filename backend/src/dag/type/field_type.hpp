@@ -9,12 +9,6 @@
 #include "type.hpp"
 #include "utils/utils.h"
 
-namespace utils {
-
-class FieldVisitor;
-
-}  // namespace utils
-
 namespace dag {
 namespace type {
 
