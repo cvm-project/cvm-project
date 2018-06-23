@@ -31,8 +31,12 @@ private:
     DagOperatorsMap op_map_;
     void load_operators();
 
-    template <class OperatorType>
-    void load_operator();
+    struct LoadOperatorFunctor {
+        template <class OperatorType>
+        void operator()(OperatorType * /*unused*/);
+
+        DagFactory *const factory;
+    };
 };
 
 #endif  // DAG_DAGCREATION_HPP

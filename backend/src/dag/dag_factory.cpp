@@ -1,7 +1,10 @@
 
 #include "dag_factory.hpp"
 
+#include <boost/mpl/for_each.hpp>
+
 #include "DAGOperators.h"
+#include "dag/all_operator_declarations.hpp"
 
 DAGOperator *DagFactory::MakeOperator(const std::string &opName) {
     if (instance().op_map_.count(opName) == 0) {
@@ -23,22 +26,12 @@ DAG *DagFactory::ParseDag(const std::string &dagstr) {
 }
 
 void DagFactory::load_operators() {
-    load_operator<DAGCartesian>();
-    load_operator<DAGCollection>();
-    load_operator<DAGConstantTuple>();
-    load_operator<DAGFilter>();
-    load_operator<DAGJoin>();
-    load_operator<DAGMap>();
-    load_operator<DAGMaterializeRowVector>();
-    load_operator<DAGParameterLookup>();
-    load_operator<DAGRange>();
-    load_operator<DAGReduce>();
-    load_operator<DAGReduceByKey>();
-    load_operator<DAGReduceByKeyGrouped>();
+    boost::mpl::for_each<dag::AllOperatorPointerTypes>(
+            LoadOperatorFunctor{this});
 }
 
 template <class OperatorType>
-void DagFactory::load_operator() {
+void DagFactory::LoadOperatorFunctor::operator()(OperatorType * /*unused*/) {
     std::string name(OperatorType::kName);
-    op_map_.emplace(name.c_str(), &OperatorType::make_dag_operator);
+    factory->op_map_.emplace(name.c_str(), &OperatorType::make_dag_operator);
 }
