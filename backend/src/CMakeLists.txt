@@ -106,7 +106,6 @@ set(SOURCE_FILES
         dag/type/tuple.cpp
         dag/utils/apply_visitor.cpp
         IR_analyzer/LLVMParser.cpp
-        IR_analyzer/llvm_field_type_visitor.cpp
         optimize/attribute_id_tracking.cpp
         optimize/determine_sortedness.cpp
         optimize/Optimizer.cpp

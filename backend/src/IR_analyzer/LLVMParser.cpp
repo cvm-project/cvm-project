@@ -7,9 +7,37 @@
 #include <algorithm>
 #include <regex>
 
+#include <boost/mpl/list.hpp>
+
 #include <llvm/Transforms/Utils/Cloning.h>
 
-#include "llvm_field_type_visitor.hpp"
+#include "dag/collection/atomic.hpp"
+#include "dag/collection/field.hpp"
+#include "utils/c_type_to_llvm.h"
+#include "utils/visitor.hpp"
+
+llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
+                            dag::collection::Field *const field) {
+    class LLVMFieldTypeVisitor
+        : public Visitor<LLVMFieldTypeVisitor, dag::collection::Field,
+                         boost::mpl::list<                //
+                                 dag::collection::Atomic  //
+                                 >::type,
+                         llvm::Type *> {
+    public:
+        explicit LLVMFieldTypeVisitor(llvm::LLVMContext *context)
+            : context(context) {}
+
+        llvm::Type *operator()(dag::collection::Atomic *const field) {
+            return c_type_to_llvm(field->field_type()->type, context);
+        }
+
+    private:
+        llvm::LLVMContext *context;
+    };
+
+    return LLVMFieldTypeVisitor(context).Visit(field);
+}
 
 void LLVMParser::parse(const std::string &ir) {
     module = parseIR(
@@ -171,8 +199,7 @@ std::string LLVMParser::adjust_filter_signature(
 
     std::vector<llvm::Type *> types;
     for (const auto &f : predecessor->tuple->fields) {
-        IR_analyzer::LLVMFieldTypeVisitor visitor(&Context);
-        types.push_back(visitor.ComputeLLVMType(f.get()));
+        types.push_back(ComputeLLVMType(&Context, f.get()));
     }
 
     auto old_function = module->getFunctionList().begin();
