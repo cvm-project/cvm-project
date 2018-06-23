@@ -104,6 +104,7 @@ set(SOURCE_FILES
         dag/type/field_type.cpp
         dag/type/type.cpp
         dag/type/tuple.cpp
+        dag/utils/apply_visitor.cpp
         IR_analyzer/LLVMParser.cpp
         IR_analyzer/llvm_field_type_visitor.cpp
         optimize/attribute_id_tracking.cpp
