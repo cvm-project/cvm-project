@@ -12,7 +12,6 @@
 #include "dag/DAGOperators.h"
 #include "dag/collection/array.hpp"
 #include "dag/collection/atomic.hpp"
-#include "dag/utils/field_visitor.hpp"
 #include "utils/utils.h"
 #include "utils/visitor.hpp"
 
@@ -22,42 +21,48 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
-class FieldTypeVisitor : public dag::utils::FieldVisitor {
-public:
-    std::string ComputeTypeString(dag::collection::Field *field) {
-        field->Accept(this);
-        return this->ret_type_string_;
-    }
-
-protected:
-    void Visit(dag::collection::Atomic *field) override {
-        this->ret_type_string_ = field->field_type()->type;
-    }
-    void Visit(dag::collection::Array *field) override {
-        std::vector<std::string> item_types;
-        for (auto pos = 0; pos < field->tuple()->fields.size(); pos++) {
-            auto f = field->tuple()->fields[pos];
-            f.get()->Accept(this);
-            auto item_type = this->ret_type_string_;
-            item_types.push_back(item_type + " v" + std::to_string(pos));
-            pos++;
-        }
-        std::vector<std::string> sizes;
-        for (size_t i = 0; i < field->field_type()->number_dim; i++) {
-            sizes.push_back("size_t size" + std::to_string(i));
+std::string ComputeTypeString(dag::collection::Field *const field) {
+    class FieldTypeVisitor
+        : public Visitor<FieldTypeVisitor, dag::collection::Field,
+                         boost::mpl::list<                 //
+                                 dag::collection::Atomic,  //
+                                 dag::collection::Array    //
+                                 >::type,
+                         std::string> {
+    public:
+        std::string operator()(dag::collection::Atomic *const field) const {
+            return field->field_type()->type;
         }
 
-        this->ret_type_string_ =
-                (boost::basic_format<char>(
-                         "struct { struct {%s;}* v0; size_t sizes [%s];}") %
-                 join(item_types, ";") %
-                 std::to_string(field->field_type()->number_dim))
-                        .str();
-    }
+        std::string operator()(dag::collection::Array *const field) const {
+            std::vector<std::string> item_types;
+            for (auto pos = 0; pos < field->tuple()->fields.size(); pos++) {
+                const auto f = field->tuple()->fields[pos];
+                const auto item_type = ComputeTypeString(f.get());
+                item_types.push_back(item_type + " v" + std::to_string(pos));
+                pos++;
+            }
+            std::vector<std::string> sizes;
+            for (size_t i = 0; i < field->field_type()->number_dim; i++) {
+                sizes.push_back("size_t size" + std::to_string(i));
+            }
 
-private:
-    std::string ret_type_string_;
-};
+            return (boost::basic_format<char>(
+                            "struct { struct {%s;}* v0; size_t sizes [%s];}") %
+                    join(item_types, ";") %
+                    std::to_string(field->field_type()->number_dim))
+                    .str();
+        }
+
+        std::string operator()(dag::collection::Field *const field) const {
+            throw std::runtime_error(
+                    "Code gen encountered unknown field type: " +
+                    field->field_type()->to_string());
+        }
+    };
+
+    return FieldTypeVisitor().Visit(field);
+}
 
 auto CodeGenVisitor::TupleTypeDesc::MakeFromCollection(
         std::string &&name, const dag::collection::Tuple &tuple)
@@ -65,8 +70,7 @@ auto CodeGenVisitor::TupleTypeDesc::MakeFromCollection(
     std::vector<std::string> types;
 
     for (auto &ft : tuple.fields) {
-        FieldTypeVisitor visitor;
-        types.emplace_back(visitor.ComputeTypeString(ft.get()));
+        types.emplace_back(ComputeTypeString(ft.get()));
     }
     std::vector<std::string> names;
     for (size_t i = 0; i < types.size(); i++) {
