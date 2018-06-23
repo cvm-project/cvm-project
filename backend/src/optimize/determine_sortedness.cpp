@@ -1,19 +1,23 @@
 #include "determine_sortedness.hpp"
 
 #include "dag/DAGOperators.h"
+#include "dag/all_operator_declarations.hpp"
+#include "dag/utils/apply_visitor.hpp"
+#include "utils/visitor.hpp"
 
 using dag::collection::FL_GROUPED;
 using dag::collection::FL_SORTED;
 using dag::collection::FL_UNIQUE;
 
-class DetermineSortednessVisitor : public DAGVisitor {
+class DetermineSortednessVisitor
+    : public Visitor<DetermineSortednessVisitor, DAGOperator,
+                     dag::AllOperatorTypes> {
 public:
-    explicit DetermineSortednessVisitor(const DAG *const dag)
-        : DAGVisitor(dag) {}
+    explicit DetermineSortednessVisitor(const DAG *const dag) : dag_(dag) {}
 
-    void visit(DAGCartesian *op) override {
-        const auto &left_fields = dag()->predecessor(op, 0)->tuple->fields;
-        const auto &right_fields = dag()->predecessor(op, 1)->tuple->fields;
+    void operator()(DAGCartesian *op) const {
+        const auto &left_fields = dag_->predecessor(op, 0)->tuple->fields;
+        const auto &right_fields = dag_->predecessor(op, 1)->tuple->fields;
 
         if (op->stream_right) {
             for (size_t i = 0; i < right_fields.size(); i++) {
@@ -38,23 +42,23 @@ public:
         }
     }
 
-    void visit(DAGCollection *op) override {
+    void operator()(DAGCollection *op) const {
         if (op->add_index) {
             op->tuple->fields[0]->AddProperty(FL_UNIQUE);
             op->tuple->fields[0]->AddProperty(FL_SORTED);
         }
     }
 
-    void visit(DAGFilter *op) override {
-        auto const &input_fields = dag()->predecessor(op)->tuple->fields;
+    void operator()(DAGFilter *op) const {
+        auto const &input_fields = dag_->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < op->tuple->fields.size(); i++) {
             op->tuple->fields[i]->CopyProperties(*input_fields[i]);
         }
     }
 
-    void visit(DAGJoin *op) override {
-        const auto &left_fields = dag()->predecessor(op, 0)->tuple->fields;
-        const auto &right_fields = dag()->predecessor(op, 1)->tuple->fields;
+    void operator()(DAGJoin *op) const {
+        const auto &left_fields = dag_->predecessor(op, 0)->tuple->fields;
+        const auto &right_fields = dag_->predecessor(op, 1)->tuple->fields;
 
         const bool is_left_unique =
                 left_fields[0]->properties().count(FL_UNIQUE) > 0;
@@ -93,8 +97,8 @@ public:
         }
     }
 
-    void visit(DAGMap *op) override {
-        auto const &input_fields = dag()->predecessor(op)->tuple->fields;
+    void operator()(DAGMap *op) const {
+        auto const &input_fields = dag_->predecessor(op)->tuple->fields;
         for (const auto &field : op->tuple->fields) {
             auto const input_field_it =
                     std::find_if(input_fields.begin(), input_fields.end(),
@@ -108,24 +112,27 @@ public:
         }
     }
 
-    void visit(DAGRange *op) override {
+    void operator()(DAGRange *op) const {
         for (const auto &field : op->tuple->fields) {
             field->AddProperty(FL_UNIQUE);
             field->AddProperty(FL_SORTED);
         }
     }
 
-    void visit(DAGReduceByKey *op) override {
+    void operator()(DAGReduceByKey *op) const {
         op->tuple->fields[0]->AddProperty(FL_UNIQUE);
     }
 
-    void visit(DAGReduceByKeyGrouped *op) override {
-        auto const &input_fields = dag()->predecessor(op)->tuple->fields;
+    void operator()(DAGReduceByKeyGrouped *op) const {
+        auto const &input_fields = dag_->predecessor(op)->tuple->fields;
         op->tuple->fields[0]->CopyProperties(*input_fields[0]);
         op->tuple->fields[0]->AddProperty(FL_UNIQUE);
     }
 
-    void visit(DAGReduce * /*unused*/) override {}
+    void operator()(DAGOperator * /*op*/) const {}
+
+private:
+    const DAG *const dag_;
 };
 
 void DetermineSortedness::optimize() {
@@ -138,7 +145,7 @@ void DetermineSortedness::optimize() {
 
     // Derive attributes from predecessors
     DetermineSortednessVisitor visitor(dag_);
-    visitor.StartVisit();
+    dag::utils::ApplyInReverseTopologicalOrder(dag_, visitor.functor());
 
     // 'grouped' is implied by 'unique' or 'sorted'
     for (auto op : dag_->operators()) {
