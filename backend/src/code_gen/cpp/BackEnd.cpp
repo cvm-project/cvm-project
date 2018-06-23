@@ -13,6 +13,8 @@
 #include <sys/stat.h>
 
 #include "CodeGenVisitor.h"
+#include "dag/DAGOperators.h"
+#include "dag/utils/apply_visitor.hpp"
 #include "utils/utils.h"
 
 using boost::adaptors::transformed;
@@ -54,7 +56,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
     std::stringstream planDeclarations;
 
     CodeGenVisitor visitor(dag, planBody, planDeclarations, llvmCode);
-    visitor.StartVisit();
+    dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
     // Compute execute function parameters
     const auto input_formatter = [](auto i) {

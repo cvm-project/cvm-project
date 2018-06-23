@@ -1,17 +1,20 @@
 #include "CodeGenVisitor.h"
 
 #include <regex>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
+#include <boost/mpl/list.hpp>
 
 #include "dag/DAGOperators.h"
 #include "dag/collection/array.hpp"
 #include "dag/collection/atomic.hpp"
 #include "dag/utils/field_visitor.hpp"
 #include "utils/utils.h"
+#include "utils/visitor.hpp"
 
 using boost::algorithm::join;
 using boost::format;
@@ -100,7 +103,7 @@ auto CodeGenVisitor::TupleTypeDesc::computeTailType(
     return ret;
 }
 
-void CodeGenVisitor::visit(DAGCollection *op) {
+void CodeGenVisitor::operator()(DAGCollection *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CollectionSourceOperator");
 
@@ -108,7 +111,7 @@ void CodeGenVisitor::visit(DAGCollection *op) {
                      {op->add_index ? "true" : "false"}, {});
 }
 
-void CodeGenVisitor::visit(DAGConstantTuple *op) {
+void CodeGenVisitor::operator()(DAGConstantTuple *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
@@ -119,12 +122,12 @@ void CodeGenVisitor::visit(DAGConstantTuple *op) {
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {tuple_arg});
 }
 
-void CodeGenVisitor::visit(DAGMap *op) {
+void CodeGenVisitor::operator()(DAGMap *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
 
     auto input_type =
-            operatorNameTupleTypeMap[dag()->predecessor(op)->id].return_type;
+            operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
     auto return_type = operatorNameTupleTypeMap[op->id].return_type;
     const std::string functor =
             visitLLVMFunc(*op, {input_type}, return_type.name);
@@ -132,7 +135,7 @@ void CodeGenVisitor::visit(DAGMap *op) {
     emitOperatorMake(var_name, "MapOperator", op, {}, {functor});
 }
 
-void CodeGenVisitor::visit(DAGMaterializeRowVector *op) {
+void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
 
@@ -143,12 +146,12 @@ void CodeGenVisitor::visit(DAGMaterializeRowVector *op) {
     operatorNameTupleTypeMap[op->id].return_type = return_type;
 
     auto input_type =
-            operatorNameTupleTypeMap[dag()->predecessor(op)->id].return_type;
+            operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
     emitOperatorMake(var_name, "MaterializeRowVectorOperator", op,
                      {input_type.name}, {});
 }
 
-void CodeGenVisitor::visit(DAGParameterLookup *op) {
+void CodeGenVisitor::operator()(DAGParameterLookup *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
@@ -170,7 +173,7 @@ void CodeGenVisitor::visit(DAGParameterLookup *op) {
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {input_arg});
 }
 
-void CodeGenVisitor::visit(DAGReduce *op) {
+void CodeGenVisitor::operator()(DAGReduce *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ReduceOperator");
 
@@ -181,33 +184,33 @@ void CodeGenVisitor::visit(DAGReduce *op) {
     emitOperatorMake(var_name, "ReduceOperator", op, {}, {functor});
 }
 
-void CodeGenVisitor::visit(DAGRange *op) {
+void CodeGenVisitor::operator()(DAGRange *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "RangeSourceOperator");
 
     emitOperatorMake(var_name, "RangeSourceOperator", op, {}, {});
 };
 
-void CodeGenVisitor::visit(DAGFilter *op) {
+void CodeGenVisitor::operator()(DAGFilter *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "FilterOperator");
 
     auto input_type =
-            operatorNameTupleTypeMap[dag()->predecessor(op)->id].return_type;
+            operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
     const std::string functor = visitLLVMFunc(*op, {input_type}, "bool");
 
     emitOperatorMake(var_name, "FilterOperator", op, {}, {functor});
 };
 
-void CodeGenVisitor::visit(DAGJoin *op) {
+void CodeGenVisitor::operator()(DAGJoin *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "JoinOperator");
 
     // Build key and value types
     const auto up1Type =
-            operatorNameTupleTypeMap[dag()->predecessor(op, 0)->id].return_type;
+            operatorNameTupleTypeMap[dag_->predecessor(op, 0)->id].return_type;
     const auto up2Type =
-            operatorNameTupleTypeMap[dag()->predecessor(op, 1)->id].return_type;
+            operatorNameTupleTypeMap[dag_->predecessor(op, 1)->id].return_type;
 
     // TODO(sabir): This currently only works for keys of size 1
     TupleTypeDesc key_type = up1Type.computeHeadType();
@@ -226,11 +229,11 @@ void CodeGenVisitor::visit(DAGJoin *op) {
     emitOperatorMake(var_name, "JoinOperator", op, template_args);
 };
 
-void CodeGenVisitor::visit(DAGCartesian *op) {
+void CodeGenVisitor::operator()(DAGCartesian *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CartesianOperator");
     std::string pred2Tuple =
-            operatorNameTupleTypeMap[dag()->predecessor(op, 1)->id]
+            operatorNameTupleTypeMap[dag_->predecessor(op, 1)->id]
                     .return_type.name;
     std::vector<std::string> template_args = {pred2Tuple};
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
@@ -265,12 +268,17 @@ void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
     emitOperatorMake(var_name, operator_name, op, template_args, {functor});
 }
 
-void CodeGenVisitor::visit(DAGReduceByKey *op) {
+void CodeGenVisitor::operator()(DAGReduceByKey *op) {
     visit_reduce_by_key(op, "ReduceByKeyOperator");
 }
 
-void CodeGenVisitor::visit(DAGReduceByKeyGrouped *op) {
+void CodeGenVisitor::operator()(DAGReduceByKeyGrouped *op) {
     visit_reduce_by_key(op, "ReduceByKeyGroupedOperator");
+}
+
+void CodeGenVisitor::operator()(DAGOperator *const op) {
+    throw std::runtime_error("CodeGen encountered unknown operator type: " +
+                             op->name());
 }
 
 // TODO(ingo): This could be an independent visitor
@@ -314,7 +322,7 @@ void CodeGenVisitor::emitOperatorMake(
     // Default input arguments: references to predecessors
     std::vector<std::string> args;
     for (size_t i = 0; i < op->num_in_ports(); i++) {
-        const auto pred = dag()->predecessor(op, i);
+        const auto pred = dag_->predecessor(op, i);
         const auto arg = "&" + operatorNameTupleTypeMap[pred->id].var_name;
         args.emplace_back(arg);
     }

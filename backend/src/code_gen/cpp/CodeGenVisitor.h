@@ -5,21 +5,24 @@
 #ifndef CODE_GEN_CPP_CODEGENVISITOR_H
 #define CODE_GEN_CPP_CODEGENVISITOR_H
 
-#include <boost/algorithm/string/join.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <set>
 #include <unordered_map>
 #include <vector>
 
+#include <boost/algorithm/string/join.hpp>
+
 #include "dag/DAG.h"
+#include "dag/all_operator_declarations.hpp"
 #include "dag/collection/tuple.hpp"
-#include "utils/DAGVisitor.h"
+#include "utils/visitor.hpp"
 
 namespace code_gen {
 namespace cpp {
 
-class CodeGenVisitor : public DAGVisitor {
+struct CodeGenVisitor
+    : public Visitor<CodeGenVisitor, DAGOperator, dag::AllOperatorTypes> {
 public:
     struct TupleTypeDesc {
         std::string name;
@@ -44,30 +47,32 @@ public:
 
     CodeGenVisitor(const DAG *const dag, std::ostream &planBody,
                    std::ostream &planDeclarations, std::ostream &llvmCode)
-        : DAGVisitor(dag),
+        : dag_(dag),
           planBody_(planBody),
           planDeclarations_(planDeclarations),
           llvmCode_(llvmCode) {}
 
     /*
-     * Implementation of DAGVisitor interface
+     * Implementation of Visitor interface
      */
-    void visit(DAGCollection *op) override;
-    void visit(DAGConstantTuple *op) override;
-    void visit(DAGMap *op) override;
-    void visit(DAGMaterializeRowVector *op) override;
-    void visit(DAGParameterLookup *op) override;
-    void visit(DAGReduce *op) override;
-    void visit(DAGRange *op) override;
-    void visit(DAGFilter *op) override;
-    void visit(DAGJoin *op) override;
-    void visit(DAGCartesian *op) override;
-    void visit(DAGReduceByKey *op) override;
-    void visit(DAGReduceByKeyGrouped *op) override;
+    void operator()(DAGCollection *op);
+    void operator()(DAGConstantTuple *op);
+    void operator()(DAGMap *op);
+    void operator()(DAGMaterializeRowVector *op);
+    void operator()(DAGParameterLookup *op);
+    void operator()(DAGReduce *op);
+    void operator()(DAGRange *op);
+    void operator()(DAGFilter *op);
+    void operator()(DAGJoin *op);
+    void operator()(DAGCartesian *op);
+    void operator()(DAGReduceByKey *op);
+    void operator()(DAGReduceByKeyGrouped *op);
+    void operator()(DAGOperator *op);
 
     /*
      * These members are the "result" of the visitor
      */
+    const DAG *const dag_;
     std::ostream &planBody_;
     std::ostream &planDeclarations_;
     std::ostream &llvmCode_;
