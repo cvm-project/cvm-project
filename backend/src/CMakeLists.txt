@@ -113,7 +113,6 @@ set(SOURCE_FILES
         optimize/grouped_reduce_by_key.cpp
         optimize/SimplePredicateMoveAround.cpp
         utils/c_type_to_llvm.cpp
-        utils/DAGVisitor.cpp
         utils/utils.cpp
          )
 add_library(generate SHARED ${SOURCE_FILES} )

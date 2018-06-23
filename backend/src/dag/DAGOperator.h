@@ -14,7 +14,6 @@
 #include "dag/collection/field.hpp"
 #include "dag/collection/tuple.hpp"
 
-class DAGVisitor;
 // cppcheck-suppress noConstructor
 class DAGOperator {
 public:
@@ -30,7 +29,6 @@ public:
     virtual size_t num_in_ports() const = 0;
     virtual size_t num_out_ports() const = 0;
 
-    virtual void accept(DAGVisitor *v) = 0;
     virtual void to_json(nlohmann::json *json) const = 0;
     virtual void from_json(const nlohmann::json &json) = 0;
 
@@ -48,8 +46,6 @@ public:
     size_t num_in_ports() const override { return OperatorType::kNumInPorts; }
     size_t num_out_ports() const override { return OperatorType::kNumOutPorts; }
 
-    void inline accept(DAGVisitor *v) override;
-
     void to_json(nlohmann::json * /*json*/) const override {}
     void from_json(const nlohmann::json & /*json*/) override {}
 };
@@ -62,7 +58,5 @@ void to_json(nlohmann::json &json, const DAGOperator &op);
 void to_json(nlohmann::json &json, const DAGOperator *op);
 // NOLINTNEXTLINE google-runtime-references
 void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op);
-
-#include "utils/DAGVisitor.h"
 
 #endif  // DAG_DAGOPERATOR_H
