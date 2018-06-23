@@ -5,21 +5,11 @@
 #ifndef UTILS_DAGVISITOR_H
 #define UTILS_DAGVISITOR_H
 
+#include "dag/all_operator_declarations.hpp"
+
 #include "dag/DAGOperator.h"
 
 class DAG;
-class DAGCartesian;
-class DAGCollection;
-class DAGConstantTuple;
-class DAGFilter;
-class DAGJoin;
-class DAGMap;
-class DAGMaterializeRowVector;
-class DAGParameterLookup;
-class DAGRange;
-class DAGReduce;
-class DAGReduceByKey;
-class DAGReduceByKeyGrouped;
 
 // TODO(ingo): there should be a const version of DAGVisitor
 class DAGVisitor {
