@@ -14,11 +14,11 @@
 
 #include "dag/type/field_type.hpp"
 
+namespace dag {
+
 namespace utils {
 class FieldVisitor;
 }  // namespace utils
-
-namespace dag {
 
 class AttributeId;
 
@@ -83,9 +83,10 @@ public:
 
     void inline Accept(utils::FieldVisitor *visitor) override;
 };
+
 }  // namespace collection
 }  // namespace dag
 
-#include "utils/field_visitor.hpp"
+#include "dag/utils/field_visitor.hpp"
 
 #endif  // DAG_TUPLEFIELD_H

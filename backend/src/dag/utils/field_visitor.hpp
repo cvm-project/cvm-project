@@ -8,11 +8,11 @@
 #include "dag/collection/field.hpp"
 
 namespace dag {
+
 namespace collection {
 class Atomic;
 class Array;
 }  // namespace collection
-}  // namespace dag
 
 namespace utils {
 
@@ -30,7 +30,6 @@ protected:
 
 }  // namespace utils
 
-namespace dag {
 namespace collection {
 
 template <class FieldClass, class FieldTypeClass>

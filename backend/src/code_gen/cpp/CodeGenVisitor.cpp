@@ -10,6 +10,7 @@
 #include "dag/DAGOperators.h"
 #include "dag/collection/array.hpp"
 #include "dag/collection/atomic.hpp"
+#include "dag/utils/field_visitor.hpp"
 #include "utils/utils.h"
 
 using boost::algorithm::join;
@@ -18,7 +19,7 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
-class FieldTypeVisitor : public utils::FieldVisitor {
+class FieldTypeVisitor : public dag::utils::FieldVisitor {
 public:
     std::string ComputeTypeString(dag::collection::Field *field) {
         field->Accept(this);
