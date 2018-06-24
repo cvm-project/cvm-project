@@ -16,10 +16,6 @@
 
 namespace dag {
 
-namespace utils {
-class FieldVisitor;
-}  // namespace utils
-
 class AttributeId;
 
 namespace collection {
@@ -45,8 +41,6 @@ public:
     Field &operator=(Field &&rhs) = default;
 
     virtual ~Field();
-
-    virtual void Accept(utils::FieldVisitor *visitor) = 0;
 
     size_t position() const;
     void set_position(size_t position);
@@ -80,13 +74,9 @@ public:
         return boost::polymorphic_pointer_downcast<const FieldTypeClass>(
                 Field::field_type());
     }
-
-    void inline Accept(utils::FieldVisitor *visitor) override;
 };
 
 }  // namespace collection
 }  // namespace dag
-
-#include "dag/utils/field_visitor.hpp"
 
 #endif  // DAG_TUPLEFIELD_H
