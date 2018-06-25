@@ -24,6 +24,9 @@ public:
     static const Tuple *MakeTuple(
             const std::vector<const FieldType *> &field_types);
 
+    const Tuple *ComputeHeadTuple(size_t head_size = 1) const;
+    const Tuple *ComputeTailTuple(size_t head_size = 1) const;
+
     std::string to_string() const override;
 
     std::vector<const FieldType *> field_types;

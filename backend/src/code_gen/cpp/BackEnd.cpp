@@ -29,8 +29,8 @@ std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
                    "%1%.open();"
                    "const auto result = %1%.next().value;"
                    "auto ret = (result_type*)malloc(sizeof(result_type));"
-                   "ret->data = result.v0;"
-                   "ret->size = result.v1;"
+                   "ret->data = result.v0.data;"
+                   "ret->size = result.v0.shape[0];"
                    "%1%.close();"
                    "return ret;") %
             sink.var_name)
@@ -53,9 +53,11 @@ void BackEnd::GenerateCode(DAG *const dag) {
     std::ofstream llvmCode(llvmCodePath);
 
     std::stringstream planBody;
-    std::stringstream planDeclarations;
+    std::stringstream planTupleDeclarations;
+    std::stringstream planLLVMDeclarations;
 
-    CodeGenVisitor visitor(dag, planBody, planDeclarations, llvmCode);
+    CodeGenVisitor visitor(dag, planBody, planTupleDeclarations, llvmCode,
+                           planLLVMDeclarations);
     dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
     // Compute execute function parameters
@@ -76,7 +78,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
                                                "   unsigned long size;"
                                                "   %s *data;"
                                                "} result_type;\n") %
-                                        return_type.name)
+                                        return_type->name)
                                                .str();
 
     // Main executable file: declarations
@@ -90,8 +92,9 @@ void BackEnd::GenerateCode(DAG *const dag) {
         mainSourceFile << "#include " << incl << std::endl;
     }
 
-    mainSourceFile << planDeclarations.str();
+    mainSourceFile << planTupleDeclarations.str();
     mainSourceFile << result_wrapper;
+    mainSourceFile << planLLVMDeclarations.str();
 
     // Main executable file: execute function
     mainSourceFile
@@ -114,8 +117,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
     // Header file
     std::ofstream headerFile(genDir + "execute.h");
 
-    headerFile << format("typedef struct { %s; } %s;\n") %
-                          return_type.field_definitions() % return_type.name;
+    headerFile << return_type->ComputeDefinition();
     headerFile << result_wrapper;
     headerFile << format("result_type* execute(%s);\n") % input_args;
     headerFile << "void free_result(result_type*);";

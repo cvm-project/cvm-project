@@ -28,6 +28,24 @@ const Tuple *Tuple::MakeTuple(
                     .first->second.get());
 }
 
+const Tuple *Tuple::ComputeHeadTuple(size_t head_size) const {
+    assert(head_size > 0);
+    assert(field_types.size() >= head_size);
+    auto first = field_types.begin();
+    auto last = field_types.begin() + head_size;
+    std::vector<const FieldType *> new_vec(first, last);
+    return MakeTuple(new_vec);
+}
+
+const Tuple *Tuple::ComputeTailTuple(size_t head_size) const {
+    assert(head_size > 0);
+    assert(field_types.size() >= head_size);
+    auto first = field_types.begin() + head_size;
+    auto last = field_types.end();
+    std::vector<const FieldType *> new_vec(first, last);
+    return MakeTuple(new_vec);
+}
+
 std::string Tuple::to_string() const {
     std::vector<std::string> item_strings;
     for (auto t : this->field_types) {

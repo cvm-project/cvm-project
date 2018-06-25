@@ -1,6 +1,7 @@
 #ifndef CPP_MATERIALIZEROWVECTOROPERATOR_H
 #define CPP_MATERIALIZEROWVECTOROPERATOR_H
 
+#include <algorithm>
 #include <cstdlib>
 
 #include "Operator.h"

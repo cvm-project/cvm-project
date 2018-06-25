@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <unordered_map>
 #include <vector>
@@ -24,34 +25,30 @@ namespace cpp {
 struct CodeGenVisitor
     : public Visitor<CodeGenVisitor, DAGOperator, dag::AllOperatorTypes> {
 public:
-    struct TupleTypeDesc {
+    struct StructDef {
+        explicit StructDef(const std::string &name,
+                           const std::vector<std::string> &types,
+                           const std::vector<std::string> &names);
+        std::string ComputeDefinition() const;
         std::string name;
         std::vector<std::string> types;
         std::vector<std::string> names;
-        static TupleTypeDesc MakeFromCollection(
-                std::string &&name, const dag::collection::Tuple &tuple);
-        std::string field_definitions() const;
-        size_t num_fields() const {
-            assert(types.size() == names.size());
-            return types.size();
-        }
-        TupleTypeDesc computeHeadType(size_t head_size = 1) const;
-        TupleTypeDesc computeTailType(size_t head_size = 1) const;
     };
 
     struct OperatorDesc {
         size_t id{};
         std::string var_name;
-        TupleTypeDesc return_type;
+        const StructDef *return_type{};
     };
 
     CodeGenVisitor(const DAG *const dag, std::ostream &planBody,
-                   std::ostream &planDeclarations, std::ostream &llvmCode)
+                   std::ostream &plan_tuple_declarations,
+                   std::ostream &llvmCode, std::ostream &plan_llvm_declarations)
         : dag_(dag),
           planBody_(planBody),
-          planDeclarations_(planDeclarations),
-          llvmCode_(llvmCode) {}
-
+          plan_tuple_declarations_(plan_tuple_declarations),
+          llvmCode_(llvmCode),
+          plan_llvm_declarations_(plan_llvm_declarations) {}
     /*
      * Implementation of Visitor interface
      */
@@ -74,11 +71,14 @@ public:
      */
     const DAG *const dag_;
     std::ostream &planBody_;
-    std::ostream &planDeclarations_;
+    std::ostream &plan_tuple_declarations_;
+    std::ostream &plan_llvm_declarations_;
     std::ostream &llvmCode_;
     std::vector<std::pair<std::string, std::string>> inputNames;
     std::set<std::string> includes;
-    std::unordered_map<std::string, std::string> tupleDefinitions_;
+    std::unordered_map<const dag::type::Type *,
+                       const CodeGenVisitor::StructDef *>
+            tuple_type_descs_;
     std::unordered_map<size_t, OperatorDesc> operatorNameTupleTypeMap;
 
 private:
@@ -88,23 +88,27 @@ private:
     std::string visit_common(DAGOperator *op, const std::string &operator_name);
     void visit_reduce_by_key(DAGOperator *op, const std::string &operator_name);
     std::string visitLLVMFunc(const DAGOperator &op,
-                              const std::vector<TupleTypeDesc> &input_types,
+                              const std::vector<const StructDef *> &input_types,
                               const std::string &return_type);
-    std::string emitTupleDefinition(const TupleTypeDesc &type);
     void emitOperatorMake(
             const std::string &variable_name, const std::string &operator_name,
             const DAGOperator *op,
             const std::vector<std::string> &extra_template_args = {},
             const std::vector<std::string> &extra_args = {});
-    void emitLLVMFunctionWrapper(const std::string &func_name,
-                                 const std::vector<TupleTypeDesc> &input_types,
-                                 const std::string &return_type);
+    void emitLLVMFunctionWrapper(
+            const std::string &func_name,
+            const std::vector<const StructDef *> &input_types,
+            const std::string &return_type);
     void storeLLVMCode(const std::string &ir, const std::string &func_name);
-
     /*
      * Manage tuple/function/variable names
      */
     std::unordered_map<std::string, size_t> unique_counters;
+
+    const StructDef *EmitStructDefinition(
+            const dag::type::Type *key, const std::vector<std::string> &types,
+            const std::vector<std::string> &names);
+    const StructDef *EmitTupleStructDefinition(const dag::type::Tuple *tuple);
 
     size_t unique_counter(const std::string &name) const {
         return unique_counters.at(name);

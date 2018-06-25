@@ -3,6 +3,7 @@
 #include <regex>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <boost/algorithm/string/join.hpp>
@@ -21,89 +22,24 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
-std::string ComputeTypeString(dag::collection::Field *const field) {
-    class FieldTypeVisitor
-        : public Visitor<FieldTypeVisitor, dag::collection::Field,
-                         boost::mpl::list<                 //
-                                 dag::collection::Atomic,  //
-                                 dag::collection::Array    //
-                                 >::type,
-                         std::string> {
-    public:
-        std::string operator()(dag::collection::Atomic *const field) const {
-            return field->field_type()->type;
-        }
-
-        std::string operator()(dag::collection::Array *const field) const {
-            std::vector<std::string> item_types;
-            for (auto pos = 0; pos < field->tuple()->fields.size(); pos++) {
-                const auto f = field->tuple()->fields[pos];
-                const auto item_type = ComputeTypeString(f.get());
-                item_types.push_back(item_type + " v" + std::to_string(pos));
-            }
-            std::vector<std::string> sizes;
-            for (size_t i = 0; i < field->field_type()->number_dim; i++) {
-                sizes.push_back("size_t size" + std::to_string(i));
-            }
-
-            return (boost::basic_format<char>(
-                            "struct { struct {%s;}* v0; size_t sizes [%s];}") %
-                    join(item_types, ";") %
-                    std::to_string(field->field_type()->number_dim))
-                    .str();
-        }
-
-        std::string operator()(dag::collection::Field *const field) const {
-            throw std::runtime_error(
-                    "Code gen encountered unknown field type: " +
-                    field->field_type()->to_string());
-        }
-    };
-
-    return FieldTypeVisitor().Visit(field);
-}
-
-auto CodeGenVisitor::TupleTypeDesc::MakeFromCollection(
-        std::string &&name, const dag::collection::Tuple &tuple)
-        -> TupleTypeDesc {
-    std::vector<std::string> types;
-
-    for (auto &ft : tuple.fields) {
-        types.emplace_back(ComputeTypeString(ft.get()));
-    }
-    std::vector<std::string> names;
-    for (size_t i = 0; i < types.size(); i++) {
-        names.emplace_back("v" + std::to_string(i));
-    }
-
-    return TupleTypeDesc{name, types, names};
-}
-
-std::string CodeGenVisitor::TupleTypeDesc::field_definitions() const {
+CodeGenVisitor::StructDef::StructDef(
+        const std::string &name,  // NOLINT modernize-pass-by-value
+        // NOLINTNEXTLINE modernize-pass-by-value
+        const std::vector<std::string> &types,
+        // NOLINTNEXTLINE modernize-pass-by-value
+        const std::vector<std::string> &names)
+    : name(name), types(types), names(names) {
     assert(types.size() == names.size());
-    std::vector<std::string> typed_names;
-    for (size_t i = 0; i < types.size(); i++) {
-        typed_names.emplace_back(types[i] + " " + names[i]);
+}
+
+std::string CodeGenVisitor::StructDef::ComputeDefinition() const {
+    std::vector<std::string> name_types;
+    name_types.reserve(names.size());
+    for (auto i = 0; i < names.size(); i++) {
+        name_types.emplace_back(types[i] + " " + names[i]);
     }
-    return join(typed_names, "; ");
-}
-
-auto CodeGenVisitor::TupleTypeDesc::computeHeadType(
-        const size_t head_size) const -> TupleTypeDesc {
-    assert(num_fields() >= head_size);
-    TupleTypeDesc ret = *this;
-    ret.types.resize(head_size);
-    ret.names.resize(head_size);
-    return ret;
-}
-
-auto CodeGenVisitor::TupleTypeDesc::computeTailType(
-        const size_t head_size) const -> TupleTypeDesc {
-    assert(num_fields() >= head_size);
-    TupleTypeDesc ret = *this;
-    ret.types.erase(ret.types.begin(), ret.types.begin() + head_size);
-    ret.names.resize(ret.types.size());
-    return ret;
+    return boost::str(format("typedef struct { %s; } %s;") %
+                      join(name_types, "; ") % name);
 }
 
 void CodeGenVisitor::operator()(DAGCollection *op) {
@@ -120,7 +56,8 @@ void CodeGenVisitor::operator()(DAGConstantTuple *op) {
 
     const auto return_type = operatorNameTupleTypeMap[op->id].return_type;
     const auto tuple_arg =
-            (format("%s{%s}") % return_type.name % join(op->values, ",")).str();
+            (format("%s{%s}") % return_type->name % join(op->values, ","))
+                    .str();
 
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {tuple_arg});
 }
@@ -133,7 +70,7 @@ void CodeGenVisitor::operator()(DAGMap *op) {
             operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
     auto return_type = operatorNameTupleTypeMap[op->id].return_type;
     const std::string functor =
-            visitLLVMFunc(*op, {input_type}, return_type.name);
+            visitLLVMFunc(*op, {input_type}, return_type->name);
 
     emitOperatorMake(var_name, "MapOperator", op, {}, {functor});
 }
@@ -142,34 +79,41 @@ void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
 
-    auto tuple_type = operatorNameTupleTypeMap[op->id].return_type;
-    auto return_type =
-            TupleTypeDesc{"", {tuple_type.name + "*", "size_t"}, {"v0", "v1"}};
-    return_type.name = emitTupleDefinition(return_type);
-    operatorNameTupleTypeMap[op->id].return_type = return_type;
+    // need to return an array
+    auto collection_tuple = op->tuple.get();
+    auto array_type = dag::type::Array::MakeArray(
+            collection_tuple->type, dag::type::ArrayLayout::kC, 1);
+
+    auto tuple_array_type = dag::type::Tuple::MakeTuple({array_type});
+
+    auto return_type_desc = EmitTupleStructDefinition(tuple_array_type);
+    operatorNameTupleTypeMap[op->id].return_type = return_type_desc;
 
     auto input_type =
             operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
     emitOperatorMake(var_name, "MaterializeRowVectorOperator", op,
-                     {input_type.name}, {});
+                     {input_type->name}, {});
 }
 
 void CodeGenVisitor::operator()(DAGParameterLookup *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
-    auto tuple_type = operatorNameTupleTypeMap[op->id].return_type;
-    auto return_type =
-            TupleTypeDesc{"", {tuple_type.name + "*", "size_t"}, {"v0", "v1"}};
-    return_type.name = emitTupleDefinition(return_type);
-    operatorNameTupleTypeMap[op->id].return_type = return_type;
+    // need to return an array
+    auto item_type = operatorNameTupleTypeMap[op->id].return_type;
+    auto collection_tuple = op->tuple.get();
+    auto array_type = dag::type::Array::MakeArray(
+            collection_tuple->type, dag::type::ArrayLayout::kC, 1);
+    auto tuple_array_type = dag::type::Tuple::MakeTuple({array_type});
+    auto return_type_desc = EmitTupleStructDefinition(tuple_array_type);
+    operatorNameTupleTypeMap[op->id].return_type = return_type_desc;
 
     auto input_name_pair = getNextInputName();
     inputNames.push_back(input_name_pair);
 
     const auto input_arg =
-            (boost::format("%1%{ reinterpret_cast<%2% *>(%3%), %4% }") %
-             return_type.name % tuple_type.name % input_name_pair.first %
+            (boost::format("%1%{{ reinterpret_cast<%2% *>(%3%), %4% }}") %
+             return_type_desc->name % item_type->name % input_name_pair.first %
              input_name_pair.second)
                     .str();
 
@@ -182,7 +126,7 @@ void CodeGenVisitor::operator()(DAGReduce *op) {
 
     auto return_type = operatorNameTupleTypeMap[op->id].return_type;
     const std::string functor =
-            visitLLVMFunc(*op, {return_type, return_type}, return_type.name);
+            visitLLVMFunc(*op, {return_type, return_type}, return_type->name);
 
     emitOperatorMake(var_name, "ReduceOperator", op, {}, {functor});
 }
@@ -210,24 +154,21 @@ void CodeGenVisitor::operator()(DAGJoin *op) {
             CodeGenVisitor::visit_common(op, "JoinOperator");
 
     // Build key and value types
-    const auto up1Type =
-            operatorNameTupleTypeMap[dag_->predecessor(op, 0)->id].return_type;
-    const auto up2Type =
-            operatorNameTupleTypeMap[dag_->predecessor(op, 1)->id].return_type;
-
     // TODO(sabir): This currently only works for keys of size 1
-    TupleTypeDesc key_type = up1Type.computeHeadType();
-    key_type.name = emitTupleDefinition(key_type);
+    const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
+    const auto up2Type = dag_->predecessor(op, 1)->tuple->type;
+    auto key_Tuple = up1Type->ComputeHeadTuple();
 
-    TupleTypeDesc value_type1 = up1Type.computeTailType();
-    value_type1.name = emitTupleDefinition(value_type1);
+    auto key_type = EmitTupleStructDefinition(key_Tuple);
 
-    TupleTypeDesc value_type2 = up2Type;
-    value_type2.name = emitTupleDefinition(value_type2);
+    auto value_tuple1 = up1Type->ComputeTailTuple();
+    auto value_type1 = EmitTupleStructDefinition(value_tuple1);
+
+    auto value_type2 = EmitTupleStructDefinition(up2Type);
 
     // Build operator
-    std::vector<std::string> template_args = {key_type.name, value_type1.name,
-                                              value_type2.name};
+    std::vector<std::string> template_args = {key_type->name, value_type1->name,
+                                              value_type2->name};
 
     emitOperatorMake(var_name, "JoinOperator", op, template_args);
 };
@@ -237,7 +178,7 @@ void CodeGenVisitor::operator()(DAGCartesian *op) {
             CodeGenVisitor::visit_common(op, "CartesianOperator");
     std::string pred2Tuple =
             operatorNameTupleTypeMap[dag_->predecessor(op, 1)->id]
-                    .return_type.name;
+                    .return_type->name;
     std::vector<std::string> template_args = {pred2Tuple};
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
 };
@@ -251,21 +192,20 @@ void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
             CodeGenVisitor::visit_common(op, operator_name);
 
     // Build key and value types
-    auto return_type = operatorNameTupleTypeMap[op->id].return_type;
 
     // TODO(sabir): This currently only works for keys of size 1
-    TupleTypeDesc key_type = return_type.computeHeadType();
-    key_type.name = emitTupleDefinition(key_type);
+    auto key_type_tuple = op->tuple->type->ComputeHeadTuple();
+    auto key_type = EmitTupleStructDefinition(key_type_tuple);
 
-    TupleTypeDesc value_type = return_type.computeTailType();
-    value_type.name = emitTupleDefinition(value_type);
+    auto value_type_tuple = op->tuple->type->ComputeTailTuple();
+    auto value_type = EmitTupleStructDefinition(value_type_tuple);
 
     // Construct functor
     const std::string functor =
-            visitLLVMFunc(*op, {value_type, value_type}, value_type.name);
+            visitLLVMFunc(*op, {value_type, value_type}, value_type->name);
 
     // Collect template arguments
-    std::vector<std::string> template_args = {key_type.name, value_type.name};
+    std::vector<std::string> template_args = {key_type->name, value_type->name};
 
     // Generate call
     emitOperatorMake(var_name, operator_name, op, template_args, {functor});
@@ -290,8 +230,7 @@ std::string CodeGenVisitor::visit_common(DAGOperator *op,
     planBody_ << format("/** %s **/\n") % operator_name;
     const std::string var_name = getNextOperatorName();
 
-    auto output_type = TupleTypeDesc::MakeFromCollection("", *op->tuple);
-    output_type.name = emitTupleDefinition(output_type);
+    auto output_type = EmitTupleStructDefinition(op->tuple->type);
 
     operatorNameTupleTypeMap.emplace(
             op->id, OperatorDesc{op->id, var_name, output_type});
@@ -300,7 +239,8 @@ std::string CodeGenVisitor::visit_common(DAGOperator *op,
 }
 
 std::string CodeGenVisitor::visitLLVMFunc(
-        const DAGOperator &op, const std::vector<TupleTypeDesc> &input_types,
+        const DAGOperator &op,
+        const std::vector<const CodeGenVisitor::StructDef *> &input_types,
         const std::string &return_type) {
     const std::string func_name = op.name() + getNextLLVMFuncName();
     const std::string functor_name = snake_to_camel_string(func_name);
@@ -316,7 +256,7 @@ void CodeGenVisitor::emitOperatorMake(
         const std::vector<std::string> &extra_args) {
     // First template argument: current tuple
     auto return_type = operatorNameTupleTypeMap[op->id].return_type;
-    std::vector<std::string> template_args = {return_type.name};
+    std::vector<std::string> template_args = {return_type->name};
 
     // Take over extra template arguments
     template_args.insert(template_args.end(), extra_template_args.begin(),
@@ -339,22 +279,9 @@ void CodeGenVisitor::emitOperatorMake(
                          join(args, ",");
 }
 
-std::string CodeGenVisitor::emitTupleDefinition(const TupleTypeDesc &type) {
-    const auto ret = tupleDefinitions_.emplace(type.field_definitions(),
-                                               getNextTupleName());
-    const auto name = ret.first->second;
-
-    if (ret.second) {
-        planDeclarations_ << format("typedef struct { %s; } %s;") %
-                                     type.field_definitions() % name;
-    }
-
-    return name;
-}
-
 void CodeGenVisitor::emitLLVMFunctionWrapper(
         const std::string &func_name,
-        const std::vector<TupleTypeDesc> &input_types,
+        const std::vector<const CodeGenVisitor::StructDef *> &input_types,
         const std::string &return_type) {
     const std::string class_name = snake_to_camel_string(func_name);
 
@@ -364,18 +291,18 @@ void CodeGenVisitor::emitLLVMFunctionWrapper(
     for (auto const &input_type : input_types) {
         // Each input tuple is one argument of the functor
         const auto input_var_name = "t" + std::to_string(input_args.size());
-        input_args.emplace_back(input_type.name + " " + input_var_name);
+        input_args.emplace_back(input_type->name + " " + input_var_name);
 
         // Each collection of all input tuples is one argument to the function
         // --> construct values for the call
-        for (auto const &field : input_type.names) {
+        for (auto const &field : input_type->names) {
             // NOLINTNEXTLINE performance-inefficient-string-concatenation
             call_args.emplace_back(input_var_name + "." + field);
         }
 
         // --> construct types for the declaration
-        call_types.insert(call_types.begin(), input_type.types.begin(),
-                          input_type.types.end());
+        call_types.insert(call_types.begin(), input_type->types.begin(),
+                          input_type->types.end());
     }
 
     // Emit functor definition
@@ -389,8 +316,9 @@ void CodeGenVisitor::emitLLVMFunctionWrapper(
                          join(call_args, ",");
 
     // Emit function declaration
-    planDeclarations_ << format("extern \"C\" { %s %s(%s); }") % return_type %
-                                 func_name % join(call_types, ",");
+    plan_llvm_declarations_ << format("extern \"C\" { %s %s(%s); }") %
+                                       return_type % func_name %
+                                       join(call_types, ",");
 }
 
 void CodeGenVisitor::storeLLVMCode(const std::string &ir,
@@ -408,5 +336,71 @@ void CodeGenVisitor::storeLLVMCode(const std::string &ir,
     llvmCode_ << patched_ir;
 }
 
+const CodeGenVisitor::StructDef *CodeGenVisitor::EmitStructDefinition(
+        const dag::type::Type *key, const std::vector<std::string> &types,
+        const std::vector<std::string> &names) {
+    if (tuple_type_descs_.count(key) > 0) {
+        return tuple_type_descs_.at(key);
+    }
+
+    const auto tupleTypeDesc =
+            new CodeGenVisitor::StructDef(getNextTupleName(), types, names);
+    const auto ret = tuple_type_descs_.emplace(key, tupleTypeDesc);
+    plan_tuple_declarations_ << tupleTypeDesc->ComputeDefinition();
+    assert(ret.second);
+    return ret.first->second;
+}
+
+const CodeGenVisitor::StructDef *CodeGenVisitor::EmitTupleStructDefinition(
+        const dag::type::Tuple *tuple) {
+    class FieldTypeVisitor
+        : public Visitor<FieldTypeVisitor, const dag::type::FieldType,
+                         boost::mpl::list<const dag::type::Atomic,
+                                          const dag::type::Array>::type,
+                         std::string> {
+    public:
+        explicit FieldTypeVisitor(CodeGenVisitor *pVisitor)
+            : code_gen_visitor_(pVisitor) {}
+
+        std::string operator()(const dag::type::Atomic *const field) {
+            return field->type;
+        }
+
+        std::string operator()(const dag::type::Array *const field) {
+            auto item_desc = code_gen_visitor_->EmitTupleStructDefinition(
+                    field->tuple_type);
+            std::vector<std::string> names;
+            std::vector<std::string> types;
+            names.emplace_back("data");
+            names.emplace_back(
+                    boost::str(format("shape [%s]") % field->number_dim));
+            types.emplace_back(boost::str(format("%s*") % item_desc->name));
+            types.emplace_back("size_t");
+            return code_gen_visitor_->EmitStructDefinition(field, types, names)
+                    ->name;
+        }
+
+        std::string operator()(const dag::type::FieldType *const field) const {
+            throw std::runtime_error(
+                    "Code gen encountered unknown field type: " +
+                    field->to_string());
+        }
+
+    private:
+        CodeGenVisitor *code_gen_visitor_;
+    };
+
+    FieldTypeVisitor visitor(this);
+
+    std::vector<std::string> types;
+    std::vector<std::string> names;
+    for (auto pos = 0; pos < tuple->field_types.size(); pos++) {
+        auto f = tuple->field_types[pos];
+        auto item_type = visitor.Visit(f);
+        types.emplace_back(item_type);
+        names.emplace_back("v" + std::to_string(pos));
+    }
+    return EmitStructDefinition(tuple, types, names);
+}
 }  // namespace cpp
 }  // namespace code_gen

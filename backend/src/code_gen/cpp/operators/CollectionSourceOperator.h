@@ -20,8 +20,8 @@ public:
         upstream->close();
         // XXX: This is currently a memory leak! We need a clear way to manage
         //      memory that releases allocated memory as soon as it is not used
-        values = input_tuple.v0;
-        size = input_tuple.v1;
+        values = input_tuple.v0.data;
+        size = input_tuple.v0.shape[0];
         index = 0;
     }
 
