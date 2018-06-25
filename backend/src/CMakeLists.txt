@@ -15,6 +15,12 @@ if(ClangFormat_FOUND)
     enable_clang_format_targets()
 endif()
 
+# Setup clang-tidy
+find_package (ClangTidy 5.0 EXACT)
+if(ClangTidy_FOUND)
+    enable_clang_tidy_targets()
+endif()
+
 # Set up LLVM
 find_package(LLVM REQUIRED CONFIG)
 

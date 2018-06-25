@@ -35,19 +35,20 @@ dbg-build:
   image: ingomuellernet/buildenv-jitq
   script:
     - cd backend/build
-    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug
+    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
     - make
   artifacts:
     paths:
       - backend/build/*
 
 clang-tidy:
-  stage: build
+  stage: test
+  dependencies:
+    - dbg-build
   image: ingomuellernet/buildenv-jitq
   script:
     - cd backend/build
-    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_CXX_CLANG_TIDY:STRING="clang-tidy-5.0;-extra-arg=-I/opt/clang+llvm-5.0.0/lib/clang/5.0.0;-header-filter=/builds/OU-SYSTEMS/jitq/backend/src/"
-    - make
+    - make -k check-tidy
 
 cppcheck:
   stage: test
