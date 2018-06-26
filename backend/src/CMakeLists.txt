@@ -115,6 +115,7 @@ set(SOURCE_FILES
         optimize/attribute_id_tracking.cpp
         optimize/determine_sortedness.cpp
         optimize/Optimizer.cpp
+        optimize/type_inference.cpp
         optimize/grouped_reduce_by_key.cpp
         optimize/SimplePredicateMoveAround.cpp
         utils/c_type_to_llvm.cpp
