@@ -41,7 +41,7 @@ llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
     return LLVMFieldTypeVisitor(context).Visit(field);
 }
 
-void Function::parse(const std::string &ir) {
+Function::Function(const std::string &ir) : ret_type(UNKNOWN) {
     module = parseIR(
             llvm::MemoryBufferRef(llvm::StringRef(ir), llvm::StringRef("id")),
             Err, Context);

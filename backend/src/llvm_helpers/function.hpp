@@ -19,9 +19,7 @@ namespace llvm_helpers {
 
 class Function {
 public:
-    explicit Function(const std::string &ir) : ret_type(UNKNOWN) { parse(ir); }
-
-    void parse(const std::string &ir);
+    explicit Function(const std::string &ir);
 
     /**
      * if the argument is part of the output, return its positions in the output
