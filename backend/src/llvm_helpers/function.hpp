@@ -2,8 +2,8 @@
 // Created by sabir on 18.07.17.
 //
 
-#ifndef IR_ANALYZER_LLVMPARSER_H
-#define IR_ANALYZER_LLVMPARSER_H
+#ifndef LLVM_HELPERS_FUNCTION_HPP
+#define LLVM_HELPERS_FUNCTION_HPP
 
 #include <memory>
 #include <string>
@@ -15,11 +15,11 @@
 
 #include "dag/DAGFilter.h"
 
-class LLVMParser {
+namespace llvm_helpers {
+
+class Function {
 public:
-    explicit LLVMParser(const std::string &ir) : ret_type(UNKNOWN) {
-        parse(ir);
-    }
+    explicit Function(const std::string &ir) : ret_type(UNKNOWN) { parse(ir); }
 
     void parse(const std::string &ir);
 
@@ -73,4 +73,6 @@ private:
     ret_types ret_type;
 };
 
-#endif  // IR_ANALYZER_LLVMPARSER_H
+}  // namespace llvm_helpers
+
+#endif  // LLVM_HELPERS_FUNCTION_HPP

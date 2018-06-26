@@ -10,8 +10,8 @@
 
 #include <boost/mpl/list.hpp>
 
-#include "IR_analyzer/LLVMParser.h"
 #include "dag/DAGFilter.h"
+#include "llvm_helpers/function.hpp"
 #include "utils/visitor.hpp"
 
 struct CollectFiltersVisitor
@@ -116,7 +116,7 @@ void SimplePredicateMoveAround::optimize() {
             dag_->AddFlow(currentOp, 0, filt, 0);
 
             // change the llvm ir signature
-            LLVMParser parser(filt->llvm_ir);
+            llvm_helpers::Function parser(filt->llvm_ir);
             filt->llvm_ir = parser.adjust_filter_signature(
                     filt, dag_->predecessor(filt));
 

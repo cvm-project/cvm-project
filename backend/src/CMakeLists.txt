@@ -111,7 +111,7 @@ set(SOURCE_FILES
         dag/type/type.cpp
         dag/type/tuple.cpp
         dag/utils/apply_visitor.cpp
-        IR_analyzer/LLVMParser.cpp
+        llvm_helpers/function.cpp
         optimize/attribute_id_tracking.cpp
         optimize/determine_sortedness.cpp
         optimize/Optimizer.cpp
@@ -130,14 +130,14 @@ add_executable(benchmark benchmarks/main.cpp)
 
 add_executable(max_memory benchmarks/max_memory.c)
 
-# Set up LLVMParser unit tests
-add_executable(LLVMParser_tests
-        tests/LLVMParser.cpp
+# Set up llvm_function unit tests
+add_executable(llvm_helpers_tests
+        tests/llvm_helpers_function.cpp
     )
-target_link_libraries(LLVMParser_tests PUBLIC
+target_link_libraries(llvm_helpers_tests PUBLIC
         generate
     )
-add_test(LLVMParser LLVMParser_tests)
+add_test(llvm_helpers llvm_helpers_tests)
 
 # Set up optimizer command line tool
 add_executable(opt-cli

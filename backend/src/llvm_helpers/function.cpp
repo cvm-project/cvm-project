@@ -2,7 +2,7 @@
 // Created by sabir on 18.07.17.
 //
 
-#include "LLVMParser.h"
+#include "function.hpp"
 
 #include <algorithm>
 #include <regex>
@@ -15,6 +15,8 @@
 #include "dag/collection/field.hpp"
 #include "utils/c_type_to_llvm.h"
 #include "utils/visitor.hpp"
+
+namespace llvm_helpers {
 
 llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
                             dag::collection::Field *const field) {
@@ -39,7 +41,7 @@ llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
     return LLVMFieldTypeVisitor(context).Visit(field);
 }
 
-void LLVMParser::parse(const std::string &ir) {
+void Function::parse(const std::string &ir) {
     module = parseIR(
             llvm::MemoryBufferRef(llvm::StringRef(ir), llvm::StringRef("id")),
             Err, Context);
@@ -83,7 +85,7 @@ void LLVMParser::parse(const std::string &ir) {
     }
 }
 
-std::vector<size_t> LLVMParser::get_output_positions_primitive(
+std::vector<size_t> Function::get_output_positions_primitive(
         size_t arg_position) {
     std::vector<size_t> res;
 
@@ -103,8 +105,7 @@ std::vector<size_t> LLVMParser::get_output_positions_primitive(
     return res;
 }
 
-std::vector<size_t> LLVMParser::get_output_positions_struct(
-        size_t arg_position) {
+std::vector<size_t> Function::get_output_positions_struct(size_t arg_position) {
     std::vector<size_t> res;
 
     auto function = module->getFunctionList().begin();
@@ -127,7 +128,7 @@ std::vector<size_t> LLVMParser::get_output_positions_struct(
     return res;
 }
 
-std::vector<size_t> LLVMParser::get_output_positions_caller_ptr(
+std::vector<size_t> Function::get_output_positions_caller_ptr(
         size_t arg_position) {
     std::vector<size_t> res;
 
@@ -153,7 +154,7 @@ std::vector<size_t> LLVMParser::get_output_positions_caller_ptr(
     return res;
 }
 
-std::vector<size_t> LLVMParser::get_output_positions(size_t arg_position) {
+std::vector<size_t> Function::get_output_positions(size_t arg_position) {
     switch (ret_type) {
         case PRIMITIVE:
             return get_output_positions_primitive(arg_position);
@@ -166,7 +167,7 @@ std::vector<size_t> LLVMParser::get_output_positions(size_t arg_position) {
     }
 }
 
-bool LLVMParser::is_argument_read(size_t arg_pos) {
+bool Function::is_argument_read(size_t arg_pos) {
     // go over uses and check if at least one is not an insert or a store
     if (ret_type == CALLER_PTR) {
         arg_pos++;
@@ -193,7 +194,7 @@ bool LLVMParser::is_argument_read(size_t arg_pos) {
     return used;
 }
 
-std::string LLVMParser::adjust_filter_signature(
+std::string Function::adjust_filter_signature(
         DAGFilter *const pFilter, const DAGOperator *const predecessor) {
     llvm::Module *new_mod = new llvm::Module("filter", Context);
 
@@ -244,3 +245,5 @@ std::string LLVMParser::adjust_filter_signature(
     delete (new_mod);
     return ret;
 }
+
+}  // namespace llvm_helpers

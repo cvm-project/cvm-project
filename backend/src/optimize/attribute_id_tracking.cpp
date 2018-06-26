@@ -2,11 +2,11 @@
 
 #include <unordered_set>
 
-#include "IR_analyzer/LLVMParser.h"
 #include "dag/DAGOperator.h"
 #include "dag/DAGOperators.h"
 #include "dag/all_operator_declarations.hpp"
 #include "dag/utils/apply_visitor.hpp"
+#include "llvm_helpers/function.hpp"
 #include "utils/visitor.hpp"
 
 class AttributeIdTrackingVisitor
@@ -61,7 +61,7 @@ public:
     }
 
     void operator()(DAGMap *const op) const {
-        LLVMParser parser(op->llvm_ir);
+        llvm_helpers::Function parser(op->llvm_ir);
 
         auto &input_fields = dag_->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
@@ -96,7 +96,7 @@ public:
     explicit DetermineReadSetVisitor(const DAG *const dag) : dag_(dag) {}
 
     void operator()(DAGFilter *const op) const {
-        LLVMParser parser(op->llvm_ir);
+        llvm_helpers::Function parser(op->llvm_ir);
         auto &input_fields = dag_->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
             if (parser.is_argument_read(i)) {
@@ -110,7 +110,7 @@ public:
     }
 
     void operator()(DAGMap *const op) const {
-        LLVMParser parser(op->llvm_ir);
+        llvm_helpers::Function parser(op->llvm_ir);
         auto &input_fields = dag_->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
             if (parser.is_argument_read(i)) {
