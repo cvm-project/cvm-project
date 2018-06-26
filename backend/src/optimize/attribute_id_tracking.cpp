@@ -65,7 +65,7 @@ public:
 
         auto &input_fields = dag_->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
-            for (const auto pos : parser.get_output_positions(i)) {
+            for (const auto pos : parser.ComputeOutputPositions(i)) {
                 auto &output_field = op->tuple->fields[pos];
                 input_fields[i]->attribute_id()->AddField(output_field.get());
                 input_fields[i]->attribute_id()->AddField(output_field.get());
@@ -99,7 +99,7 @@ public:
         llvm_helpers::Function parser(op->llvm_ir);
         auto &input_fields = dag_->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
-            if (parser.is_argument_read(i)) {
+            if (parser.ComputeIsArgumentRead(i)) {
                 op->read_set.insert(input_fields[i]->attribute_id());
             }
         }
@@ -113,7 +113,7 @@ public:
         llvm_helpers::Function parser(op->llvm_ir);
         auto &input_fields = dag_->predecessor(op)->tuple->fields;
         for (size_t i = 0; i < input_fields.size(); i++) {
-            if (parser.is_argument_read(i)) {
+            if (parser.ComputeIsArgumentRead(i)) {
                 op->read_set.insert(input_fields[i]->attribute_id());
             }
         }

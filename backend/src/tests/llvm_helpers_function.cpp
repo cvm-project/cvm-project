@@ -17,7 +17,7 @@ TEST_CASE("Read false, primitive return type", "") {
             "  ret i64 %.1\n"
             "}";
     llvm_helpers::Function parser(ir);
-    REQUIRE(!parser.is_argument_read(0));
+    REQUIRE(!parser.ComputeIsArgumentRead(0));
 }
 
 TEST_CASE("Read true, primitive return type", "") {
@@ -29,7 +29,7 @@ TEST_CASE("Read true, primitive return type", "") {
             "  ret i64 %.27.i\n"
             "}";
     llvm_helpers::Function parser(ir);
-    REQUIRE(parser.is_argument_read(0));
+    REQUIRE(parser.ComputeIsArgumentRead(0));
 }
 
 TEST_CASE("input arg 1 used in output, primitive return type", "") {
@@ -40,9 +40,9 @@ TEST_CASE("input arg 1 used in output, primitive return type", "") {
             "  ret i64 %.1\n"
             "}";
     llvm_helpers::Function parser(ir);
-    REQUIRE(parser.get_output_positions(0)[0] == 0);
-    REQUIRE(parser.get_output_positions(0).size() == 1);
-    REQUIRE(parser.get_output_positions(1).empty());
+    REQUIRE(parser.ComputeOutputPositions(0)[0] == 0);
+    REQUIRE(parser.ComputeOutputPositions(0).size() == 1);
+    REQUIRE(parser.ComputeOutputPositions(1).empty());
 }
 
 TEST_CASE("input arg 2 used in output, primitive return type", "") {
@@ -53,9 +53,9 @@ TEST_CASE("input arg 2 used in output, primitive return type", "") {
             "  ret i64 %.2\n"
             "}";
     llvm_helpers::Function parser(ir);
-    REQUIRE(parser.get_output_positions(1)[0] == 0);
-    REQUIRE(parser.get_output_positions(1).size() == 1);
-    REQUIRE(parser.get_output_positions(0).empty());
+    REQUIRE(parser.ComputeOutputPositions(1)[0] == 0);
+    REQUIRE(parser.ComputeOutputPositions(1).size() == 1);
+    REQUIRE(parser.ComputeOutputPositions(0).empty());
 }
 
 TEST_CASE("Read false, struct return type", "") {
@@ -69,8 +69,8 @@ TEST_CASE("Read false, struct return type", "") {
             "  ret { i64, i64 } %.16.fca.1.insert"
             "}";
     llvm_helpers::Function parser(ir);
-    REQUIRE(!parser.is_argument_read(0));
-    REQUIRE(!parser.is_argument_read(1));
+    REQUIRE(!parser.ComputeIsArgumentRead(0));
+    REQUIRE(!parser.ComputeIsArgumentRead(1));
 }
 
 TEST_CASE("Read true, caller pointer return type", "") {
@@ -93,8 +93,8 @@ TEST_CASE("Read true, caller pointer return type", "") {
             "\n"
             "";
     llvm_helpers::Function parser(ir);
-    REQUIRE(parser.is_argument_read(0));
-    REQUIRE(!parser.is_argument_read(1));
+    REQUIRE(parser.ComputeIsArgumentRead(0));
+    REQUIRE(!parser.ComputeIsArgumentRead(1));
 }
 
 TEST_CASE("Read false, caller pointer return type", "") {
@@ -116,8 +116,8 @@ TEST_CASE("Read false, caller pointer return type", "") {
             "\n"
             "";
     llvm_helpers::Function parser(ir);
-    REQUIRE(!parser.is_argument_read(0));
-    REQUIRE(!parser.is_argument_read(1));
+    REQUIRE(!parser.ComputeIsArgumentRead(0));
+    REQUIRE(!parser.ComputeIsArgumentRead(1));
 }
 
 TEST_CASE("input arg 1 used in output, pointer return type", "") {
@@ -137,10 +137,10 @@ TEST_CASE("input arg 1 used in output, pointer return type", "") {
             "  ret void\n"
             "}";
     llvm_helpers::Function parser(ir);
-    size_t pos = parser.get_output_positions(0)[0] +
-                 parser.get_output_positions(0)[1];
+    size_t pos = parser.ComputeOutputPositions(0)[0] +
+                 parser.ComputeOutputPositions(0)[1];
     REQUIRE(pos == 1);
-    REQUIRE(parser.get_output_positions(0).size() == 2);
-    REQUIRE(parser.get_output_positions(1).size() == 1);
-    REQUIRE(parser.get_output_positions(1)[0] == 2);
+    REQUIRE(parser.ComputeOutputPositions(0).size() == 2);
+    REQUIRE(parser.ComputeOutputPositions(1).size() == 1);
+    REQUIRE(parser.ComputeOutputPositions(1)[0] == 2);
 }

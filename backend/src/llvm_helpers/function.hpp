@@ -24,27 +24,18 @@ public:
     /**
      * if the argument is part of the output, return its positions in the output
      */
-    std::vector<size_t> get_output_positions(size_t arg_position);
+    std::vector<size_t> ComputeOutputPositions(size_t arg_position);
 
     /**
      * whether this argument is used by the function to produce any output
      *
      */
-    bool is_argument_read(size_t arg_pos);
+    bool ComputeIsArgumentRead(size_t arg_pos);
 
-    std::string adjust_filter_signature(DAGFilter *pFilter,
-                                        const DAGOperator *predecessor);
+    std::string AdjustFilterSignature(DAGFilter *pFilter,
+                                      const DAGOperator *predecessor);
 
 private:
-    // these 3 fields must be declared in this order
-    llvm::SMDiagnostic Err;
-    llvm::LLVMContext Context;
-    std::unique_ptr<llvm::Module> module;
-    std::vector<std::string> ret_instruction_ids;
-    std::vector<size_t> get_output_positions_primitive(size_t arg_position);
-    std::vector<size_t> get_output_positions_struct(size_t arg_position);
-    std::vector<size_t> get_output_positions_caller_ptr(size_t arg_position);
-
     /**
      * we need to differentiate between 3 cases
      * 1) the function has only one return value, e.g. ret i64 %.1
@@ -67,8 +58,19 @@ private:
           store i64 3, i64* %.1.repack3, align 8
           ret void
      */
-    enum ret_types { UNKNOWN, PRIMITIVE, STRUCT, CALLER_PTR };
-    ret_types ret_type;
+    enum class ReturnType { kUnknown, kPrimitive, kStruct, kCallerPtr };
+
+    std::vector<size_t> ComputeOutputPositionsPrimitive(size_t arg_position);
+    std::vector<size_t> ComputeOutputPositionsStruct(size_t arg_position);
+    std::vector<size_t> ComputeOutputPositionsCallerPtr(size_t arg_position);
+
+    // these 3 fields must be declared in this order
+    llvm::SMDiagnostic err_;
+    llvm::LLVMContext context_;
+    std::unique_ptr<llvm::Module> module_;
+
+    std::vector<std::string> ret_instruction_ids_;
+    ReturnType ret_type_;
 };
 
 }  // namespace llvm_helpers

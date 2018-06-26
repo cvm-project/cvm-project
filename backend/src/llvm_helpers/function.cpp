@@ -41,15 +41,15 @@ llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
     return LLVMFieldTypeVisitor(context).Visit(field);
 }
 
-Function::Function(const std::string &ir) : ret_type(UNKNOWN) {
-    module = parseIR(
+Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
+    module_ = parseIR(
             llvm::MemoryBufferRef(llvm::StringRef(ir), llvm::StringRef("id")),
-            Err, Context);
+            err_, context_);
     // find out the return type
-    auto func = module->getFunctionList().begin();
+    auto func = module_->getFunctionList().begin();
     auto t = func->getReturnType();
     if (t->isAggregateType()) {
-        ret_type = STRUCT;
+        ret_type_ = ReturnType::kStruct;
         // save the insert instructions
         for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; i++) {
@@ -58,38 +58,38 @@ Function::Function(const std::string &ir) : ret_type(UNKNOWN) {
                         auto insert = llvm::cast<llvm::InsertValueInst>(instr);
                         assert(insert->getIndices().size() == 1);
                         const size_t pos = *(insert->idx_begin());
-                        if (pos + 1 > ret_instruction_ids.size()) {
-                            ret_instruction_ids.resize(pos + 1);
+                        if (pos + 1 > ret_instruction_ids_.size()) {
+                            ret_instruction_ids_.resize(pos + 1);
                         }
-                        ret_instruction_ids[pos] = instr->getName();
+                        ret_instruction_ids_[pos] = instr->getName();
                     }
                 }
             }
         }
     } else if (t->isVoidTy()) {
-        ret_type = CALLER_PTR;
+        ret_type_ = ReturnType::kCallerPtr;
         // save the store instructions
         for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; ++i) {
                 if (auto instr = llvm::cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::Store) {
                         // the store target uniquely identifies this instruction
-                        ret_instruction_ids.push_back(
+                        ret_instruction_ids_.push_back(
                                 instr->getOperand(1)->getName());
                     }
                 }
             }
         }
     } else {
-        ret_type = PRIMITIVE;
+        ret_type_ = ReturnType::kPrimitive;
     }
 }
 
-std::vector<size_t> Function::get_output_positions_primitive(
+std::vector<size_t> Function::ComputeOutputPositionsPrimitive(
         size_t arg_position) {
     std::vector<size_t> res;
 
-    auto function = module->getFunctionList().begin();
+    auto function = module_->getFunctionList().begin();
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
@@ -105,10 +105,11 @@ std::vector<size_t> Function::get_output_positions_primitive(
     return res;
 }
 
-std::vector<size_t> Function::get_output_positions_struct(size_t arg_position) {
+std::vector<size_t> Function::ComputeOutputPositionsStruct(
+        size_t arg_position) {
     std::vector<size_t> res;
 
-    auto function = module->getFunctionList().begin();
+    auto function = module_->getFunctionList().begin();
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
@@ -116,8 +117,8 @@ std::vector<size_t> Function::get_output_positions_struct(size_t arg_position) {
         if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() == llvm::Instruction::InsertValue) {
                 // find the index
-                for (size_t i = 0; i < ret_instruction_ids.size(); i++) {
-                    std::string id = ret_instruction_ids[i];
+                for (size_t i = 0; i < ret_instruction_ids_.size(); i++) {
+                    std::string id = ret_instruction_ids_[i];
                     if (id == inst->getName()) {
                         res.push_back(i);
                     }
@@ -128,13 +129,13 @@ std::vector<size_t> Function::get_output_positions_struct(size_t arg_position) {
     return res;
 }
 
-std::vector<size_t> Function::get_output_positions_caller_ptr(
+std::vector<size_t> Function::ComputeOutputPositionsCallerPtr(
         size_t arg_position) {
     std::vector<size_t> res;
 
     // the first arg is the return pointer
     arg_position++;
-    auto function = module->getFunctionList().begin();
+    auto function = module_->getFunctionList().begin();
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
@@ -142,8 +143,8 @@ std::vector<size_t> Function::get_output_positions_caller_ptr(
         if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() == llvm::Instruction::Store) {
                 // find the index
-                for (size_t i = 0; i < ret_instruction_ids.size(); i++) {
-                    std::string id = ret_instruction_ids[i];
+                for (size_t i = 0; i < ret_instruction_ids_.size(); i++) {
+                    std::string id = ret_instruction_ids_[i];
                     if (id == inst->getOperand(1)->getName()) {
                         res.push_back(i);
                     }
@@ -154,25 +155,25 @@ std::vector<size_t> Function::get_output_positions_caller_ptr(
     return res;
 }
 
-std::vector<size_t> Function::get_output_positions(size_t arg_position) {
-    switch (ret_type) {
-        case PRIMITIVE:
-            return get_output_positions_primitive(arg_position);
-        case STRUCT:
-            return get_output_positions_struct(arg_position);
-        case CALLER_PTR:
-            return get_output_positions_caller_ptr(arg_position);
+std::vector<size_t> Function::ComputeOutputPositions(size_t arg_position) {
+    switch (ret_type_) {
+        case ReturnType::kPrimitive:
+            return ComputeOutputPositionsPrimitive(arg_position);
+        case ReturnType::kStruct:
+            return ComputeOutputPositionsStruct(arg_position);
+        case ReturnType::kCallerPtr:
+            return ComputeOutputPositionsCallerPtr(arg_position);
         default:
-            return get_output_positions_primitive(arg_position);
+            return ComputeOutputPositionsPrimitive(arg_position);
     }
 }
 
-bool Function::is_argument_read(size_t arg_pos) {
+bool Function::ComputeIsArgumentRead(size_t arg_pos) {
     // go over uses and check if at least one is not an insert or a store
-    if (ret_type == CALLER_PTR) {
+    if (ret_type_ == ReturnType::kCallerPtr) {
         arg_pos++;
     }
-    auto function = module->getFunctionList().begin();
+    auto function = module_->getFunctionList().begin();
     auto &s = function->arg_begin()[arg_pos];
 
     bool used = false;
@@ -194,18 +195,18 @@ bool Function::is_argument_read(size_t arg_pos) {
     return used;
 }
 
-std::string Function::adjust_filter_signature(
+std::string Function::AdjustFilterSignature(
         DAGFilter *const pFilter, const DAGOperator *const predecessor) {
-    llvm::Module *new_mod = new llvm::Module("filter", Context);
+    llvm::Module *new_mod = new llvm::Module("filter", context_);
 
     std::vector<llvm::Type *> types;
     for (const auto &f : predecessor->tuple->fields) {
-        types.push_back(ComputeLLVMType(&Context, f.get()));
+        types.push_back(ComputeLLVMType(&context_, f.get()));
     }
 
-    auto old_function = module->getFunctionList().begin();
+    auto old_function = module_->getFunctionList().begin();
     llvm::FunctionType *FT =
-            llvm::FunctionType::get(llvm::Type::getInt1Ty(Context),
+            llvm::FunctionType::get(llvm::Type::getInt1Ty(context_),
                                     llvm::ArrayRef<llvm::Type *>(types), false);
     llvm::Function *filter_predicate =
             llvm::Function::Create(FT, llvm::Function::ExternalLinkage,

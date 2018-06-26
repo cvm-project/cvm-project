@@ -117,8 +117,8 @@ void SimplePredicateMoveAround::optimize() {
 
             // change the llvm ir signature
             llvm_helpers::Function parser(filt->llvm_ir);
-            filt->llvm_ir = parser.adjust_filter_signature(
-                    filt, dag_->predecessor(filt));
+            filt->llvm_ir =
+                    parser.AdjustFilterSignature(filt, dag_->predecessor(filt));
 
             // copy the output fields
             filt->tuple->fields.clear();
