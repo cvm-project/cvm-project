@@ -20,7 +20,8 @@ LDFLAGS = -fuse-ld=gold -flto
 UDF_SOURCES = llvm_funcs.ll
 UDF_OBJECTS = $(UDF_SOURCES:.ll=.o)
 
-HEADER = $(SCRIPT_DIR)/operators/Operators.h
+MAINHEADER = $(SCRIPT_DIR)/operators/Operators.h
+HEADERS = $(filter-out $(MAINHEADER),$(wildcard $(SCRIPT_DIR)/operators/*.h))
 GCHEADER = $(SCRIPT_DIR)/operators/Operators.h.gch
 GENHEADER = $(SCRIPT_DIR)/operators/Operators.h.sh
 
@@ -35,10 +36,10 @@ all: execute.so
 execute.o: execute.cpp $(GCHEADER)
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(INC) -include-pch $(GCHEADER)
 
-$(GCHEADER): $(HEADER)
+$(GCHEADER): $(MAINHEADER)
 	$(CXX) $(CXXFLAGS) $(INC) -x c++-header $< -o $@
 
-$(HEADER):
+$(MAINHEADER): $(HEADERS)
 	$(GENHEADER) $@
 
 execute.so: $(UDF_OBJECTS) execute.o
@@ -48,6 +49,6 @@ execute.s: execute.so
 	objdump -D $^ > $@
 
 clean:
-	rm -f *.bc execute *.asm functions_llvm/*.o *.o *.so *.ll $(GCHEADER) $(HEADER)
+	rm -f *.bc execute *.asm functions_llvm/*.o *.o *.so *.ll $(GCHEADER) $(MAINHEADER)
 
 .PHONY: clean
