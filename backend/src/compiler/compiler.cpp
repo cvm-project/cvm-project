@@ -20,7 +20,9 @@ Compiler::Compiler(const std::string &dagstr, const std::string &confstr)
 void Compiler::GenerateExecutable() {
     // Optimize
     Optimizer opt;
-    opt.run(dag_.get());
+    if (conf_.value("/optimizer/optimization-level", 0) > 0) {
+        opt.run(dag_.get());
+    }
 
     // Select code gen back-end
     // TODO(ingo): pass back-end-specific config to back-end
@@ -32,12 +34,14 @@ void Compiler::GenerateExecutable() {
     const std::string codegen_backend = conf_.value("/codegen/backend", "cpp");
     const auto code_gen_backend = code_generators.at(codegen_backend).get();
 
-    // Generate code
-    code_gen_backend->GenerateCode(dag_.get());
+    if (conf_.value("/optimizer/codegen", true)) {
+        // Generate code
+        code_gen_backend->GenerateCode(dag_.get());
 
-    // Compile to native machine code
-    // TODO(ingo): think again about this interface
-    code_gen_backend->Compile(conf_.value("/backend/counter", 0));
+        // Compile to native machine code
+        // TODO(ingo): think again about this interface
+        code_gen_backend->Compile(conf_.value("/backend/counter", 0));
+    }
 }
 
 }  // namespace compiler

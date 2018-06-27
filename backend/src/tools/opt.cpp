@@ -4,10 +4,7 @@
 
 #include <boost/program_options.hpp>
 
-#include "compiler/generate_executable.hpp"
-#include "dag/DAG.h"
-#include "dag/dag_factory.hpp"
-#include "optimize/Optimizer.h"
+#include "compiler/compiler.hpp"
 #include "utils/printDAG.h"
 
 namespace po = boost::program_options;
@@ -86,27 +83,30 @@ int main(int argc, char* argv[]) {
     std::ostream output(vm.count("output") > 0 ? output_file.rdbuf()
                                                : std::cout.rdbuf());
 
-    // Read file content and parse
-    std::unique_ptr<DAG> dag(DagFactory::instance().ParseDag(&input));
+    const std::string dagstr(std::istreambuf_iterator<char>(input), {});
 
-    // cppcheck-suppress knownConditionTrueFalse
-    if (opt_level > 0) {
-        // Optimize
-        Optimizer opt;
-        opt.run(dag.get());
+    // Assemble backend configuration
+    nlohmann::json conf_json;
+    conf_json["/optimizer/optimization-level"] = opt_level;
+
+    if (output_format != OutputFormat::kBin) {
+        conf_json["/optimizer/codegen"] = false;
     }
 
+    // Run the compiler
+    compiler::Compiler compiler(dagstr, conf_json.unflatten().dump());
+    compiler.GenerateExecutable();
+
+    // Produce output
     switch (output_format) {
         case OutputFormat::kJson: {
-            nlohmann::json json(dag);
+            nlohmann::json json(compiler.dag());
             output << json << std::endl;
         } break;
-        case OutputFormat::kDot:
-            ToDotStream(dag.get(), &output);
-            break;
+        case OutputFormat::kDot: {
+            ToDotStream(compiler.dag(), &output);
+        } break;
         case OutputFormat::kBin: {
-            nlohmann::json json(dag);
-            GenerateExecutable("{}", json.dump().c_str(), 0);
         } break;
         default:
             throw std::runtime_error("Invalid output format");
