@@ -100,11 +100,17 @@ def get_type_size(type_):
     try:
         size = int(type_.bitwidth / 8)
     except AttributeError:
+        if isinstance(type_, nb.types.Boolean):
+            return 1
         if isinstance(type_, nb.types.Tuple):
             for child_type in type_.types:
                 size += get_type_size(child_type)
         elif isinstance(type_, nb.types.UniTuple):
             size = get_type_size(type_.dtype) * type_.count
+        elif isinstance(type_, nb.types.Record):
+            size = type_.size
+        else:
+            assert False, "Cannot compute size of " + type_.name
     return size
 
 
