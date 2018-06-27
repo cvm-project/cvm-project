@@ -40,7 +40,6 @@ std::string ComputeTypeString(dag::collection::Field *const field) {
                 const auto f = field->tuple()->fields[pos];
                 const auto item_type = ComputeTypeString(f.get());
                 item_types.push_back(item_type + " v" + std::to_string(pos));
-                pos++;
             }
             std::vector<std::string> sizes;
             for (size_t i = 0; i < field->field_type()->number_dim; i++) {
