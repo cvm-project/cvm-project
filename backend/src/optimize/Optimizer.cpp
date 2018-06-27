@@ -12,23 +12,35 @@
 #include "SimplePredicateMoveAround.h"
 
 void Optimizer::run(DAG *dag) {
-    // Type inference
-    TypeInference ti(dag);
-    ti.optimize();
+    // Verify tuple types
+    TypeInference ti_check(dag, true);
+    ti_check.optimize();
 
     // Column tracking
     AttributeIdTracking ct(dag);
     ct.optimize();
+#ifndef NDEBUG
+    ti_check.optimize();
+#endif  // NDEBUG
 
     // Move around filters
     SimplePredicateMoveAround opt(dag);
     opt.optimize();
+#ifndef NDEBUG
+    ti_check.optimize();
+#endif  // NDEBUG
 
     // Determine sortedness
     DetermineSortedness sort(dag);
     sort.optimize();
+#ifndef NDEBUG
+    ti_check.optimize();
+#endif  // NDEBUG
 
     // Replace GroupByKey with grouped variant
     GroupedReduceByKey grbk(dag);
     grbk.optimize();
+#ifndef NDEBUG
+    ti_check.optimize();
+#endif  // NDEBUG
 }
