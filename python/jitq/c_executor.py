@@ -13,7 +13,7 @@ from jitq.utils import get_project_path, RDDEncoder, Timer, \
 JITQ_PATH = get_project_path()
 CPP_DIR = JITQ_PATH + "/backend/"
 GEN_DIR = JITQ_PATH + "/backend/gen/"
-GEN_HEADER_FILE = "generate_dag_plan.h"
+GEN_HEADER_FILE = "compiler/generate_executable.h"
 EXECUTOR_HEADER_FILE = "execute.h"
 GENERATE_LIB = "libgenerate"
 EXECUTE_LIB = "execute"
@@ -82,7 +82,7 @@ class Executor:
 
                 timer = Timer()
                 timer.start()
-                generator.generate_dag_plan(
+                generator.GenerateExecutable(
                     conf_c, dag_c, self.lib_counter)
                 timer.end()
                 print("time: calling make " + str(timer.diff()))

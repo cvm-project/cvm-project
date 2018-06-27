@@ -91,9 +91,9 @@ include(GoogleTest)
 
 # Set up library
 set(SOURCE_FILES
-        generate_dag_plan.cpp
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/BackEnd.cpp
+        compiler/generate_executable.cpp
         dag/attribute_id.cpp
         dag/DAGConstantTuple.cpp
         dag/DAG.cpp
@@ -120,7 +120,7 @@ set(SOURCE_FILES
         optimize/SimplePredicateMoveAround.cpp
         utils/c_type_to_llvm.cpp
         utils/utils.cpp
-         )
+    )
 add_library(generate SHARED ${SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
         ${LLVM_LIBS}

@@ -1,4 +1,4 @@
-#include "generate_dag_plan.hpp"
+#include "generate_executable.hpp"
 
 #include <cstddef>
 #include <cstring>
@@ -14,8 +14,8 @@
 #include "utils/timing.h"
 
 extern "C" {
-int generate_dag_plan(const char *const conf, const char *const dagstr,
-                      const unsigned long counter) {  // NOLINT
+int GenerateExecutable(const char *const conf, const char *const dagstr,
+                       const unsigned long counter) {  // NOLINT
 
     // Parse configuration
     nlohmann::json json;

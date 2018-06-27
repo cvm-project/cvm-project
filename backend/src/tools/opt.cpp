@@ -4,9 +4,9 @@
 
 #include <boost/program_options.hpp>
 
+#include "compiler/generate_executable.hpp"
 #include "dag/DAG.h"
 #include "dag/dag_factory.hpp"
-#include "generate_dag_plan.hpp"
 #include "optimize/Optimizer.h"
 #include "utils/printDAG.h"
 
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
             break;
         case OutputFormat::kBin: {
             nlohmann::json json(dag);
-            generate_dag_plan("{}", json.dump().c_str(), 0);
+            GenerateExecutable("{}", json.dump().c_str(), 0);
         } break;
         default:
             throw std::runtime_error("Invalid output format");
