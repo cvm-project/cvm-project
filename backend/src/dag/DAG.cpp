@@ -256,8 +256,11 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
     return dag;
 }
 
-void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(
-        nlohmann::json &json, const std::unique_ptr<DAG> &dag) {
+void to_json(nlohmann::json &json, DAG *const dag) {
+    to_json(json, const_cast<const DAG *>(dag));
+}
+
+void to_json(nlohmann::json &json, const DAG *const dag) {
     auto jops = nlohmann::json::array();
     for (const auto &op : dag->operators()) {
         // Convert operator to JSON
@@ -274,4 +277,9 @@ void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(
         jops.push_back(jop);
     }
     json.emplace("dag", jops);
+}
+
+void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(
+        nlohmann::json &json, const std::unique_ptr<DAG> &dag) {
+    ::to_json(json, dag.get());
 }

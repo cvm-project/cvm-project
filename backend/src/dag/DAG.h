@@ -223,4 +223,9 @@ struct adl_serializer<std::unique_ptr<DAG>> {
 
 }  // namespace nlohmann
 
+// NOLINTNEXTLINE google-runtime-references
+void to_json(nlohmann::json &json, DAG *dag);
+// NOLINTNEXTLINE google-runtime-references
+void to_json(nlohmann::json &json, const DAG *dag);
+
 #endif  // DAG_DAG_H
