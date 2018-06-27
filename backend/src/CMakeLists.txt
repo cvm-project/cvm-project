@@ -93,6 +93,7 @@ include(GoogleTest)
 set(SOURCE_FILES
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/BackEnd.cpp
+        compiler/compiler.cpp
         compiler/generate_executable.cpp
         dag/attribute_id.cpp
         dag/DAGConstantTuple.cpp

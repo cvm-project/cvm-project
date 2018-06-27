@@ -7,48 +7,16 @@
 
 #include <json.hpp>
 
-#include "code_gen/common/BackEnd.hpp"
-#include "code_gen/cpp/BackEnd.hpp"
-#include "dag/dag_factory.hpp"
-#include "optimize/Optimizer.h"
-#include "utils/timing.h"
+#include "compiler/compiler.hpp"
 
 extern "C" {
 int GenerateExecutable(const char *const conf, const char *const dagstr,
                        const unsigned long counter) {  // NOLINT
+    auto conf_json = nlohmann::json::parse(conf).flatten();
+    conf_json["/backend/counter"] = counter;
 
-    // Parse configuration
-    nlohmann::json json;
-    std::istringstream(conf) >> json;
-    json = json.flatten();
-
-    // Parse DAG
-    std::unique_ptr<DAG> dag(
-            DagFactory::instance().ParseDag(std::string(dagstr)));
-
-    // Optimize
-    Optimizer opt;
-    opt.run(dag.get());
-
-    // Select code gen back-end
-    // TODO(ingo): pass back-end-specific config to back-end
-    using CodeGenBackEnd = std::unique_ptr<code_gen::common::BackEnd>;
-    std::unordered_map<std::string, CodeGenBackEnd> code_generators;
-    code_generators.emplace("cpp",
-                            CodeGenBackEnd(new code_gen::cpp::BackEnd()));
-
-    const std::string codegen_backend = json.value("/codegen/backend", "cpp");
-    const auto code_gen_backend = code_generators.at(codegen_backend).get();
-
-    // Generate code
-    code_gen_backend->GenerateCode(dag.get());
-
-    // Compile to native machine code
-    TICK1
-    // TODO(ingo): think again about this interface
-    code_gen_backend->Compile(counter);
-    TOCK1
-    //    std::cout << "call make " << DIFF1 << std::endl;
+    compiler::Compiler compiler(dagstr, conf_json.unflatten().dump());
+    compiler.GenerateExecutable();
 
     // TODO(ingo): better error handling
     return 0;
