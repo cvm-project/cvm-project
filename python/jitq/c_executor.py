@@ -45,22 +45,24 @@ def load_cffi(header, lib_path, ffi):
 
 
 # pylint: disable=inconsistent-return-statements
-def wrap_result(item, type_, ffi):
+def wrap_result(res, type_, ffi):
+
+    values = json.loads(ffi.string(res).decode('utf-8'))
+    assert len(values) == 1
+    value = values[0]
 
     if isinstance(type_, types.Array):
-        attributes = dir(item)
-        assert len(attributes) == 1, "Unexpected result type from backend"
-        first_field_name = attributes[0]
-        first_field = getattr(item, first_field_name)
+        data_ptr = ffi.cast("void *", value['data'])
+        shape = value['shape']
+        assert type_.ndim == len(shape)
         dtype_size = get_type_size(type_.dtype)
-        shape = [first_field.shape[i] for i in range(type_.ndim)]
         total_count = reduce(lambda t1, t2: t1 * t2, shape)
-        c_buffer = ffi.buffer(first_field.data, total_count * dtype_size)
+        c_buffer = ffi.buffer(data_ptr, total_count * dtype_size)
         np_arr = np.frombuffer(c_buffer,
                                dtype=numba_type_to_dtype(type_.dtype),
                                count=total_count)
         np_arr = np_arr.view(NumpyResult)
-        np_arr.ptr = item
+        np_arr.ptr = res
         return np_arr
     assert False
 
@@ -102,13 +104,7 @@ class Executor:
         def execute(self, context, dag_dict, inputs, output_type):
             ffi = FFI()
 
-            # here we should pass the actual C type for our input tuple
-            args = []
-            for inpt in inputs:
-                data_ptr = ffi.cast("void*", inpt[0])
-                args.append(data_ptr)
-                args.append(inpt[1])
-
+            args_c = ffi.new('char[]', json.dumps(inputs).encode('utf-8'))
             dag_str = json.dumps(dag_dict, cls=RDDEncoder)
             conf_str = json.dumps(context.conf)
 
@@ -116,7 +112,7 @@ class Executor:
 
             timer = Timer()
             timer.start()
-            res = executor.execute(*args)
+            res = executor.execute(args_c)
             # Add a free function to the result object that allows the C++
             # layer to clean up
             res = ffi.gc(res, executor.free_result)

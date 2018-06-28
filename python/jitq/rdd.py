@@ -8,6 +8,7 @@ import numba.types as types
 from numba import typeof
 import numpy as np
 from pandas import DataFrame
+from cffi import FFI
 
 from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
 from jitq.c_executor import Executor
@@ -520,7 +521,9 @@ class ParameterLookup(SourceRDD):
         dic['parameter_num'] = self.parameter_num
 
     def self_get_inputs(self):
-        return (self.data_ptr, self.size)
+        ffi = FFI()
+        data = int(ffi.cast("uintptr_t", ffi.cast("void*", self.data_ptr)))
+        return {'type': 'array', 'data': data, 'shape': [self.size]}
 
 
 # pylint: disable=inconsistent-return-statements

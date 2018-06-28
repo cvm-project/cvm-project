@@ -89,23 +89,7 @@ void CodeGenVisitor::operator()(DAGParameterLookup *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
-    auto return_type_desc = operatorNameTupleTypeMap[op->id].return_type;
-
-    // generate item_type
-    auto item_type =
-            boost::polymorphic_pointer_downcast<const dag::type::Array>(
-                    op->tuple->fields[0]->field_type())
-                    ->tuple_type;
-    auto item_type_desc = EmitTupleStructDefinition(item_type);
-
-    auto input_name_pair = getNextInputName();
-    inputNames.push_back(input_name_pair);
-
-    const auto input_arg =
-            (boost::format("%1%{{ reinterpret_cast<%2% *>(%3%), %4% }}") %
-             return_type_desc->name % item_type_desc->name %
-             input_name_pair.first % input_name_pair.second)
-                    .str();
+    const auto input_arg = "input_" + std::to_string(op->parameter_num);
 
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {input_arg});
 }

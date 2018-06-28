@@ -89,8 +89,8 @@ set(GTEST_LIBRARIES
 
 include(GoogleTest)
 
-# Set up library
-set(SOURCE_FILES
+# Set up generate library
+set(GENERATE_SOURCE_FILES
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/BackEnd.cpp
         compiler/compiler.cpp
@@ -123,10 +123,21 @@ set(SOURCE_FILES
         utils/c_type_to_llvm.cpp
         utils/utils.cpp
     )
-add_library(generate SHARED ${SOURCE_FILES} )
+add_library(generate SHARED ${GENERATE_SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
         ${LLVM_LIBS}
+        runtime
     )
+
+# Set up runtime library
+set(RUNTIME_SOURCE_FILES
+        runtime/values/json_parsing.cpp
+        runtime/values/array_json.cpp
+        runtime/values/tuple_json.cpp
+        runtime/values/value_json.cpp
+        runtime/values/value_parser.cpp
+    )
+add_library(runtime SHARED ${RUNTIME_SOURCE_FILES} )
 
 # Set up benchmark utils
 add_executable(benchmark benchmarks/main.cpp)

@@ -8,16 +8,15 @@
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
-#include <boost/range/adaptor/transformed.hpp>
 
 #include <sys/stat.h>
 
 #include "CodeGenVisitor.h"
 #include "dag/DAGOperators.h"
+#include "dag/type/array.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "utils/utils.h"
 
-using boost::adaptors::transformed;
 using boost::algorithm::join;
 using boost::format;
 
@@ -58,12 +57,42 @@ void BackEnd::GenerateCode(DAG *const dag) {
     dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
     // Compute execute function parameters
-    const auto input_formatter = [](auto i) {
-        return (format("void * %s, unsigned long %s") % i.first % i.second)
-                .str();
+    struct CollectInputsVisitor
+        : public Visitor<CollectInputsVisitor, DAGOperator,
+                         boost::mpl::list<DAGParameterLookup>> {
+        void operator()(DAGParameterLookup *op) { inputs_.emplace_back(op); }
+        std::vector<DAGParameterLookup *> inputs_;
     };
-    const auto input_args =
-            join(visitor.inputNames | transformed(input_formatter), ", ");
+    CollectInputsVisitor collec_inputs_visitor;
+    for (auto const op : dag->operators()) {
+        collec_inputs_visitor.Visit(op);
+    }
+
+    std::vector<std::string> pack_input_args;
+    std::vector<std::string> packed_input_args;
+    for (auto const op : collec_inputs_visitor.inputs_) {
+        const std::string param_num = std::to_string(op->parameter_num);
+
+        // Packing of parameters as tules
+        const auto tuple_type = op->tuple->type;
+        const auto array_type = dynamic_cast<const dag::type::Array *>(
+                tuple_type->field_types[0]);
+        const auto inner_type = array_type->tuple_type;
+        const auto tuple_typedef = visitor.tuple_type_descs_[tuple_type];
+        const auto inner_typedef = visitor.tuple_type_descs_[inner_type];
+
+        pack_input_args.emplace_back(
+                (format("%1%{{reinterpret_cast<%2%*>("
+                        "       inputs[%3%]->as<Array>()->data),"
+                        "       inputs[%3%]->as<Array>()->shape[0]}}") %
+                 tuple_typedef->name % inner_typedef->name % param_num)
+                        .str());
+
+        // Parameters for function signature of 'execute_plan' (as tuples)
+        packed_input_args.emplace_back(
+                (format("%1% input_%2%") % tuple_typedef->name % param_num)
+                        .str());
+    }
 
     // Generate typedef for result wrapper
     auto sink = visitor.operatorNameTupleTypeMap[dag->sink->id];
@@ -79,31 +108,68 @@ void BackEnd::GenerateCode(DAG *const dag) {
         mainSourceFile << "#include " << incl << std::endl;
     }
 
+    mainSourceFile                                                        //
+            << "#include \"../../../runtime/values/array.hpp\"\n"         //
+            << "#include \"../../../runtime/values/value.hpp\"\n"         //
+            << "#include \"../../../runtime/values/json_parsing.hpp\"\n"  //
+            << "using namespace runtime::values;" << std::endl;
+
     mainSourceFile << planTupleDeclarations.str();
     mainSourceFile << planLLVMDeclarations.str();
 
-    // Main executable file: execute function
-    mainSourceFile << format("extern \"C\" { %s execute(%s) { %s\n%s } }") %
-                              sink.return_type->name % input_args %
-                              planBody.str() % ComputePlanDriver(sink);
+    // Main executable file: plan function on tuples
+    mainSourceFile << format("%1% execute_tuples(%2%) { "
+                             "    %3%\n%4% }") %
+                              sink.return_type->name %
+                              join(packed_input_args, ", ") % planBody.str() %
+                              ComputePlanDriver(sink);
+
+    // Main executable file: plan function on runtime values
+    mainSourceFile <<  //
+            format("VectorOfValues execute_values(const VectorOfValues &inputs)"
+                   "{"
+                   "    const auto ret = execute_tuples(%1%);"
+                   "    std::unique_ptr<Array> val(new Array());"
+                   "    val->data = ret.v0.data;"
+                   "    val->shape = {ret.v0.shape[0]};"
+                   "    VectorOfValues v;"
+                   "    v.emplace_back(val.release());"
+                   "    return v;"
+                   " }") %
+                    join(pack_input_args, ", ");
+
+    // Main executable file: exported execute function
+    mainSourceFile
+            << "extern \"C\" { const char* execute("
+               "        const char *const inputs_str) {"
+               "    const auto inputs = ConvertFromJsonString(inputs_str);"
+               "    const auto ret = execute_values(inputs);"
+               "    const auto ret_str = ConvertToJsonString(ret);"
+               "    const auto ret_ptr = reinterpret_cast<char *>("
+               "            malloc(ret_str.size() + 1));"
+               "    strcpy(ret_ptr, ret_str.c_str());"
+               "    return ret_ptr;"
+               "} }";
 
     // Main executable file: free
-    mainSourceFile << format("extern \"C\" {"
-                             "    void free_result(%s result) {"
-                             "        if (result.v0.data != nullptr) {"
-                             "            free(result.v0.data);"
-                             "            result.v0.data = nullptr;"
-                             "        }"
-                             "    }"
-                             "}") %
-                              sink.return_type->name;
+    mainSourceFile <<  //
+            "extern \"C\" {"
+            "    void free_result(const char* const s) {"
+            "        const auto outputs = ConvertFromJsonString(s);"
+            "        for (auto &output : outputs) {"
+            "            free(output->as<Array>()->data);"
+            "        }"
+            "        free(const_cast<void *>("
+            "                reinterpret_cast<const void*>(s)));"
+            "    }"
+            "}";
+
     // Header file
     std::ofstream headerFile(genDir + "execute.h");
 
-    headerFile << planTupleDeclarations.str();
-    headerFile << format("%s execute(%s);\n") % sink.return_type->name %
-                          input_args;
-    headerFile << format("void free_result(%s);") % sink.return_type->name;
+    headerFile <<  //
+            "const char* execute(const char* inputs_str);\n"
+            "void free_result(const char*);";
 }
 
 void BackEnd::Compile(const uint64_t counter) {
