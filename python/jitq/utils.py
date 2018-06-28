@@ -50,7 +50,8 @@ NUMPY_DTYPE_MAP = {
     'bool': 'b1',
 }
 
-ALLOWED_ROW_TYPES = [nb.types.Tuple, nb.types.Array, nb.types.Record]
+ALLOWED_ROW_TYPES = [nb.types.Tuple, nb.types.Array, nb.types.Record,
+                     nb.types.List]
 
 
 def is_item_type(type_):
@@ -64,6 +65,9 @@ def is_item_type(type_):
             return True
     if isinstance(type_, nb.types.Record):
         if all(map(lambda tp: is_item_type(tp[0]), type_.fields.values())):
+            return True
+    if isinstance(type_, nb.types.List):
+        if is_item_type(type_.dtype):
             return True
     return False
 
@@ -132,6 +136,11 @@ class RDDEncoder(JSONEncoder):
                                                     fields_sorted))))
         if isinstance(o, nb.types.Array):
             return [{'type': "array", 'dim': o.ndim, 'layout': o.layout,
+                     "output_type":
+                         self.default(o.dtype)}]
+        if isinstance(o, nb.types.List):
+            # treat this as an array of 1 dim
+            return [{'type': "array", 'dim': 1, 'layout': "C",
                      "output_type":
                          self.default(o.dtype)}]
         return JSONEncoder.default(self, o)

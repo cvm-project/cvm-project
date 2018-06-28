@@ -126,9 +126,8 @@ class RDD(abc.ABC):
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
                     json.dump(dag_dict, fp=fp, cls=RDDEncoder, indent=3)
-        # TODO replace dtype with our output type
         return Executor().execute(self.context, dag_dict, inputs,
-                                  numba_type_to_dtype(self.output_type))
+                                  self.output_type)
 
     def __hash__(self):
         hashes = []
@@ -258,10 +257,19 @@ class MaterializeRowVector(UnaryRDD):
         #      on the fly for every call to collect and for a cached RDD,
         #      self_write_dag is not executed.
         super(MaterializeRowVector, self).__init__(context, parent)
-        self.output_type = self.parents[0].output_type
+        self.__compute_output_type()
 
     def self_write_dag(self, dic):
-        self.output_type = self.parents[0].output_type
+        self.__compute_output_type()
+
+    def __compute_output_type(self):
+        dtype = self.parents[0].output_type
+        if isinstance(dtype, (types.Array, types.List)):
+            # sabir(25.06.18) the output should be a "jagged" array
+            # we cannot guarantee that all sub-arrays will be of the same size
+            self.output_type = types.List(dtype)
+        else:
+            self.output_type = types.Array(dtype, 1, "C")
 
 
 class Filter(PipeRDD):

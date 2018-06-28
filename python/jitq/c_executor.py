@@ -3,9 +3,12 @@ from sys import platform
 
 import numpy as np
 from cffi import FFI
+from numba import types
+
 from jitq.rdd_result import NumpyResult
 
-from jitq.utils import get_project_path, RDDEncoder, Timer
+from jitq.utils import get_project_path, RDDEncoder, Timer, \
+    numba_type_to_dtype, get_type_size
 
 JITQ_PATH = get_project_path()
 CPP_DIR = JITQ_PATH + "/backend/"
@@ -40,22 +43,20 @@ def load_cffi(header, lib_path, ffi):
     return ffi.dlopen(lib_path + lib_extension)
 
 
-def wrap_result(res, type_, ffi):
-    output_type_size = ffi.sizeof(ffi.typeof(res.data[0]))
-    c_buffer = ffi.buffer(res.data, res.size * output_type_size)
+# pylint: disable=inconsistent-return-statements
+def wrap_result(item, type_, ffi):
 
-    # TODO(sabir, 12.06.2018):
-    # if the row type is just an array and every row is of the same size
-    # we should reshape the array to 2d array ("collapse the two arrays")
-    # the dtype is then the dtype of the inner array
-    # otherwise the dtype should be object and every object is then a numpy
-    # array
-
-    # here we should cast it to the right dtype
-    np_arr = np.frombuffer(c_buffer, dtype=type_, count=res.size)
-    np_arr = np_arr.view(NumpyResult)
-    np_arr.ptr = res
-    return np_arr
+    if isinstance(type_, types.Array):
+        dtype_size = get_type_size(type_.dtype)
+        total_count = item.size
+        c_buffer = ffi.buffer(item.data, total_count * dtype_size)
+        np_arr = np.frombuffer(c_buffer,
+                               dtype=numba_type_to_dtype(type_.dtype),
+                               count=total_count)
+        np_arr = np_arr.view(NumpyResult)
+        np_arr.ptr = item
+        return np_arr
+    assert False
 
 
 class Executor:

@@ -79,16 +79,6 @@ void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
 
-    // need to return an array
-    auto collection_tuple = op->tuple.get();
-    auto array_type = dag::type::Array::MakeArray(
-            collection_tuple->type, dag::type::ArrayLayout::kC, 1);
-
-    auto tuple_array_type = dag::type::Tuple::MakeTuple({array_type});
-
-    auto return_type_desc = EmitTupleStructDefinition(tuple_array_type);
-    operatorNameTupleTypeMap[op->id].return_type = return_type_desc;
-
     auto input_type =
             operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
     emitOperatorMake(var_name, "MaterializeRowVectorOperator", op,
