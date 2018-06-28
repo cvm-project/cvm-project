@@ -477,21 +477,40 @@ class ParameterLookup(SourceRDD):
 
         if isinstance(values, DataFrame):
             self.array = values.to_records(index=False)
-            self.output_type = item_typeof(self.array[0])
+            dtype = item_typeof(self.array[0])
         elif isinstance(values, np.ndarray):
             self.array = values
-            self.output_type = item_typeof(self.array[0])
+            dtype = item_typeof(self.array[0])
         else:
             # Any subscriptable iterator should work here
             # Do not create numpy array directly
             # It would infer the dtype incorrectly
-            self.output_type = item_typeof(values[0])
+            dtype = item_typeof(values[0])
             self.array = np.array(
-                values, dtype=numba_type_to_dtype(self.output_type))
+                values, dtype=numba_type_to_dtype(dtype))
 
         self.data_ptr = self.array.__array_interface__['data'][0]
         self.size = self.array.shape[0]
         self.parameter_num = -1
+
+        if isinstance(dtype, types.Array):
+            # right now we support only jagged arrays
+            self.output_type = types.List(dtype)
+            # create a jagged array until the backend can support an ndim
+            assert self.array.ndim == 2
+            inner_size = self.array.shape[1]
+            res_list = []
+            for i in range(self.size):
+                item_array = self.array[i]
+                inner_ptr = item_array.__array_interface__['data'][0]
+                res_list.append((inner_ptr, inner_size))
+            self.array = np.array(
+                res_list, dtype=[
+                    ("data", int), ("shape", int)])
+            self.data_ptr = self.array.__array_interface__['data'][0]
+
+        else:
+            self.output_type = types.Array(dtype, 1, "C")
 
     def self_hash(self):
         hash_objects = [str(self.output_type)]
@@ -504,13 +523,26 @@ class ParameterLookup(SourceRDD):
         return (self.data_ptr, self.size)
 
 
+# pylint: disable=inconsistent-return-statements
+def compute_item_type(outer_type):
+    if isinstance(outer_type, types.Array):
+        ndim = outer_type.ndim
+        if ndim > 1:
+            return types.Array(dtype=outer_type.dtype, ndim=ndim - 1,
+                               layout=outer_type.layout)
+        return outer_type.dtype
+    if isinstance(outer_type, types.List):
+        return outer_type.dtype
+    assert False, "Cannot have any other containers"
+
+
 class CollectionSource(UnaryRDD):
     NAME = 'collection_source'
 
     def __init__(self, context, parent, add_index):
         super(CollectionSource, self).__init__(context, parent)
 
-        self.output_type = self.parents[0].output_type
+        self.output_type = compute_item_type(self.parents[0].output_type)
         self.add_index = add_index
 
         if add_index:
