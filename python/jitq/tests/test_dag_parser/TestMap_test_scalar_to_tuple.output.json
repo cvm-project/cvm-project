@@ -48,13 +48,20 @@
             "op": "materialize_row_vector",
             "output_type": [
                 {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": [

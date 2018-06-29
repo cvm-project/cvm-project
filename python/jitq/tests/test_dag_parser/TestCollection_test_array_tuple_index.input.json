@@ -38,13 +38,20 @@
             "op": "materialize_row_vector",
             "output_type": [
                 {
-                    "type": "long"
-                },
-                {
-                    "type": "int"
-                },
-                {
-                    "type": "int"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": [
