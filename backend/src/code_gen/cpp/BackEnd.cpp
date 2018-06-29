@@ -24,15 +24,12 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
-std::string generatePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
-    return (format("/** collecting the result **/"
+std::string ComputePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
+    return (format("\n/** collecting the result **/"
                    "%1%.open();"
-                   "const auto result = %1%.next().value;"
-                   "auto ret = (result_type*)malloc(sizeof(result_type));"
-                   "ret->data = result.v0.data;"
-                   "ret->size = result.v0.shape[0];"
+                   "auto result = %1%.next().value;"
                    "%1%.close();"
-                   "return ret;") %
+                   "return result;") %
             sink.var_name)
             .str();
 }
@@ -70,16 +67,6 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
     // Generate typedef for result wrapper
     auto sink = visitor.operatorNameTupleTypeMap[dag->sink->id];
-    auto return_type =
-            visitor.operatorNameTupleTypeMap[dag->predecessor(dag->sink)->id]
-                    .return_type;
-
-    const std::string result_wrapper = (format("typedef struct {"
-                                               "   unsigned long size;"
-                                               "   %s *data;"
-                                               "} result_type;\n") %
-                                        return_type->name)
-                                               .str();
 
     // Main executable file: declarations
     std::ofstream mainSourceFile(genDir + "execute.cpp");
@@ -93,34 +80,30 @@ void BackEnd::GenerateCode(DAG *const dag) {
     }
 
     mainSourceFile << planTupleDeclarations.str();
-    mainSourceFile << result_wrapper;
     mainSourceFile << planLLVMDeclarations.str();
 
     // Main executable file: execute function
-    mainSourceFile
-            << format("extern \"C\" { result_type* execute(%s) { %s\n%s } }") %
-                       input_args % planBody.str() % generatePlanDriver(sink);
+    mainSourceFile << format("extern \"C\" { %s execute(%s) { %s\n%s } }") %
+                              sink.return_type->name % input_args %
+                              planBody.str() % ComputePlanDriver(sink);
 
     // Main executable file: free
-    mainSourceFile << "extern \"C\" {"
-                      "    void free_result(result_type *ptr) {"
-                      "        if (ptr != nullptr && ptr->data != nullptr) {"
-                      "            free(ptr->data);"
-                      "            ptr->data = nullptr;"
-                      "        }"
-                      "        if (ptr != nullptr) {"
-                      "            free(ptr);"
-                      "        }"
-                      "    }"
-                      "}";
-
+    mainSourceFile << format("extern \"C\" {"
+                             "    void free_result(%s result) {"
+                             "        if (result.v0.data != nullptr) {"
+                             "            free(result.v0.data);"
+                             "            result.v0.data = nullptr;"
+                             "        }"
+                             "    }"
+                             "}") %
+                              sink.return_type->name;
     // Header file
     std::ofstream headerFile(genDir + "execute.h");
 
-    headerFile << return_type->ComputeDefinition();
-    headerFile << result_wrapper;
-    headerFile << format("result_type* execute(%s);\n") % input_args;
-    headerFile << "void free_result(result_type*);";
+    headerFile << planTupleDeclarations.str();
+    headerFile << format("%s execute(%s);\n") % sink.return_type->name %
+                          input_args;
+    headerFile << format("void free_result(%s);") % sink.return_type->name;
 }
 
 void BackEnd::Compile(const uint64_t counter) {

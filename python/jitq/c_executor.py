@@ -1,4 +1,5 @@
 import json
+from functools import reduce
 from sys import platform
 
 import numpy as np
@@ -47,9 +48,14 @@ def load_cffi(header, lib_path, ffi):
 def wrap_result(item, type_, ffi):
 
     if isinstance(type_, types.Array):
+        attributes = dir(item)
+        assert len(attributes) == 1, "Unexpected result type from backend"
+        first_field_name = attributes[0]
+        first_field = getattr(item, first_field_name)
         dtype_size = get_type_size(type_.dtype)
-        total_count = item.size
-        c_buffer = ffi.buffer(item.data, total_count * dtype_size)
+        shape = [first_field.shape[i] for i in range(type_.ndim)]
+        total_count = reduce(lambda t1, t2: t1 * t2, shape)
+        c_buffer = ffi.buffer(first_field.data, total_count * dtype_size)
         np_arr = np.frombuffer(c_buffer,
                                dtype=numba_type_to_dtype(type_.dtype),
                                count=total_count)
