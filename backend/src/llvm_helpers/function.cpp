@@ -86,7 +86,7 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
 }
 
 std::vector<size_t> Function::ComputeOutputPositionsPrimitive(
-        size_t arg_position) {
+        size_t arg_position) const {
     std::vector<size_t> res;
 
     auto function = module_->getFunctionList().begin();
@@ -106,7 +106,7 @@ std::vector<size_t> Function::ComputeOutputPositionsPrimitive(
 }
 
 std::vector<size_t> Function::ComputeOutputPositionsStruct(
-        size_t arg_position) {
+        size_t arg_position) const {
     std::vector<size_t> res;
 
     auto function = module_->getFunctionList().begin();
@@ -130,7 +130,7 @@ std::vector<size_t> Function::ComputeOutputPositionsStruct(
 }
 
 std::vector<size_t> Function::ComputeOutputPositionsCallerPtr(
-        size_t arg_position) {
+        size_t arg_position) const {
     std::vector<size_t> res;
 
     // the first arg is the return pointer
@@ -155,7 +155,8 @@ std::vector<size_t> Function::ComputeOutputPositionsCallerPtr(
     return res;
 }
 
-std::vector<size_t> Function::ComputeOutputPositions(size_t arg_position) {
+std::vector<size_t> Function::ComputeOutputPositions(
+        size_t arg_position) const {
     switch (ret_type_) {
         case ReturnType::kPrimitive:
             return ComputeOutputPositionsPrimitive(arg_position);
@@ -168,7 +169,7 @@ std::vector<size_t> Function::ComputeOutputPositions(size_t arg_position) {
     }
 }
 
-bool Function::ComputeIsArgumentRead(size_t arg_pos) {
+bool Function::ComputeIsArgumentRead(size_t arg_pos) const {
     // go over uses and check if at least one is not an insert or a store
     if (ret_type_ == ReturnType::kCallerPtr) {
         arg_pos++;
