@@ -5,7 +5,14 @@
             "op": "parameter_lookup",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "parameter_num": 0,
@@ -45,7 +52,14 @@
             "op": "parameter_lookup",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "parameter_num": 1,
