@@ -1,10 +1,15 @@
 #ifndef CPP_MATERIALIZEROWVECTOROPERATOR_H
 #define CPP_MATERIALIZEROWVECTOROPERATOR_H
 
-#include <algorithm>
-#include <cstdlib>
+#include <type_traits>
 
 #include "Operator.h"
+
+template <typename T, typename U>
+auto constexpr max(T x, U y) ->
+        typename std::remove_reference<decltype(x > y ? x : y)>::type {
+    return x > y ? x : y;
+}
 
 template <class OuterTuple, class InnerTuple, class Upstream>
 class MaterializeRowVectorOperator : public Operator {
@@ -36,9 +41,8 @@ private:
             result_ptr[result_size] = tuple.value;
             result_size++;
         }
-        result_ptr = reinterpret_cast<InnerTuple *>(
-                realloc(result_ptr,
-                        sizeof(InnerTuple) * std::max(size_t(1), result_size)));
+        result_ptr = reinterpret_cast<InnerTuple *>(realloc(
+                result_ptr, sizeof(InnerTuple) * max(size_t(1), result_size)));
         upstream->close();
     }
 
