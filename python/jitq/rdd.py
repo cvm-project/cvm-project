@@ -523,7 +523,10 @@ class ParameterLookup(SourceRDD):
     def self_get_inputs(self):
         ffi = FFI()
         data = int(ffi.cast("uintptr_t", ffi.cast("void*", self.data_ptr)))
-        return {'type': 'array', 'data': data, 'shape': [self.size]}
+        return {
+            'type': 'tuple',
+            'fields': [{'type': 'array', 'data': data, 'shape': [self.size]}],
+        }
 
 
 # pylint: disable=inconsistent-return-statements

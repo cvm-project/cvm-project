@@ -14,6 +14,7 @@
 #include "CodeGenVisitor.h"
 #include "dag/DAGOperators.h"
 #include "dag/type/array.hpp"
+#include "dag/type/atomic.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "utils/utils.h"
 
@@ -30,6 +31,85 @@ std::string ComputePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
                    "%1%.close();"
                    "return result;") %
             sink.var_name)
+            .str();
+}
+
+std::string ComputeStructToValue(const std::string &input_var_name,
+                                 const std::string &output_var_name) {
+    return (format("std::unique_ptr<Array> %2%(new Array());"
+                   "%2%->data = %1%.v0.data;"
+                   "%2%->shape = {%1%.v0.shape[0]};") %
+            input_var_name % output_var_name)
+            .str();
+}
+
+std::string ComputeValueToStruct(
+        const std::string &input_var_name, const dag::type::Tuple *tuple_type,
+        const std::unordered_map<const dag::type::Type *,
+                                 const CodeGenVisitor::StructDef *>
+                &tuple_type_descs) {
+    struct ValueToStructVisitor
+        : public Visitor<ValueToStructVisitor, const dag::type::FieldType,
+                         boost::mpl::list<                //
+                                 const dag::type::Array,  //
+                                 const dag::type::Atomic  //
+                                 >::type,
+                         std::string> {
+        ValueToStructVisitor(
+                // NOLINTNEXTLINE modernize-pass-by-value
+                const std::string &input_var_name,
+                const std::unordered_map<const dag::type::Type *,
+                                         const CodeGenVisitor::StructDef *>
+                        &tuple_type_descs)
+            : input_var_name_(input_var_name),
+              tuple_type_descs_(tuple_type_descs) {}
+
+        std::string operator()(const dag::type::Array *const type) const {
+            const auto inner_type = type->tuple_type;
+            const auto inner_typedef = tuple_type_descs_.at(inner_type);
+
+            return (format("{reinterpret_cast<%2%*>(%1%->as<Array>()->data),"
+                           " %1%->as<Array>()->shape[0]}") %
+                    input_var_name_ % inner_typedef->name)
+                    .str();
+        }
+
+        std::string operator()(const dag::type::Atomic *const type) const {
+            static const std::unordered_map<std::string, std::string> type_map =
+                    {
+                            {"float", "Float"},    //
+                            {"double", "Double"},  //
+                            {"int", "Int32"},      //
+                            {"long", "Int64"},     //
+                            {"bool", "Bool"}       //
+                    };
+            return (format("%1%->as<%2%>()->value") % input_var_name_ %
+                    type_map.at(type->type))
+                    .str();
+        }
+
+        std::string operator()(const dag::type::FieldType *const type) const {
+            throw std::runtime_error("Unknown field type: " +
+                                     type->to_string());
+        }
+
+        std::string input_var_name_;
+        const std::unordered_map<const dag::type::Type *,
+                                 const CodeGenVisitor::StructDef *>
+                &tuple_type_descs_;
+    };
+
+    ValueToStructVisitor visitor("", tuple_type_descs);
+    std::vector<std::string> field_values;
+    for (size_t i = 0; i < tuple_type->field_types.size(); i++) {
+        auto const &type = tuple_type->field_types[i];
+        visitor.input_var_name_ = input_var_name + "->as<Tuple>()->fields[" +
+                                  std::to_string(i) + "]";
+        field_values.emplace_back(visitor.Visit(type));
+    }
+
+    const auto tuple_typedef = tuple_type_descs.at(tuple_type);
+    return (format("%1%{%2%}") % tuple_typedef->name % join(field_values, ", "))
             .str();
 }
 
@@ -75,20 +155,12 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
         // Packing of parameters as tules
         const auto tuple_type = op->tuple->type;
-        const auto array_type = dynamic_cast<const dag::type::Array *>(
-                tuple_type->field_types[0]);
-        const auto inner_type = array_type->tuple_type;
-        const auto tuple_typedef = visitor.tuple_type_descs_[tuple_type];
-        const auto inner_typedef = visitor.tuple_type_descs_[inner_type];
-
         pack_input_args.emplace_back(
-                (format("%1%{{reinterpret_cast<%2%*>("
-                        "       inputs[%3%]->as<Array>()->data),"
-                        "       inputs[%3%]->as<Array>()->shape[0]}}") %
-                 tuple_typedef->name % inner_typedef->name % param_num)
-                        .str());
+                ComputeValueToStruct("inputs[" + param_num + "]", tuple_type,
+                                     visitor.tuple_type_descs_));
 
         // Parameters for function signature of 'execute_plan' (as tuples)
+        const auto tuple_typedef = visitor.tuple_type_descs_.at(tuple_type);
         packed_input_args.emplace_back(
                 (format("%1% input_%2%") % tuple_typedef->name % param_num)
                         .str());
@@ -110,6 +182,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
     mainSourceFile                                                        //
             << "#include \"../../../runtime/values/array.hpp\"\n"         //
+            << "#include \"../../../runtime/values/atomics.hpp\"\n"       //
             << "#include \"../../../runtime/values/value.hpp\"\n"         //
             << "#include \"../../../runtime/values/json_parsing.hpp\"\n"  //
             << "using namespace runtime::values;" << std::endl;
@@ -129,14 +202,13 @@ void BackEnd::GenerateCode(DAG *const dag) {
             format("VectorOfValues execute_values(const VectorOfValues &inputs)"
                    "{"
                    "    const auto ret = execute_tuples(%1%);"
-                   "    std::unique_ptr<Array> val(new Array());"
-                   "    val->data = ret.v0.data;"
-                   "    val->shape = {ret.v0.shape[0]};"
+                   "    %2%"
                    "    VectorOfValues v;"
                    "    v.emplace_back(val.release());"
                    "    return v;"
                    " }") %
-                    join(pack_input_args, ", ");
+                    join(pack_input_args, ", ") %
+                    ComputeStructToValue("ret", "val");
 
     // Main executable file: exported execute function
     mainSourceFile
