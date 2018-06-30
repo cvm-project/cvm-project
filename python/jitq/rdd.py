@@ -17,7 +17,7 @@ from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
     OUTPUT_TYPE, DATA_PATH, ADD_INDEX
 from jitq.libs.numba.llvm_ir import get_llvm_ir
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
-    make_tuple, item_typeof, numba_type_to_dtype, is_item_type
+    make_tuple, item_typeof, numba_type_to_dtype, is_item_type, C_TYPE_MAP
 
 
 def clean_rdds(rdd):
@@ -476,12 +476,25 @@ class ParameterLookup(SourceRDD):
         # values could also be a numpy array
         assert len(values) > 0, "Empty collection not allowed"
 
+        self.parameter_num = -1
+        dtype = None
+
         if isinstance(values, DataFrame):
             self.array = values.to_records(index=False)
             dtype = item_typeof(self.array[0])
+
         elif isinstance(values, np.ndarray):
             self.array = values
             dtype = item_typeof(self.array[0])
+
+        elif isinstance(values, tuple):
+            self.input_value = {
+                'type': 'tuple',
+                'fields': [{'type': C_TYPE_MAP[str(item_typeof(v))],
+                            'value': v} for v in values],
+            }
+            self.output_type = item_typeof(values)
+
         else:
             # Any subscriptable iterator should work here
             # Do not create numpy array directly
@@ -490,28 +503,34 @@ class ParameterLookup(SourceRDD):
             self.array = np.array(
                 values, dtype=numba_type_to_dtype(dtype))
 
-        self.data_ptr = self.array.__array_interface__['data'][0]
-        self.size = self.array.shape[0]
-        self.parameter_num = -1
+        if not isinstance(values, tuple):
+            ffi = FFI()
+            data = self.array.__array_interface__['data'][0]
+            data = int(ffi.cast("uintptr_t", ffi.cast("void*", data)))
+            shape = self.array.shape
+            self.input_value = {
+                'type': 'tuple',
+                'fields': [{'type': 'array', 'data': data, 'shape': shape}],
+            }
 
-        if isinstance(dtype, types.Array):
-            # right now we support only jagged arrays
-            self.output_type = types.List(dtype)
-            # create a jagged array until the backend can support an ndim
-            assert self.array.ndim == 2
-            inner_size = self.array.shape[1]
-            res_list = []
-            for i in range(self.size):
-                item_array = self.array[i]
-                inner_ptr = item_array.__array_interface__['data'][0]
-                res_list.append((inner_ptr, inner_size))
-            self.array = np.array(
-                res_list, dtype=[
-                    ("data", int), ("shape", int)])
-            self.data_ptr = self.array.__array_interface__['data'][0]
+            if isinstance(dtype, types.Array):
+                # right now we support only jagged arrays
+                self.output_type = types.List(dtype)
+                # create a jagged array until the backend can support an ndim
+                assert self.array.ndim == 2
+                inner_size = self.array.shape[1]
+                res_list = []
+                for i in range(self.input_value['fields'][0]['shape'][0]):
+                    item_array = self.array[i]
+                    inner_ptr = item_array.__array_interface__['data'][0]
+                    res_list.append((inner_ptr, inner_size))
+                self.array = np.array(
+                    res_list, dtype=[
+                        ("data", int), ("shape", int)])
+                self.data_ptr = self.array.__array_interface__['data'][0]
 
-        else:
-            self.output_type = types.Array(dtype, 1, "C")
+            else:
+                self.output_type = types.Array(dtype, 1, "C")
 
     def self_hash(self):
         hash_objects = [str(self.output_type)]
@@ -521,12 +540,7 @@ class ParameterLookup(SourceRDD):
         dic['parameter_num'] = self.parameter_num
 
     def self_get_inputs(self):
-        ffi = FFI()
-        data = int(ffi.cast("uintptr_t", ffi.cast("void*", self.data_ptr)))
-        return {
-            'type': 'tuple',
-            'fields': [{'type': 'array', 'data': data, 'shape': [self.size]}],
-        }
+        return self.input_value
 
 
 # pylint: disable=inconsistent-return-statements
