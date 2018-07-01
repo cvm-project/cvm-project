@@ -1,8 +1,6 @@
 #ifndef CPP_CONSTANTTUPLEOPERATOR_H
 #define CPP_CONSTANTTUPLEOPERATOR_H
 
-#include <cstring>
-
 #include "Operator.h"
 
 template <class Tuple>
