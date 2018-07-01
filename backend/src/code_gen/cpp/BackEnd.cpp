@@ -163,6 +163,45 @@ std::string GenerateExecuteTuples(
             .str();
 }
 
+std::string GenerateExecuteValues(
+        DAG *const dag, std::unordered_map<const dag::type::Type *,
+                                           const CodeGenVisitor::StructDef *>
+                                *const tuple_type_descs) {
+    // Compute execute function parameters
+    struct CollectInputsVisitor
+        : public Visitor<CollectInputsVisitor, DAGOperator,
+                         boost::mpl::list<DAGParameterLookup>> {
+        void operator()(DAGParameterLookup *op) { inputs_.emplace_back(op); }
+        std::vector<DAGParameterLookup *> inputs_;
+    };
+    CollectInputsVisitor collec_inputs_visitor;
+    for (auto const op : dag->operators()) {
+        collec_inputs_visitor.Visit(op);
+    }
+
+    std::vector<std::string> pack_input_args;
+    for (auto const op : collec_inputs_visitor.inputs_) {
+        const std::string param_num = std::to_string(op->parameter_num);
+
+        // Packing of parameters as tuples
+        const auto tuple_type = op->tuple->type;
+        pack_input_args.emplace_back(ComputeValueToStruct(
+                "inputs[" + param_num + "]", tuple_type, *tuple_type_descs));
+    }
+
+    // Main executable file: plan function on runtime values
+    return (format("VectorOfValues execute_values(const VectorOfValues &inputs)"
+                   "{"
+                   "    const auto ret = execute_tuples(%1%);"
+                   "    %2%"
+                   "    VectorOfValues v;"
+                   "    v.emplace_back(val.release());"
+                   "    return v;"
+                   " }") %
+            join(pack_input_args, ", ") % ComputeStructToValue("ret", "val"))
+            .str();
+}
+
 void BackEnd::GenerateCode(DAG *const dag) {
     const std::string genDir = get_lib_path() + "/backend/gen/";
     exec(("bash -c 'rm -r -f " + genDir + "/*'").c_str());
@@ -189,28 +228,8 @@ void BackEnd::GenerateCode(DAG *const dag) {
             GenerateExecuteTuples(dag, planTupleDeclarations,
                                   planLLVMDeclarations, llvmCode, &includes,
                                   &tuple_type_descs);
-
-    // Compute execute function parameters
-    struct CollectInputsVisitor
-        : public Visitor<CollectInputsVisitor, DAGOperator,
-                         boost::mpl::list<DAGParameterLookup>> {
-        void operator()(DAGParameterLookup *op) { inputs_.emplace_back(op); }
-        std::vector<DAGParameterLookup *> inputs_;
-    };
-    CollectInputsVisitor collec_inputs_visitor;
-    for (auto const op : dag->operators()) {
-        collec_inputs_visitor.Visit(op);
-    }
-
-    std::vector<std::string> pack_input_args;
-    for (auto const op : collec_inputs_visitor.inputs_) {
-        const std::string param_num = std::to_string(op->parameter_num);
-
-        // Packing of parameters as tules
-        const auto tuple_type = op->tuple->type;
-        pack_input_args.emplace_back(ComputeValueToStruct(
-                "inputs[" + param_num + "]", tuple_type, tuple_type_descs));
-    }
+    auto const execute_values_definition =  //
+            GenerateExecuteValues(dag, &tuple_type_descs);
 
     // Main executable file: declarations
     std::ofstream mainSourceFile(genDir + "execute.cpp");
@@ -233,19 +252,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
     mainSourceFile << planTupleDeclarations.str();
     mainSourceFile << planLLVMDeclarations.str();
     mainSourceFile << execute_tuples_definition;
-
-    // Main executable file: plan function on runtime values
-    mainSourceFile <<  //
-            format("VectorOfValues execute_values(const VectorOfValues &inputs)"
-                   "{"
-                   "    const auto ret = execute_tuples(%1%);"
-                   "    %2%"
-                   "    VectorOfValues v;"
-                   "    v.emplace_back(val.release());"
-                   "    return v;"
-                   " }") %
-                    join(pack_input_args, ", ") %
-                    ComputeStructToValue("ret", "val");
+    mainSourceFile << execute_values_definition;
 
     // Main executable file: exported execute function
     mainSourceFile
