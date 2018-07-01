@@ -24,16 +24,6 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
-std::string ComputePlanDriver(const CodeGenVisitor::OperatorDesc &sink) {
-    return (format("\n/** collecting the result **/"
-                   "%1%.open();"
-                   "auto result = %1%.next().value;"
-                   "%1%.close();"
-                   "return result;") %
-            sink.var_name)
-            .str();
-}
-
 std::string ComputeStructToValue(const std::string &input_var_name,
                                  const std::string &output_var_name) {
     return (format("std::unique_ptr<Array> %2%(new Array());"
@@ -113,6 +103,66 @@ std::string ComputeValueToStruct(
             .str();
 }
 
+std::string GenerateExecuteTuples(
+        DAG *const dag, std::ostream &plan_tuple_declarations,
+        std::ostream &plan_llvm_declarations, std::ostream &llvm_code,
+        std::set<std::string> *const includes,
+        std::unordered_map<const dag::type::Type *,
+                           const CodeGenVisitor::StructDef *>
+                *const tuple_type_descs) {
+    std::stringstream plan_body;
+
+    CodeGenVisitor visitor(dag, plan_body, plan_tuple_declarations, llvm_code,
+                           plan_llvm_declarations);
+
+    visitor.includes.insert(includes->begin(), includes->end());
+    visitor.tuple_type_descs_.insert(tuple_type_descs->begin(),
+                                     tuple_type_descs->end());
+
+    dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
+
+    includes->insert(visitor.includes.begin(), visitor.includes.end());
+    tuple_type_descs->insert(visitor.tuple_type_descs_.begin(),
+                             visitor.tuple_type_descs_.end());
+
+    // Compute execute function parameters
+    struct CollectInputsVisitor
+        : public Visitor<CollectInputsVisitor, DAGOperator,
+                         boost::mpl::list<DAGParameterLookup>> {
+        void operator()(DAGParameterLookup *op) { inputs_.emplace_back(op); }
+        std::vector<DAGParameterLookup *> inputs_;
+    };
+    CollectInputsVisitor collec_inputs_visitor;
+    for (auto const op : dag->operators()) {
+        collec_inputs_visitor.Visit(op);
+    }
+
+    std::vector<std::string> packed_input_args;
+    for (auto const op : collec_inputs_visitor.inputs_) {
+        const std::string param_num = std::to_string(op->parameter_num);
+        const auto tuple_type = op->tuple->type;
+
+        // Parameters for function signature of 'execute_tuples'
+        const auto tuple_typedef = visitor.tuple_type_descs_.at(tuple_type);
+        packed_input_args.emplace_back(
+                (format("%1% input_%2%") % tuple_typedef->name % param_num)
+                        .str());
+    }
+
+    auto sink = visitor.operatorNameTupleTypeMap[dag->sink->id];
+    return (format("%1% execute_tuples(%2%) { "
+                   "    %3%\n"
+                   "    /** collecting the result **/"
+                   "    %4%.open();"
+                   "    auto result = %4%.next().value;"
+                   "    %4%.close();"
+                   "    return result;"
+                   "}") %
+            sink.return_type->name % join(packed_input_args, ", ") %
+            plan_body.str() % sink.var_name)
+            .str();
+}
+
 void BackEnd::GenerateCode(DAG *const dag) {
     const std::string genDir = get_lib_path() + "/backend/gen/";
     exec(("bash -c 'rm -r -f " + genDir + "/*'").c_str());
@@ -128,13 +178,17 @@ void BackEnd::GenerateCode(DAG *const dag) {
     std::string llvmCodePath = genDir + "llvm_funcs.ll";
     std::ofstream llvmCode(llvmCodePath);
 
-    std::stringstream planBody;
     std::stringstream planTupleDeclarations;
     std::stringstream planLLVMDeclarations;
+    std::set<std::string> includes;
+    std::unordered_map<const dag::type::Type *,
+                       const CodeGenVisitor::StructDef *>
+            tuple_type_descs;
 
-    CodeGenVisitor visitor(dag, planBody, planTupleDeclarations, llvmCode,
-                           planLLVMDeclarations);
-    dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
+    auto const execute_tuples_definition =  //
+            GenerateExecuteTuples(dag, planTupleDeclarations,
+                                  planLLVMDeclarations, llvmCode, &includes,
+                                  &tuple_type_descs);
 
     // Compute execute function parameters
     struct CollectInputsVisitor
@@ -149,25 +203,14 @@ void BackEnd::GenerateCode(DAG *const dag) {
     }
 
     std::vector<std::string> pack_input_args;
-    std::vector<std::string> packed_input_args;
     for (auto const op : collec_inputs_visitor.inputs_) {
         const std::string param_num = std::to_string(op->parameter_num);
 
         // Packing of parameters as tules
         const auto tuple_type = op->tuple->type;
-        pack_input_args.emplace_back(
-                ComputeValueToStruct("inputs[" + param_num + "]", tuple_type,
-                                     visitor.tuple_type_descs_));
-
-        // Parameters for function signature of 'execute_plan' (as tuples)
-        const auto tuple_typedef = visitor.tuple_type_descs_.at(tuple_type);
-        packed_input_args.emplace_back(
-                (format("%1% input_%2%") % tuple_typedef->name % param_num)
-                        .str());
+        pack_input_args.emplace_back(ComputeValueToStruct(
+                "inputs[" + param_num + "]", tuple_type, tuple_type_descs));
     }
-
-    // Generate typedef for result wrapper
-    auto sink = visitor.operatorNameTupleTypeMap[dag->sink->id];
 
     // Main executable file: declarations
     std::ofstream mainSourceFile(genDir + "execute.cpp");
@@ -176,7 +219,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
                       " * Auto-generated execution plan\n"
                       " */\n";
 
-    for (const auto &incl : visitor.includes) {
+    for (const auto &incl : includes) {
         mainSourceFile << "#include " << incl << std::endl;
     }
 
@@ -189,13 +232,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
     mainSourceFile << planTupleDeclarations.str();
     mainSourceFile << planLLVMDeclarations.str();
-
-    // Main executable file: plan function on tuples
-    mainSourceFile << format("%1% execute_tuples(%2%) { "
-                             "    %3%\n%4% }") %
-                              sink.return_type->name %
-                              join(packed_input_args, ", ") % planBody.str() %
-                              ComputePlanDriver(sink);
+    mainSourceFile << execute_tuples_definition;
 
     // Main executable file: plan function on runtime values
     mainSourceFile <<  //
