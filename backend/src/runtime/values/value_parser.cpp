@@ -74,6 +74,7 @@ void LoadValueParsers() {
     Register("int", new DefaultValueParser<Int32>());
     Register("long", new DefaultValueParser<Int64>());
     Register("bool", new DefaultValueParser<Bool>());
+    Register("std::string", new DefaultValueParser<String>());
 
     has_loaded = true;
 }

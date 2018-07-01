@@ -67,11 +67,12 @@ std::string ComputeValueToStruct(
         std::string operator()(const dag::type::Atomic *const type) const {
             static const std::unordered_map<std::string, std::string> type_map =
                     {
-                            {"float", "Float"},    //
-                            {"double", "Double"},  //
-                            {"int", "Int32"},      //
-                            {"long", "Int64"},     //
-                            {"bool", "Bool"}       //
+                            {"float", "Float"},        //
+                            {"double", "Double"},      //
+                            {"int", "Int32"},          //
+                            {"long", "Int64"},         //
+                            {"bool", "Bool"},          //
+                            {"std::string", "String"}  //
                     };
             return (format("%1%->as<%2%>()->value") % input_var_name_ %
                     type_map.at(type->type))

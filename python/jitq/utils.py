@@ -31,6 +31,7 @@ C_TYPE_MAP = {
     'int64': 'long',
     'boolean': 'bool',
     'bool': 'bool',
+    'str': 'std::string',
 }
 
 
@@ -48,6 +49,7 @@ NUMPY_DTYPE_MAP = {
     'int64': 'i8',
     'boolean': 'b1',
     'bool': 'b1',
+    'str': 'strings unsupported by numpy',
 }
 
 ALLOWED_ROW_TYPES = [nb.types.Tuple, nb.types.Array, nb.types.Record,
@@ -122,7 +124,7 @@ class RDDEncoder(JSONEncoder):
     # pylint: disable=method-hidden
     # sabir 14.02.18: JSONEncoder overwrites this method, nothing we can do
     def default(self, o):
-        if isinstance(o, (nb.types.Number, nb.types.Boolean)):
+        if isinstance(o, (nb.types.Number, nb.types.Boolean, nb.types.Opaque)):
             # at this point the tuple type should be flat right?
             return [{'type': numba_to_c_types(o.name)}]
         if isinstance(o, nb.types.Tuple):

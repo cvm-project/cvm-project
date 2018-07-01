@@ -16,6 +16,7 @@ using Double = Atomic<double>;
 using Int32 = Atomic<int32_t>;
 using Int64 = Atomic<int64_t>;
 using Bool = Atomic<bool>;
+using String = Atomic<std::string>;
 
 }  // namespace values
 }  // namespace runtime
