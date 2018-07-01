@@ -31,7 +31,7 @@ void GroupedReduceByKey::optimize() {
                 new DAGReduceByKeyGrouped());
         auto const new_op = new_op_ptr.get();
 
-        new_op->tuple = op->tuple;
+        new_op->tuple = std::make_unique<dag::collection::Tuple>(*op->tuple);
         new_op->llvm_ir = op->llvm_ir;
 
         dag_->AddOperator(new_op_ptr.release());

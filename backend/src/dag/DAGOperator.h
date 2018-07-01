@@ -17,7 +17,7 @@
 // cppcheck-suppress noConstructor
 class DAGOperator {
 public:
-    std::shared_ptr<dag::collection::Tuple> tuple;
+    std::unique_ptr<dag::collection::Tuple> tuple;
     std::set<std::shared_ptr<dag::AttributeId>> read_set;
     std::set<std::shared_ptr<dag::AttributeId>> write_set;
     std::string llvm_ir;

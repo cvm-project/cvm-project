@@ -222,7 +222,7 @@ std::string Function::AdjustFilterSignature(
         it->setName("." + std::to_string(counter++));
     }
     // In the IR, replace all fields with their new positions
-    for (auto f : pFilter->tuple->fields) {
+    for (const auto &f : pFilter->tuple->fields) {
         if (!pFilter->Reads(f->attribute_id().get())) continue;
         const size_t old_pos = f->position();
 

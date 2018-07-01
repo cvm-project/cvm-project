@@ -9,7 +9,7 @@ void from_json(const nlohmann::json &json, DAGOperator &op) {
     if (json.count("func") > 0) {
         op.llvm_ir = json["func"];
     }
-    op.tuple = std::make_shared<Tuple>(json.at("output_type"));
+    op.tuple = std::make_unique<Tuple>(json.at("output_type"));
     op.from_json(json);
 }
 

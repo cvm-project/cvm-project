@@ -21,10 +21,10 @@ public:
     explicit Array(const type::FieldType *field_type_, const size_t &position,
                    const nlohmann::json &json);
 
-    std::shared_ptr<Tuple> tuple() { return tuple_; }
+    Tuple *tuple() { return tuple_.get(); }
 
 private:
-    std::shared_ptr<Tuple> tuple_;
+    std::unique_ptr<Tuple> tuple_;
 };
 
 }  // namespace collection

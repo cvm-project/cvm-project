@@ -107,7 +107,7 @@ public:
                                             *(other->attribute_id());
                                  });
             if (input_field_it != input_fields.end()) {
-                field->CopyProperties(*input_field_it->get());
+                field->CopyProperties(**input_field_it);
             }
         }
     }

@@ -120,12 +120,9 @@ void SimplePredicateMoveAround::optimize() {
             filt->llvm_ir =
                     parser.AdjustFilterSignature(filt, dag_->predecessor(filt));
 
-            // copy the output fields
-            filt->tuple->fields.clear();
-            for (const auto &f : currentOp->tuple->fields) {
-                filt->tuple->fields.push_back(f);
-            }
-            filt->tuple->type = currentOp->tuple->type;
+            // copy the tuple
+            filt->tuple =
+                    std::make_unique<dag::collection::Tuple>(*currentOp->tuple);
         }
 
         // Remove the filter

@@ -19,10 +19,23 @@ namespace collection {
 struct Tuple {
     explicit Tuple(const nlohmann::json &json) { this->from_json(json); }
 
+    Tuple(const Tuple &other) {
+        type = other.type;
+        for (const auto &e : other.fields) {
+            fields.push_back(std::make_unique<Field>(*e));
+        }
+    }
+
+    Tuple() = delete;
+    ~Tuple() = default;
+    Tuple(Tuple &&field) = default;
+    Tuple &operator=(const Tuple &rhs) = delete;
+    Tuple &operator=(Tuple &&rhs) = default;
+
     void from_json(const nlohmann::json &json);
 
     const type::Tuple *type{};
-    std::vector<std::shared_ptr<Field>> fields;
+    std::vector<std::unique_ptr<Field>> fields{};
 };
 
 }  // namespace collection

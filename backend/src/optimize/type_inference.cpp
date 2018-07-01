@@ -221,7 +221,7 @@ void TypeInference::optimize() {
         // Update output type
         dag::utils::ApplyInReverseTopologicalOrder(dag_, [dag](auto const op) {
             auto const computed_output_type = ComputeOutputType(dag, op);
-            op->tuple = std::make_shared<dag::collection::Tuple>(
+            op->tuple = std::make_unique<dag::collection::Tuple>(
                     make_raw(computed_output_type));
         });
     }

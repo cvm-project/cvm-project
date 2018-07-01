@@ -22,16 +22,16 @@ void Tuple::from_json(const nlohmann::json &json) {
 
     size_t pos = 0;
     for (auto &it : json) {
-        std::shared_ptr<Field> field;
         auto field_type = this->type->field_types.at(pos);
         if (it.at("type") == "array") {
-            field = std::make_shared<Array>(field_type, pos, it);
+            this->fields.push_back(
+                    std::make_unique<Array>(field_type, pos, it));
         } else {
-            field = std::make_shared<Atomic>(field_type, pos);
+            this->fields.push_back(std::make_unique<Atomic>(field_type, pos));
         }
+        Field *field = this->fields.back().get();
         auto attribute_id = AttributeId::MakeAttributeId();
-        attribute_id->AddField(field.get());
-        this->fields.push_back(field);
+        attribute_id->AddField(field);
         pos++;
     }
 }
