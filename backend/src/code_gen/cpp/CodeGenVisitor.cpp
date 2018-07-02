@@ -54,7 +54,7 @@ void CodeGenVisitor::operator()(DAGConstantTuple *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
-    const auto return_type = operatorNameTupleTypeMap[op->id].return_type;
+    const auto return_type = operator_descs_[op->id].return_type;
     const auto tuple_arg =
             (format("%s{%s}") % return_type->name % join(op->values, ","))
                     .str();
@@ -66,9 +66,8 @@ void CodeGenVisitor::operator()(DAGMap *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
 
-    auto input_type =
-            operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
-    auto return_type = operatorNameTupleTypeMap[op->id].return_type;
+    auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
+    auto return_type = operator_descs_[op->id].return_type;
     const std::string functor =
             visitLLVMFunc(*op, {input_type}, return_type->name);
 
@@ -79,8 +78,7 @@ void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
 
-    auto input_type =
-            operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
+    auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
     emitOperatorMake(var_name, "MaterializeRowVectorOperator", op,
                      {input_type->name}, {});
 }
@@ -98,7 +96,7 @@ void CodeGenVisitor::operator()(DAGReduce *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ReduceOperator");
 
-    auto return_type = operatorNameTupleTypeMap[op->id].return_type;
+    auto return_type = operator_descs_[op->id].return_type;
     const std::string functor =
             visitLLVMFunc(*op, {return_type, return_type}, return_type->name);
 
@@ -116,8 +114,7 @@ void CodeGenVisitor::operator()(DAGFilter *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "FilterOperator");
 
-    auto input_type =
-            operatorNameTupleTypeMap[dag_->predecessor(op)->id].return_type;
+    auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
     const std::string functor = visitLLVMFunc(*op, {input_type}, "bool");
 
     emitOperatorMake(var_name, "FilterOperator", op, {}, {functor});
@@ -151,8 +148,7 @@ void CodeGenVisitor::operator()(DAGCartesian *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CartesianOperator");
     std::string pred2Tuple =
-            operatorNameTupleTypeMap[dag_->predecessor(op, 1)->id]
-                    .return_type->name;
+            operator_descs_[dag_->predecessor(op, 1)->id].return_type->name;
     std::vector<std::string> template_args = {pred2Tuple};
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
 };
@@ -201,14 +197,14 @@ void CodeGenVisitor::operator()(DAGOperator *const op) {
 // TODO(ingo): This could be an independent visitor
 std::string CodeGenVisitor::visit_common(DAGOperator *op,
                                          const std::string &operator_name) {
-    planBody_ << format("/** %s **/\n") % operator_name;
+    plan_body_ << format("/** %s **/\n") % operator_name;
     const std::string var_name = getNextOperatorName();
 
     auto output_type = EmitTupleStructDefinition(op->tuple->type);
 
-    operatorNameTupleTypeMap.emplace(
-            op->id, OperatorDesc{op->id, var_name, output_type});
-    includes.insert("\"" + operator_name + ".h\"");
+    operator_descs_.emplace(op->id,
+                            OperatorDesc{op->id, var_name, output_type});
+    includes_.insert("\"" + operator_name + ".h\"");
     return var_name;
 }
 
@@ -229,7 +225,7 @@ void CodeGenVisitor::emitOperatorMake(
         const std::vector<std::string> &extra_template_args,
         const std::vector<std::string> &extra_args) {
     // First template argument: current tuple
-    auto return_type = operatorNameTupleTypeMap[op->id].return_type;
+    auto return_type = operator_descs_[op->id].return_type;
     std::vector<std::string> template_args = {return_type->name};
 
     // Take over extra template arguments
@@ -240,7 +236,7 @@ void CodeGenVisitor::emitOperatorMake(
     std::vector<std::string> args;
     for (size_t i = 0; i < op->num_in_ports(); i++) {
         const auto pred = dag_->predecessor(op, i);
-        const auto arg = "&" + operatorNameTupleTypeMap[pred->id].var_name;
+        const auto arg = "&" + operator_descs_[pred->id].var_name;
         args.emplace_back(arg);
     }
 
@@ -248,9 +244,9 @@ void CodeGenVisitor::emitOperatorMake(
     args.insert(args.end(), extra_args.begin(), extra_args.end());
 
     // Generate call
-    planBody_ << format("auto %s = make%s<%s>(%s);") % variable_name %
-                         operator_name % join(template_args, ",") %
-                         join(args, ",");
+    plan_body_ << format("auto %s = make%s<%s>(%s);") % variable_name %
+                          operator_name % join(template_args, ",") %
+                          join(args, ",");
 }
 
 void CodeGenVisitor::emitLLVMFunctionWrapper(
@@ -280,14 +276,14 @@ void CodeGenVisitor::emitLLVMFunctionWrapper(
     }
 
     // Emit functor definition
-    planBody_ << format("class %s {"
-                        "public:"
-                        "    auto operator()(%s) {"
-                        "        return %s(%s);"
-                        "    }"
-                        "};") %
-                         class_name % join(input_args, ",") % func_name %
-                         join(call_args, ",");
+    plan_body_ << format("class %s {"
+                         "public:"
+                         "    auto operator()(%s) {"
+                         "        return %s(%s);"
+                         "    }"
+                         "};") %
+                          class_name % join(input_args, ",") % func_name %
+                          join(call_args, ",");
 
     // Emit function declaration
     plan_llvm_declarations_ << format("extern \"C\" { %s %s(%s); }") %
@@ -307,7 +303,7 @@ void CodeGenVisitor::storeLLVMCode(const std::string &ir,
     std::regex reg("@cfuncnotuniquename");
     patched_ir = std::regex_replace(patched_ir, reg, "@\"" + func_name + "\"");
     // write code to the gen dir
-    llvmCode_ << patched_ir;
+    llvm_code_ << patched_ir;
 }
 
 const CodeGenVisitor::StructDef *CodeGenVisitor::EmitStructDefinition(

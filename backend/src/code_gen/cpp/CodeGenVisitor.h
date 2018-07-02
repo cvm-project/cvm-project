@@ -45,9 +45,9 @@ public:
                    std::ostream &plan_tuple_declarations,
                    std::ostream &llvmCode, std::ostream &plan_llvm_declarations)
         : dag_(dag),
-          planBody_(planBody),
+          plan_body_(planBody),
           plan_tuple_declarations_(plan_tuple_declarations),
-          llvmCode_(llvmCode),
+          llvm_code_(llvmCode),
           plan_llvm_declarations_(plan_llvm_declarations) {}
     /*
      * Implementation of Visitor interface
@@ -70,15 +70,15 @@ public:
      * These members are the "result" of the visitor
      */
     const DAG *const dag_;
-    std::ostream &planBody_;
+    std::ostream &plan_body_;
     std::ostream &plan_tuple_declarations_;
     std::ostream &plan_llvm_declarations_;
-    std::ostream &llvmCode_;
-    std::set<std::string> includes;
+    std::ostream &llvm_code_;
+    std::set<std::string> includes_;
     std::unordered_map<const dag::type::Type *,
                        const CodeGenVisitor::StructDef *>
             tuple_type_descs_;
-    std::unordered_map<size_t, OperatorDesc> operatorNameTupleTypeMap;
+    std::unordered_map<size_t, OperatorDesc> operator_descs_;
 
 private:
     /*
@@ -102,7 +102,7 @@ private:
     /*
      * Manage tuple/function/variable names
      */
-    std::unordered_map<std::string, size_t> unique_counters;
+    std::unordered_map<std::string, size_t> unique_counters_;
 
     const StructDef *EmitStructDefinition(
             const dag::type::Type *key, const std::vector<std::string> &types,
@@ -110,11 +110,11 @@ private:
     const StructDef *EmitTupleStructDefinition(const dag::type::Tuple *tuple);
 
     size_t unique_counter(const std::string &name) const {
-        return unique_counters.at(name);
+        return unique_counters_.at(name);
     }
 
     void incrementUniqueCounter(const std::string &name) {
-        auto it = unique_counters.emplace(name, -1).first;
+        auto it = unique_counters_.emplace(name, -1).first;
         (it->second)++;
     }
 

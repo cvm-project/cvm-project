@@ -116,13 +116,13 @@ std::string GenerateExecuteTuples(
     CodeGenVisitor visitor(dag, plan_body, plan_tuple_declarations, llvm_code,
                            plan_llvm_declarations);
 
-    visitor.includes.insert(includes->begin(), includes->end());
+    visitor.includes_.insert(includes->begin(), includes->end());
     visitor.tuple_type_descs_.insert(tuple_type_descs->begin(),
                                      tuple_type_descs->end());
 
     dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
-    includes->insert(visitor.includes.begin(), visitor.includes.end());
+    includes->insert(visitor.includes_.begin(), visitor.includes_.end());
     tuple_type_descs->insert(visitor.tuple_type_descs_.begin(),
                              visitor.tuple_type_descs_.end());
 
@@ -150,7 +150,7 @@ std::string GenerateExecuteTuples(
                         .str());
     }
 
-    auto sink = visitor.operatorNameTupleTypeMap[dag->sink->id];
+    auto sink = visitor.operator_descs_[dag->sink->id];
     return (format("%1% execute_tuples(%2%) { "
                    "    %3%\n"
                    "    /** collecting the result **/"
