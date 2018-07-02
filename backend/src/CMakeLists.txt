@@ -91,8 +91,9 @@ include(GoogleTest)
 
 # Set up generate library
 set(GENERATE_SOURCE_FILES
-        code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/BackEnd.cpp
+        code_gen/cpp/CodeGenVisitor.cpp
+        code_gen/cpp/context.cpp
         compiler/compiler.cpp
         compiler/generate_executable.cpp
         dag/attribute_id.cpp

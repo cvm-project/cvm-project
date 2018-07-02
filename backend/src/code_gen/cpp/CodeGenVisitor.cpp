@@ -22,26 +22,6 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
-CodeGenVisitor::StructDef::StructDef(
-        const std::string &name,  // NOLINT modernize-pass-by-value
-        // NOLINTNEXTLINE modernize-pass-by-value
-        const std::vector<std::string> &types,
-        // NOLINTNEXTLINE modernize-pass-by-value
-        const std::vector<std::string> &names)
-    : name(name), types(types), names(names) {
-    assert(types.size() == names.size());
-}
-
-std::string CodeGenVisitor::StructDef::ComputeDefinition() const {
-    std::vector<std::string> name_types;
-    name_types.reserve(names.size());
-    for (auto i = 0; i < names.size(); i++) {
-        name_types.emplace_back(types[i] + " " + names[i]);
-    }
-    return boost::str(format("typedef struct { %s; } %s;") %
-                      join(name_types, "; ") % name);
-}
-
 void CodeGenVisitor::operator()(DAGCollection *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CollectionSourceOperator");
@@ -198,21 +178,21 @@ void CodeGenVisitor::operator()(DAGOperator *const op) {
 std::string CodeGenVisitor::visit_common(DAGOperator *op,
                                          const std::string &operator_name) {
     plan_body_ << format("/** %s **/\n") % operator_name;
-    const std::string var_name = getNextOperatorName();
+    const std::string var_name = context_->GenerateOperatorName();
 
     auto output_type = EmitTupleStructDefinition(op->tuple->type);
 
     operator_descs_.emplace(op->id,
                             OperatorDesc{op->id, var_name, output_type});
-    includes_.insert("\"" + operator_name + ".h\"");
+    context_->includes().insert("\"" + operator_name + ".h\"");
     return var_name;
 }
 
 std::string CodeGenVisitor::visitLLVMFunc(
         const DAGOperator &op,
-        const std::vector<const CodeGenVisitor::StructDef *> &input_types,
+        const std::vector<const StructDef *> &input_types,
         const std::string &return_type) {
-    const std::string func_name = op.name() + getNextLLVMFuncName();
+    const std::string func_name = op.name() + context_->GenerateLlvmFuncName();
     const std::string functor_name = snake_to_camel_string(func_name);
     storeLLVMCode(op.llvm_ir, func_name);
     emitLLVMFunctionWrapper(func_name, input_types, return_type);
@@ -251,7 +231,7 @@ void CodeGenVisitor::emitOperatorMake(
 
 void CodeGenVisitor::emitLLVMFunctionWrapper(
         const std::string &func_name,
-        const std::vector<const CodeGenVisitor::StructDef *> &input_types,
+        const std::vector<const StructDef *> &input_types,
         const std::string &return_type) {
     const std::string class_name = snake_to_camel_string(func_name);
 
@@ -286,9 +266,9 @@ void CodeGenVisitor::emitLLVMFunctionWrapper(
                           join(call_args, ",");
 
     // Emit function declaration
-    plan_llvm_declarations_ << format("extern \"C\" { %s %s(%s); }") %
-                                       return_type % func_name %
-                                       join(call_types, ",");
+    context_->plan_llvm_declarations()
+            << format("extern \"C\" { %s %s(%s); }") % return_type % func_name %
+                       join(call_types, ",");
 }
 
 void CodeGenVisitor::storeLLVMCode(const std::string &ir,
@@ -303,25 +283,25 @@ void CodeGenVisitor::storeLLVMCode(const std::string &ir,
     std::regex reg("@cfuncnotuniquename");
     patched_ir = std::regex_replace(patched_ir, reg, "@\"" + func_name + "\"");
     // write code to the gen dir
-    llvm_code_ << patched_ir;
+    context_->llvm_code() << patched_ir;
 }
 
-const CodeGenVisitor::StructDef *CodeGenVisitor::EmitStructDefinition(
+const StructDef *CodeGenVisitor::EmitStructDefinition(
         const dag::type::Type *key, const std::vector<std::string> &types,
         const std::vector<std::string> &names) {
-    if (tuple_type_descs_.count(key) > 0) {
-        return tuple_type_descs_.at(key);
+    if (context_->tuple_type_descs().count(key) > 0) {
+        return context_->tuple_type_descs().at(key);
     }
 
     const auto tupleTypeDesc =
-            new CodeGenVisitor::StructDef(getNextTupleName(), types, names);
-    const auto ret = tuple_type_descs_.emplace(key, tupleTypeDesc);
-    plan_tuple_declarations_ << tupleTypeDesc->ComputeDefinition();
+            new StructDef(context_->GenerateTupleName(), types, names);
+    const auto ret = context_->tuple_type_descs().emplace(key, tupleTypeDesc);
+    context_->plan_tuple_declarations() << tupleTypeDesc->ComputeDefinition();
     assert(ret.second);
     return ret.first->second;
 }
 
-const CodeGenVisitor::StructDef *CodeGenVisitor::EmitTupleStructDefinition(
+const StructDef *CodeGenVisitor::EmitTupleStructDefinition(
         const dag::type::Tuple *tuple) {
     class FieldTypeVisitor
         : public Visitor<FieldTypeVisitor, const dag::type::FieldType,

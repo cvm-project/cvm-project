@@ -14,6 +14,7 @@
 
 #include <boost/algorithm/string/join.hpp>
 
+#include "context.hpp"
 #include "dag/DAG.h"
 #include "dag/all_operator_declarations.hpp"
 #include "dag/collection/tuple.hpp"
@@ -25,30 +26,18 @@ namespace cpp {
 struct CodeGenVisitor
     : public Visitor<CodeGenVisitor, DAGOperator, dag::AllOperatorTypes> {
 public:
-    struct StructDef {
-        explicit StructDef(const std::string &name,
-                           const std::vector<std::string> &types,
-                           const std::vector<std::string> &names);
-        std::string ComputeDefinition() const;
-        std::string name;
-        std::vector<std::string> types;
-        std::vector<std::string> names;
-    };
-
     struct OperatorDesc {
         size_t id{};
         std::string var_name;
         const StructDef *return_type{};
     };
 
-    CodeGenVisitor(const DAG *const dag, std::ostream &planBody,
-                   std::ostream &plan_tuple_declarations,
-                   std::ostream &llvmCode, std::ostream &plan_llvm_declarations)
-        : dag_(dag),
-          plan_body_(planBody),
-          plan_tuple_declarations_(plan_tuple_declarations),
-          llvm_code_(llvmCode),
-          plan_llvm_declarations_(plan_llvm_declarations) {}
+    using OperatorRegistry = std::unordered_map<size_t, OperatorDesc>;
+
+    CodeGenVisitor(const DAG *const dag, Context *const context,
+                   std::ostream &plan_body)
+        : dag_(dag), context_(context), plan_body_(plan_body) {}
+
     /*
      * Implementation of Visitor interface
      */
@@ -67,18 +56,12 @@ public:
     void operator()(DAGOperator *op);
 
     /*
-     * These members are the "result" of the visitor
+     * Members
      */
     const DAG *const dag_;
+    Context *const context_;
     std::ostream &plan_body_;
-    std::ostream &plan_tuple_declarations_;
-    std::ostream &plan_llvm_declarations_;
-    std::ostream &llvm_code_;
-    std::set<std::string> includes_;
-    std::unordered_map<const dag::type::Type *,
-                       const CodeGenVisitor::StructDef *>
-            tuple_type_descs_;
-    std::unordered_map<size_t, OperatorDesc> operator_descs_;
+    OperatorRegistry operator_descs_{};
 
 private:
     /*
@@ -99,43 +82,14 @@ private:
             const std::vector<const StructDef *> &input_types,
             const std::string &return_type);
     void storeLLVMCode(const std::string &ir, const std::string &func_name);
+
     /*
      * Manage tuple/function/variable names
      */
-    std::unordered_map<std::string, size_t> unique_counters_;
-
     const StructDef *EmitStructDefinition(
             const dag::type::Type *key, const std::vector<std::string> &types,
             const std::vector<std::string> &names);
     const StructDef *EmitTupleStructDefinition(const dag::type::Tuple *tuple);
-
-    size_t unique_counter(const std::string &name) const {
-        return unique_counters_.at(name);
-    }
-
-    void incrementUniqueCounter(const std::string &name) {
-        auto it = unique_counters_.emplace(name, -1).first;
-        (it->second)++;
-    }
-
-    std::string unique_name(const std::string &name) const {
-        return name + "_" + std::to_string(unique_counter(name));
-    }
-
-    std::string getNextLLVMFuncName() {
-        incrementUniqueCounter("_operator_function");
-        return unique_name("_operator_function");
-    }
-
-    std::string getNextTupleName() {
-        incrementUniqueCounter("tuple");
-        return unique_name("tuple");
-    }
-
-    std::string getNextOperatorName() {
-        incrementUniqueCounter("op");
-        return unique_name("op");
-    }
 };
 
 }  // namespace cpp

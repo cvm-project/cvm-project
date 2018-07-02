@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 
 #include "CodeGenVisitor.h"
+#include "context.hpp"
 #include "dag/DAGOperators.h"
 #include "dag/type/array.hpp"
 #include "dag/type/atomic.hpp"
@@ -33,11 +34,9 @@ std::string ComputeStructToValue(const std::string &input_var_name,
             .str();
 }
 
-std::string ComputeValueToStruct(
-        const std::string &input_var_name, const dag::type::Tuple *tuple_type,
-        const std::unordered_map<const dag::type::Type *,
-                                 const CodeGenVisitor::StructDef *>
-                &tuple_type_descs) {
+std::string ComputeValueToStruct(const std::string &input_var_name,
+                                 const dag::type::Tuple *tuple_type,
+                                 Context *context) {
     struct ValueToStructVisitor
         : public Visitor<ValueToStructVisitor, const dag::type::FieldType,
                          boost::mpl::list<                //
@@ -47,16 +46,13 @@ std::string ComputeValueToStruct(
                          std::string> {
         ValueToStructVisitor(
                 // NOLINTNEXTLINE modernize-pass-by-value
-                const std::string &input_var_name,
-                const std::unordered_map<const dag::type::Type *,
-                                         const CodeGenVisitor::StructDef *>
-                        &tuple_type_descs)
-            : input_var_name_(input_var_name),
-              tuple_type_descs_(tuple_type_descs) {}
+                const std::string &input_var_name, Context *const context)
+            : input_var_name_(input_var_name), context_(context) {}
 
         std::string operator()(const dag::type::Array *const type) const {
             const auto inner_type = type->tuple_type;
-            const auto inner_typedef = tuple_type_descs_.at(inner_type);
+            const auto inner_typedef =
+                    context_->tuple_type_descs().at(inner_type);
 
             return (format("{reinterpret_cast<%2%*>(%1%->as<Array>()->data),"
                            " %1%->as<Array>()->shape[0]}") %
@@ -85,12 +81,10 @@ std::string ComputeValueToStruct(
         }
 
         std::string input_var_name_;
-        const std::unordered_map<const dag::type::Type *,
-                                 const CodeGenVisitor::StructDef *>
-                &tuple_type_descs_;
+        Context *const context_;
     };
 
-    ValueToStructVisitor visitor("", tuple_type_descs);
+    ValueToStructVisitor visitor("", context);
     std::vector<std::string> field_values;
     for (size_t i = 0; i < tuple_type->field_types.size(); i++) {
         auto const &type = tuple_type->field_types[i];
@@ -99,32 +93,16 @@ std::string ComputeValueToStruct(
         field_values.emplace_back(visitor.Visit(type));
     }
 
-    const auto tuple_typedef = tuple_type_descs.at(tuple_type);
+    const auto tuple_typedef = context->tuple_type_descs().at(tuple_type);
     return (format("%1%{%2%}") % tuple_typedef->name % join(field_values, ", "))
             .str();
 }
 
-std::string GenerateExecuteTuples(
-        DAG *const dag, std::ostream &plan_tuple_declarations,
-        std::ostream &plan_llvm_declarations, std::ostream &llvm_code,
-        std::set<std::string> *const includes,
-        std::unordered_map<const dag::type::Type *,
-                           const CodeGenVisitor::StructDef *>
-                *const tuple_type_descs) {
+std::string GenerateExecuteTuples(DAG *const dag, Context *const context) {
     std::stringstream plan_body;
 
-    CodeGenVisitor visitor(dag, plan_body, plan_tuple_declarations, llvm_code,
-                           plan_llvm_declarations);
-
-    visitor.includes_.insert(includes->begin(), includes->end());
-    visitor.tuple_type_descs_.insert(tuple_type_descs->begin(),
-                                     tuple_type_descs->end());
-
+    CodeGenVisitor visitor(dag, context, plan_body);
     dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
-
-    includes->insert(visitor.includes_.begin(), visitor.includes_.end());
-    tuple_type_descs->insert(visitor.tuple_type_descs_.begin(),
-                             visitor.tuple_type_descs_.end());
 
     // Compute execute function parameters
     struct CollectInputsVisitor
@@ -144,7 +122,7 @@ std::string GenerateExecuteTuples(
         const auto tuple_type = op->tuple->type;
 
         // Parameters for function signature of 'execute_tuples'
-        const auto tuple_typedef = visitor.tuple_type_descs_.at(tuple_type);
+        const auto tuple_typedef = context->tuple_type_descs().at(tuple_type);
         packed_input_args.emplace_back(
                 (format("%1% input_%2%") % tuple_typedef->name % param_num)
                         .str());
@@ -164,10 +142,12 @@ std::string GenerateExecuteTuples(
             .str();
 }
 
-std::string GenerateExecuteValues(
-        DAG *const dag, std::unordered_map<const dag::type::Type *,
-                                           const CodeGenVisitor::StructDef *>
-                                *const tuple_type_descs) {
+std::string GenerateExecuteValues(DAG *const dag, Context *context) {
+    context->includes().emplace("\"../../../runtime/values/array.hpp\"");
+    context->includes().emplace("\"../../../runtime/values/atomics.hpp\"");
+    context->includes().emplace("\"../../../runtime/values/value.hpp\"");
+    context->includes().emplace("\"../../../runtime/values/json_parsing.hpp\"");
+
     // Compute execute function parameters
     struct CollectInputsVisitor
         : public Visitor<CollectInputsVisitor, DAGOperator,
@@ -187,7 +167,7 @@ std::string GenerateExecuteValues(
         // Packing of parameters as tuples
         const auto tuple_type = op->tuple->type;
         pack_input_args.emplace_back(ComputeValueToStruct(
-                "inputs[" + param_num + "]", tuple_type, *tuple_type_descs));
+                "inputs[" + param_num + "]", tuple_type, context));
     }
 
     // Main executable file: plan function on runtime values
@@ -220,17 +200,18 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
     std::stringstream planTupleDeclarations;
     std::stringstream planLLVMDeclarations;
-    std::set<std::string> includes;
-    std::unordered_map<const dag::type::Type *,
-                       const CodeGenVisitor::StructDef *>
-            tuple_type_descs;
+
+    std::unordered_map<std::string, size_t> unique_counters;
+    std::unordered_set<std::string> includes;
+    Context::TupleTypeRegistry tuple_type_descs;
+
+    Context context(&planTupleDeclarations, &planLLVMDeclarations, &llvmCode,
+                    &unique_counters, &includes, &tuple_type_descs);
 
     auto const execute_tuples_definition =  //
-            GenerateExecuteTuples(dag, planTupleDeclarations,
-                                  planLLVMDeclarations, llvmCode, &includes,
-                                  &tuple_type_descs);
+            GenerateExecuteTuples(dag, &context);
     auto const execute_values_definition =  //
-            GenerateExecuteValues(dag, &tuple_type_descs);
+            GenerateExecuteValues(dag, &context);
 
     // Main executable file: declarations
     std::ofstream mainSourceFile(genDir + "execute.cpp");
@@ -239,16 +220,11 @@ void BackEnd::GenerateCode(DAG *const dag) {
                       " * Auto-generated execution plan\n"
                       " */\n";
 
-    for (const auto &incl : includes) {
+    for (const auto &incl : context.includes()) {
         mainSourceFile << "#include " << incl << std::endl;
     }
 
-    mainSourceFile                                                        //
-            << "#include \"../../../runtime/values/array.hpp\"\n"         //
-            << "#include \"../../../runtime/values/atomics.hpp\"\n"       //
-            << "#include \"../../../runtime/values/value.hpp\"\n"         //
-            << "#include \"../../../runtime/values/json_parsing.hpp\"\n"  //
-            << "using namespace runtime::values;" << std::endl;
+    mainSourceFile << "using namespace runtime::values;" << std::endl;
 
     mainSourceFile << planTupleDeclarations.str();
     mainSourceFile << planLLVMDeclarations.str();
