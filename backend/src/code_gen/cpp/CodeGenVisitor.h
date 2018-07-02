@@ -74,7 +74,6 @@ public:
     std::ostream &plan_tuple_declarations_;
     std::ostream &plan_llvm_declarations_;
     std::ostream &llvmCode_;
-    std::vector<std::pair<std::string, std::string>> inputNames;
     std::set<std::string> includes;
     std::unordered_map<const dag::type::Type *,
                        const CodeGenVisitor::StructDef *>
@@ -121,12 +120,6 @@ private:
 
     std::string unique_name(const std::string &name) const {
         return name + "_" + std::to_string(unique_counter(name));
-    }
-
-    auto getNextInputName() {
-        incrementUniqueCounter("input");
-        incrementUniqueCounter("input_size");
-        return std::make_pair(unique_name("input"), unique_name("input_size"));
     }
 
     std::string getNextLLVMFuncName() {
