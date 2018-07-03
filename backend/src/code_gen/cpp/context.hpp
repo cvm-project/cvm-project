@@ -22,6 +22,11 @@ struct StructDef {
     std::vector<std::string> names;
 };
 
+struct FunctionDef {
+    std::string name;
+    const StructDef *const return_type;
+};
+
 class Context {
 public:
     using TupleTypeRegistry =

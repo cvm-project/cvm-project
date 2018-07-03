@@ -98,7 +98,7 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
             .str();
 }
 
-const StructDef *GenerateExecuteTuples(DAG *const dag, Context *const context) {
+FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
     std::stringstream plan_body;
 
     CodeGenVisitor visitor(dag, context, plan_body);
@@ -128,9 +128,10 @@ const StructDef *GenerateExecuteTuples(DAG *const dag, Context *const context) {
                         .str());
     }
 
+    auto const func_name = context->GenerateSymbolName("execute_tuples", true);
     auto sink = visitor.operator_descs_[dag->sink->id];
     context->definitions() <<  //
-            format("%1% execute_tuples(%2%) { "
+            format("%1% %5%(%2%) { "
                    "    %3%\n"
                    "    /** collecting the result **/"
                    "    %4%.open();"
@@ -139,12 +140,16 @@ const StructDef *GenerateExecuteTuples(DAG *const dag, Context *const context) {
                    "    return result;"
                    "}") %
                     sink.return_type->name % join(packed_input_args, ", ") %
-                    plan_body.str() % sink.var_name;
+                    plan_body.str() % sink.var_name % func_name;
 
-    return sink.return_type;
+    return {func_name, sink.return_type};
 }
 
-void GenerateExecuteValues(DAG *const dag, Context *context) {
+std::string GenerateExecuteValues(DAG *const dag, Context *context) {
+    // Generate plan function on tuples
+    auto execute_tuples = GenerateExecuteTuples(dag, context);
+
+    // Includes needed for generate_values
     context->includes().emplace("\"../../../runtime/values/array.hpp\"");
     context->includes().emplace("\"../../../runtime/values/atomics.hpp\"");
     context->includes().emplace("\"../../../runtime/values/value.hpp\"");
@@ -175,18 +180,22 @@ void GenerateExecuteValues(DAG *const dag, Context *context) {
     }
 
     // Main executable file: plan function on runtime values
+    const auto func_name = context->GenerateSymbolName("execute_values", true);
     context->definitions() <<  //
-            format("VectorOfValues execute_values(const VectorOfValues "
+            format("VectorOfValues %3%(const VectorOfValues "
                    "&inputs)"
                    "{"
-                   "    const auto ret = execute_tuples(%1%);"
+                   "    const auto ret = %4%(%1%);"
                    "    %2%"
                    "    VectorOfValues v;"
                    "    v.emplace_back(val.release());"
                    "    return v;"
                    "}") %
                     join(pack_input_args, ", ") %
-                    ComputeStructToValue("ret", "val");
+                    ComputeStructToValue("ret", "val") % func_name %
+                    execute_tuples.name;
+
+    return func_name;
 }
 
 void BackEnd::GenerateCode(DAG *const dag) {
@@ -214,8 +223,8 @@ void BackEnd::GenerateCode(DAG *const dag) {
     Context context(&declarations, &definitions, &llvmCode, &unique_counters,
                     &includes, &tuple_type_descs);
 
-    GenerateExecuteTuples(dag, &context);
-    GenerateExecuteValues(dag, &context);
+    auto execute_values = GenerateExecuteValues(dag, &context);
+    assert(execute_values == "execute_values");
 
     // Main executable file: declarations
     std::ofstream mainSourceFile(genDir + "execute.cpp");
