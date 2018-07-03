@@ -49,7 +49,7 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
         std::string operator()(const dag::type::Array *const type) const {
             const auto inner_type = type->tuple_type;
             const auto inner_typedef =
-                    context_->tuple_type_descs().at(inner_type);
+                    context_->tuple_type_descs().at(inner_type).get();
 
             return (format("{reinterpret_cast<%2%*>(%1%->as<Array>()->data),"
                            " %1%->as<Array>()->shape[0]}") %
@@ -90,7 +90,7 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
         field_values.emplace_back(visitor.Visit(type));
     }
 
-    const auto tuple_typedef = context->tuple_type_descs().at(tuple_type);
+    const auto tuple_typedef = context->tuple_type_descs().at(tuple_type).get();
     return (format("%1%{%2%}") % tuple_typedef->name % join(field_values, ", "))
             .str();
 }
@@ -119,7 +119,8 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
         const auto tuple_type = op->tuple->type;
 
         // Parameters for function signature of 'execute_tuples'
-        const auto tuple_typedef = context->tuple_type_descs().at(tuple_type);
+        const auto tuple_typedef =
+                context->tuple_type_descs().at(tuple_type).get();
         packed_input_args.emplace_back(
                 (format("%1% input_%2%") % tuple_typedef->name % param_num)
                         .str());

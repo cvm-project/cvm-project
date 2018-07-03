@@ -1,6 +1,7 @@
 #ifndef CODE_GEN_CPP_CONTEXT_HPP
 #define CODE_GEN_CPP_CONTEXT_HPP
 
+#include <memory>
 #include <ostream>
 #include <string>
 #include <unordered_map>
@@ -30,7 +31,8 @@ struct FunctionDef {
 class Context {
 public:
     using TupleTypeRegistry =
-            std::unordered_map<const dag::type::Type *, const StructDef *>;
+            std::unordered_map<const dag::type::Type *,
+                               std::unique_ptr<const StructDef>>;
 
     Context(std::ostream *const declarations, std::ostream *const definitions,
             std::ostream *const llvm_code,

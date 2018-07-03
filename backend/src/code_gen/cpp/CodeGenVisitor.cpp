@@ -292,15 +292,18 @@ const StructDef *CodeGenVisitor::EmitStructDefinition(
         const dag::type::Type *key, const std::vector<std::string> &types,
         const std::vector<std::string> &names) {
     if (context_->tuple_type_descs().count(key) > 0) {
-        return context_->tuple_type_descs().at(key);
+        return context_->tuple_type_descs().at(key).get();
     }
 
-    const auto tupleTypeDesc =
-            new StructDef(context_->GenerateSymbolName("tuple"), types, names);
-    const auto ret = context_->tuple_type_descs().emplace(key, tupleTypeDesc);
-    context_->declarations() << tupleTypeDesc->ComputeDefinition();
+    auto tuple_typedef = std::make_unique<StructDef>(
+            context_->GenerateSymbolName("tuple"), types, names);
+    context_->declarations() << tuple_typedef->ComputeDefinition();
+
+    const auto ret =
+            context_->tuple_type_descs().emplace(key, std::move(tuple_typedef));
     assert(ret.second);
-    return ret.first->second;
+
+    return ret.first->second.get();
 }
 
 const StructDef *CodeGenVisitor::EmitTupleStructDefinition(
