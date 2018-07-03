@@ -155,13 +155,13 @@ std::string GenerateExecuteValues(DAG *const dag, Context *context) {
         void operator()(DAGParameterLookup *op) { inputs_.emplace_back(op); }
         std::vector<DAGParameterLookup *> inputs_;
     };
-    CollectInputsVisitor collec_inputs_visitor;
+    CollectInputsVisitor collect_inputs_visitor;
     for (auto const op : dag->operators()) {
-        collec_inputs_visitor.Visit(op);
+        collect_inputs_visitor.Visit(op);
     }
 
     std::vector<std::string> pack_input_args;
-    for (auto const op : collec_inputs_visitor.inputs_) {
+    for (auto const op : collect_inputs_visitor.inputs_) {
         const std::string param_num = std::to_string(op->parameter_num);
 
         // Packing of parameters as tuples
@@ -178,7 +178,7 @@ std::string GenerateExecuteValues(DAG *const dag, Context *context) {
                    "    VectorOfValues v;"
                    "    v.emplace_back(val.release());"
                    "    return v;"
-                   " }") %
+                   "}") %
             join(pack_input_args, ", ") % ComputeStructToValue("ret", "val"))
             .str();
 }
