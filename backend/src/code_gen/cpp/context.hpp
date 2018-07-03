@@ -39,28 +39,8 @@ public:
           includes_(includes),
           tuple_type_descs_(tuple_type_descs) {}
 
-    size_t unique_counter(const std::string &name) const {
-        return unique_counters_->at(name);
-    }
-
-    std::string unique_name(const std::string &name) const {
-        return name + "_" + std::to_string(unique_counter(name));
-    }
-
-    std::string GenerateLlvmFuncName() {
-        IncrementUniqueCounter("_operator_function");
-        return unique_name("_operator_function");
-    }
-
-    std::string GenerateTupleName() {
-        IncrementUniqueCounter("tuple");
-        return unique_name("tuple");
-    }
-
-    std::string GenerateOperatorName() {
-        IncrementUniqueCounter("op");
-        return unique_name("op");
-    }
+    std::string GenerateSymbolName(const std::string &prefix,
+                                   bool try_empty_suffix = false);
 
     std::ostream &declarations() { return *declarations_; }
     std::ostream &definitions() { return *definitions_; }
@@ -70,11 +50,6 @@ public:
     TupleTypeRegistry &tuple_type_descs() { return *tuple_type_descs_; }
 
 private:
-    void IncrementUniqueCounter(const std::string &name) {
-        auto it = unique_counters_->emplace(name, -1).first;
-        (it->second)++;
-    }
-
     std::ostream *const declarations_;
     std::ostream *const definitions_;
     std::ostream *const llvm_code_;

@@ -34,5 +34,14 @@ std::string StructDef::ComputeDefinition() const {
             .str();
 }
 
+std::string Context::GenerateSymbolName(const std::string &prefix,
+                                        const bool try_empty_suffix) {
+    const size_t counter = ((*unique_counters_)[prefix])++;
+    if (counter == 0 && try_empty_suffix) {
+        return prefix;
+    }
+    return prefix + "_" + std::to_string(counter);
+}
+
 }  // namespace cpp
 }  // namespace code_gen

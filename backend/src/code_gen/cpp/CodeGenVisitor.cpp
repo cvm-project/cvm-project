@@ -178,7 +178,8 @@ void CodeGenVisitor::operator()(DAGOperator *const op) {
 std::string CodeGenVisitor::visit_common(DAGOperator *op,
                                          const std::string &operator_name) {
     plan_body_ << format("/** %s **/\n") % operator_name;
-    const std::string var_name = context_->GenerateOperatorName();
+    const std::string var_name =
+            context_->GenerateSymbolName("op_" + std::to_string(op->id), true);
 
     auto output_type = EmitTupleStructDefinition(op->tuple->type);
 
@@ -192,7 +193,8 @@ std::string CodeGenVisitor::visitLLVMFunc(
         const DAGOperator &op,
         const std::vector<const StructDef *> &input_types,
         const std::string &return_type) {
-    const std::string func_name = op.name() + context_->GenerateLlvmFuncName();
+    const std::string func_name =
+            op.name() + context_->GenerateSymbolName("llvm_function");
     const std::string functor_name = snake_to_camel_string(func_name);
     storeLLVMCode(op.llvm_ir, func_name);
     emitLLVMFunctionWrapper(func_name, input_types, return_type);
@@ -294,7 +296,7 @@ const StructDef *CodeGenVisitor::EmitStructDefinition(
     }
 
     const auto tupleTypeDesc =
-            new StructDef(context_->GenerateTupleName(), types, names);
+            new StructDef(context_->GenerateSymbolName("tuple"), types, names);
     const auto ret = context_->tuple_type_descs().emplace(key, tupleTypeDesc);
     context_->declarations() << tupleTypeDesc->ComputeDefinition();
     assert(ret.second);
