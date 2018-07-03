@@ -98,8 +98,7 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
             .str();
 }
 
-const StructDef *GenerateExecuteTuples(DAG *const dag, Context *const context,
-                                       std::ostream &output) {
+const StructDef *GenerateExecuteTuples(DAG *const dag, Context *const context) {
     std::stringstream plan_body;
 
     CodeGenVisitor visitor(dag, context, plan_body);
@@ -130,26 +129,28 @@ const StructDef *GenerateExecuteTuples(DAG *const dag, Context *const context,
     }
 
     auto sink = visitor.operator_descs_[dag->sink->id];
-    output << format("%1% execute_tuples(%2%) { "
-                     "    %3%\n"
-                     "    /** collecting the result **/"
-                     "    %4%.open();"
-                     "    auto result = %4%.next().value;"
-                     "    %4%.close();"
-                     "    return result;"
-                     "}") %
-                      sink.return_type->name % join(packed_input_args, ", ") %
-                      plan_body.str() % sink.var_name;
+    context->definitions() <<  //
+            format("%1% execute_tuples(%2%) { "
+                   "    %3%\n"
+                   "    /** collecting the result **/"
+                   "    %4%.open();"
+                   "    auto result = %4%.next().value;"
+                   "    %4%.close();"
+                   "    return result;"
+                   "}") %
+                    sink.return_type->name % join(packed_input_args, ", ") %
+                    plan_body.str() % sink.var_name;
 
     return sink.return_type;
 }
 
-void GenerateExecuteValues(DAG *const dag, Context *context,
-                           std::ostream &output) {
+void GenerateExecuteValues(DAG *const dag, Context *context) {
     context->includes().emplace("\"../../../runtime/values/array.hpp\"");
     context->includes().emplace("\"../../../runtime/values/atomics.hpp\"");
     context->includes().emplace("\"../../../runtime/values/value.hpp\"");
     context->includes().emplace("\"../../../runtime/values/json_parsing.hpp\"");
+
+    context->declarations() << "using namespace runtime::values;" << std::endl;
 
     // Compute execute function parameters
     struct CollectInputsVisitor
@@ -174,17 +175,18 @@ void GenerateExecuteValues(DAG *const dag, Context *context,
     }
 
     // Main executable file: plan function on runtime values
-    output << format("VectorOfValues execute_values(const VectorOfValues "
-                     "&inputs)"
-                     "{"
-                     "    const auto ret = execute_tuples(%1%);"
-                     "    %2%"
-                     "    VectorOfValues v;"
-                     "    v.emplace_back(val.release());"
-                     "    return v;"
-                     "}") %
-                      join(pack_input_args, ", ") %
-                      ComputeStructToValue("ret", "val");
+    context->definitions() <<  //
+            format("VectorOfValues execute_values(const VectorOfValues "
+                   "&inputs)"
+                   "{"
+                   "    const auto ret = execute_tuples(%1%);"
+                   "    %2%"
+                   "    VectorOfValues v;"
+                   "    v.emplace_back(val.release());"
+                   "    return v;"
+                   "}") %
+                    join(pack_input_args, ", ") %
+                    ComputeStructToValue("ret", "val");
 }
 
 void BackEnd::GenerateCode(DAG *const dag) {
@@ -202,19 +204,18 @@ void BackEnd::GenerateCode(DAG *const dag) {
     std::string llvmCodePath = genDir + "llvm_funcs.ll";
     std::ofstream llvmCode(llvmCodePath);
 
-    std::stringstream planTupleDeclarations;
-    std::stringstream planLLVMDeclarations;
-    std::stringstream plan_definitions;
+    std::stringstream declarations;
+    std::stringstream definitions;
 
     std::unordered_map<std::string, size_t> unique_counters;
     std::unordered_set<std::string> includes;
     Context::TupleTypeRegistry tuple_type_descs;
 
-    Context context(&planTupleDeclarations, &planLLVMDeclarations, &llvmCode,
-                    &unique_counters, &includes, &tuple_type_descs);
+    Context context(&declarations, &definitions, &llvmCode, &unique_counters,
+                    &includes, &tuple_type_descs);
 
-    GenerateExecuteTuples(dag, &context, plan_definitions);
-    GenerateExecuteValues(dag, &context, plan_definitions);
+    GenerateExecuteTuples(dag, &context);
+    GenerateExecuteValues(dag, &context);
 
     // Main executable file: declarations
     std::ofstream mainSourceFile(genDir + "execute.cpp");
@@ -227,11 +228,8 @@ void BackEnd::GenerateCode(DAG *const dag) {
         mainSourceFile << "#include " << incl << std::endl;
     }
 
-    mainSourceFile << "using namespace runtime::values;" << std::endl;
-
-    mainSourceFile << planTupleDeclarations.str();
-    mainSourceFile << planLLVMDeclarations.str();
-    mainSourceFile << plan_definitions.str();
+    mainSourceFile << declarations.str();
+    mainSourceFile << definitions.str();
 
     // Main executable file: exported execute function
     mainSourceFile

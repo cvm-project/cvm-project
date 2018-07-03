@@ -266,9 +266,9 @@ void CodeGenVisitor::emitLLVMFunctionWrapper(
                           join(call_args, ",");
 
     // Emit function declaration
-    context_->plan_llvm_declarations()
-            << format("extern \"C\" { %s %s(%s); }") % return_type % func_name %
-                       join(call_types, ",");
+    context_->declarations() << format("extern \"C\" { %s %s(%s); }") %
+                                        return_type % func_name %
+                                        join(call_types, ",");
 }
 
 void CodeGenVisitor::storeLLVMCode(const std::string &ir,
@@ -296,7 +296,7 @@ const StructDef *CodeGenVisitor::EmitStructDefinition(
     const auto tupleTypeDesc =
             new StructDef(context_->GenerateTupleName(), types, names);
     const auto ret = context_->tuple_type_descs().emplace(key, tupleTypeDesc);
-    context_->plan_tuple_declarations() << tupleTypeDesc->ComputeDefinition();
+    context_->declarations() << tupleTypeDesc->ComputeDefinition();
     assert(ret.second);
     return ret.first->second;
 }

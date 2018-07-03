@@ -27,14 +27,13 @@ public:
     using TupleTypeRegistry =
             std::unordered_map<const dag::type::Type *, const StructDef *>;
 
-    Context(std::ostream *const plan_tuple_declarations,
-            std::ostream *const plan_llvm_declarations,
+    Context(std::ostream *const declarations, std::ostream *const definitions,
             std::ostream *const llvm_code,
             std::unordered_map<std::string, size_t> *const unique_counters,
             std::unordered_set<std::string> *const includes,
             TupleTypeRegistry *const tuple_type_descs)
-        : plan_tuple_declarations_(plan_tuple_declarations),
-          plan_llvm_declarations_(plan_llvm_declarations),
+        : declarations_(declarations),
+          definitions_(definitions),
           llvm_code_(llvm_code),
           unique_counters_(unique_counters),
           includes_(includes),
@@ -63,10 +62,8 @@ public:
         return unique_name("op");
     }
 
-    std::ostream &plan_tuple_declarations() {
-        return *plan_tuple_declarations_;
-    }
-    std::ostream &plan_llvm_declarations() { return *plan_llvm_declarations_; }
+    std::ostream &declarations() { return *declarations_; }
+    std::ostream &definitions() { return *definitions_; }
     std::ostream &llvm_code() { return *llvm_code_; }
 
     std::unordered_set<std::string> &includes() { return *includes_; }
@@ -78,8 +75,8 @@ private:
         (it->second)++;
     }
 
-    std::ostream *const plan_tuple_declarations_;
-    std::ostream *const plan_llvm_declarations_;
+    std::ostream *const declarations_;
+    std::ostream *const definitions_;
     std::ostream *const llvm_code_;
     std::unordered_map<std::string, size_t> *const unique_counters_;
     std::unordered_set<std::string> *const includes_;
