@@ -80,6 +80,8 @@ cpp-test:
   dependencies:
     - dbg-build
   image: ingomuellernet/buildenv-jitq
+  variables:
+    GTEST_COLOR: "1"
   script:
     - cd backend/build
     - ctest -V
