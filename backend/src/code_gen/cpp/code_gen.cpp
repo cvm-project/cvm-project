@@ -34,14 +34,58 @@ std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {
     return type_map.at(type_name);
 }
 
-std::string ComputeStructToValue(const std::string &input_var_name,
-                                 const std::string &output_var_name) {
-    return (format("std::unique_ptr<Tuple> %2%(new Tuple());"
-                   "%2%->fields.emplace_back(new Array);"
-                   "%2%->fields[0]->as<Array>()->data = %1%.v0.data;"
-                   "%2%->fields[0]->as<Array>()->shape = {%1%.v0.shape[0]};") %
-            input_var_name % output_var_name)
-            .str();
+std::string ComputeStructToValue(std::ostream &output, Context *const context,
+                                 const std::string &input_var_name,
+                                 const dag::type::Tuple *const tuple_type) {
+    struct StructToValueVisitor
+        : public Visitor<StructToValueVisitor, const dag::type::FieldType,
+                         boost::mpl::list<                //
+                                 const dag::type::Array,  //
+                                 const dag::type::Atomic  //
+                                 >::type,
+                         std::string> {
+        StructToValueVisitor(std::ostream &output, Context *const context,
+                             // NOLINTNEXTLINE modernize-pass-by-value
+                             const std::string &input_var_name)
+            : input_var_name_(input_var_name),
+              output_(output),
+              context_(context) {}
+
+        std::string operator()(const dag::type::Atomic *const type) const {
+            const auto temp_var_name = context_->GenerateSymbolName("val");
+            output_ << format("std::unique_ptr<%2%> %1%(new %2%());"
+                              "%1%->value = %3%;") %
+                               temp_var_name %
+                               AtomicTypeNameToRuntimeTypename(type->type) %
+                               input_var_name_;
+            return temp_var_name + ".release()";
+        }
+
+        std::string operator()(const dag::type::Array * /*type*/) const {
+            const auto temp_var_name = context_->GenerateSymbolName("val");
+            output_ << format("std::unique_ptr<Array> %2%(new Array());"
+                              "%2%->data = %1%.data;"
+                              "%2%->shape = {%1%.shape[0]};") %
+                               input_var_name_ % temp_var_name;
+            return temp_var_name + ".release()";
+        }
+
+    private:
+        std::ostream &output_;
+        Context *const context_;
+        const std::string input_var_name_;
+    };
+
+    output << "VectorOfValues v;"
+              "v.emplace_back(new Tuple);";
+    for (size_t i = 0; i < tuple_type->field_types.size(); i++) {
+        const auto &type = tuple_type->field_types[i];
+        const auto field_var_name = input_var_name + ".v" + std::to_string(i);
+        StructToValueVisitor visitor(output, context, field_var_name);
+        output << format("v[0]->as<Tuple>()->fields.emplace_back(%1%);") %
+                          visitor.Visit(type);
+    }
+    return "v";
 }
 
 std::string ComputeValueToStruct(const std::string &input_var_name,
@@ -183,20 +227,21 @@ std::string GenerateExecuteValues(DAG *const dag, Context *context) {
     }
 
     // Main executable file: plan function on runtime values
+    auto const return_type = dag->sink->tuple->type;
     const auto func_name = context->GenerateSymbolName("execute_values", true);
+    std::stringstream temp_statements;
+    const auto return_val =
+            ComputeStructToValue(temp_statements, context, "ret", return_type);
     context->definitions() <<  //
             format("VectorOfValues %3%(const VectorOfValues "
                    "&inputs)"
                    "{"
                    "    const auto ret = %4%(%1%);"
                    "    %2%"
-                   "    VectorOfValues v;"
-                   "    v.emplace_back(val.release());"
-                   "    return v;"
+                   "    return %5%;"
                    "}") %
-                    join(pack_input_args, ", ") %
-                    ComputeStructToValue("ret", "val") % func_name %
-                    execute_tuples.name;
+                    join(pack_input_args, ", ") % temp_statements.str() %
+                    func_name % execute_tuples.name % return_val;
 
     return func_name;
 }
