@@ -2,6 +2,10 @@
 #define UTILS_VISITOR_HPP
 
 #include <type_traits>
+#include <typeinfo>  // Boost v1.58 (and potentially others) do not include
+                     // the STL code for std::bad_cast from the polymorphic
+                     // pointer cast even though it needs it. <typeinfo>
+                     // provides it.
 
 #include <cassert>
 
