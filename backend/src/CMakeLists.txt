@@ -133,6 +133,7 @@ target_link_libraries(generate PUBLIC
 
 # Set up runtime library
 set(RUNTIME_SOURCE_FILES
+        runtime/free.cpp
         runtime/values/json_parsing.cpp
         runtime/values/array_json.cpp
         runtime/values/tuple_json.cpp

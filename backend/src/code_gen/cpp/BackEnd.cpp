@@ -51,6 +51,8 @@ void BackEnd::GenerateCode(DAG *const dag) {
                       " * Auto-generated execution plan\n"
                       " */\n";
 
+    includes.emplace("\"../../../runtime/free.hpp\"");
+
     for (const auto &incl : context.includes()) {
         mainSourceFile << "#include " << incl << std::endl;
     }
@@ -77,11 +79,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
     mainSourceFile <<  //
             "extern \"C\" {"
             "    void free_result(const char* const s) {"
-            "        const auto outputs = ConvertFromJsonString(s);"
-            "        for (auto &output : outputs) {"
-            "            free(output->as<Tuple>()->fields[0]"
-            "                    ->as<Array>()->data);"
-            "        }"
+            "        runtime::FreeValues(s);"
             "        free(const_cast<void *>("
             "                reinterpret_cast<const void*>(s)));"
             "    }"
