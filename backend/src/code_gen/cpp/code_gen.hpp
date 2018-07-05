@@ -10,6 +10,8 @@
 namespace code_gen {
 namespace cpp {
 
+std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name);
+
 std::string ComputeStructToValue(const std::string &input_var_name,
                                  const std::string &output_var_name);
 

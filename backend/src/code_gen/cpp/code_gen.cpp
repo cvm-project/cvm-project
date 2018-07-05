@@ -22,6 +22,18 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
+std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {
+    static const std::unordered_map<std::string, std::string> type_map = {
+            {"float", "Float"},        //
+            {"double", "Double"},      //
+            {"int", "Int32"},          //
+            {"long", "Int64"},         //
+            {"bool", "Bool"},          //
+            {"std::string", "String"}  //
+    };
+    return type_map.at(type_name);
+}
+
 std::string ComputeStructToValue(const std::string &input_var_name,
                                  const std::string &output_var_name) {
     return (format("std::unique_ptr<Tuple> %2%(new Tuple());"
@@ -59,17 +71,8 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
         }
 
         std::string operator()(const dag::type::Atomic *const type) const {
-            static const std::unordered_map<std::string, std::string> type_map =
-                    {
-                            {"float", "Float"},        //
-                            {"double", "Double"},      //
-                            {"int", "Int32"},          //
-                            {"long", "Int64"},         //
-                            {"bool", "Bool"},          //
-                            {"std::string", "String"}  //
-                    };
             return (format("%1%->as<%2%>()->value") % input_var_name_ %
-                    type_map.at(type->type))
+                    AtomicTypeNameToRuntimeTypename(type->type))
                     .str();
         }
 
