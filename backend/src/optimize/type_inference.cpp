@@ -71,6 +71,10 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return op->tuple->type;
         }
 
+        const Tuple *operator()(const DAGEnsureSingleTuple *const op) const {
+            return dag_->predecessor(op)->tuple->type;
+        }
+
         const Tuple *operator()(const DAGFilter *const op) const {
             return dag_->predecessor(op)->tuple->type;
         }

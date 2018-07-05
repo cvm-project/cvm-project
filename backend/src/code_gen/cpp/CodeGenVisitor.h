@@ -48,6 +48,7 @@ public:
     void operator()(DAGParameterLookup *op);
     void operator()(DAGReduce *op);
     void operator()(DAGRange *op);
+    void operator()(DAGEnsureSingleTuple *op);
     void operator()(DAGFilter *op);
     void operator()(DAGJoin *op);
     void operator()(DAGCartesian *op);

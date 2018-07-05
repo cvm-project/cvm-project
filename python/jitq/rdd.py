@@ -180,7 +180,9 @@ class RDD(abc.ABC):
         return ReduceByKey(self.context, self, func)
 
     def reduce(self, func):
-        return Reduce(self.context, self, func).collect()[0]
+        return EnsureSingleTuple(self.context,
+                                 Reduce(self.context, self, func)) \
+            .execute_dag()
 
     def join(self, other):
         return Join(self.context, self, other)
@@ -236,6 +238,13 @@ class PipeRDD(UnaryRDD):
         file_ = io.StringIO()
         dis.dis(self.func, file=file_)
         return hash(file_.getvalue())
+
+
+class EnsureSingleTuple(UnaryRDD):
+    NAME = 'ensure_single_tuple'
+
+    def self_write_dag(self, dic):
+        self.output_type = self.parents[0].output_type
 
 
 class Map(PipeRDD):

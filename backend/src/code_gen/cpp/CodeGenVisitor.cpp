@@ -90,6 +90,13 @@ void CodeGenVisitor::operator()(DAGRange *op) {
     emitOperatorMake(var_name, "RangeSourceOperator", op, {}, {});
 };
 
+void CodeGenVisitor::operator()(DAGEnsureSingleTuple *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "EnsureSingleTupleOperator");
+
+    emitOperatorMake(var_name, "EnsureSingleTupleOperator", op, {}, {});
+};
+
 void CodeGenVisitor::operator()(DAGFilter *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "FilterOperator");

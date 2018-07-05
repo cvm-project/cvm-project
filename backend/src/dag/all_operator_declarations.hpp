@@ -7,6 +7,7 @@
 class DAGCartesian;
 class DAGCollection;
 class DAGConstantTuple;
+class DAGEnsureSingleTuple;
 class DAGFilter;
 class DAGJoin;
 class DAGMap;
@@ -23,6 +24,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGCartesian,                       //
         DAGCollection,                      //
         DAGConstantTuple,                   //
+        DAGEnsureSingleTuple,               //
         DAGFilter,                          //
         DAGJoin,                            //
         DAGMap,                             //
