@@ -5,8 +5,6 @@
 #ifndef DAG_DAGMAP_H
 #define DAG_DAGMAP_H
 
-#include <iostream>
-
 #include "DAGOperator.h"
 
 class DAGMap : public DAGOperatorBase<DAGMap> {
