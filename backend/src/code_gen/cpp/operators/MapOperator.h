@@ -10,27 +10,28 @@
 template <class Upstream, class Tuple, class MapFunction>
 class MapOperator : public Operator {
 public:
-    Upstream *upstream;
-    MapFunction mapFunction;
+    MapOperator(Upstream *const upstream, MapFunction map_function)
+        : upstream_(upstream), map_function_(map_function) {}
 
-    MapOperator(Upstream *upstream1, MapFunction mapFunction)
-        : upstream(upstream1), mapFunction(mapFunction) {}
+    INLINE void open() { upstream_->open(); }
 
     INLINE Optional<Tuple> next() {
-        if (auto ret = upstream->next()) {
-            return mapFunction(ret.value);
+        if (auto ret = upstream_->next()) {
+            return map_function_(ret.value);
         }
         return {};
     }
 
-    INLINE void open() { upstream->open(); }
+    INLINE void close() { upstream_->close(); }
 
-    INLINE void close() { upstream->close(); }
+private:
+    Upstream *const upstream_;
+    MapFunction map_function_;
 };
 
 template <class Tuple, class Upstream, class MapFunction>
-MapOperator<Upstream, Tuple, MapFunction> makeMapOperator(Upstream *upstream,
-                                                          MapFunction func) {
+MapOperator<Upstream, Tuple, MapFunction> makeMapOperator(
+        Upstream *const upstream, MapFunction func) {
     return MapOperator<Upstream, Tuple, MapFunction>(upstream, func);
 };
 
