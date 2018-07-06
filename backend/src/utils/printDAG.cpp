@@ -119,7 +119,10 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
     for (const auto &f : dag->flows()) {
         const auto &source_node = nodes.at(f.source);
         const auto &target_node = nodes.at(f.target);
-        Agedge_t *const edge = agedge(g, source_node, target_node, "", 1);
+        const auto edge_name = std::to_string(f.source_port) + "-" +
+                               std::to_string(f.target_port);
+        Agedge_t *const edge =
+                agedge(g, source_node, target_node, to_char_ptr(edge_name), 1);
 
         agsafeset(edge, "headport", to_char_ptr(head_port(f)), "");
     }
