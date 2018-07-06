@@ -27,9 +27,16 @@ std::string node_name(const DAGOperator *const op) {
 
 std::string head_port(const DAG::Flow &flow) {
     if (flow.target->num_in_ports() > 1) {
-        return std::to_string(flow.target_port) + ":n";
+        return (boost::format("in%1%:n") % flow.target_port).str();
     }
     return "n";
+}
+
+std::string tail_port(const DAG::Flow &flow) {
+    if (flow.source->num_out_ports() > 1) {
+        return (boost::format("out%1%:s") % flow.source_port).str();
+    }
+    return "s";
 }
 
 char *to_char_ptr(const std::string &s) {
@@ -90,7 +97,7 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
                 boost::irange(size_t{0}, op->num_in_ports()) |
                 boost::adaptors::transformed([](const auto &i) {
                     const std::string s = std::to_string(i);
-                    return (boost::format("<%1%> %1%") % s).str();
+                    return (boost::format("<in%1%> %1%") % s).str();
                 });
         const auto input_ports_label =
                 (boost::format("{%s} | ") % boost::join(input_ports, "| "))
@@ -98,14 +105,28 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
         const auto input_port_label =
                 (op->num_in_ports() > 1) ? input_ports_label : std::string();
 
+        // Output ports
+        const auto output_ports =
+                boost::irange(size_t{0}, op->num_out_ports()) |
+                boost::adaptors::transformed([](const auto &i) {
+                    const std::string s = std::to_string(i);
+                    return (boost::format("<out%1%> %1%") % s).str();
+                });
+        const auto output_ports_label =
+                (boost::format(" | {%s}") % boost::join(output_ports, "| "))
+                        .str();
+        const auto output_port_label =
+                (op->num_out_ports() > 1) ? output_ports_label : std::string();
+
         // Compute node label
         const std::string node_label =
                 (boost::format("{%s <header>%s | <fields> fields: "
-                               "%s&#92;nread: %s&#92;nwrite: %s&#92;n}") %
-                 input_port_label % op_name %   //
-                 boost::join(fields, ", ") %    //
-                 boost::join(read_set, ", ") %  //
-                 boost::join(write_set, ", "))
+                               "%s&#92;nread: %s&#92;nwrite: %s&#92;n%s}") %
+                 input_port_label % op_name %    //
+                 boost::join(fields, ", ") %     //
+                 boost::join(read_set, ", ") %   //
+                 boost::join(write_set, ", ") %  //
+                 output_port_label)
                         .str();
 
         // Create node
@@ -125,6 +146,7 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
                 agedge(g, source_node, target_node, to_char_ptr(edge_name), 1);
 
         agsafeset(edge, "headport", to_char_ptr(head_port(f)), "");
+        agsafeset(edge, "tailport", to_char_ptr(tail_port(f)), "");
     }
 }
 
