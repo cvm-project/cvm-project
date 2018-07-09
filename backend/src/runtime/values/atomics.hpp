@@ -1,6 +1,8 @@
 #ifndef RUNTIME_VALUES_ATOMICS_HPP
 #define RUNTIME_VALUES_ATOMICS_HPP
 
+#include <string>
+
 #include "value.hpp"
 
 namespace runtime {

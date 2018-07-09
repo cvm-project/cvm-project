@@ -152,6 +152,7 @@ std::string GenerateExecuteValues(DAG *const dag, Context *context) {
     context->includes().emplace("\"../../../runtime/values/atomics.hpp\"");
     context->includes().emplace("\"../../../runtime/values/value.hpp\"");
     context->includes().emplace("\"../../../runtime/values/json_parsing.hpp\"");
+    context->includes().emplace("\"../../../runtime/values/tuple.hpp\"");
 
     context->declarations() << "using namespace runtime::values;" << std::endl;
 
