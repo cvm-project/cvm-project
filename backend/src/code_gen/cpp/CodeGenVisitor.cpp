@@ -194,7 +194,7 @@ std::string CodeGenVisitor::visitLLVMFunc(
         const std::vector<const StructDef *> &input_types,
         const std::string &return_type) {
     const std::string func_name =
-            op.name() + context_->GenerateSymbolName("llvm_function");
+            context_->GenerateSymbolName(op.name() + "_llvm_function");
     const std::string functor_name = snake_to_camel_string(func_name);
     storeLLVMCode(op.llvm_ir, func_name);
     emitLLVMFunctionWrapper(func_name, input_types, return_type);
