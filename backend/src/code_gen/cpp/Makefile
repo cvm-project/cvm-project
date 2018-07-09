@@ -14,8 +14,8 @@ BACKEND_DIR = $(SCRIPT_DIR)/../../../
 
 # Set flags
 INC = -I$(SCRIPT_DIR)/operators -I$(BACKEND_DIR)/src
-CXXFLAGS = -fPIC -flto -std=c++14
-LDFLAGS = -fuse-ld=gold -flto -L$(BACKEND_DIR)/build -lruntime
+CXXFLAGS = -fPIC -flto -std=c++14 -fopenmp
+LDFLAGS = -fuse-ld=gold -flto -L$(BACKEND_DIR)/build -lruntime -fopenmp
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)

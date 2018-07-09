@@ -211,6 +211,7 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     context->includes().emplace("\"runtime/values/none.hpp\"");
     context->includes().emplace("\"runtime/values/tuple.hpp\"");
     context->includes().emplace("\"runtime/values/value.hpp\"");
+    context->includes().emplace("<omp.h>");
 
     context->declarations() << "using namespace runtime::values;" << std::endl;
 
@@ -290,18 +291,25 @@ std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
             auto const result_name = GenerateResultVarName(op);
 
             std::vector<std::string> input_names(dag_->in_degree(op));
+            std::set<std::string> input_deps;
             for (auto const f : dag_->in_flows(op)) {
                 auto const input_name = result_names_->at(f.source.op);
                 input_names[f.target.port] =
                         (format("%1%[%2%]") % input_name % f.source.port).str();
+                input_deps.emplace(input_name);
             }
 
             // Call nested code gen
             auto inner_plan =
                     GenerateExecuteValues(dag_->inner_dag(op), context_);
 
-            return (format("VectorOfValues %1% = %2%({%3%});") %  //
-                    result_name % inner_plan % join(input_names, ","))
+            return (format("VectorOfValues %1%;"
+                           "\n#pragma omp task default(shared)"
+                           "        depend(out:%1%) depend(in: %4%)\n{"
+                           "    %1% = %2%({%3%});"
+                           "}") %
+                    result_name % inner_plan % join(input_names, ",") %
+                    boost::join(input_deps, ", "))
                     .str();
         }
 
@@ -342,8 +350,15 @@ std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
 
     context->definitions() <<  //
             format("VectorOfValues %1%(const VectorOfValues &inputs) {"
-                   "    %2%\n"
-                   "    return std::move(%3%);"
+                   "    VectorOfValues result;\n"
+                   "    #pragma omp parallel shared(result)\n"
+                   "    #pragma omp single\n"
+                   "    {"
+                   "        %2%\n"
+                   "        #pragma omp taskwait\n"
+                   "        result = %3%;"
+                   "    }"
+                   "    return std::move(result);"
                    "}") %
                     func_name % plan_body.str() % sink_result_name;
 
