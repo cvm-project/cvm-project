@@ -5,19 +5,26 @@
 #ifndef CPP_OPTIONAL_H
 #define CPP_OPTIONAL_H
 
+#include <cassert>
+
 template <typename T>
 class Optional {
 public:
-    T value;
-    bool initialized;
+    Optional() : initialized_(false) {}
+    Optional(T value) : value_(value), initialized_(true) {}
 
-    Optional(T value) : value(value), initialized(1) {}
+    explicit operator bool() const { return initialized_; }
 
-    Optional() : initialized(0) {}
+    operator T() const { return value(); }
 
-    explicit operator bool() const { return initialized; }
+    T value() const {
+        assert(initialized_);
+        return value_;
+    }
 
-    operator T() const { return value; }
+private:
+    T value_;
+    bool initialized_;
 };
 
 #endif  // CPP_OPTIONAL_H

@@ -17,7 +17,7 @@ public:
 
     INLINE Optional<Tuple> next() {
         if (auto ret = upstream_->next()) {
-            return map_function_(ret.value);
+            return map_function_(ret.value());
         }
         return {};
     }

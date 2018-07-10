@@ -28,7 +28,7 @@ public:
         if (auto t1 = upstream1->next()) {
             // currenttuple could be empty
             if (currentTuple) {
-                return buildResult(t1.value, currentTuple.value);
+                return buildResult(t1.value(), currentTuple.value());
             }
         }
         currentTuple = upstream2->next();

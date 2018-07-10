@@ -16,7 +16,7 @@ public:
 
     INLINE void open() {
         upstream_->open();
-        auto input_tuple = upstream_->next().value;
+        auto input_tuple = upstream_->next().value();
         upstream_->close();
         // XXX: This is currently a memory leak! We need a clear way to manage
         //      memory that releases allocated memory as soon as it is not used

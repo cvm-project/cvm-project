@@ -44,13 +44,13 @@ public:
     void INLINE open() {
         upstream->open();
         while (auto ret = upstream->next()) {
-            auto key = getKey(ret.value);
+            auto key = getKey(ret.value());
             auto it = ht.find(key);
             if (it != ht.end()) {
                 auto t = it->second;
-                it->second = func(t, getValue(ret.value));
+                it->second = func(t, getValue(ret.value()));
             } else {
-                ht.emplace(key, getValue(ret.value));
+                ht.emplace(key, getValue(ret.value()));
             }
         }
         tupleIterator = ht.begin();

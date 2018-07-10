@@ -19,7 +19,7 @@ public:
     void open() {
         upstream->open();
 
-        auto input_tuple = upstream->next().value;
+        auto input_tuple = upstream->next().value();
         current = input_tuple.v0;
         to = input_tuple.v1;
         step = input_tuple.v2;

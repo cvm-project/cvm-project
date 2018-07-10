@@ -42,7 +42,7 @@ private:
                     throw std::runtime_error(
                             "Could not materialize: out of memory.");
             }
-            result_ptr_[result_size_] = tuple.value;
+            result_ptr_[result_size_] = tuple.value();
             result_size_++;
         }
 

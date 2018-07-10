@@ -14,14 +14,14 @@ public:
 
     INLINE Optional<Tuple> next() {
         const auto ret = upstream_->next();
-        if (!ret.initialized) {
+        if (!ret) {
             return {};
         }
         if (upstream_->next()) {
             throw std::runtime_error(
                     "Found several tuples where a single one was expected");
         }
-        return ret.value;
+        return ret.value();
     }
 
     INLINE void close() { upstream_->close(); }

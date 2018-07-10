@@ -181,7 +181,7 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
                    "    %3%\n"
                    "    /** collecting the result **/"
                    "    %4%.open();"
-                   "    auto result = %4%.next().value;"
+                   "    auto result = %4%.next().value();"
                    "    %4%.close();"
                    "    return result;"
                    "}") %

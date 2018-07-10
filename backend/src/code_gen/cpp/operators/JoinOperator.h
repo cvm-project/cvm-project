@@ -38,11 +38,11 @@ public:
             return buildResult(lastKey, res, lastUpstream2);
         }
         while (auto ret = upstream2->next()) {
-            auto key = getKey(ret.value);
+            auto key = getKey(ret.value());
             if (ht.count(key)) {
                 intermediateTuples = ht[key].begin();
                 iteratorEnd = ht[key].end();
-                lastUpstream2 = getValue2(ret.value);
+                lastUpstream2 = getValue2(ret.value());
                 lastKey = key;
                 return next();
             }
@@ -57,12 +57,12 @@ public:
             return;
         }
         while (auto ret = upstream1->next()) {
-            if (ht.count(getKey(ret.value)) > 0) {
-                ht[getKey(ret.value)].push_back(getValue1(ret.value));
+            if (ht.count(getKey(ret.value())) > 0) {
+                ht[getKey(ret.value())].push_back(getValue1(ret.value()));
             } else {
                 vector<ValueType1> values;
-                values.push_back(getValue1(ret.value));
-                ht.emplace(getKey(ret.value), values);
+                values.push_back(getValue1(ret.value()));
+                ht.emplace(getKey(ret.value()), values);
             }
         }
     }
