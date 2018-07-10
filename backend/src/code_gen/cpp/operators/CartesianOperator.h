@@ -55,7 +55,7 @@ private:
     Optional<UpstreamTuple> currentTuple;
 
     template <class T1, class T2>
-    INLINE static Tuple buildResult(T1 &val1, T2 &val2) {
+    INLINE static Tuple buildResult(const T1 &val1, const T2 &val2) {
         Tuple res;
         char *resp = (char *)&res;
         *((T1 *)resp) = val1;

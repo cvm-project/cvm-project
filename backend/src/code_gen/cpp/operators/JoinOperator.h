@@ -114,22 +114,22 @@ private:
     typename std::vector<ValueType1>::iterator iteratorEnd;
 
     template <class UpstreamTuple>
-    INLINE static constexpr KeyType getKey(UpstreamTuple &t) {
+    INLINE static constexpr KeyType getKey(const UpstreamTuple &t) {
         return *(const_cast<KeyType *>((KeyType *)(&t)));
     }
 
     template <class UpstreamTuple>
-    INLINE static constexpr ValueType1 getValue1(UpstreamTuple &t) {
+    INLINE static constexpr ValueType1 getValue1(const UpstreamTuple &t) {
         return *((ValueType1 *)(((char *)&t) + sizeof(KeyType)));
     }
 
     template <class UpstreamTuple>
-    INLINE static constexpr ValueType2 getValue2(UpstreamTuple &t) {
+    INLINE static constexpr ValueType2 getValue2(const UpstreamTuple &t) {
         return *((ValueType2 *)(((char *)&t) + sizeof(KeyType)));
     }
 
-    INLINE static Tuple buildResult(KeyType &key, ValueType1 &val1,
-                                    ValueType2 &val2) {
+    INLINE static Tuple buildResult(const KeyType &key, const ValueType1 &val1,
+                                    const ValueType2 &val2) {
         Tuple res;
         char *resp = (char *)&res;
         *((KeyType *)resp) = key;
