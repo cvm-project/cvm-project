@@ -317,5 +317,74 @@ void StoreLlvmCode(Context *const context, const std::string &llvm_ir,
     context->llvm_code() << patched_ir;
 }
 
+const StructDef *EmitStructDefinition(Context *const context,
+                                      const dag::type::Type *key,
+                                      const std::vector<std::string> &types,
+                                      const std::vector<std::string> &names) {
+    if (context->tuple_type_descs().count(key) > 0) {
+        return context->tuple_type_descs().at(key).get();
+    }
+
+    auto tuple_typedef = std::make_unique<StructDef>(
+            context->GenerateSymbolName("tuple"), types, names);
+    context->declarations() << tuple_typedef->ComputeDefinition();
+
+    const auto ret =
+            context->tuple_type_descs().emplace(key, std::move(tuple_typedef));
+    assert(ret.second);
+
+    return ret.first->second.get();
+}
+
+const StructDef *EmitTupleStructDefinition(Context *const context,
+                                           const dag::type::Tuple *tuple) {
+    class FieldTypeVisitor
+        : public Visitor<FieldTypeVisitor, const dag::type::FieldType,
+                         boost::mpl::list<const dag::type::Atomic,
+                                          const dag::type::Array>::type,
+                         std::string> {
+    public:
+        explicit FieldTypeVisitor(Context *const context) : context_(context) {}
+
+        std::string operator()(const dag::type::Atomic *const field) {
+            return field->type;
+        }
+
+        std::string operator()(const dag::type::Array *const field) {
+            auto item_desc =
+                    EmitTupleStructDefinition(context_, field->tuple_type);
+            std::vector<std::string> names;
+            std::vector<std::string> types;
+            names.emplace_back("data");
+            names.emplace_back(
+                    boost::str(format("shape [%s]") % field->number_dim));
+            types.emplace_back(boost::str(format("%s*") % item_desc->name));
+            types.emplace_back("size_t");
+            return EmitStructDefinition(context_, field, types, names)->name;
+        }
+
+        std::string operator()(const dag::type::FieldType *const field) const {
+            throw std::runtime_error(
+                    "Code gen encountered unknown field type: " +
+                    field->to_string());
+        }
+
+    private:
+        Context *const context_;
+    };
+
+    FieldTypeVisitor visitor(context);
+
+    std::vector<std::string> types;
+    std::vector<std::string> names;
+    for (auto pos = 0; pos < tuple->field_types.size(); pos++) {
+        auto f = tuple->field_types[pos];
+        auto item_type = visitor.Visit(f);
+        types.emplace_back(item_type);
+        names.emplace_back("v" + std::to_string(pos));
+    }
+    return EmitStructDefinition(context, tuple, types, names);
+}
+
 }  // namespace cpp
 }  // namespace code_gen

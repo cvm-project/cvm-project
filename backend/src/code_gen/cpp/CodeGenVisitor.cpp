@@ -129,12 +129,12 @@ void CodeGenVisitor::operator()(DAGJoin *op) {
     const auto up2Type = dag_->predecessor(op, 1)->tuple->type;
     auto key_Tuple = up1Type->ComputeHeadTuple();
 
-    auto key_type = EmitTupleStructDefinition(key_Tuple);
+    auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
 
     auto value_tuple1 = up1Type->ComputeTailTuple();
-    auto value_type1 = EmitTupleStructDefinition(value_tuple1);
+    auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
 
-    auto value_type2 = EmitTupleStructDefinition(up2Type);
+    auto value_type2 = EmitTupleStructDefinition(context_, up2Type);
 
     // Build operator
     std::vector<std::string> template_args = {key_type->name, value_type1->name,
@@ -164,10 +164,10 @@ void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
 
     // TODO(sabir): This currently only works for keys of size 1
     auto key_type_tuple = op->tuple->type->ComputeHeadTuple();
-    auto key_type = EmitTupleStructDefinition(key_type_tuple);
+    auto key_type = EmitTupleStructDefinition(context_, key_type_tuple);
 
     auto value_type_tuple = op->tuple->type->ComputeTailTuple();
-    auto value_type = EmitTupleStructDefinition(value_type_tuple);
+    auto value_type = EmitTupleStructDefinition(context_, value_type_tuple);
 
     // Construct functor
     const std::string functor_class =
@@ -202,7 +202,7 @@ std::string CodeGenVisitor::visit_common(DAGOperator *op,
     const std::string var_name =
             context_->GenerateSymbolName("op_" + std::to_string(op->id), true);
 
-    auto output_type = EmitTupleStructDefinition(op->tuple->type);
+    auto output_type = EmitTupleStructDefinition(context_, op->tuple->type);
 
     operator_descs_.emplace(op->id,
                             OperatorDesc{op->id, var_name, output_type});
@@ -240,74 +240,5 @@ void CodeGenVisitor::emitOperatorMake(
                           join(args, ",");
 }
 
-const StructDef *CodeGenVisitor::EmitStructDefinition(
-        const dag::type::Type *key, const std::vector<std::string> &types,
-        const std::vector<std::string> &names) {
-    if (context_->tuple_type_descs().count(key) > 0) {
-        return context_->tuple_type_descs().at(key).get();
-    }
-
-    auto tuple_typedef = std::make_unique<StructDef>(
-            context_->GenerateSymbolName("tuple"), types, names);
-    context_->declarations() << tuple_typedef->ComputeDefinition();
-
-    const auto ret =
-            context_->tuple_type_descs().emplace(key, std::move(tuple_typedef));
-    assert(ret.second);
-
-    return ret.first->second.get();
-}
-
-const StructDef *CodeGenVisitor::EmitTupleStructDefinition(
-        const dag::type::Tuple *tuple) {
-    class FieldTypeVisitor
-        : public Visitor<FieldTypeVisitor, const dag::type::FieldType,
-                         boost::mpl::list<const dag::type::Atomic,
-                                          const dag::type::Array>::type,
-                         std::string> {
-    public:
-        explicit FieldTypeVisitor(CodeGenVisitor *pVisitor)
-            : code_gen_visitor_(pVisitor) {}
-
-        std::string operator()(const dag::type::Atomic *const field) {
-            return field->type;
-        }
-
-        std::string operator()(const dag::type::Array *const field) {
-            auto item_desc = code_gen_visitor_->EmitTupleStructDefinition(
-                    field->tuple_type);
-            std::vector<std::string> names;
-            std::vector<std::string> types;
-            names.emplace_back("data");
-            names.emplace_back(
-                    boost::str(format("shape [%s]") % field->number_dim));
-            types.emplace_back(boost::str(format("%s*") % item_desc->name));
-            types.emplace_back("size_t");
-            return code_gen_visitor_->EmitStructDefinition(field, types, names)
-                    ->name;
-        }
-
-        std::string operator()(const dag::type::FieldType *const field) const {
-            throw std::runtime_error(
-                    "Code gen encountered unknown field type: " +
-                    field->to_string());
-        }
-
-    private:
-        CodeGenVisitor *code_gen_visitor_;
-    };
-
-    FieldTypeVisitor visitor(this);
-
-    std::vector<std::string> types;
-    std::vector<std::string> names;
-    for (auto pos = 0; pos < tuple->field_types.size(); pos++) {
-        auto f = tuple->field_types[pos];
-        auto item_type = visitor.Visit(f);
-        types.emplace_back(item_type);
-        names.emplace_back("v" + std::to_string(pos));
-    }
-    return EmitStructDefinition(tuple, types, names);
-}
 }  // namespace cpp
 }  // namespace code_gen

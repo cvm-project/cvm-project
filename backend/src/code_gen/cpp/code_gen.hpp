@@ -34,6 +34,14 @@ std::string GenerateLlvmFunctor(
 void StoreLlvmCode(Context *context, const std::string &llvm_ir,
                    const std::string &func_name);
 
+const StructDef *EmitStructDefinition(Context *context,
+                                      const dag::type::Type *key,
+                                      const std::vector<std::string> &types,
+                                      const std::vector<std::string> &names);
+
+const StructDef *EmitTupleStructDefinition(Context *context,
+                                           const dag::type::Tuple *tuple);
+
 }  // namespace cpp
 }  // namespace code_gen
 

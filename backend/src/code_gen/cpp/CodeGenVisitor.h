@@ -72,14 +72,6 @@ private:
             const DAGOperator *op,
             const std::vector<std::string> &extra_template_args = {},
             const std::vector<std::string> &extra_args = {});
-
-    /*
-     * Manage tuple/function/variable names
-     */
-    const StructDef *EmitStructDefinition(
-            const dag::type::Type *key, const std::vector<std::string> &types,
-            const std::vector<std::string> &names);
-    const StructDef *EmitTupleStructDefinition(const dag::type::Tuple *tuple);
 };
 
 }  // namespace cpp
