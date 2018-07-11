@@ -4,6 +4,7 @@
 #include <boost/mpl/placeholders.hpp>
 #include <boost/mpl/transform_view.hpp>
 
+class DAGAssertCorrectOpenNextClose;
 class DAGCartesian;
 class DAGCollection;
 class DAGConstantTuple;
@@ -21,6 +22,7 @@ class DAGReduceByKeyGrouped;
 namespace dag {
 
 using AllOperatorTypes = boost::mpl::list<  //
+        DAGAssertCorrectOpenNextClose,      //
         DAGCartesian,                       //
         DAGCollection,                      //
         DAGConstantTuple,                   //

@@ -22,6 +22,14 @@ using boost::format;
 namespace code_gen {
 namespace cpp {
 
+void CodeGenVisitor::operator()(DAGAssertCorrectOpenNextClose *op) {
+    const std::string var_name = CodeGenVisitor::visit_common(
+            op, "AssertCorrectOpenNextCloseOperator");
+
+    emitOperatorMake(var_name, "AssertCorrectOpenNextCloseOperator", op, {},
+                     {});
+}
+
 void CodeGenVisitor::operator()(DAGCollection *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CollectionSourceOperator");

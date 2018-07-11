@@ -26,6 +26,11 @@ const Tuple *ComputeOutputType(const DAG *const dag,
     public:
         explicit TypeInferenceVisitor(const DAG *const dag) : dag_(dag) {}
 
+        const Tuple *operator()(
+                const DAGAssertCorrectOpenNextClose *const op) const {
+            return dag_->predecessor(op)->tuple->type;
+        }
+
         const Tuple *operator()(const DAGCartesian *const op) const {
             auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
             auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;

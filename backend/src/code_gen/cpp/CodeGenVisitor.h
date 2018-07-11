@@ -41,6 +41,7 @@ public:
     /*
      * Implementation of Visitor interface
      */
+    void operator()(DAGAssertCorrectOpenNextClose *op);
     void operator()(DAGCollection *op);
     void operator()(DAGConstantTuple *op);
     void operator()(DAGMap *op);

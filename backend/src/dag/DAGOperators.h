@@ -1,6 +1,7 @@
 #ifndef DAG_DAGOPERATORS_H
 #define DAG_DAGOPERATORS_H
 
+#include "DAGAssertCorrectOpenNextClose.h"
 #include "DAGCartesian.h"
 #include "DAGCollection.h"
 #include "DAGConstantTuple.h"

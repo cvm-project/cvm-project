@@ -4,6 +4,7 @@
 
 #include "Optimizer.h"
 
+#include "assert_correct_open_next_close.hpp"
 #include "attribute_id_tracking.hpp"
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
@@ -52,4 +53,10 @@ void Optimizer::run(DAG *dag) {
 #ifndef NDEBUG
     ti_check.optimize();
 #endif  // NDEBUG
+
+#ifdef ASSERT_OPEN_NEXT_CLOSE
+    AssertCorrectOpenNextClose acopn(dag);
+    acopn.optimize();
+    ti.optimize();
+#endif  // ASSERT_OPEN_NEXT_CLOSE
 }
