@@ -7,12 +7,8 @@
 
 #include <cstdlib>
 #include <iostream>
-#include <memory>
-#include <set>
 #include <unordered_map>
 #include <vector>
-
-#include <boost/algorithm/string/join.hpp>
 
 #include "context.hpp"
 #include "dag/DAG.h"
