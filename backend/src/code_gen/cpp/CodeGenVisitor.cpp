@@ -208,12 +208,9 @@ std::string CodeGenVisitor::visitLLVMFunc(
         const DAGOperator &op,
         const std::vector<const StructDef *> &input_types,
         const std::string &return_type) {
-    const std::string func_name =
-            context_->GenerateSymbolName(op.name() + "_llvm_function");
-    const std::string functor_name = snake_to_camel_string(func_name);
-    storeLLVMCode(op.llvm_ir, func_name);
-    emitLLVMFunctionWrapper(func_name, input_types, return_type);
-    return functor_name + "()";
+    const auto class_name = emitLLVMFunctionWrapper(op.name(), op.llvm_ir,
+                                                    input_types, return_type);
+    return class_name + "()";
 }
 
 void CodeGenVisitor::emitOperatorMake(
@@ -246,12 +243,20 @@ void CodeGenVisitor::emitOperatorMake(
                           join(args, ",");
 }
 
-void CodeGenVisitor::emitLLVMFunctionWrapper(
-        const std::string &func_name,
+std::string CodeGenVisitor::emitLLVMFunctionWrapper(
+        const std::string &func_name_prefix, const std::string &llvm_ir,
         const std::vector<const StructDef *> &input_types,
         const std::string &return_type) {
-    const std::string class_name = snake_to_camel_string(func_name);
+    // Generate symbol names
+    const auto func_name =
+            context_->GenerateSymbolName(func_name_prefix + "_llvm");
+    const auto class_name =
+            context_->GenerateSymbolName(func_name_prefix + "_functor");
 
+    // Emit LLVM code
+    storeLLVMCode(llvm_ir, func_name);
+
+    // Prepare functor defintion
     std::vector<std::string> input_args;
     std::vector<std::string> call_args;
     std::vector<std::string> call_types;
@@ -286,6 +291,8 @@ void CodeGenVisitor::emitLLVMFunctionWrapper(
     context_->declarations() << format("extern \"C\" { %s %s(%s); }") %
                                         return_type % func_name %
                                         join(call_types, ",");
+
+    return class_name;
 }
 
 void CodeGenVisitor::storeLLVMCode(const std::string &ir,

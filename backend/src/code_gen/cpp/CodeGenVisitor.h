@@ -79,8 +79,8 @@ private:
             const DAGOperator *op,
             const std::vector<std::string> &extra_template_args = {},
             const std::vector<std::string> &extra_args = {});
-    void emitLLVMFunctionWrapper(
-            const std::string &func_name,
+    std::string emitLLVMFunctionWrapper(
+            const std::string &func_name_prefix, const std::string &llvm_ir,
             const std::vector<const StructDef *> &input_types,
             const std::string &return_type);
     void storeLLVMCode(const std::string &ir, const std::string &func_name);
