@@ -56,10 +56,10 @@ void CodeGenVisitor::operator()(DAGMap *op) {
 
     auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
     auto return_type = operator_descs_[op->id].return_type;
-    const std::string functor =
-            visitLLVMFunc(*op, {input_type}, return_type->name);
+    const std::string functor_class = emitLLVMFunctionWrapper(
+            op->name(), op->llvm_ir, {input_type}, return_type->name);
 
-    emitOperatorMake(var_name, "MapOperator", op, {}, {functor});
+    emitOperatorMake(var_name, "MapOperator", op, {}, {functor_class + "()"});
 }
 
 void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
@@ -85,10 +85,12 @@ void CodeGenVisitor::operator()(DAGReduce *op) {
             CodeGenVisitor::visit_common(op, "ReduceOperator");
 
     auto return_type = operator_descs_[op->id].return_type;
-    const std::string functor =
-            visitLLVMFunc(*op, {return_type, return_type}, return_type->name);
+    const std::string functor_class = emitLLVMFunctionWrapper(
+            op->name(), op->llvm_ir, {return_type, return_type},
+            return_type->name);
 
-    emitOperatorMake(var_name, "ReduceOperator", op, {}, {functor});
+    emitOperatorMake(var_name, "ReduceOperator", op, {},
+                     {functor_class + "()"});
 }
 
 void CodeGenVisitor::operator()(DAGRange *op) {
@@ -110,9 +112,11 @@ void CodeGenVisitor::operator()(DAGFilter *op) {
             CodeGenVisitor::visit_common(op, "FilterOperator");
 
     auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
-    const std::string functor = visitLLVMFunc(*op, {input_type}, "bool");
+    const std::string functor_class = emitLLVMFunctionWrapper(
+            op->name(), op->llvm_ir, {input_type}, "bool");
 
-    emitOperatorMake(var_name, "FilterOperator", op, {}, {functor});
+    emitOperatorMake(var_name, "FilterOperator", op, {},
+                     {functor_class + "()"});
 };
 
 void CodeGenVisitor::operator()(DAGJoin *op) {
@@ -166,14 +170,16 @@ void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
     auto value_type = EmitTupleStructDefinition(value_type_tuple);
 
     // Construct functor
-    const std::string functor =
-            visitLLVMFunc(*op, {value_type, value_type}, value_type->name);
+    const std::string functor_class =
+            emitLLVMFunctionWrapper(op->name(), op->llvm_ir,
+                                    {value_type, value_type}, value_type->name);
 
     // Collect template arguments
     std::vector<std::string> template_args = {key_type->name, value_type->name};
 
     // Generate call
-    emitOperatorMake(var_name, operator_name, op, template_args, {functor});
+    emitOperatorMake(var_name, operator_name, op, template_args,
+                     {functor_class + "()"});
 }
 
 void CodeGenVisitor::operator()(DAGReduceByKey *op) {
@@ -202,15 +208,6 @@ std::string CodeGenVisitor::visit_common(DAGOperator *op,
                             OperatorDesc{op->id, var_name, output_type});
     context_->includes().insert("\"" + operator_name + ".h\"");
     return var_name;
-}
-
-std::string CodeGenVisitor::visitLLVMFunc(
-        const DAGOperator &op,
-        const std::vector<const StructDef *> &input_types,
-        const std::string &return_type) {
-    const auto class_name = emitLLVMFunctionWrapper(op.name(), op.llvm_ir,
-                                                    input_types, return_type);
-    return class_name + "()";
 }
 
 void CodeGenVisitor::emitOperatorMake(

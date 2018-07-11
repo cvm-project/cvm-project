@@ -71,9 +71,6 @@ private:
      */
     std::string visit_common(DAGOperator *op, const std::string &operator_name);
     void visit_reduce_by_key(DAGOperator *op, const std::string &operator_name);
-    std::string visitLLVMFunc(const DAGOperator &op,
-                              const std::vector<const StructDef *> &input_types,
-                              const std::string &return_type);
     void emitOperatorMake(
             const std::string &variable_name, const std::string &operator_name,
             const DAGOperator *op,
