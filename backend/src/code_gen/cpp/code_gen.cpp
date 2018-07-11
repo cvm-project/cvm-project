@@ -192,7 +192,7 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
     return {func_name, sink.return_type};
 }
 
-std::string GenerateExecuteValues(DAG *const dag, Context *context) {
+std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     // Generate plan function on tuples
     auto execute_tuples = GenerateExecuteTuples(dag, context);
 
