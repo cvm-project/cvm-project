@@ -2,6 +2,7 @@
 #define CODE_GEN_CPP_CODE_GEN_HPP
 
 #include <string>
+#include <vector>
 
 #include "context.hpp"
 #include "dag/DAG.h"
@@ -23,6 +24,15 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
 FunctionDef GenerateExecuteTuples(DAG *dag, Context *context);
 
 std::string GenerateExecuteValues(DAG *dag, Context *context);
+
+std::string GenerateLlvmFunctor(
+        Context *context, const std::string &func_name_prefix,
+        const std::string &llvm_ir,
+        const std::vector<const StructDef *> &input_types,
+        const std::string &return_type);
+
+void StoreLlvmCode(Context *context, const std::string &llvm_ir,
+                   const std::string &func_name);
 
 }  // namespace cpp
 }  // namespace code_gen

@@ -1,6 +1,7 @@
 #include "code_gen.hpp"
 
 #include <ostream>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -244,6 +245,76 @@ std::string GenerateExecuteValues(DAG *const dag, Context *context) {
                     func_name % execute_tuples.name % return_val;
 
     return func_name;
+}
+
+std::string GenerateLlvmFunctor(
+        Context *const context, const std::string &func_name_prefix,
+        const std::string &llvm_ir,
+        const std::vector<const StructDef *> &input_types,
+        const std::string &return_type) {
+    // Generate symbol names
+    const auto func_name =
+            context->GenerateSymbolName(func_name_prefix + "_llvm");
+    const auto class_name =
+            context->GenerateSymbolName(func_name_prefix + "_functor");
+
+    // Emit LLVM code
+    StoreLlvmCode(context, llvm_ir, func_name);
+
+    // Prepare functor defintion
+    std::vector<std::string> input_args;
+    std::vector<std::string> call_args;
+    std::vector<std::string> call_types;
+    for (auto const &input_type : input_types) {
+        // Each input tuple is one argument of the functor
+        const auto input_var_name = "t" + std::to_string(input_args.size());
+        input_args.emplace_back(input_type->name + " " + input_var_name);
+
+        // Each collection of all input tuples is one argument to the function
+        // --> construct values for the call
+        for (auto const &field : input_type->names) {
+            // NOLINTNEXTLINE performance-inefficient-string-concatenation
+            call_args.emplace_back(input_var_name + "." + field);
+        }
+
+        // --> construct types for the declaration
+        call_types.insert(call_types.begin(), input_type->types.begin(),
+                          input_type->types.end());
+    }
+
+    // Emit functor definition
+    context->definitions() <<  //
+            format("class %s {"
+                   "public:"
+                   "    auto operator()(%s) {"
+                   "        return %s(%s);"
+                   "    }"
+                   "};") %
+                    class_name % join(input_args, ",") % func_name %
+                    join(call_args, ",");
+
+    // Emit function declaration
+    context->declarations() << format("extern \"C\" { %s %s(%s); }") %
+                                       return_type % func_name %
+                                       join(call_types, ",");
+
+    return class_name;
+}
+
+void StoreLlvmCode(Context *const context, const std::string &llvm_ir,
+                   const std::string &func_name) {
+    std::string patched_ir = llvm_ir;
+
+    // Remove 'local_unnamed_addr', which is not llvm-3.7 compatible:
+    std::regex reg1("local_unnamed_addr #.? ");
+    patched_ir = std::regex_replace(patched_ir, reg1, "");
+
+    // Replace the func name with ours
+    std::regex reg("@cfuncnotuniquename");
+    patched_ir = std::regex_replace(patched_ir, reg, "@\"" + func_name + "\"");
+
+    // Write code
+    context->llvm_code() << patched_ir;
 }
 
 }  // namespace cpp

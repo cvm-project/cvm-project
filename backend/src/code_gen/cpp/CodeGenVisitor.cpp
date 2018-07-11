@@ -1,6 +1,5 @@
 #include "CodeGenVisitor.h"
 
-#include <regex>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -10,6 +9,7 @@
 #include <boost/format.hpp>
 #include <boost/mpl/list.hpp>
 
+#include "code_gen.hpp"
 #include "dag/DAGOperators.h"
 #include "dag/collection/array.hpp"
 #include "dag/collection/atomic.hpp"
@@ -56,8 +56,8 @@ void CodeGenVisitor::operator()(DAGMap *op) {
 
     auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
     auto return_type = operator_descs_[op->id].return_type;
-    const std::string functor_class = emitLLVMFunctionWrapper(
-            op->name(), op->llvm_ir, {input_type}, return_type->name);
+    const std::string functor_class = GenerateLlvmFunctor(
+            context_, op->name(), op->llvm_ir, {input_type}, return_type->name);
 
     emitOperatorMake(var_name, "MapOperator", op, {}, {functor_class + "()"});
 }
@@ -85,9 +85,9 @@ void CodeGenVisitor::operator()(DAGReduce *op) {
             CodeGenVisitor::visit_common(op, "ReduceOperator");
 
     auto return_type = operator_descs_[op->id].return_type;
-    const std::string functor_class = emitLLVMFunctionWrapper(
-            op->name(), op->llvm_ir, {return_type, return_type},
-            return_type->name);
+    const std::string functor_class =
+            GenerateLlvmFunctor(context_, op->name(), op->llvm_ir,
+                                {return_type, return_type}, return_type->name);
 
     emitOperatorMake(var_name, "ReduceOperator", op, {},
                      {functor_class + "()"});
@@ -112,8 +112,8 @@ void CodeGenVisitor::operator()(DAGFilter *op) {
             CodeGenVisitor::visit_common(op, "FilterOperator");
 
     auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
-    const std::string functor_class = emitLLVMFunctionWrapper(
-            op->name(), op->llvm_ir, {input_type}, "bool");
+    const std::string functor_class = GenerateLlvmFunctor(
+            context_, op->name(), op->llvm_ir, {input_type}, "bool");
 
     emitOperatorMake(var_name, "FilterOperator", op, {},
                      {functor_class + "()"});
@@ -171,8 +171,8 @@ void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
 
     // Construct functor
     const std::string functor_class =
-            emitLLVMFunctionWrapper(op->name(), op->llvm_ir,
-                                    {value_type, value_type}, value_type->name);
+            GenerateLlvmFunctor(context_, op->name(), op->llvm_ir,
+                                {value_type, value_type}, value_type->name);
 
     // Collect template arguments
     std::vector<std::string> template_args = {key_type->name, value_type->name};
@@ -238,73 +238,6 @@ void CodeGenVisitor::emitOperatorMake(
     plan_body_ << format("auto %s = make%s<%s>(%s);") % variable_name %
                           operator_name % join(template_args, ",") %
                           join(args, ",");
-}
-
-std::string CodeGenVisitor::emitLLVMFunctionWrapper(
-        const std::string &func_name_prefix, const std::string &llvm_ir,
-        const std::vector<const StructDef *> &input_types,
-        const std::string &return_type) {
-    // Generate symbol names
-    const auto func_name =
-            context_->GenerateSymbolName(func_name_prefix + "_llvm");
-    const auto class_name =
-            context_->GenerateSymbolName(func_name_prefix + "_functor");
-
-    // Emit LLVM code
-    storeLLVMCode(llvm_ir, func_name);
-
-    // Prepare functor defintion
-    std::vector<std::string> input_args;
-    std::vector<std::string> call_args;
-    std::vector<std::string> call_types;
-    for (auto const &input_type : input_types) {
-        // Each input tuple is one argument of the functor
-        const auto input_var_name = "t" + std::to_string(input_args.size());
-        input_args.emplace_back(input_type->name + " " + input_var_name);
-
-        // Each collection of all input tuples is one argument to the function
-        // --> construct values for the call
-        for (auto const &field : input_type->names) {
-            // NOLINTNEXTLINE performance-inefficient-string-concatenation
-            call_args.emplace_back(input_var_name + "." + field);
-        }
-
-        // --> construct types for the declaration
-        call_types.insert(call_types.begin(), input_type->types.begin(),
-                          input_type->types.end());
-    }
-
-    // Emit functor definition
-    plan_body_ << format("class %s {"
-                         "public:"
-                         "    auto operator()(%s) {"
-                         "        return %s(%s);"
-                         "    }"
-                         "};") %
-                          class_name % join(input_args, ",") % func_name %
-                          join(call_args, ",");
-
-    // Emit function declaration
-    context_->declarations() << format("extern \"C\" { %s %s(%s); }") %
-                                        return_type % func_name %
-                                        join(call_types, ",");
-
-    return class_name;
-}
-
-void CodeGenVisitor::storeLLVMCode(const std::string &ir,
-                                   const std::string &func_name) {
-    std::string patched_ir = ir;
-    // the local_unnamed_addr std::string is not llvm-3.7 compatible:
-    std::regex reg1("local_unnamed_addr #.? ");
-    patched_ir = std::regex_replace(patched_ir, reg1, "");
-    //        patched_ir = string_replace(patched_ir, "local_unnamed_addr #1
-    //        ", "");
-    // replace the func name with our
-    std::regex reg("@cfuncnotuniquename");
-    patched_ir = std::regex_replace(patched_ir, reg, "@\"" + func_name + "\"");
-    // write code to the gen dir
-    context_->llvm_code() << patched_ir;
 }
 
 const StructDef *CodeGenVisitor::EmitStructDefinition(
