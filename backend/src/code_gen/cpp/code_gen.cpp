@@ -176,7 +176,7 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
     }
 
     auto const func_name = context->GenerateSymbolName("execute_tuples", true);
-    auto sink = visitor.operator_descs_[dag->sink->id];
+    auto sink = visitor.operator_descs_[dag->sink];
     context->definitions() <<  //
             format("%1% %5%(%2%) { "
                    "    %3%\n"

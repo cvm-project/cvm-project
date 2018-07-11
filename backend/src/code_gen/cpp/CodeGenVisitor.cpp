@@ -42,7 +42,7 @@ void CodeGenVisitor::operator()(DAGConstantTuple *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
-    const auto return_type = operator_descs_[op->id].return_type;
+    const auto return_type = operator_descs_[op].return_type;
     const auto tuple_arg =
             (format("%s{%s}") % return_type->name % join(op->values, ","))
                     .str();
@@ -54,8 +54,8 @@ void CodeGenVisitor::operator()(DAGMap *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
-    auto return_type = operator_descs_[op->id].return_type;
+    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
+    auto return_type = operator_descs_[op].return_type;
     const std::string functor_class = GenerateLlvmFunctor(
             context_, op->name(), op->llvm_ir, {input_type}, return_type->name);
 
@@ -66,7 +66,7 @@ void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
+    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
     emitOperatorMake(var_name, "MaterializeRowVectorOperator", op,
                      {input_type->name}, {});
 }
@@ -84,7 +84,7 @@ void CodeGenVisitor::operator()(DAGReduce *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ReduceOperator");
 
-    auto return_type = operator_descs_[op->id].return_type;
+    auto return_type = operator_descs_[op].return_type;
     const std::string functor_class =
             GenerateLlvmFunctor(context_, op->name(), op->llvm_ir,
                                 {return_type, return_type}, return_type->name);
@@ -111,7 +111,7 @@ void CodeGenVisitor::operator()(DAGFilter *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "FilterOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)->id].return_type;
+    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
     const std::string functor_class = GenerateLlvmFunctor(
             context_, op->name(), op->llvm_ir, {input_type}, "bool");
 
@@ -147,7 +147,7 @@ void CodeGenVisitor::operator()(DAGCartesian *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CartesianOperator");
     std::string pred2Tuple =
-            operator_descs_[dag_->predecessor(op, 1)->id].return_type->name;
+            operator_descs_[dag_->predecessor(op, 1)].return_type->name;
     std::vector<std::string> template_args = {pred2Tuple};
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
 };
@@ -204,8 +204,7 @@ std::string CodeGenVisitor::visit_common(DAGOperator *op,
 
     auto output_type = EmitTupleStructDefinition(context_, op->tuple->type);
 
-    operator_descs_.emplace(op->id,
-                            OperatorDesc{op->id, var_name, output_type});
+    operator_descs_.emplace(op, OperatorDesc{var_name, output_type});
     context_->includes().insert("\"" + operator_name + ".h\"");
     return var_name;
 }
@@ -216,7 +215,7 @@ void CodeGenVisitor::emitOperatorMake(
         const std::vector<std::string> &extra_template_args,
         const std::vector<std::string> &extra_args) {
     // First template argument: current tuple
-    auto return_type = operator_descs_[op->id].return_type;
+    auto return_type = operator_descs_[op].return_type;
     std::vector<std::string> template_args = {return_type->name};
 
     // Take over extra template arguments
@@ -227,7 +226,7 @@ void CodeGenVisitor::emitOperatorMake(
     std::vector<std::string> args;
     for (size_t i = 0; i < op->num_in_ports(); i++) {
         const auto pred = dag_->predecessor(op, i);
-        const auto arg = "&" + operator_descs_[pred->id].var_name;
+        const auto arg = "&" + operator_descs_[pred].var_name;
         args.emplace_back(arg);
     }
 

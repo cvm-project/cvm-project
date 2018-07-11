@@ -23,12 +23,12 @@ struct CodeGenVisitor
     : public Visitor<CodeGenVisitor, DAGOperator, dag::AllOperatorTypes> {
 public:
     struct OperatorDesc {
-        size_t id{};
         std::string var_name;
         const StructDef *return_type{};
     };
 
-    using OperatorRegistry = std::unordered_map<size_t, OperatorDesc>;
+    using OperatorRegistry =
+            std::unordered_map<const DAGOperator *, OperatorDesc>;
 
     CodeGenVisitor(const DAG *const dag, Context *const context,
                    std::ostream &plan_body)
