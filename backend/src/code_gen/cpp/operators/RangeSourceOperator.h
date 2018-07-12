@@ -19,10 +19,16 @@ public:
     void open() {
         upstream->open();
 
-        auto input_tuple = upstream->next().value();
-        current = input_tuple.v0;
-        to = input_tuple.v1;
-        step = input_tuple.v2;
+        const auto ret = upstream->next();
+
+        if (!ret) {
+            current = to;
+        } else {
+            const auto input_tuple = ret.value();
+            current = input_tuple.v0;
+            to = input_tuple.v1;
+            step = input_tuple.v2;
+        }
 
         upstream->close();
     }
