@@ -13,43 +13,42 @@
 template <class Upstream, class Tuple, class Function>
 class ReduceOperator : public Operator {
 public:
-    Upstream *upstream;
-
-    ReduceOperator(Upstream *upstream1, Function func)
-        : upstream(upstream1), has_returned(false), function(func) {}
+    ReduceOperator(Upstream *const upstream, Function func)
+        : upstream_(upstream), has_returned_(false), function_(func) {}
 
     INLINE Optional<Tuple> next() {
-        if (has_returned) {
+        if (has_returned_) {
             return {};
         }
-        while (auto ret = upstream->next()) {
-            acc = function(acc, ret);
+        while (auto ret = upstream_->next()) {
+            acc_ = function_(acc_, ret);
         }
-        has_returned = true;
-        return acc;
+        has_returned_ = true;
+        return acc_;
     }
 
     INLINE void open() {
-        upstream->open();
+        upstream_->open();
 
-        if (auto ret = upstream->next()) {
-            acc = ret;
+        if (auto ret = upstream_->next()) {
+            acc_ = ret;
         } else {
             throw std::logic_error("Cannot apply reduce on empty input");
         }
     }
 
-    INLINE void close() { upstream->close(); }
+    INLINE void close() { upstream_->close(); }
 
 private:
-    Tuple acc;
-    bool has_returned;
-    Function function;
+    Upstream *const upstream_;
+    Tuple acc_;
+    bool has_returned_;
+    Function function_;
 };
 
 template <class Tuple, class Upstream, class Function>
-ReduceOperator<Upstream, Tuple, Function> makeReduceOperator(Upstream *upstream,
-                                                             Function func) {
+ReduceOperator<Upstream, Tuple, Function> makeReduceOperator(
+        Upstream *const upstream, Function func) {
     return ReduceOperator<Upstream, Tuple, Function>(upstream, func);
 };
 
