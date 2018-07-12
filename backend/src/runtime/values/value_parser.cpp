@@ -8,6 +8,8 @@
 #include "array_json.hpp"
 #include "atomics.hpp"
 #include "atomics_json.hpp"
+#include "none.hpp"
+#include "none_json.hpp"
 #include "tuple.hpp"
 #include "tuple_json.hpp"
 #include "value.hpp"
@@ -74,6 +76,7 @@ void LoadValueParsers() {
     Register("int", new DefaultValueParser<Int32>());
     Register("long", new DefaultValueParser<Int64>());
     Register("bool", new DefaultValueParser<Bool>());
+    Register("none", new DefaultValueParser<None>());
     Register("std::string", new DefaultValueParser<String>());
 
     has_loaded = true;

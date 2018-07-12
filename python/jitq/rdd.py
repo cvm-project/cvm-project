@@ -194,7 +194,8 @@ class RDD(abc.ABC):
         return MaterializeRowVector(self.context, self).execute_dag()
 
     def count(self):
-        return self.map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
+        ret = self.map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
+        return ret if ret is not None else 0
 
 
 class SourceRDD(RDD):

@@ -6,7 +6,7 @@
 template <class Tuple>
 class ConstantTupleOperator : public Operator {
 public:
-    ConstantTupleOperator(const Tuple &tuple)
+    ConstantTupleOperator(const Optional<Tuple> &tuple)
         : tuple_(tuple), has_returned_(false) {}
 
     INLINE void open() { has_returned_ = false; }
@@ -20,12 +20,13 @@ public:
     INLINE void close() {}
 
 private:
-    const Tuple tuple_;
+    const Optional<Tuple> tuple_;
     bool has_returned_;
 };
 
 template <class Tuple>
-ConstantTupleOperator<Tuple> makeConstantTupleOperator(const Tuple &tuple) {
+ConstantTupleOperator<Tuple> makeConstantTupleOperator(
+        const Optional<Tuple> &tuple) {
     return ConstantTupleOperator<Tuple>(tuple);
 };
 

@@ -49,6 +49,10 @@ def wrap_result(res, type_, ffi, executor):
 
     values = json.loads(ffi.string(res).decode('utf-8'))
     assert len(values) == 1
+
+    if values[0]['type'] == 'none':
+        return None
+
     assert values[0]['type'] == 'tuple'
     result = values[0]['fields']
 

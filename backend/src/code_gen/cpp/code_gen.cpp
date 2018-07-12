@@ -170,19 +170,19 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
         // Parameters for function signature of 'execute_tuples'
         const auto tuple_typedef =
                 context->tuple_type_descs().at(tuple_type).get();
-        packed_input_args.emplace_back(
-                (format("%1% input_%2%") % tuple_typedef->name % param_num)
-                        .str());
+        packed_input_args.emplace_back((format("Optional<%1%> input_%2%") %
+                                        tuple_typedef->name % param_num)
+                                               .str());
     }
 
     auto const func_name = context->GenerateSymbolName("execute_tuples", true);
     auto sink = visitor.operator_descs_[dag->sink];
     context->definitions() <<  //
-            format("%1% %5%(%2%) { "
+            format("Optional<%1%> %5%(%2%) {"
                    "    %3%\n"
                    "    /** collecting the result **/"
                    "    %4%.open();"
-                   "    auto result = %4%.next().value();"
+                   "    auto result = %4%.next();"
                    "    %4%.close();"
                    "    return result;"
                    "}") %
@@ -197,11 +197,13 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     auto execute_tuples = GenerateExecuteTuples(dag, context);
 
     // Includes needed for generate_values
+    context->includes().emplace("\"Optional.h\"");
     context->includes().emplace("\"../../../runtime/values/array.hpp\"");
     context->includes().emplace("\"../../../runtime/values/atomics.hpp\"");
-    context->includes().emplace("\"../../../runtime/values/value.hpp\"");
     context->includes().emplace("\"../../../runtime/values/json_parsing.hpp\"");
+    context->includes().emplace("\"../../../runtime/values/none.hpp\"");
     context->includes().emplace("\"../../../runtime/values/tuple.hpp\"");
+    context->includes().emplace("\"../../../runtime/values/value.hpp\"");
 
     context->declarations() << "using namespace runtime::values;" << std::endl;
 
@@ -217,29 +219,48 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
         collect_inputs_visitor.Visit(op);
     }
 
+    // Packing of parameters as tuples
     std::vector<std::string> pack_input_args;
     for (auto const op : collect_inputs_visitor.inputs_) {
-        const std::string param_num = std::to_string(op->parameter_num);
+        // Expression that gets the input Value
+        const auto input_value =
+                (format("inputs[%1%]") % op->parameter_num).str();
 
-        // Packing of parameters as tuples
+        // Expression that computes the input tuple
         const auto tuple_type = op->tuple->type;
-        pack_input_args.emplace_back(ComputeValueToStruct(
-                "inputs[" + param_num + "]", tuple_type, context));
+        const auto input_tuple =
+                ComputeValueToStruct(input_value, tuple_type, context);
+
+        // Expression that computes the Optional<T>, depending on whether the
+        // input value is None
+        const auto tuple_typedef =
+                context->tuple_type_descs().at(tuple_type).get();
+        const auto input_arg =
+                (format("(dynamic_cast<None *>(%1%.get()) != nullptr ?"
+                        " Optional<%2%>() : Optional<%2%>(%3%))") %
+                 input_value % tuple_typedef->name % input_tuple)
+                        .str();
+
+        pack_input_args.emplace_back(input_arg);
     }
 
     // Main executable file: plan function on runtime values
     auto const return_type = dag->sink->tuple->type;
     const auto func_name = context->GenerateSymbolName("execute_values", true);
     std::stringstream temp_statements;
-    const auto return_val =
-            ComputeStructToValue(temp_statements, context, "ret", return_type);
+    const auto return_val = ComputeStructToValue(temp_statements, context,
+                                                 "ret.value()", return_type);
     context->definitions() <<  //
-            format("VectorOfValues %3%(const VectorOfValues "
-                   "&inputs)"
+            format("VectorOfValues %3%(const VectorOfValues &inputs)"
                    "{"
                    "    const auto ret = %4%(%1%);"
-                   "    %2%"
-                   "    return %5%;"
+                   "    if (ret) {"
+                   "        %2%"
+                   "        return %5%;"
+                   "    }"
+                   "    VectorOfValues v;"
+                   "    v.emplace_back(std::make_unique<None>());"
+                   "    return v;"
                    "}") %
                     join(pack_input_args, ", ") % temp_statements.str() %
                     func_name % execute_tuples.name % return_val;
