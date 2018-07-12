@@ -426,7 +426,11 @@ class TestReduce(unittest.TestCase):
                  sum(map(lambda t: t[1], input_)))
         self.assertTupleEqual(res, truth)
 
-    @unittest.skip("Empty inputs to reduce currently not supported.")
+    def test_reduce_empty(self):
+        jitq_context = JitqContext()
+        res = jitq_context.range_(0, 0).reduce(lambda i1, i2: i1 + i2)
+        self.assertEqual(res, None)
+
     def test_count_empty(self):
         jitq_context = JitqContext()
         res = jitq_context.range_(0, 0).count()
