@@ -49,11 +49,13 @@ def wrap_result(res, type_, ffi):
 
     values = json.loads(ffi.string(res).decode('utf-8'))
     assert len(values) == 1
-    value = values[0]
+    assert values[0]['type'] == 'tuple'
+    result = values[0]['fields']
 
     if isinstance(type_, types.Array):
-        data_ptr = ffi.cast("void *", value['data'])
-        shape = value['shape']
+        assert len(result) == 1
+        data_ptr = ffi.cast("void *", result[0]['data'])
+        shape = result[0]['shape']
         assert type_.ndim == len(shape)
         dtype_size = get_type_size(type_.dtype)
         total_count = reduce(lambda t1, t2: t1 * t2, shape)
@@ -64,6 +66,7 @@ def wrap_result(res, type_, ffi):
         np_arr = np_arr.view(NumpyResult)
         np_arr.ptr = res
         return np_arr
+
     assert False
 
 

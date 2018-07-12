@@ -24,9 +24,10 @@ namespace cpp {
 
 std::string ComputeStructToValue(const std::string &input_var_name,
                                  const std::string &output_var_name) {
-    return (format("std::unique_ptr<Array> %2%(new Array());"
-                   "%2%->data = %1%.v0.data;"
-                   "%2%->shape = {%1%.v0.shape[0]};") %
+    return (format("std::unique_ptr<Tuple> %2%(new Tuple());"
+                   "%2%->fields.emplace_back(new Array);"
+                   "%2%->fields[0]->as<Array>()->data = %1%.v0.data;"
+                   "%2%->fields[0]->as<Array>()->shape = {%1%.v0.shape[0]};") %
             input_var_name % output_var_name)
             .str();
 }
