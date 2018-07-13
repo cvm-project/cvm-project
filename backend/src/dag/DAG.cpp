@@ -257,7 +257,7 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
     std::unordered_map<size_t, DAGOperator *> operators;
     std::unordered_map<DAGOperator *, std::vector<size_t>> predecessors;
 
-    for (auto &it : json.at("dag")) {
+    for (auto &it : json.at("operators")) {
         std::string op_name = it.at("op");
         DAGOperator *op = nullptr;
         {
@@ -317,7 +317,7 @@ void to_json(nlohmann::json &json, const DAG *const dag) {
         // Add to DAG
         jops.push_back(jop);
     }
-    json.emplace("dag", jops);
+    json.emplace("operators", jops);
 }
 
 void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(

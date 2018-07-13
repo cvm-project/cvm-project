@@ -119,7 +119,7 @@ class RDD(abc.ABC):
 
             clean_rdds(self)
 
-            dag_dict['dag'] = self.write_dag()
+            dag_dict['operators'] = self.write_dag()
 
             self.context.serialization_cache[hash_] = dag_dict
             # write to file

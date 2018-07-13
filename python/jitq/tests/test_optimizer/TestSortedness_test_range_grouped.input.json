@@ -1,5 +1,5 @@
 {
-    "dag": [
+    "operators": [
         {
             "id": 0,
             "op": "parameter_lookup",
