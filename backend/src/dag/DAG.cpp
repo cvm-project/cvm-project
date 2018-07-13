@@ -35,6 +35,7 @@ auto DAG::AddOperator(DAGOperator *const op, const size_t id) -> Vertex {
 void DAG::RemoveOperator(const DAGOperator *const op) {
     const auto v = to_vertex(op);
     assert(boost::degree(v, graph_) == 0);
+    assert(boost::distance(inputs(op)) == 0);
     assert(boost::distance(outputs(op)) == 0);
     boost::remove_vertex(v, graph_);
 }
@@ -203,6 +204,72 @@ DAGOperator *DAG::successor(const DAGOperator *const op,
     return out_flow(op, source_port).target.op;
 }
 
+size_t DAG::in_degree() const { return inputs_.size(); }
+
+DAG::InputRange DAG::inputs() const {
+    return boost::make_iterator_range(inputs_.cbegin(), inputs_.cend());
+}
+
+DAG::InputRangeTips DAG::inputs(int dag_input_port) const {
+    return boost::make_iterator_range(inputs_.equal_range(dag_input_port)) |
+           boost::adaptors::transformed(ExtractFlowTipFunc());
+}
+
+DAG::InputRangeByOperator DAG::inputs(const DAGOperator *const op) const {
+    return inputs() | boost::adaptors::filtered(FilterInputByOperatorFunc(op));
+}
+
+DAG::FlowTip DAG::input() const {
+    assert(inputs_.size() == 1);
+    return input(0);
+}
+
+DAG::FlowTip DAG::input(const int dag_input_port) const {
+    auto const ret = inputs(dag_input_port);
+    assert(boost::distance(ret) == 1);
+    return ret.front();
+}
+
+std::pair<int, DAG::FlowTip> DAG::input(const DAGOperator *const op) const {
+    auto const ret = inputs(op);
+    assert(boost::distance(ret) == 1);
+    return ret.front();
+}
+
+int DAG::input_port(const DAGOperator *const op) const {
+    return input(op).first;
+}
+
+void DAG::set_input(const FlowTip &input) {
+    inputs_.clear();
+    add_input(0, input);
+}
+
+void DAG::set_input(DAGOperator *const op, const int operator_input_port) {
+    set_input({op, operator_input_port});
+}
+
+void DAG::set_input(const int dag_input_port, const FlowTip &input) {
+    inputs_.erase(dag_input_port);
+    add_input(dag_input_port, input);
+}
+
+void DAG::set_input(const int dag_input_port, DAGOperator *const op,
+                    int const operator_input_port) {
+    set_input(dag_input_port, {op, operator_input_port});
+}
+
+void DAG::add_input(const int dag_input_port, const FlowTip &input) {
+    inputs_.emplace(dag_input_port, input);
+}
+
+void DAG::add_input(const int dag_input_port, DAGOperator *const op,
+                    int const operator_input_port) {
+    add_input(dag_input_port, {op, operator_input_port});
+}
+
+void DAG::reset_inputs() { inputs_.clear(); }
+
 size_t DAG::out_degree() const { return outputs_.size(); }
 
 DAG::OutputRange DAG::outputs() const {
@@ -293,6 +360,13 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         dag->set_output(current_output_port++, operators.at(op_id), port);
     }
 
+    for (auto &it : json.at("inputs")) {
+        const size_t op_id = it.at("op");
+        const int op_port = it.at("op_port");
+        const int dag_port = it.at("dag_port");
+        dag->add_input(dag_port, operators.at(op_id), op_port);
+    }
+
     return dag;
 }
 
@@ -317,6 +391,13 @@ void to_json(nlohmann::json &json, const DAG *const dag) {
         jops.push_back(jop);
     }
     json.emplace("operators", jops);
+
+    auto inputs = json.emplace("inputs", nlohmann::json::array()).first;
+    for (auto const input : dag->inputs()) {
+        inputs->push_back({{"op", input.second.op->id},     //
+                           {"op_port", input.second.port},  //
+                           {"dag_port", input.first}});
+    }
 
     auto outputs = json.emplace("outputs", nlohmann::json::array()).first;
     for (size_t i = 0; i < dag->out_degree(); i++) {

@@ -132,6 +132,13 @@ private:
         const DAGOperator *const op_;
     };
 
+    struct ExtractFlowTipFunc {
+        template <typename T>
+        auto operator()(const T &it) const {
+            return it.second;
+        }
+    };
+
     /*
      * Iterator types (implementation details)
      */
@@ -162,6 +169,13 @@ public:
                                   const OutFlowRange>;
     using OperatorRange =
             boost::transformed_range<VertexToOperatorFunc, const VertexRange>;
+    using InputRange =
+            boost::iterator_range<std::multimap<int, FlowTip>::const_iterator>;
+    using InputRangeTips =
+            boost::transformed_range<ExtractFlowTipFunc, const InputRange>;
+    using InputRangeByOperator =
+            const boost::filtered_range<FilterInputByOperatorFunc,
+                                        const InputRange>;
     using OutputRange =
             boost::iterator_range<std::map<int, FlowTip>::const_iterator>;
     using OutputRangeByOperator =
@@ -219,6 +233,24 @@ public:
     DAGOperator *successor(const DAGOperator *op) const;
     DAGOperator *successor(const DAGOperator *op, int source_port) const;
 
+    size_t in_degree() const;
+    InputRange inputs() const;
+    InputRangeTips inputs(int dag_input_port) const;
+    InputRangeByOperator inputs(const DAGOperator *op) const;
+    FlowTip input() const;
+    FlowTip input(int dag_input_port) const;
+    std::pair<int, FlowTip> input(const DAGOperator *op) const;
+    int input_port(const DAGOperator *op) const;
+    void set_input(const FlowTip &input);
+    void set_input(DAGOperator *op, int operator_input_port = 0);
+    void set_input(int dag_input_port, const FlowTip &input);
+    void set_input(int dag_input_port, DAGOperator *op,
+                   int operator_input_port = 0);
+    void add_input(int dag_input_port, const FlowTip &input);
+    void add_input(int dag_input_port, DAGOperator *op,
+                   int operator_input_port = 0);
+    void reset_inputs();
+
     size_t out_degree() const;
     OutputRange outputs() const;
     OutputRangeByOperator outputs(const DAGOperator *op) const;
@@ -236,6 +268,7 @@ private:
 
     Graph graph_;
     std::set<size_t> operator_ids_;
+    std::multimap<int, FlowTip> inputs_;
     std::map<int, FlowTip> outputs_;
 };
 

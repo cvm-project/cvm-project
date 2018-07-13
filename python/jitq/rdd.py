@@ -114,6 +114,7 @@ class RDD(abc.ABC):
         hash_ = str(hash(self))
         inputs = self.get_inputs()
         dag_dict = self.context.serialization_cache.get(hash_, None)
+
         if not dag_dict:
             dag_dict = dict()
 
@@ -126,13 +127,23 @@ class RDD(abc.ABC):
                 'op': operators[str(self)]['id'],
                 'port': 0,
             }]
+            dag_dict['inputs'] = [{
+                'op': operators[str(op)]['id'],
+                'op_port': 0,
+                'dag_port': n,
+            } for (op, (n, _)) in sorted(inputs.items(),
+                                         key=lambda e: e[1][0])]
 
             self.context.serialization_cache[hash_] = dag_dict
             # write to file
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
                     json.dump(dag_dict, fp=fp, cls=RDDEncoder, indent=3)
-        return Executor().execute(self.context, dag_dict, inputs,
+
+        input_values = [v for (_, v) in
+                        sorted(list(inputs.values()),
+                               key=lambda input_: input_[0])]
+        return Executor().execute(self.context, dag_dict, input_values,
                                   self.output_type)
 
     def __hash__(self):
@@ -152,14 +163,14 @@ class RDD(abc.ABC):
         return hash("")
 
     def get_inputs(self):
-        inputs = []
+        inputs = {}
 
         def collect_inputs(operator):
             op_inputs = operator.self_get_inputs()
             if op_inputs is None:
                 return
             operator.parameter_num = len(inputs)
-            inputs.append(op_inputs)
+            inputs[operator] = (len(inputs), op_inputs)
 
         visitor = RDD.Visitor(collect_inputs)
         visitor.visit(self)
