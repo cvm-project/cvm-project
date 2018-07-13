@@ -150,6 +150,8 @@ public:
                                   const OutFlowRange>;
     using OperatorRange =
             boost::transformed_range<VertexToOperatorFunc, const VertexRange>;
+    using SinkRange =
+            boost::iterator_range<std::map<int, DAGOperator *>::const_iterator>;
 
     /*
      * Normal member functions
@@ -202,14 +204,18 @@ public:
     DAGOperator *successor(const DAGOperator *op) const;
     DAGOperator *successor(const DAGOperator *op, int source_port) const;
 
-    // TODO(ingo): revisit the concept of sink
-    DAGOperator *sink{};
+    SinkRange sinks() const;
+    DAGOperator *sink() const;
+    DAGOperator *sink(int output_port) const;
+    void set_sink(DAGOperator *op);
+    void set_sink(int output_port, DAGOperator *op);
 
 private:
     size_t last_operator_id() const;
 
     Graph graph_;
     std::set<size_t> operator_ids_;
+    std::map<int, DAGOperator *> sinks_;
 };
 
 namespace nlohmann {

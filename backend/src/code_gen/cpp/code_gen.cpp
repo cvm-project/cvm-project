@@ -176,7 +176,7 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
     }
 
     auto const func_name = context->GenerateSymbolName("execute_tuples", true);
-    auto sink = visitor.operator_descs_[dag->sink];
+    auto sink = visitor.operator_descs_[dag->sink()];
     context->definitions() <<  //
             format("Optional<%1%> %5%(%2%) {"
                    "    %3%\n"
@@ -245,7 +245,7 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     }
 
     // Main executable file: plan function on runtime values
-    auto const return_type = dag->sink->tuple->type;
+    auto const return_type = dag->sink()->tuple->type;
     const auto func_name = context->GenerateSymbolName("execute_values", true);
     std::stringstream temp_statements;
     const auto return_val = ComputeStructToValue(temp_statements, context,

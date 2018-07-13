@@ -202,6 +202,31 @@ DAGOperator *DAG::successor(const DAGOperator *const op,
     return out_flow(op, source_port).target;
 }
 
+DAG::SinkRange DAG::sinks() const {
+    return boost::make_iterator_range(sinks_.cbegin(), sinks_.cend());
+}
+
+DAGOperator *DAG::sink() const {
+    assert(sinks_.size() <= 1);
+    return sink(0);
+}
+
+DAGOperator *DAG::sink(const int output_port) const {
+    const auto ret = sinks_.find(output_port);
+    if (ret == sinks_.end()) return nullptr;
+    return ret->second;
+}
+
+void DAG::set_sink(DAGOperator *const op) {
+    assert(sinks_.size() <= 1);
+    sinks_.clear();
+    set_sink(0, op);
+}
+
+void DAG::set_sink(const int output_port, DAGOperator *const op) {
+    sinks_[output_port] = op;
+}
+
 size_t DAG::last_operator_id() const {
     if (!operator_ids_.empty()) {
         return *(operator_ids_.rbegin());
@@ -248,8 +273,8 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
     for (const auto &op_val : operators) {
         DAGOperator *const op = op_val.second;
         if (dag->out_degree(op) == 0) {
-            assert(dag->sink == nullptr);
-            dag->sink = op;
+            assert(dag->sink() == nullptr);
+            dag->set_sink(op);
         }
     }
 

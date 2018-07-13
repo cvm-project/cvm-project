@@ -26,6 +26,6 @@ void AssertCorrectOpenNextClose::optimize() {
         assert(op->num_out_ports() == 1);
         dag_->AddFlow(op, aop);
 
-        if (dag_->sink == op) dag_->sink = aop;
+        if (dag_->sink() == op) dag_->set_sink(aop);
     }
 }
