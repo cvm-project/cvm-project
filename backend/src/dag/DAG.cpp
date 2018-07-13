@@ -35,6 +35,7 @@ auto DAG::AddOperator(DAGOperator *const op, const size_t id) -> Vertex {
 void DAG::RemoveOperator(const DAGOperator *const op) {
     const auto v = to_vertex(op);
     assert(boost::degree(v, graph_) == 0);
+    assert(boost::distance(outputs(op)) == 0);
     boost::remove_vertex(v, graph_);
 }
 
@@ -202,30 +203,45 @@ DAGOperator *DAG::successor(const DAGOperator *const op,
     return out_flow(op, source_port).target.op;
 }
 
-DAG::SinkRange DAG::sinks() const {
-    return boost::make_iterator_range(sinks_.cbegin(), sinks_.cend());
+size_t DAG::out_degree() const { return outputs_.size(); }
+
+DAG::OutputRange DAG::outputs() const {
+    return boost::make_iterator_range(outputs_.cbegin(), outputs_.cend());
 }
 
-DAGOperator *DAG::sink() const {
-    assert(sinks_.size() <= 1);
-    return sink(0);
+DAG::OutputRangeByOperator DAG::outputs(const DAGOperator *op) const {
+    return outputs() | boost::adaptors::filtered(FilterInputByOperatorFunc(op));
 }
 
-DAGOperator *DAG::sink(const int output_port) const {
-    const auto ret = sinks_.find(output_port);
-    if (ret == sinks_.end()) return nullptr;
-    return ret->second;
+DAG::FlowTip DAG::output() const {
+    assert(outputs_.size() == 1);
+    return output(0);
 }
 
-void DAG::set_sink(DAGOperator *const op) {
-    assert(sinks_.size() <= 1);
-    sinks_.clear();
-    set_sink(0, op);
+DAG::FlowTip DAG::output(const int dag_output_port) const {
+    return outputs_.at(dag_output_port);
 }
 
-void DAG::set_sink(const int output_port, DAGOperator *const op) {
-    sinks_[output_port] = op;
+void DAG::set_output(const FlowTip &output) {
+    assert(outputs_.size() <= 1);
+    outputs_.clear();
+    set_output(0, output);
 }
+
+void DAG::set_output(DAGOperator *const op, const int operator_output_port) {
+    set_output({op, operator_output_port});
+}
+
+void DAG::set_output(const int dag_output_port, const FlowTip &output) {
+    outputs_[dag_output_port] = output;
+}
+
+void DAG::set_output(const int dag_output_port, DAGOperator *const op,
+                     int const operator_output_port) {
+    set_output(dag_output_port, {op, operator_output_port});
+}
+
+void DAG::reset_outputs() { outputs_.clear(); }
 
 size_t DAG::last_operator_id() const {
     if (!operator_ids_.empty()) {
@@ -273,8 +289,8 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
     for (const auto &op_val : operators) {
         DAGOperator *const op = op_val.second;
         if (dag->out_degree(op) == 0) {
-            assert(dag->sink() == nullptr);
-            dag->set_sink(op);
+            assert(boost::distance(dag->outputs()) == 0);
+            dag->set_output(op, 0);
         }
     }
 

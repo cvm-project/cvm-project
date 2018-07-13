@@ -122,6 +122,16 @@ private:
         const DAG *const dag_;
     };
 
+    struct FilterInputByOperatorFunc {
+        explicit FilterInputByOperatorFunc(const DAGOperator *const op)
+            : op_(op) {}
+        template <typename T>
+        bool operator()(const T &it) const {
+            return it.second.op == op_;
+        }
+        const DAGOperator *const op_;
+    };
+
     /*
      * Iterator types (implementation details)
      */
@@ -152,8 +162,11 @@ public:
                                   const OutFlowRange>;
     using OperatorRange =
             boost::transformed_range<VertexToOperatorFunc, const VertexRange>;
-    using SinkRange =
-            boost::iterator_range<std::map<int, DAGOperator *>::const_iterator>;
+    using OutputRange =
+            boost::iterator_range<std::map<int, FlowTip>::const_iterator>;
+    using OutputRangeByOperator =
+            const boost::filtered_range<FilterInputByOperatorFunc,
+                                        const OutputRange>;
 
     /*
      * Normal member functions
@@ -206,18 +219,24 @@ public:
     DAGOperator *successor(const DAGOperator *op) const;
     DAGOperator *successor(const DAGOperator *op, int source_port) const;
 
-    SinkRange sinks() const;
-    DAGOperator *sink() const;
-    DAGOperator *sink(int output_port) const;
-    void set_sink(DAGOperator *op);
-    void set_sink(int output_port, DAGOperator *op);
+    size_t out_degree() const;
+    OutputRange outputs() const;
+    OutputRangeByOperator outputs(const DAGOperator *op) const;
+    FlowTip output() const;
+    FlowTip output(int dag_output_port) const;
+    void set_output(const FlowTip &output);
+    void set_output(DAGOperator *op, int operator_output_port = 0);
+    void set_output(int dag_output_port, const FlowTip &output);
+    void set_output(int dag_output_port, DAGOperator *op,
+                    int operator_output_port = 0);
+    void reset_outputs();
 
 private:
     size_t last_operator_id() const;
 
     Graph graph_;
     std::set<size_t> operator_ids_;
-    std::map<int, DAGOperator *> sinks_;
+    std::map<int, FlowTip> outputs_;
 };
 
 namespace nlohmann {
