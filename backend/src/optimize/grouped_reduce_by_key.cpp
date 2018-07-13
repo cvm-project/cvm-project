@@ -36,16 +36,13 @@ void GroupedReduceByKey::optimize() {
 
         dag_->AddOperator(new_op_ptr.release());
 
-        if (op == dag_->sink) {
-            dag_->sink = new_op;
-        } else {
-            const auto out_flow = dag_->out_flow(op);
-            dag_->RemoveFlow(out_flow);
-            dag_->AddFlow(new_op, 0, out_flow.target, out_flow.target_port);
-        }
-
+        const auto out_flow = dag_->out_flow(op);
         const auto in_flow = dag_->in_flow(op);
+
+        dag_->RemoveFlow(out_flow);
         dag_->RemoveFlow(in_flow);
+
+        dag_->AddFlow(new_op, 0, out_flow.target, out_flow.target_port);
         dag_->AddFlow(in_flow.source, in_flow.source_port, new_op, 0);
 
         dag_->RemoveOperator(op);

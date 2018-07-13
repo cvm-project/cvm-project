@@ -88,31 +88,25 @@ void SimplePredicateMoveAround::optimize() {
         // this is the sink, reassign the sink
         if (!keep_original) {
             const auto in_flow = dag_->in_flow(filter);
-            dag_->RemoveFlow(in_flow);
+            const auto out_flow = dag_->out_flow(filter);
 
-            if (filter == dag_->sink) {
-                dag_->sink = in_flow.source;
-            } else {
-                const auto out_flow = dag_->out_flow(filter);
-                dag_->RemoveFlow(out_flow);
-                dag_->AddFlow(in_flow.source, in_flow.source_port,
-                              out_flow.target, out_flow.target_port);
-            }
+            dag_->RemoveFlow(in_flow);
+            dag_->RemoveFlow(out_flow);
+
+            dag_->AddFlow(in_flow.source, in_flow.source_port, out_flow.target,
+                          out_flow.target_port);
         }
 
         // Add copy of the filter into the new places
         for (auto const currentOp : new_predecessors) {
             DAGFilter *filt = filter->copy();
             dag_->AddOperator(filt);
+
             // insert the filter after this operator
-            if (currentOp == dag_->sink) {
-                // reassign sink to the filter
-                dag_->sink = filt;
-            } else {
-                const auto out_flow = dag_->out_flow(currentOp, 0);
-                dag_->RemoveFlow(out_flow);
-                dag_->AddFlow(filt, 0, out_flow.target, out_flow.target_port);
-            }
+            const auto out_flow = dag_->out_flow(currentOp, 0);
+            dag_->RemoveFlow(out_flow);
+
+            dag_->AddFlow(filt, 0, out_flow.target, out_flow.target_port);
             dag_->AddFlow(currentOp, 0, filt, 0);
 
             // change the llvm ir signature
