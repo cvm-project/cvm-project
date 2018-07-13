@@ -286,12 +286,11 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         }
     }
 
-    for (const auto &op_val : operators) {
-        DAGOperator *const op = op_val.second;
-        if (dag->out_degree(op) == 0) {
-            assert(boost::distance(dag->outputs()) == 0);
-            dag->set_output(op, 0);
-        }
+    int current_output_port = 0;
+    for (auto &it : json.at("outputs")) {
+        const size_t op_id = it.at("op");
+        const int port = it.at("port");
+        dag->set_output(current_output_port++, operators.at(op_id), port);
     }
 
     return dag;
@@ -318,6 +317,12 @@ void to_json(nlohmann::json &json, const DAG *const dag) {
         jops.push_back(jop);
     }
     json.emplace("operators", jops);
+
+    auto outputs = json.emplace("outputs", nlohmann::json::array()).first;
+    for (size_t i = 0; i < dag->out_degree(); i++) {
+        auto const output = dag->output(i);
+        outputs->push_back({{"op", output.op->id}, {"port", output.port}});
+    }
 }
 
 void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(

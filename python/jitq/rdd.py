@@ -107,8 +107,8 @@ class RDD(abc.ABC):
 
         visitor = RDD.Visitor(collect_operators)
         visitor.visit(self)
-        ret = list(op_dicts.values())
-        return sorted(ret, key=lambda d: d['id'])
+
+        return op_dicts
 
     def execute_dag(self):
         hash_ = str(hash(self))
@@ -119,7 +119,13 @@ class RDD(abc.ABC):
 
             clean_rdds(self)
 
-            dag_dict['operators'] = self.write_dag()
+            operators = self.write_dag()
+            dag_dict['operators'] = sorted(operators.values(),
+                                           key=lambda d: d['id'])
+            dag_dict['outputs'] = [{
+                'op': operators[str(self)]['id'],
+                'port': 0,
+            }]
 
             self.context.serialization_cache[hash_] = dag_dict
             # write to file
