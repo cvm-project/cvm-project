@@ -44,14 +44,14 @@ void MaterializeMultipleReads::optimize() {
 
         // Replace out flows with scans
         for (auto const &out_flow : out_flows) {
-            assert(out_flow.source_port == 0);
+            assert(out_flow.source.port == 0);
 
             dag_->RemoveFlow(out_flow);
 
             auto scan_op = new DAGCollection();
             dag_->AddOperator(scan_op);
             dag_->AddFlow(mat_op, scan_op);
-            dag_->AddFlow(scan_op, out_flow.target, out_flow.target_port);
+            dag_->AddFlow(scan_op, out_flow.target.op, out_flow.target.port);
         }
     }
 }

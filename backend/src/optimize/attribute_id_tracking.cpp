@@ -164,7 +164,7 @@ void AttributeIdTracking::optimize() {
 
         std::unordered_set<const dag::AttributeId *> input_attribute_ids;
         for (const auto flow : dag_->in_flows(op)) {
-            const auto input_op = flow.source;
+            const auto input_op = flow.source.op;
             for (const auto &field : input_op->tuple->fields) {
                 input_attribute_ids.insert(field->attribute_id().get());
             }

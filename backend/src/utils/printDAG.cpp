@@ -26,15 +26,15 @@ std::string node_name(const DAGOperator *const op) {
 }
 
 std::string head_port(const DAG::Flow &flow) {
-    if (flow.target->num_in_ports() > 1) {
-        return (boost::format("in%1%:n") % flow.target_port).str();
+    if (flow.target.op->num_in_ports() > 1) {
+        return (boost::format("in%1%:n") % flow.target.port).str();
     }
     return "n";
 }
 
 std::string tail_port(const DAG::Flow &flow) {
-    if (flow.source->num_out_ports() > 1) {
-        return (boost::format("out%1%:s") % flow.source_port).str();
+    if (flow.source.op->num_out_ports() > 1) {
+        return (boost::format("out%1%:s") % flow.source.port).str();
     }
     return "s";
 }
@@ -138,10 +138,10 @@ void buildDOT(const DAG *const dag, Agraph_t *g) {
 
     // Compute edges from flows
     for (const auto &f : dag->flows()) {
-        const auto &source_node = nodes.at(f.source);
-        const auto &target_node = nodes.at(f.target);
-        const auto edge_name = std::to_string(f.source_port) + "-" +
-                               std::to_string(f.target_port);
+        const auto &source_node = nodes.at(f.source.op);
+        const auto &target_node = nodes.at(f.target.op);
+        const auto edge_name = std::to_string(f.source.port) + "-" +
+                               std::to_string(f.target.port);
         Agedge_t *const edge =
                 agedge(g, source_node, target_node, to_char_ptr(edge_name), 1);
 

@@ -76,11 +76,13 @@ public:
      * Represents a "flow" between two ports of two operators. Used to return
      * all information related to a flow at once for convenience.
      */
+    struct FlowTip {
+        DAGOperator *op;
+        int port;
+    };
     struct Flow {
-        DAGOperator *source;
-        DAGOperator *target;
-        int source_port;
-        int target_port;
+        FlowTip source;
+        FlowTip target;
         Edge e;
     };
 
@@ -98,7 +100,7 @@ private:
         explicit FilterFlowBySourcePortFunc(const int source_port)
             : source_port_(source_port) {}
         bool operator()(const Flow &f) const {
-            return f.source_port == source_port_;
+            return f.source.port == source_port_;
         }
         const int source_port_;
     };
@@ -107,7 +109,7 @@ private:
         explicit FilterFlowByTargetPortFunc(const int target_port)
             : target_port_(target_port) {}
         bool operator()(const Flow &f) const {
-            return f.target_port == target_port_;
+            return f.target.port == target_port_;
         }
         const int target_port_;
     };

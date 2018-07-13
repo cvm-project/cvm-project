@@ -42,8 +42,8 @@ void GroupedReduceByKey::optimize() {
         dag_->RemoveFlow(out_flow);
         dag_->RemoveFlow(in_flow);
 
-        dag_->AddFlow(new_op, 0, out_flow.target, out_flow.target_port);
-        dag_->AddFlow(in_flow.source, in_flow.source_port, new_op, 0);
+        dag_->AddFlow(new_op, 0, out_flow.target.op, out_flow.target.port);
+        dag_->AddFlow(in_flow.source.op, in_flow.source.port, new_op, 0);
 
         dag_->RemoveOperator(op);
     }

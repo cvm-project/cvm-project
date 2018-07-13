@@ -107,7 +107,7 @@ DAG::Flow DAG::to_flow(const Edge &e) const {
     const auto source_port = source_port_map[e];
     const auto target_port = target_port_map[e];
 
-    return Flow{source_op, target_op, source_port, target_port, e};
+    return Flow{{source_op, source_port}, {target_op, target_port}, e};
 }
 
 auto DAG::to_vertex(const DAGOperator *const op) const -> Vertex {
@@ -185,21 +185,21 @@ size_t DAG::out_degree(const DAGOperator *op, int source_port) const {
 }
 
 DAGOperator *DAG::predecessor(const DAGOperator *const op) const {
-    return in_flow(op).source;
+    return in_flow(op).source.op;
 }
 
 DAGOperator *DAG::predecessor(const DAGOperator *const op,
                               const int target_port) const {
-    return in_flow(op, target_port).source;
+    return in_flow(op, target_port).source.op;
 }
 
 DAGOperator *DAG::successor(const DAGOperator *const op) const {
-    return out_flow(op).target;
+    return out_flow(op).target.op;
 }
 
 DAGOperator *DAG::successor(const DAGOperator *const op,
                             const int source_port) const {
-    return out_flow(op, source_port).target;
+    return out_flow(op, source_port).target.op;
 }
 
 DAG::SinkRange DAG::sinks() const {

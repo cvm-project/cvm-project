@@ -20,7 +20,7 @@ void AssertCorrectOpenNextClose::optimize() {
 
         for (auto const &f : out_flows) {
             dag_->RemoveFlow(f);
-            dag_->AddFlow(aop, f.source_port, f.target, f.target_port);
+            dag_->AddFlow(aop, f.source.port, f.target.op, f.target.port);
         }
 
         assert(op->num_out_ports() == 1);

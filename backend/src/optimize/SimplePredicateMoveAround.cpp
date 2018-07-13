@@ -51,7 +51,7 @@ void SimplePredicateMoveAround::optimize() {
 
             bool can_swap = false;
             for (auto const flow : dag_->in_flows(currentOp)) {
-                auto const pred = flow.source;
+                auto const pred = flow.source.op;
                 if (currentOp->name() != "collection_source" &&
                     currentOp->name() != "range_source" &&
                     std::all_of(filter->read_set.begin(),
@@ -93,8 +93,8 @@ void SimplePredicateMoveAround::optimize() {
             dag_->RemoveFlow(in_flow);
             dag_->RemoveFlow(out_flow);
 
-            dag_->AddFlow(in_flow.source, in_flow.source_port, out_flow.target,
-                          out_flow.target_port);
+            dag_->AddFlow(in_flow.source.op, in_flow.source.port,
+                          out_flow.target.op, out_flow.target.port);
         }
 
         // Add copy of the filter into the new places
@@ -106,7 +106,7 @@ void SimplePredicateMoveAround::optimize() {
             const auto out_flow = dag_->out_flow(currentOp, 0);
             dag_->RemoveFlow(out_flow);
 
-            dag_->AddFlow(filt, 0, out_flow.target, out_flow.target_port);
+            dag_->AddFlow(filt, 0, out_flow.target.op, out_flow.target.port);
             dag_->AddFlow(currentOp, 0, filt, 0);
 
             // change the llvm ir signature
