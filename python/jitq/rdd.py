@@ -13,8 +13,6 @@ from cffi import FFI
 from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
 from jitq.c_executor import Executor
 from jitq.config import FAST_MATH, DUMP_DAG
-from jitq.constant_strings import ID, PREDS, DAG, OP, FUNC, \
-    OUTPUT_TYPE, DATA_PATH, ADD_INDEX
 from jitq.libs.numba.llvm_ir import get_llvm_ir
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
     make_tuple, item_typeof, numba_type_to_dtype, is_item_type, C_TYPE_MAP
@@ -100,16 +98,17 @@ class RDD(abc.ABC):
             assert is_item_type(operator.output_type), \
                 "Expected valid nested tuple type."
 
-            op_dict[ID] = len(op_dicts)
-            op_dict[PREDS] = [op_dicts[str(p)][ID] for p in operator.parents]
-            op_dict[OP] = operator.NAME
-            op_dict[OUTPUT_TYPE] = operator.output_type
+            op_dict['id'] = len(op_dicts)
+            op_dict['predecessors'] = [
+                op_dicts[str(p)]['id'] for p in operator.parents]
+            op_dict['op'] = operator.NAME
+            op_dict['output_type'] = operator.output_type
             op_dicts[str(operator)] = op_dict
 
         visitor = RDD.Visitor(collect_operators)
         visitor.visit(self)
         ret = list(op_dicts.values())
-        return sorted(ret, key=lambda d: d[ID])
+        return sorted(ret, key=lambda d: d['id'])
 
     def execute_dag(self):
         hash_ = str(hash(self))
@@ -120,7 +119,7 @@ class RDD(abc.ABC):
 
             clean_rdds(self)
 
-            dag_dict[DAG] = self.write_dag()
+            dag_dict['dag'] = self.write_dag()
 
             self.context.serialization_cache[hash_] = dag_dict
             # write to file
@@ -252,7 +251,7 @@ class Map(PipeRDD):
     NAME = 'map'
 
     def self_write_dag(self, dic):
-        dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
+        dic['func'], self.output_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
         if not is_item_type(self.output_type):
             raise BaseException(
@@ -287,7 +286,7 @@ class Filter(PipeRDD):
     NAME = 'filter'
 
     def self_write_dag(self, dic):
-        dic[FUNC], return_type = get_llvm_ir_and_output_type(
+        dic['func'], return_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
         if str(return_type) != "bool":
             raise BaseException(
@@ -301,7 +300,7 @@ class FlatMap(PipeRDD):
     NAME = 'flat_map'
 
     def self_write_dag(self, dic):
-        dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
+        dic['func'], self.output_type = get_llvm_ir_for_generator(self.func)
 
 
 class Join(BinaryRDD):
@@ -384,7 +383,7 @@ class Reduce(UnaryRDD):
 
     def self_write_dag(self, dic):
         aggregate_type = self.parents[0].output_type
-        dic[FUNC], self.output_type = get_llvm_ir_and_output_type(
+        dic['func'], self.output_type = get_llvm_ir_and_output_type(
             self.func, [aggregate_type, aggregate_type])
         if str(aggregate_type) != str(self.output_type):
             raise BaseException(
@@ -415,7 +414,7 @@ class ReduceByKey(UnaryRDD):
         aggregate_type = make_tuple(self.parents[0].output_type.types[1:])
         if len(aggregate_type) == 1:
             aggregate_type = aggregate_type.types[0]
-        dic[FUNC], output_type = get_llvm_ir_and_output_type(
+        dic['func'], output_type = get_llvm_ir_and_output_type(
             self.func, [aggregate_type, aggregate_type])
         if str(aggregate_type) != str(output_type):
             raise BaseException(
@@ -449,8 +448,8 @@ class CSVSource(SourceRDD):
         df = np.genfromtxt(
             self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
         self.output_type = item_typeof(df[0])
-        dic[DATA_PATH] = self.path
-        dic[ADD_INDEX] = self.add_index
+        dic['data_path'] = self.path
+        dic['add_index'] = self.add_index
 
 
 class ConstantTuple(SourceRDD):
@@ -596,7 +595,7 @@ class CollectionSource(UnaryRDD):
         return hash("#".join(hash_objects))
 
     def self_write_dag(self, dic):
-        dic[ADD_INDEX] = self.add_index
+        dic['add_index'] = self.add_index
 
 
 class Range(UnaryRDD):
@@ -623,4 +622,4 @@ class GeneratorSource(SourceRDD):
         return hash(file_.getvalue())
 
     def self_write_dag(self, dic):
-        dic[FUNC], self.output_type = get_llvm_ir_for_generator(self.func)
+        dic['func'], self.output_type = get_llvm_ir_for_generator(self.func)
