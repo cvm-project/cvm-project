@@ -240,17 +240,10 @@
         },
         {
             "id": 16,
-            "op": "materialize_row_vector",
+            "op": "ensure_single_tuple",
             "output_type": [
                 {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
+                    "type": "long"
                 }
             ],
             "predecessors": [
