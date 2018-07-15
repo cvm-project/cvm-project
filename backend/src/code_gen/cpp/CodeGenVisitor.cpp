@@ -75,7 +75,7 @@ void CodeGenVisitor::operator()(DAGParameterLookup *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
-    const auto input_arg = "input_" + std::to_string(op->parameter_num);
+    const auto input_arg = "input_" + std::to_string(dag_->input_port(op));
 
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {input_arg});
 }

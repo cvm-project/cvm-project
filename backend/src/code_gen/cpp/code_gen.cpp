@@ -151,20 +151,12 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
     dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
     // Compute execute function parameters
-    struct CollectInputsVisitor
-        : public Visitor<CollectInputsVisitor, DAGOperator,
-                         boost::mpl::list<DAGParameterLookup>> {
-        void operator()(DAGParameterLookup *op) { inputs_.emplace_back(op); }
-        std::vector<DAGParameterLookup *> inputs_;
-    };
-    CollectInputsVisitor collec_inputs_visitor;
-    for (auto const op : dag->operators()) {
-        collec_inputs_visitor.Visit(op);
-    }
-
     std::vector<std::string> packed_input_args;
-    for (auto const op : collec_inputs_visitor.inputs_) {
-        const std::string param_num = std::to_string(op->parameter_num);
+    for (auto const input : dag->inputs()) {
+        auto const op = input.second.op;
+        auto const dag_port = input.first;
+
+        const std::string param_num = std::to_string(dag_port);
         const auto tuple_type = op->tuple->type;
 
         // Parameters for function signature of 'execute_tuples'
@@ -208,23 +200,13 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     context->declarations() << "using namespace runtime::values;" << std::endl;
 
     // Compute execute function parameters
-    struct CollectInputsVisitor
-        : public Visitor<CollectInputsVisitor, DAGOperator,
-                         boost::mpl::list<DAGParameterLookup>> {
-        void operator()(DAGParameterLookup *op) { inputs_.emplace_back(op); }
-        std::vector<DAGParameterLookup *> inputs_;
-    };
-    CollectInputsVisitor collect_inputs_visitor;
-    for (auto const op : dag->operators()) {
-        collect_inputs_visitor.Visit(op);
-    }
-
-    // Packing of parameters as tuples
     std::vector<std::string> pack_input_args;
-    for (auto const op : collect_inputs_visitor.inputs_) {
+    for (auto const input : dag->inputs()) {
+        auto const op = input.second.op;
+        auto const dag_port = input.first;
+
         // Expression that gets the input Value
-        const auto input_value =
-                (format("inputs[%1%]") % op->parameter_num).str();
+        const auto input_value = (format("inputs[%1%]") % dag_port).str();
 
         // Expression that computes the input tuple
         const auto tuple_type = op->tuple->type;
