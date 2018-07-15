@@ -2,7 +2,7 @@
     "dag": [
         {
             "id": 0,
-            "op": "constant_tuple",
+            "op": "parameter_lookup",
             "output_type": [
                 {
                     "type": "long"
@@ -14,12 +14,8 @@
                     "type": "long"
                 }
             ],
-            "predecessors": [],
-            "values": [
-                "0",
-                "10",
-                "1"
-            ]
+            "parameter_num": 0,
+            "predecessors": []
         },
         {
             "id": 1,
@@ -51,7 +47,7 @@
         },
         {
             "id": 3,
-            "op": "constant_tuple",
+            "op": "parameter_lookup",
             "output_type": [
                 {
                     "type": "long"
@@ -63,12 +59,8 @@
                     "type": "long"
                 }
             ],
-            "predecessors": [],
-            "values": [
-                "0",
-                "10",
-                "1"
-            ]
+            "parameter_num": 1,
+            "predecessors": []
         },
         {
             "id": 4,

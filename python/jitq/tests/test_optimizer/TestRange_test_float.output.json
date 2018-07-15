@@ -2,7 +2,7 @@
     "dag": [
         {
             "id": 0,
-            "op": "constant_tuple",
+            "op": "parameter_lookup",
             "output_type": [
                 {
                     "type": "double"
@@ -14,12 +14,8 @@
                     "type": "double"
                 }
             ],
-            "predecessors": [],
-            "values": [
-                "10.5",
-                "20.0",
-                "2.0"
-            ]
+            "parameter_num": 0,
+            "predecessors": []
         },
         {
             "id": 1,
