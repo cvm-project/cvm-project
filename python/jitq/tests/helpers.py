@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import sys
 import unittest
 
@@ -25,10 +26,24 @@ def enable_dag_dumping():
                 with open(out, 'w') as output_file:
                     output_file.write(format_json(input_file.read()))
 
-    def wrapper(func):
+    # pylint: disable=unused-argument
+    def remove_old_dag_json(self):
+        try:
+            os.remove(get_project_path() + "/dag.json")
+        except BaseException:
+            pass
+
+    def tear_down_wrapper(func):
         def inner(self):
             func(self)
             augment_with_dag_dumping_power(self)
+
+        return inner
+
+    def setup_wrapper(func):
+        def inner(self):
+            func(self)
+            remove_old_dag_json(self)
 
         return inner
 
@@ -38,9 +53,13 @@ def enable_dag_dumping():
         for test in suit:
             cls = test.__class__
             if cls.tearDown:
-                cls.tearDown = wrapper(cls.tearDown)
+                cls.tearDown = tear_down_wrapper(cls.tearDown)
             else:
                 cls.tearDown = augment_with_dag_dumping_power
+            if cls.setUp:
+                cls.setUp = setup_wrapper(cls.setUp)
+            else:
+                cls.setUp = remove_old_dag_json
 
 
 def run_tests():
