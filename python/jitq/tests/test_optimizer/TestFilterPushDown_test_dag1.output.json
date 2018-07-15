@@ -1,0 +1,144 @@
+{
+    "dag": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "parameter_num": 0,
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
+            "id": 2,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                9
+            ]
+        },
+        {
+            "id": 4,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2,
+                7
+            ]
+        },
+        {
+            "id": 5,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                4
+            ]
+        },
+        {
+            "id": 6,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 7,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                6
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 8,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                6
+            ]
+        },
+        {
+            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.14.i = icmp eq i64 %.1, 0\n  ret i1 %.14.i\n}\n",
+            "id": 9,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                8
+            ]
+        }
+    ]
+}
