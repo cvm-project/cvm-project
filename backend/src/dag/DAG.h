@@ -35,6 +35,10 @@ struct operator_t {
     using kind = boost::vertex_property_tag;
 };
 
+struct inner_graph_t {
+    using kind = boost::vertex_property_tag;
+};
+
 struct source_port_t {
     using kind = boost::edge_property_tag;
 };
@@ -45,10 +49,12 @@ struct target_port_t {
 
 namespace boost {
 enum vertex_operator_t { vertex_operator };
+enum vertex_inner_graph_t { vertex_inner_graph };
 enum edge_source_port_t { edge_source_port };
 enum edge_target_port_t { edge_target_port };
 
 BOOST_INSTALL_PROPERTY(vertex, operator);
+BOOST_INSTALL_PROPERTY(vertex, inner_graph);
 BOOST_INSTALL_PROPERTY(edge, source_port);
 BOOST_INSTALL_PROPERTY(edge, target_port);
 }  // namespace boost
@@ -63,7 +69,9 @@ public:
     using EdgeProperties = EdgeTargetPort;
     using VertexOperator =
             boost::property<operator_t, std::shared_ptr<DAGOperator>>;
-    using VertexProperties = VertexOperator;
+    using VertexInnerDag = boost::property<inner_graph_t, std::shared_ptr<DAG>,
+                                           VertexOperator>;
+    using VertexProperties = VertexInnerDag;
     // Use listS for vertices because we modify the graph a lot.
     // Use vecS for edges because we want to allow parallel edges.
     using Graph = boost::adjacency_list<boost::listS, boost::vecS,
@@ -185,8 +193,8 @@ public:
     /*
      * Normal member functions
      */
-    Vertex AddOperator(DAGOperator *op);
-    Vertex AddOperator(DAGOperator *op, size_t id);
+    Vertex AddOperator(DAGOperator *op, DAG *inner_dag = nullptr);
+    Vertex AddOperator(DAGOperator *op, size_t id, DAG *inner_dag = nullptr);
     void RemoveOperator(const DAGOperator *op);
 
     Edge AddFlow(const DAGOperator *source, const DAGOperator *target,
@@ -232,6 +240,11 @@ public:
     DAGOperator *predecessor(const DAGOperator *op, int target_port) const;
     DAGOperator *successor(const DAGOperator *op) const;
     DAGOperator *successor(const DAGOperator *op, int source_port) const;
+
+    bool has_inner_dag(const DAGOperator *op) const;
+    DAG *inner_dag(const DAGOperator *op) const;
+    void set_inner_dag(const DAGOperator *op, DAG *inner_dag);
+    void remove_inner_dag(const DAGOperator *op);
 
     size_t in_degree() const;
     InputRange inputs() const;

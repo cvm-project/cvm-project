@@ -15,19 +15,22 @@
 #include "DAGOperator.h"
 #include "dag_factory.hpp"
 
-auto DAG::AddOperator(DAGOperator *const op) -> Vertex {
-    return AddOperator(op, last_operator_id() + 1);
+auto DAG::AddOperator(DAGOperator *const op, DAG *const inner_dag) -> Vertex {
+    return AddOperator(op, last_operator_id() + 1, inner_dag);
 }
 
-auto DAG::AddOperator(DAGOperator *const op, const size_t id) -> Vertex {
+auto DAG::AddOperator(DAGOperator *const op, const size_t id,
+                      DAG *const inner_dag) -> Vertex {
     assert(op != nullptr);
 
+    const std::shared_ptr<DAG> dag_ptr(inner_dag);
     const std::shared_ptr<DAGOperator> op_ptr(op);
     op_ptr->id = id;
     auto ret = this->operator_ids_.insert(op_ptr->id);
     assert(ret.second == true);
 
-    auto v = add_vertex(VertexOperator(op_ptr), graph_);
+    auto v =
+            add_vertex(VertexInnerDag(dag_ptr, VertexOperator(op_ptr)), graph_);
 
     return v;
 }
@@ -204,6 +207,25 @@ DAGOperator *DAG::successor(const DAGOperator *const op,
     return out_flow(op, source_port).target.op;
 }
 
+bool DAG::has_inner_dag(const DAGOperator *const op) const {
+    return inner_dag(op) != nullptr;
+}
+
+DAG *DAG::inner_dag(const DAGOperator *const op) const {
+    const auto inner_graph_map = boost::get(inner_graph_t(), graph_);
+    const auto dag = inner_graph_map[to_vertex(op)];
+    return dag.get();
+}
+
+void DAG::set_inner_dag(const DAGOperator *const op, DAG *const inner_dag) {
+    const auto inner_graph_map = boost::get(inner_graph_t(), graph_);
+    inner_graph_map[to_vertex(op)].reset(inner_dag);
+}
+
+void DAG::remove_inner_dag(const DAGOperator *const op) {
+    set_inner_dag(op, nullptr);
+}
+
 size_t DAG::in_degree() const { return inputs_.size(); }
 
 DAG::InputRange DAG::inputs() const {
@@ -336,6 +358,11 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         }
         operators.emplace(op->id, op);
 
+        if (it.count("inner_dag") > 0) {
+            std::unique_ptr<DAG> inner_dag = it["inner_dag"];
+            dag->set_inner_dag(op, inner_dag.release());
+        }
+
         std::vector<size_t> preds;
         auto preds_json = it.at("predecessors");
         for (auto &it_preds : preds_json) {
@@ -386,6 +413,11 @@ void to_json(nlohmann::json &json, const DAG *const dag) {
             jpreds.push_back(dag->predecessor(op, i)->id);
         }
         jop.emplace("predecessors", jpreds);
+
+        // Add inner DAG
+        if (dag->has_inner_dag(op)) {
+            jop.emplace("inner_dag", dag->inner_dag(op));
+        }
 
         // Add to DAG
         jops.push_back(jop);
