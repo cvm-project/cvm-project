@@ -169,7 +169,6 @@ class RDD(abc.ABC):
             op_inputs = operator.self_get_inputs()
             if op_inputs is None:
                 return
-            operator.parameter_num = len(inputs)
             inputs[operator] = (len(inputs), op_inputs)
 
         visitor = RDD.Visitor(collect_inputs)
@@ -502,7 +501,6 @@ class ParameterLookup(SourceRDD):
         # values could also be a numpy array
         assert len(values) > 0, "Empty collection not allowed"
 
-        self.parameter_num = -1
         dtype = None
 
         if isinstance(values, DataFrame):
@@ -563,7 +561,7 @@ class ParameterLookup(SourceRDD):
         return hash("#".join(hash_objects))
 
     def self_write_dag(self, dic):
-        dic['parameter_num'] = self.parameter_num
+        pass
 
     def self_get_inputs(self):
         return self.input_value

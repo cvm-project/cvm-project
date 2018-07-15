@@ -104,7 +104,6 @@ set(GENERATE_SOURCE_FILES
         dag/dag_factory.cpp
         dag/DAGFilter.cpp
         dag/DAGOperator.cpp
-        dag/DAGParameterLookup.cpp
         dag/collection/field.cpp
         dag/collection/array.cpp
         dag/collection/tuple.cpp
