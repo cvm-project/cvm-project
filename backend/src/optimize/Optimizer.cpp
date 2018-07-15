@@ -7,6 +7,7 @@
 #include "assert_correct_open_next_close.hpp"
 #include "attribute_id_tracking.hpp"
 #include "canonicalize.hpp"
+#include "create_pipelines.hpp"
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
 #include "materialize_multiple_reads.hpp"
@@ -54,6 +55,12 @@ void Optimizer::run(DAG *dag) {
 #ifndef NDEBUG
     ti_check.optimize();
 #endif  // NDEBUG
+
+    // Split the plan into tree-shaped sub-plans
+    CreatePipelines cp(dag);
+    cp.optimize();
+    ti.optimize();
+    sort.optimize();
 
 #ifdef ASSERT_OPEN_NEXT_CLOSE
     AssertCorrectOpenNextClose acopn(dag);

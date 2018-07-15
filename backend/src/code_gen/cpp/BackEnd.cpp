@@ -42,8 +42,8 @@ void BackEnd::GenerateCode(DAG *const dag) {
     Context context(&declarations, &definitions, &llvmCode, &unique_counters,
                     &includes, &tuple_type_descs);
 
-    auto execute_values = GenerateExecuteValues(dag, &context);
-    assert(execute_values == "execute_values");
+    auto execute_values = GenerateExecutePipelines(&context, dag);
+    assert(execute_values == "execute_pipelines");
 
     // Main executable file: declarations
     std::ofstream mainSourceFile(genDir + "execute.cpp");
@@ -68,7 +68,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
             << "extern \"C\" { const char* execute("
                "        const char *const inputs_str) {"
                "    const auto inputs = ConvertFromJsonString(inputs_str);"
-               "    const auto ret = execute_values(inputs);"
+               "    const auto ret = execute_pipelines(inputs);"
                "    const auto ret_str = ConvertToJsonString(ret);"
                "    const auto ret_ptr = reinterpret_cast<char *>("
                "            malloc(ret_str.size() + 1));"

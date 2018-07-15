@@ -71,6 +71,10 @@ void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
                      {input_type->name}, {});
 }
 
+void CodeGenVisitor::operator()(DAGPipeline * /*op*/) {
+    throw std::runtime_error("CodeGen encountered pipeline operator.");
+}
+
 void CodeGenVisitor::operator()(DAGParameterLookup *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");

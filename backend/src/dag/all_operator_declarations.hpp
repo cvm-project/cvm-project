@@ -14,6 +14,7 @@ class DAGJoin;
 class DAGMap;
 class DAGMaterializeRowVector;
 class DAGParameterLookup;
+class DAGPipeline;
 class DAGRange;
 class DAGReduce;
 class DAGReduceByKey;
@@ -32,6 +33,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGMap,                             //
         DAGMaterializeRowVector,            //
         DAGParameterLookup,                 //
+        DAGPipeline,                        //
         DAGRange,                           //
         DAGReduce,                          //
         DAGReduceByKey,                     //

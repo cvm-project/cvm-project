@@ -25,6 +25,8 @@ FunctionDef GenerateExecuteTuples(DAG *dag, Context *context);
 
 std::string GenerateExecuteValues(DAG *dag, Context *context);
 
+std::string GenerateExecutePipelines(Context *context, DAG *dag);
+
 std::string GenerateLlvmFunctor(
         Context *context, const std::string &func_name_prefix,
         const std::string &llvm_ir,

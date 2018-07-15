@@ -252,6 +252,91 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     return func_name;
 }
 
+std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
+    using ResultNames = std::map<const DAGOperator *, std::string>;
+
+    struct GeneratePipelinesVisitor
+        : public Visitor<GeneratePipelinesVisitor, const DAGOperator,
+                         boost::mpl::list<            //
+                                 DAGParameterLookup,  //
+                                 DAGPipeline          //
+                                 >::type,
+                         std::string> {
+        GeneratePipelinesVisitor(const DAG *const dag, Context *const context,
+                                 ResultNames *const result_names)
+            : dag_(dag), context_(context), result_names_(result_names) {}
+
+        std::string operator()(const DAGParameterLookup *const op) {
+            auto const result_name = GenerateResultVarName(op);
+            return (format("VectorOfValues %1% = { inputs.at(%2%) };") %  //
+                    result_name % dag_->input_port(op))
+                    .str();
+        }
+
+        std::string operator()(const DAGPipeline *const op) {
+            auto const result_name = GenerateResultVarName(op);
+
+            std::vector<std::string> input_names(dag_->in_degree(op));
+            for (auto const f : dag_->in_flows(op)) {
+                auto const input_name = result_names_->at(f.source.op);
+                input_names[f.target.port] =
+                        (format("%1%[%2%]") % input_name % f.source.port).str();
+            }
+
+            // Call nested code gen
+            auto inner_plan =
+                    GenerateExecuteValues(dag_->inner_dag(op), context_);
+
+            return (format("VectorOfValues %1% = %2%({%3%});") %  //
+                    result_name % inner_plan % join(input_names, ","))
+                    .str();
+        }
+
+        std::string operator()(const DAGOperator *const op) {
+            throw std::runtime_error(
+                    "Pipeline generation encountered unknown operator type: " +
+                    op->name());
+        }
+
+    private:
+        std::string GenerateResultVarName(const DAGOperator *const op) {
+            auto const name = context_->GenerateSymbolName(
+                    (format("op_%1%_result") % op->id).str(), true);
+            auto const ret = result_names_->emplace(op, name);
+            assert(ret.second);
+            return name;
+        }
+
+        const DAG *const dag_;
+        Context *const context_;
+        ResultNames *const result_names_;
+    };
+
+    // Generate pipeline-level plan body
+    std::stringstream plan_body;
+    ResultNames result_names;
+
+    dag::utils::ApplyInReverseTopologicalOrder(
+            dag, [&](const DAGOperator *const op) {
+                GeneratePipelinesVisitor visitor(dag, context, &result_names);
+                plan_body << visitor.Visit(op);
+            });
+
+    // Generate glue code
+    const auto func_name =
+            context->GenerateSymbolName("execute_pipelines", true);
+    const auto sink_result_name = result_names[dag->output().op];
+
+    context->definitions() <<  //
+            format("VectorOfValues %1%(const VectorOfValues &inputs) {"
+                   "    %2%\n"
+                   "    return std::move(%3%);"
+                   "}") %
+                    func_name % plan_body.str() % sink_result_name;
+
+    return func_name;
+}
+
 std::string GenerateLlvmFunctor(
         Context *const context, const std::string &func_name_prefix,
         const std::string &llvm_ir,

@@ -136,6 +136,12 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return op->tuple->type;
         }
 
+        const Tuple *operator()(const DAGPipeline *const op) const {
+            assert(dag_->has_inner_dag(op));
+            auto const inner_dag = dag_->inner_dag(op);
+            return inner_dag->output().op->tuple->type;
+        }
+
         const Tuple *operator()(const DAGRange *const op) const {
             auto const pred = dag_->predecessor(op);
             auto const input_type = pred->tuple->type;

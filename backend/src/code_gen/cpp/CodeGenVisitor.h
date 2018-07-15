@@ -43,6 +43,7 @@ public:
     void operator()(DAGMap *op);
     void operator()(DAGMaterializeRowVector *op);
     void operator()(DAGParameterLookup *op);
+    void operator()(DAGPipeline *op);
     void operator()(DAGReduce *op);
     void operator()(DAGRange *op);
     void operator()(DAGEnsureSingleTuple *op);
