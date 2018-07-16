@@ -207,31 +207,47 @@ const Tuple *ComputeOutputType(const DAG *const dag,
     return visitor.Visit(op);
 }
 
-void TypeInference::optimize() {
-    const DAG *const dag = dag_;
+void CheckOutputType(const DAGOperator *const op, const DAG *const dag) {
+    auto const computed_output_type = ComputeOutputType(dag, op);
+    auto const output_type = op->tuple->type;
+    if (output_type != computed_output_type) {
+        throw std::invalid_argument(
+                (boost::format("Operator %1% (%2%) has the wrong output type:\n"
+                               "   found:    %3%\n"
+                               "   expected: %4%\n") %
+                 op->name() % op->id % output_type->to_string() %
+                 computed_output_type->to_string())
+                        .str());
+    }
+}
 
+void RecomputeOutputType(DAGOperator *const op, const DAG *const dag) {
+    auto const computed_output_type = ComputeOutputType(dag, op);
+    op->tuple = std::make_unique<dag::collection::Tuple>(
+            make_raw(computed_output_type));
+}
+
+void SetInnerGraphInputTypes(DAGOperator *const op, const DAG *const dag) {
+    if (!dag->has_inner_dag(op)) return;
+
+    auto const inner_dag = dag->inner_dag(op);
+    for (auto const input : inner_dag->inputs()) {
+        auto const inner_op = input.second.op;
+        auto const input_port = input.first;
+        auto const input_type = dag->predecessor(op, input_port)->tuple->type;
+        inner_op->tuple =
+                std::make_unique<dag::collection::Tuple>(make_raw(input_type));
+    }
+}
+
+void TypeInference::optimize() {
     if (only_check_) {
         // Check output type
-        dag::utils::ApplyInReverseTopologicalOrder(dag_, [dag](auto const op) {
-            auto const computed_output_type = ComputeOutputType(dag, op);
-            auto const output_type = op->tuple->type;
-            if (output_type != computed_output_type) {
-                throw std::invalid_argument(
-                        (boost::format("Operator %1% (%2%) has the wrong "
-                                       "output type:\n"
-                                       "   found:    %3%\n"
-                                       "   expected: %4%\n") %
-                         op->name() % op->id % output_type->to_string() %
-                         computed_output_type->to_string())
-                                .str());
-            }
-        });
+        dag::utils::ApplyInReverseTopologicalOrderRecursively(dag_,
+                                                              CheckOutputType);
     } else {
         // Update output type
-        dag::utils::ApplyInReverseTopologicalOrder(dag_, [dag](auto const op) {
-            auto const computed_output_type = ComputeOutputType(dag, op);
-            op->tuple = std::make_unique<dag::collection::Tuple>(
-                    make_raw(computed_output_type));
-        });
+        dag::utils::ApplyInReverseTopologicalOrderRecursively(
+                dag_, SetInnerGraphInputTypes, RecomputeOutputType);
     }
 }
