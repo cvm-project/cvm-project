@@ -1,4 +1,11 @@
 {
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        }
+    ],
     "operators": [
         {
             "id": 0,
