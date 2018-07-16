@@ -30,7 +30,6 @@
                     "type": "array"
                 }
             ],
-            "parameter_num": 0,
             "predecessors": []
         },
         {
@@ -83,7 +82,6 @@
                     "type": "array"
                 }
             ],
-            "parameter_num": 1,
             "predecessors": []
         },
         {
