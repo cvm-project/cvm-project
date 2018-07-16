@@ -2,30 +2,57 @@
 
 #include <vector>
 
+#include <boost/mpl/list.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
 #include "dag/DAGAssertCorrectOpenNextClose.h"
 #include "dag/DAGOperator.h"
+#include "dag/DAGPipeline.h"
+#include "dag/utils/apply_visitor.hpp"
+#include "utils/visitor.hpp"
 
-void AssertCorrectOpenNextClose::optimize() {
+void AddAssertions(DAG *const dag) {
     std::vector<DAGOperator *> operators;
-    boost::copy(dag_->operators(), std::back_inserter(operators));
+    boost::copy(dag->operators(), std::back_inserter(operators));
 
     for (auto const op : operators) {
         std::vector<DAG::Flow> out_flows;
-        boost::copy(dag_->out_flows(op), std::back_inserter(out_flows));
+        boost::copy(dag->out_flows(op), std::back_inserter(out_flows));
 
         auto const aop = new DAGAssertCorrectOpenNextClose();
-        dag_->AddOperator(aop);
+        dag->AddOperator(aop);
 
         for (auto const &f : out_flows) {
-            dag_->RemoveFlow(f);
-            dag_->AddFlow(aop, f.source.port, f.target.op, f.target.port);
+            dag->RemoveFlow(f);
+            dag->AddFlow(aop, f.source.port, f.target.op, f.target.port);
         }
 
         assert(op->num_out_ports() == 1);
-        dag_->AddFlow(op, aop);
+        dag->AddFlow(op, aop);
 
-        if (dag_->output().op == op) dag_->set_output(aop, dag_->output().port);
+        if (dag->output().op == op) dag->set_output(aop, dag->output().port);
     }
+}
+
+class AddAssertionsVisitor
+    : public Visitor<AddAssertionsVisitor, const DAGOperator,
+                     boost::mpl::list<    //
+                             DAGPipeline  //
+                             >::type> {
+public:
+    explicit AddAssertionsVisitor(DAG *const dag) : dag_(dag) {}
+
+    void operator()(const DAGPipeline *const op) {
+        AddAssertions(dag_->inner_dag(op));
+    }
+
+private:
+    DAG *const dag_;
+};
+
+void AssertCorrectOpenNextClose::optimize() {
+    dag::utils::ApplyInReverseTopologicalOrderRecursively(
+            dag_, [](const DAGOperator *const op, DAG *const dag) {
+                AddAssertionsVisitor(dag).Visit(op);
+            });
 }
