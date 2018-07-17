@@ -1,7 +1,9 @@
 #include "code_gen.hpp"
 
+#include <map>
 #include <ostream>
 #include <regex>
+#include <set>
 #include <sstream>
 #include <string>
 #include <unordered_map>

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <ostream>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -37,7 +38,7 @@ public:
     Context(std::ostream *const declarations, std::ostream *const definitions,
             std::ostream *const llvm_code,
             std::unordered_map<std::string, size_t> *const unique_counters,
-            std::unordered_set<std::string> *const includes,
+            std::set<std::string> *const includes,
             TupleTypeRegistry *const tuple_type_descs)
         : declarations_(declarations),
           definitions_(definitions),
@@ -53,7 +54,7 @@ public:
     std::ostream &definitions() { return *definitions_; }
     std::ostream &llvm_code() { return *llvm_code_; }
 
-    std::unordered_set<std::string> &includes() { return *includes_; }
+    std::set<std::string> &includes() { return *includes_; }
     TupleTypeRegistry &tuple_type_descs() { return *tuple_type_descs_; }
 
 private:
@@ -61,7 +62,7 @@ private:
     std::ostream *const definitions_;
     std::ostream *const llvm_code_;
     std::unordered_map<std::string, size_t> *const unique_counters_;
-    std::unordered_set<std::string> *const includes_;
+    std::set<std::string> *const includes_;
     TupleTypeRegistry *const tuple_type_descs_;
 };
 

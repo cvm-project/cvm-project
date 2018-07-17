@@ -1,6 +1,7 @@
 #include "BackEnd.hpp"
 
 #include <fstream>
+#include <set>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -35,7 +36,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
     std::stringstream definitions;
 
     std::unordered_map<std::string, size_t> unique_counters;
-    std::unordered_set<std::string> includes;
+    std::set<std::string> includes;
     Context::TupleTypeRegistry tuple_type_descs;
 
     Context context(&declarations, &definitions, &llvmCode, &unique_counters,
