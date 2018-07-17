@@ -118,5 +118,8 @@ void CreatePipelines::optimize() {
             inner_dag->AddFlow(in_flow.source.op, in_flow.source.port,
                                in_flow.target.op, in_flow.target.port);
         }
+
+        // Done with this pipeline; now it should be a tree
+        assert(inner_dag->IsTree());
     }
 }

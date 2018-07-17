@@ -212,6 +212,7 @@ public:
     void RemoveFlow(const Edge &e);
 
     bool HasCycle() const;
+    bool IsTree() const;
 
     /*
      * Getter/setter type functions

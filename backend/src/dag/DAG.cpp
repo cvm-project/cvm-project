@@ -7,6 +7,7 @@
 #include <cassert>
 
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/range/adaptor/filtered.hpp>
@@ -99,6 +100,42 @@ bool DAG::HasCycle() const {
         }
     }
     return false;
+}
+
+struct TreeDetectionVisitor : public boost::default_bfs_visitor {
+    explicit TreeDetectionVisitor(bool *const result) : result_(result) {
+        *result_ = true;
+    }
+    template <typename Edge, typename Graph>
+    void non_tree_edge(const Edge /*e*/, const Graph & /*g*/) {
+        *result_ = false;
+    }
+    bool *const result_;
+};
+
+bool DAG::IsTree() const {
+    const DAGOperator *root = nullptr;
+    for (const auto op : operators()) {
+        if (out_degree(op) > 1) return false;
+        if (out_degree(op) == 0) {
+            if (root != nullptr) return false;
+            root = op;
+        }
+    }
+    bool is_tree = true;
+    using ColorMap = std::unordered_map<Vertex, boost::default_color_type>;
+    ColorMap bfs_colors;
+    TreeDetectionVisitor vis(&is_tree);
+    // NOLINTNEXTLINE clang-analyzer-core.StackAddressEscape
+    boost::breadth_first_search(
+            graph(), to_vertex(root),
+            boost::visitor(vis).color_map(
+                    boost::make_assoc_property_map(bfs_colors)));
+    if (!is_tree) return false;
+
+    // If a node is not in bfs_colors after the BFS, the graph consists of more
+    // than one connected component and is hence not a tree.
+    return bfs_colors.size() == boost::distance(operators());
 }
 
 auto DAG::operators() const -> OperatorRange {
