@@ -2,122 +2,203 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 6,
+            "op": 2,
             "op_port": 0
         },
         {
             "dag_port": 1,
-            "op": 7,
+            "op": 1,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "ensure_single_tuple",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 7,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 6,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "ensure_single_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+                        "id": 1,
+                        "op": "reduce",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
+                        "id": 2,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            3
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "op": "cartesian",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 4,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            6
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 5,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            7
+                        ]
+                    },
+                    {
+                        "id": 6,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 7,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                1
-            ]
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-            "id": 1,
-            "op": "reduce",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
+                1,
                 2
             ]
         },
         {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
-            "id": 2,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                3
-            ]
-        },
-        {
-            "id": 3,
-            "op": "cartesian",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                4,
-                5
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 4,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                6
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 5,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                7
-            ]
-        },
-        {
-            "id": 6,
+            "id": 1,
             "op": "parameter_lookup",
             "output_type": [
                 {
                     "dim": 1,
                     "layout": "C",
                     "output_type": [
+                        {
+                            "type": "long"
+                        },
                         {
                             "type": "long"
                         },
@@ -131,16 +212,13 @@
             "predecessors": []
         },
         {
-            "id": 7,
+            "id": 2,
             "op": "parameter_lookup",
             "output_type": [
                 {
                     "dim": 1,
                     "layout": "C",
                     "output_type": [
-                        {
-                            "type": "long"
-                        },
                         {
                             "type": "long"
                         },

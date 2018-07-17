@@ -2,14 +2,128 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 42,
+            "op": 11,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "materialize_row_vector",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
                     "dim": 1,
@@ -23,51 +137,529 @@
                 }
             ],
             "predecessors": [
+                1,
                 1
             ]
         },
         {
             "id": 1,
-            "op": "join",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": [
                 2,
+                2
+            ]
+        },
+        {
+            "id": 2,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                3,
                 3
             ]
         },
         {
-            "add_index": false,
-            "id": 2,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                4
-            ]
-        },
-        {
-            "add_index": false,
             "id": 3,
-            "op": "collection_source",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": [
+                4,
                 4
             ]
         },
         {
             "id": 4,
-            "op": "materialize_row_vector",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
                     "dim": 1,
@@ -81,51 +673,529 @@
                 }
             ],
             "predecessors": [
+                5,
                 5
             ]
         },
         {
             "id": 5,
-            "op": "join",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": [
                 6,
+                6
+            ]
+        },
+        {
+            "id": 6,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                7,
                 7
             ]
         },
         {
-            "add_index": false,
-            "id": 6,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                8
-            ]
-        },
-        {
-            "add_index": false,
             "id": 7,
-            "op": "collection_source",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": [
+                8,
                 8
             ]
         },
         {
             "id": 8,
-            "op": "materialize_row_vector",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
                     "dim": 1,
@@ -139,488 +1209,231 @@
                 }
             ],
             "predecessors": [
+                9,
                 9
             ]
         },
         {
             "id": 9,
-            "op": "join",
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 5,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": [
                 10,
+                10
+            ]
+        },
+        {
+            "id": 10,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 2,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 1,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
                 11
             ]
         },
         {
-            "add_index": false,
-            "id": 10,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                12
-            ]
-        },
-        {
-            "add_index": false,
             "id": 11,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                12
-            ]
-        },
-        {
-            "id": 12,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                13
-            ]
-        },
-        {
-            "id": 13,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                14,
-                15
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 14,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                16
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 15,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                16
-            ]
-        },
-        {
-            "id": 16,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                17
-            ]
-        },
-        {
-            "id": 17,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                18,
-                19
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 18,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                20
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 19,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                20
-            ]
-        },
-        {
-            "id": 20,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                21
-            ]
-        },
-        {
-            "id": 21,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                22,
-                23
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 22,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                24
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 23,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                24
-            ]
-        },
-        {
-            "id": 24,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                25
-            ]
-        },
-        {
-            "id": 25,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                26,
-                27
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 26,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                28
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 27,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                28
-            ]
-        },
-        {
-            "id": 28,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                29
-            ]
-        },
-        {
-            "id": 29,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                30,
-                31
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 30,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                32
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 31,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                32
-            ]
-        },
-        {
-            "id": 32,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                33
-            ]
-        },
-        {
-            "id": 33,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                34,
-                35
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 34,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                36
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 35,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                36
-            ]
-        },
-        {
-            "id": 36,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                37
-            ]
-        },
-        {
-            "id": 37,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                38,
-                39
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 38,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                40
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 39,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                40
-            ]
-        },
-        {
-            "id": 40,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                41
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 41,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                42
-            ]
-        },
-        {
-            "id": 42,
             "op": "parameter_lookup",
             "output_type": [
                 {
