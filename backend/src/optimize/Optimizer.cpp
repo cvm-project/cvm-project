@@ -6,6 +6,7 @@
 
 #include "assert_correct_open_next_close.hpp"
 #include "attribute_id_tracking.hpp"
+#include "canonicalize.hpp"
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
 #include "materialize_multiple_reads.hpp"
@@ -59,4 +60,8 @@ void Optimizer::run(DAG *dag) {
     acopn.optimize();
     ti.optimize();
 #endif  // ASSERT_OPEN_NEXT_CLOSE
+
+    // Make ID and order canonical
+    Canonicalize canon(dag);
+    canon.optimize();
 }

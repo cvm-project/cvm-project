@@ -116,6 +116,7 @@ set(GENERATE_SOURCE_FILES
         llvm_helpers/function.cpp
         optimize/assert_correct_open_next_close.cpp
         optimize/attribute_id_tracking.cpp
+        optimize/canonicalize.cpp
         optimize/determine_sortedness.cpp
         optimize/materialize_multiple_reads.cpp
         optimize/Optimizer.cpp
