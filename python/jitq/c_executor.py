@@ -58,12 +58,17 @@ def wrap_result(res, type_, ffi, executor):
 
     if isinstance(type_, types.Array):
         assert len(result) == 1
-        data_ptr = ffi.cast("void *", result[0]['data'])
+        outer_shape = result[0]['outer_shape']
         shape = result[0]['shape']
-        assert type_.ndim == len(shape)
+        assert type_.ndim == len(outer_shape)
+        for (size1, size2) in zip(outer_shape, shape):
+            assert size1 == size2
+        for offset in result[0]['offsets']:
+            assert offset == 0
         dtype_size = get_type_size(type_.dtype)
-        total_count = reduce(lambda t1, t2: t1 * t2, shape)
-        c_buffer = ffi.buffer(data_ptr, total_count * dtype_size)
+        total_count = reduce(lambda t1, t2: t1 * t2, outer_shape)
+        c_buffer = ffi.buffer(ffi.cast("void *", result[0]['data']),
+                              total_count * dtype_size)
         np_arr = np.frombuffer(c_buffer,
                                dtype=numba_type_to_dtype(type_.dtype),
                                count=total_count)

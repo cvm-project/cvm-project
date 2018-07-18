@@ -48,7 +48,7 @@ public:
                 result_ptr, sizeof(InnerTuple) * max(size_t(1), result_size)));
 
         upstream_->close();
-        return OuterTuple{result_ptr, result_size};
+        return OuterTuple{result_ptr, result_size, 0, result_size};
     }
 
     INLINE void close() {}

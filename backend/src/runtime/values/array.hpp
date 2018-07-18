@@ -11,6 +11,8 @@ namespace values {
 
 struct Array : public Value {
     void *data{};
+    std::vector<std::size_t> outer_shape;
+    std::vector<std::size_t> offsets;
     std::vector<std::size_t> shape;
 };
 

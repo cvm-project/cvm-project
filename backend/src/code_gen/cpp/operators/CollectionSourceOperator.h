@@ -16,13 +16,13 @@ public:
 
     INLINE void open() {
         upstream_->open();
-        index_ = 0;
-        size_ = 0;
+        current_index_ = 0;
+        last_index_ = 0;
         values_ = nullptr;
     }
 
     INLINE Optional<Tuple> next() {
-        while (index_ >= size_) {
+        while (current_index_ >= last_index_) {
             const auto ret = upstream_->next();
             if (!ret) return {};
 
@@ -30,13 +30,13 @@ public:
             //      manage memory that releases allocated memory as soon as it
             //      is not used
             const auto input = ret.value().v0;
+            current_index_ = input.offsets[0];
+            last_index_ = current_index_ + input.shape[0];
             values_ = input.data;
-            size_ = input.shape[0];
-            index_ = 0;
         }
 
         Tuple r = BuildResult();
-        index_++;
+        current_index_++;
         return r;
     }
 
@@ -44,8 +44,8 @@ public:
 
 private:
     Upstream *const upstream_;
-    size_t size_;
-    size_t index_;
+    size_t current_index_;
+    size_t last_index_;
     void *values_;
 
     INLINE Tuple BuildResult() {
@@ -53,11 +53,11 @@ private:
         char *resp = (char *)&res;
         if (kAddIndex) {
             size_t tuple_size = sizeof(Tuple) - sizeof(size_t);
-            *((size_t *)resp) = index_;
-            memcpy(resp + sizeof(size_t), (char *)values_ + tuple_size * index_,
-                   tuple_size);
+            *((size_t *)resp) = current_index_;
+            memcpy(resp + sizeof(size_t),
+                   (char *)values_ + tuple_size * current_index_, tuple_size);
         } else {
-            *((Tuple *)resp) = ((Tuple *)values_)[index_];
+            *((Tuple *)resp) = ((Tuple *)values_)[current_index_];
         }
         return res;
     }

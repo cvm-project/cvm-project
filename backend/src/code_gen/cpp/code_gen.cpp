@@ -68,6 +68,8 @@ std::string ComputeStructToValue(std::ostream &output, Context *const context,
             const auto temp_var_name = context_->GenerateSymbolName("val");
             output_ << format("std::unique_ptr<Array> %2%(new Array());"
                               "%2%->data = %1%.data;"
+                              "%2%->outer_shape = {%1%.outer_shape[0]};"
+                              "%2%->offsets = {%1%.offsets[0]};"
                               "%2%->shape = {%1%.shape[0]};") %
                                input_var_name_ % temp_var_name;
             return temp_var_name + ".release()";
@@ -112,6 +114,8 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
                     context_->tuple_type_descs().at(inner_type).get();
 
             return (format("{reinterpret_cast<%2%*>(%1%->as<Array>()->data),"
+                           " %1%->as<Array>()->outer_shape[0],"
+                           " %1%->as<Array>()->offsets[0],"
                            " %1%->as<Array>()->shape[0]}") %
                     input_var_name_ % inner_typedef->name)
                     .str();
@@ -475,8 +479,14 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
             std::vector<std::string> types;
             names.emplace_back("data");
             names.emplace_back(
+                    boost::str(format("outer_shape [%s]") % field->number_dim));
+            names.emplace_back(
+                    boost::str(format("offsets [%s]") % field->number_dim));
+            names.emplace_back(
                     boost::str(format("shape [%s]") % field->number_dim));
             types.emplace_back(boost::str(format("%s*") % item_desc->name));
+            types.emplace_back("size_t");
+            types.emplace_back("size_t");
             types.emplace_back("size_t");
             return EmitStructDefinition(context_, field, types, names)->name;
         }

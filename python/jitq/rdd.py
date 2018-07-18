@@ -530,10 +530,14 @@ class ParameterLookup(SourceRDD):
             ffi = FFI()
             data = self.array.__array_interface__['data'][0]
             data = int(ffi.cast("uintptr_t", ffi.cast("void*", data)))
-            shape = self.array.shape
+            outer_shape = self.array.shape
             self.input_value = {
                 'type': 'tuple',
-                'fields': [{'type': 'array', 'data': data, 'shape': shape}],
+                'fields': [{'type': 'array',
+                            'data': data,
+                            'outer_shape': outer_shape,
+                            'offsets': [0] * len(outer_shape),
+                            'shape': outer_shape}],
             }
 
             if isinstance(dtype, types.Array):
@@ -543,13 +547,14 @@ class ParameterLookup(SourceRDD):
                 assert self.array.ndim == 2
                 inner_size = self.array.shape[1]
                 res_list = []
-                for i in range(self.input_value['fields'][0]['shape'][0]):
+                n_rows = self.input_value['fields'][0]['outer_shape'][0]
+                for i in range(n_rows):
                     item_array = self.array[i]
                     inner_ptr = item_array.__array_interface__['data'][0]
                     res_list.append((inner_ptr, inner_size))
                 self.array = np.array(
                     res_list, dtype=[
-                        ("data", int), ("shape", int)])
+                        ("data", int), ("outer_shape", int)])
                 self.data_ptr = self.array.__array_interface__['data'][0]
 
             else:
