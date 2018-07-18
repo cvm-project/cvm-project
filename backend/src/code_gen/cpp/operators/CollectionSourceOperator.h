@@ -16,25 +16,31 @@ public:
 
     INLINE void open() {
         upstream_->open();
-        auto input_tuple = upstream_->next().value();
-        upstream_->close();
-        // XXX: This is currently a memory leak! We need a clear way to manage
-        //      memory that releases allocated memory as soon as it is not used
-        values_ = input_tuple.v0.data;
-        size_ = input_tuple.v0.shape[0];
         index_ = 0;
+        size_ = 0;
+        values_ = nullptr;
     }
 
     INLINE Optional<Tuple> next() {
-        if (index_ < size_) {
-            Tuple r = BuildResult();
-            index_++;
-            return r;
+        while (index_ >= size_) {
+            const auto ret = upstream_->next();
+            if (!ret) return {};
+
+            // XXX: This is currently a memory leak! We need a clear way to
+            //      manage memory that releases allocated memory as soon as it
+            //      is not used
+            const auto input = ret.value().v0;
+            values_ = input.data;
+            size_ = input.shape[0];
+            index_ = 0;
         }
-        return {};
+
+        Tuple r = BuildResult();
+        index_++;
+        return r;
     }
 
-    INLINE void close() {}
+    INLINE void close() { upstream_->close(); }
 
 private:
     Upstream *const upstream_;
