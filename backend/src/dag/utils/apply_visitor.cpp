@@ -5,6 +5,7 @@
 #include <boost/function_output_iterator.hpp>
 #include <boost/graph/reverse_graph.hpp>
 #include <boost/graph/topological_sort.hpp>
+#include <boost/range/algorithm/reverse.hpp>
 
 #include "dag/DAG.h"
 #include "dag/DAGOperator.h"
@@ -19,22 +20,28 @@ template <bool kReverseGraph, bool kDoRecursion>
 void ApplyInTopologicalOrderImpl(DAG *const dag,
                                  const RecursiveDagVisitor &on_entry_visitor,
                                  const RecursiveDagVisitor &on_exit_visitor) {
-    const auto graph = kReverseGraph ? boost::make_reverse_graph(dag->graph())
-                                     : dag->graph();
+    std::vector<DAGOperator *> operators;
     boost::topological_sort(
-            graph, boost::make_function_output_iterator([&](const auto v) {
-                const auto op = dag->to_operator(v);
-                on_entry_visitor(op, dag);
-                if (kDoRecursion) {
-                    if (dag->has_inner_dag(op)) {
-                        auto const inner_dag = dag->inner_dag(op);
-                        ApplyInTopologicalOrderImpl<kReverseGraph,
-                                                    kDoRecursion>(
-                                inner_dag, on_entry_visitor, on_exit_visitor);
-                    }
-                    on_exit_visitor(op, dag);
-                }
+            dag->graph(),
+            boost::make_function_output_iterator([&](const auto v) {
+                operators.emplace_back(dag->to_operator(v));
             }));
+
+    if (kReverseGraph) {
+        boost::reverse(operators);
+    }
+
+    for (auto const op : operators) {
+        on_entry_visitor(op, dag);
+        if (kDoRecursion) {
+            if (dag->has_inner_dag(op)) {
+                auto const inner_dag = dag->inner_dag(op);
+                ApplyInTopologicalOrderImpl<kReverseGraph, kDoRecursion>(
+                        inner_dag, on_entry_visitor, on_exit_visitor);
+            }
+            on_exit_visitor(op, dag);
+        }
+    }
 }
 
 template <bool kReverseGraph, bool kDoRecursion>
