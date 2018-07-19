@@ -2,14 +2,14 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 5,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "parameter_lookup",
+            "op": "materialize_row_vector",
             "output_type": [
                 {
                     "dim": 1,
@@ -22,19 +22,21 @@
                     "type": "array"
                 }
             ],
-            "predecessors": []
+            "predecessors": [
+                1
+            ]
         },
         {
-            "add_index": false,
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
             "id": 1,
-            "op": "collection_source",
+            "op": "map",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                0
+                2
             ]
         },
         {
@@ -50,25 +52,38 @@
                 }
             ],
             "predecessors": [
-                6
+                3
             ]
         },
         {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
-            "id": 4,
-            "op": "map",
+            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.41.i = srem i64 %.1, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  ret i1 %.74.i\n}\n",
+            "id": 3,
+            "op": "filter",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                2
+                4
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 4,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                5
             ]
         },
         {
             "id": 5,
-            "op": "materialize_row_vector",
+            "op": "parameter_lookup",
             "output_type": [
                 {
                     "dim": 1,
@@ -81,27 +96,12 @@
                     "type": "array"
                 }
             ],
-            "predecessors": [
-                4
-            ]
-        },
-        {
-            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.41.i = srem i64 %.1, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  ret i1 %.74.i\n}\n",
-            "id": 6,
-            "op": "filter",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                1
-            ]
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 5,
+            "op": 0,
             "port": 0
         }
     ]

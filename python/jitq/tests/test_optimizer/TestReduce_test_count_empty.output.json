@@ -2,13 +2,63 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 4,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+            "id": 1,
+            "op": "reduce",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
+            "id": 2,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                3
+            ]
+        },
+        {
+            "id": 3,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                4
+            ]
+        },
+        {
+            "id": 4,
             "op": "parameter_lookup",
             "output_type": [
                 {
@@ -22,61 +72,11 @@
                 }
             ],
             "predecessors": []
-        },
-        {
-            "id": 1,
-            "op": "range_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                0
-            ]
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
-            "id": 2,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                1
-            ]
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-            "id": 3,
-            "op": "reduce",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                2
-            ]
-        },
-        {
-            "id": 4,
-            "op": "ensure_single_tuple",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                3
-            ]
         }
     ],
     "outputs": [
         {
-            "op": 4,
+            "op": 0,
             "port": 0
         }
     ]

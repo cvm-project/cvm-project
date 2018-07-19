@@ -2,59 +2,26 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 7,
             "op_port": 0
         }
     ],
     "operators": [
         {
+            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.27.i = icmp eq i64 %.1, 0\n  ret i1 %.27.i\n}\n",
             "id": 0,
-            "op": "parameter_lookup",
+            "op": "filter",
             "output_type": [
                 {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
+                    "type": "long"
                 }
             ],
-            "predecessors": []
+            "predecessors": [
+                3
+            ]
         },
         {
-            "add_index": false,
             "id": 1,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                0
-            ]
-        },
-        {
-            "id": 2,
-            "op": "cartesian",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                8,
-                7
-            ]
-        },
-        {
-            "id": 4,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -76,6 +43,48 @@
             ]
         },
         {
+            "id": 2,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0,
+                4
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 3,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                5
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 4,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                5
+            ]
+        },
+        {
             "id": 5,
             "op": "materialize_row_vector",
             "output_type": [
@@ -91,7 +100,7 @@
                 }
             ],
             "predecessors": [
-                1
+                6
             ]
         },
         {
@@ -104,39 +113,30 @@
                 }
             ],
             "predecessors": [
-                5
+                7
             ]
         },
         {
-            "add_index": false,
             "id": 7,
-            "op": "collection_source",
+            "op": "parameter_lookup",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
-            "predecessors": [
-                5
-            ]
-        },
-        {
-            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.27.i = icmp eq i64 %.1, 0\n  ret i1 %.27.i\n}\n",
-            "id": 8,
-            "op": "filter",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                6
-            ]
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 4,
+            "op": 1,
             "port": 0
         }
     ]

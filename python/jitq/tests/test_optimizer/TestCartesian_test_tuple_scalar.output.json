@@ -2,103 +2,18 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 4,
             "op_port": 0
         },
         {
             "dag_port": 1,
-            "op": 2,
+            "op": 5,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        },
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "add_index": false,
-            "id": 1,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                0
-            ]
-        },
-        {
-            "id": 2,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "add_index": false,
-            "id": 3,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                2
-            ]
-        },
-        {
-            "id": 4,
-            "op": "cartesian",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                1,
-                3
-            ]
-        },
-        {
-            "id": 5,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -119,13 +34,98 @@
                 }
             ],
             "predecessors": [
+                1
+            ]
+        },
+        {
+            "id": 1,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2,
+                3
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 2,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
                 4
             ]
+        },
+        {
+            "add_index": false,
+            "id": 3,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                5
+            ]
+        },
+        {
+            "id": 4,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 5,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 5,
+            "op": 0,
             "port": 0
         }
     ]

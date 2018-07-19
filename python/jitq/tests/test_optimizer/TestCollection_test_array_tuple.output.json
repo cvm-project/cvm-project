@@ -2,49 +2,13 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 2,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "int"
-                        },
-                        {
-                            "type": "int"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "add_index": false,
-            "id": 1,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "int"
-                },
-                {
-                    "type": "int"
-                }
-            ],
-            "predecessors": [
-                0
-            ]
-        },
-        {
-            "id": 2,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -64,11 +28,47 @@
             "predecessors": [
                 1
             ]
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                }
+            ],
+            "predecessors": [
+                2
+            ]
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 2,
+            "op": 0,
             "port": 0
         }
     ]

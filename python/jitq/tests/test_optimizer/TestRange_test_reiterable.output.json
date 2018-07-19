@@ -2,63 +2,32 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 6,
             "op_port": 0
         },
         {
             "dag_port": 1,
-            "op": 2,
+            "op": 7,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "id": 1,
-            "op": "range_source",
+            "op": "ensure_single_tuple",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                0
+                1
             ]
         },
         {
-            "id": 2,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "id": 3,
-            "op": "range_source",
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+            "id": 1,
+            "op": "reduce",
             "output_type": [
                 {
                     "type": "long"
@@ -69,7 +38,20 @@
             ]
         },
         {
-            "id": 4,
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
+            "id": 2,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                3
+            ]
+        },
+        {
+            "id": 3,
             "op": "cartesian",
             "output_type": [
                 {
@@ -80,39 +62,13 @@
                 }
             ],
             "predecessors": [
-                1,
-                3
-            ]
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i64 1\n}\n\n\n\n",
-            "id": 5,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                4
-            ]
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-            "id": 6,
-            "op": "reduce",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
+                4,
                 5
             ]
         },
         {
-            "id": 7,
-            "op": "ensure_single_tuple",
+            "id": 4,
+            "op": "range_source",
             "output_type": [
                 {
                     "type": "long"
@@ -121,11 +77,55 @@
             "predecessors": [
                 6
             ]
+        },
+        {
+            "id": 5,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                7
+            ]
+        },
+        {
+            "id": 6,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 7,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 7,
+            "op": 0,
             "port": 0
         }
     ]

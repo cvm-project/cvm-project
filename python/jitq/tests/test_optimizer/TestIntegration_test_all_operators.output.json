@@ -2,28 +2,26 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 15,
             "op_port": 0
         },
         {
             "dag_port": 1,
-            "op": 3,
+            "op": 16,
             "op_port": 0
         },
         {
             "dag_port": 2,
-            "op": 9,
+            "op": 17,
             "op_port": 0
         }
     ],
     "operators": [
         {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
             "id": 0,
-            "op": "parameter_lookup",
+            "op": "reduce_by_key",
             "output_type": [
-                {
-                    "type": "long"
-                },
                 {
                     "type": "long"
                 },
@@ -31,84 +29,28 @@
                     "type": "long"
                 }
             ],
-            "predecessors": []
+            "predecessors": [
+                1
+            ]
         },
         {
+            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  %.17.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.17.fca.1.insert = insertvalue { i64, i64 } %.17.fca.0.insert, i64 %.3, 1\n  ret { i64, i64 } %.17.fca.1.insert\n}\n\n\n\n",
             "id": 1,
-            "op": "range_source",
+            "op": "map",
             "output_type": [
+                {
+                    "type": "long"
+                },
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                0
+                2
             ]
         },
         {
-            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
             "id": 2,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                17
-            ]
-        },
-        {
-            "id": 3,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "add_index": false,
-            "id": 4,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                3
-            ]
-        },
-        {
-            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = shl nsw i64 %.1, 1\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.14.i, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
-            "id": 5,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                4
-            ]
-        },
-        {
-            "id": 6,
             "op": "join",
             "output_type": [
                 {
@@ -122,64 +64,18 @@
                 }
             ],
             "predecessors": [
-                2,
-                18
+                3,
+                4
             ]
         },
         {
-            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  %.17.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.17.fca.1.insert = insertvalue { i64, i64 } %.17.fca.0.insert, i64 %.3, 1\n  ret { i64, i64 } %.17.fca.1.insert\n}\n\n\n\n",
-            "id": 7,
+            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+            "id": 3,
             "op": "map",
             "output_type": [
                 {
                     "type": "long"
                 },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                6
-            ]
-        },
-        {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-            "id": 8,
-            "op": "reduce_by_key",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                7
-            ]
-        },
-        {
-            "id": 9,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "add_index": false,
-            "id": 10,
-            "op": "collection_source",
-            "output_type": [
                 {
                     "type": "long"
                 }
@@ -189,9 +85,9 @@
             ]
         },
         {
-            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret { i64, i64 } { i64 1, i64 1 }\n}\n\n\n\n",
-            "id": 11,
-            "op": "map",
+            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1, i64 %.2) {\nentry:\n  %.43.i = srem i64 %.1, 3\n  %.45.i = icmp slt i64 %.43.i, 0\n  %.54.i = add nsw i64 %.43.i, 3\n  %.35.0.i = select i1 %.45.i, i64 %.54.i, i64 %.43.i\n  %.76.i = icmp eq i64 %.35.0.i, 0\n  ret i1 %.76.i\n}\n",
+            "id": 4,
+            "op": "filter",
             "output_type": [
                 {
                     "type": "long"
@@ -205,7 +101,45 @@
             ]
         },
         {
-            "id": 12,
+            "id": 5,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                6
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+            "id": 6,
+            "op": "reduce",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                7
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  ret i64 %.3\n}\n\n\n\n",
+            "id": 7,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                8
+            ]
+        },
+        {
+            "id": 8,
             "op": "cartesian",
             "output_type": [
                 {
@@ -222,14 +156,14 @@
                 }
             ],
             "predecessors": [
-                8,
+                0,
                 11
             ]
         },
         {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  ret i64 %.3\n}\n\n\n\n",
-            "id": 14,
-            "op": "map",
+            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.43.i = srem i64 %.1, 3\n  %.45.i = icmp slt i64 %.43.i, 0\n  %.54.i = add nsw i64 %.43.i, 3\n  %.35.0.i = select i1 %.45.i, i64 %.54.i, i64 %.43.i\n  %.76.i = icmp eq i64 %.35.0.i, 0\n  ret i1 %.76.i\n}\n",
+            "id": 9,
+            "op": "filter",
             "output_type": [
                 {
                     "type": "long"
@@ -240,10 +174,29 @@
             ]
         },
         {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
-            "id": 15,
-            "op": "reduce",
+            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = shl nsw i64 %.1, 1\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.14.i, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+            "id": 10,
+            "op": "map",
             "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                13
+            ]
+        },
+        {
+            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret { i64, i64 } { i64 1, i64 1 }\n}\n\n\n\n",
+            "id": 11,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
                 {
                     "type": "long"
                 }
@@ -253,8 +206,8 @@
             ]
         },
         {
-            "id": 16,
-            "op": "ensure_single_tuple",
+            "id": 12,
+            "op": "range_source",
             "output_type": [
                 {
                     "type": "long"
@@ -265,23 +218,38 @@
             ]
         },
         {
-            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.43.i = srem i64 %.1, 3\n  %.45.i = icmp slt i64 %.43.i, 0\n  %.54.i = add nsw i64 %.43.i, 3\n  %.35.0.i = select i1 %.45.i, i64 %.54.i, i64 %.43.i\n  %.76.i = icmp eq i64 %.35.0.i, 0\n  ret i1 %.76.i\n}\n",
-            "id": 17,
-            "op": "filter",
+            "add_index": false,
+            "id": 13,
+            "op": "collection_source",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                1
+                16
             ]
         },
         {
-            "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1, i64 %.2) {\nentry:\n  %.43.i = srem i64 %.1, 3\n  %.45.i = icmp slt i64 %.43.i, 0\n  %.54.i = add nsw i64 %.43.i, 3\n  %.35.0.i = select i1 %.45.i, i64 %.54.i, i64 %.43.i\n  %.76.i = icmp eq i64 %.35.0.i, 0\n  ret i1 %.76.i\n}\n",
-            "id": 18,
-            "op": "filter",
+            "add_index": false,
+            "id": 14,
+            "op": "collection_source",
             "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                17
+            ]
+        },
+        {
+            "id": 15,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
                 {
                     "type": "long"
                 },
@@ -289,14 +257,46 @@
                     "type": "long"
                 }
             ],
-            "predecessors": [
-                5
-            ]
+            "predecessors": []
+        },
+        {
+            "id": 16,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 17,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 16,
+            "op": 5,
             "port": 0
         }
     ]

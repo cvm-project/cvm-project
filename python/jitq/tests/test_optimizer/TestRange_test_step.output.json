@@ -2,41 +2,13 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 2,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "id": 1,
-            "op": "range_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                0
-            ]
-        },
-        {
-            "id": 2,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -53,11 +25,39 @@
             "predecessors": [
                 1
             ]
+        },
+        {
+            "id": 1,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2
+            ]
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 2,
+            "op": 0,
             "port": 0
         }
     ]

@@ -2,192 +2,13 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 42,
             "op_port": 0
         }
     ],
     "operators": [
         {
             "id": 0,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "add_index": false,
-            "id": 1,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                0
-            ]
-        },
-        {
-            "id": 2,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                14,
-                15
-            ]
-        },
-        {
-            "id": 3,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                17,
-                18
-            ]
-        },
-        {
-            "id": 4,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                20,
-                21
-            ]
-        },
-        {
-            "id": 5,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                23,
-                24
-            ]
-        },
-        {
-            "id": 6,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                26,
-                27
-            ]
-        },
-        {
-            "id": 7,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                29,
-                30
-            ]
-        },
-        {
-            "id": 8,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                32,
-                33
-            ]
-        },
-        {
-            "id": 9,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                35,
-                36
-            ]
-        },
-        {
-            "id": 10,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                38,
-                39
-            ]
-        },
-        {
-            "id": 11,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                41,
-                42
-            ]
-        },
-        {
-            "id": 12,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                11
-            ]
-        },
-        {
-            "id": 13,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -206,134 +27,25 @@
             ]
         },
         {
-            "add_index": false,
-            "id": 14,
-            "op": "collection_source",
+            "id": 1,
+            "op": "join",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                13
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 15,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                13
-            ]
-        },
-        {
-            "id": 16,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                2
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 17,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                16
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 18,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                16
-            ]
-        },
-        {
-            "id": 19,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
+                2,
                 3
             ]
         },
         {
             "add_index": false,
-            "id": 20,
+            "id": 2,
             "op": "collection_source",
             "output_type": [
                 {
                     "type": "long"
-                }
-            ],
-            "predecessors": [
-                19
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 21,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                19
-            ]
-        },
-        {
-            "id": 22,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
                 }
             ],
             "predecessors": [
@@ -342,7 +54,7 @@
         },
         {
             "add_index": false,
-            "id": 23,
+            "id": 3,
             "op": "collection_source",
             "output_type": [
                 {
@@ -350,24 +62,11 @@
                 }
             ],
             "predecessors": [
-                22
+                4
             ]
         },
         {
-            "add_index": false,
-            "id": 24,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                22
-            ]
-        },
-        {
-            "id": 25,
+            "id": 4,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -386,134 +85,25 @@
             ]
         },
         {
-            "add_index": false,
-            "id": 26,
-            "op": "collection_source",
+            "id": 5,
+            "op": "join",
             "output_type": [
                 {
                     "type": "long"
                 }
             ],
             "predecessors": [
-                25
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 27,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                25
-            ]
-        },
-        {
-            "id": 28,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                6
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 29,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                28
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 30,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                28
-            ]
-        },
-        {
-            "id": 31,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
+                6,
                 7
             ]
         },
         {
             "add_index": false,
-            "id": 32,
+            "id": 6,
             "op": "collection_source",
             "output_type": [
                 {
                     "type": "long"
-                }
-            ],
-            "predecessors": [
-                31
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 33,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                31
-            ]
-        },
-        {
-            "id": 34,
-            "op": "materialize_row_vector",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
                 }
             ],
             "predecessors": [
@@ -522,7 +112,7 @@
         },
         {
             "add_index": false,
-            "id": 35,
+            "id": 7,
             "op": "collection_source",
             "output_type": [
                 {
@@ -530,24 +120,11 @@
                 }
             ],
             "predecessors": [
-                34
+                8
             ]
         },
         {
-            "add_index": false,
-            "id": 36,
-            "op": "collection_source",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                34
-            ]
-        },
-        {
-            "id": 37,
+            "id": 8,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -566,6 +143,425 @@
             ]
         },
         {
+            "id": 9,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                10,
+                11
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 10,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                12
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 11,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                12
+            ]
+        },
+        {
+            "id": 12,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                13
+            ]
+        },
+        {
+            "id": 13,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                14,
+                15
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 14,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                16
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 15,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                16
+            ]
+        },
+        {
+            "id": 16,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                17
+            ]
+        },
+        {
+            "id": 17,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                18,
+                19
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 18,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                20
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 19,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                20
+            ]
+        },
+        {
+            "id": 20,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                21
+            ]
+        },
+        {
+            "id": 21,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                22,
+                23
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 22,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                24
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 23,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                24
+            ]
+        },
+        {
+            "id": 24,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                25
+            ]
+        },
+        {
+            "id": 25,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                26,
+                27
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 26,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                28
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 27,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                28
+            ]
+        },
+        {
+            "id": 28,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                29
+            ]
+        },
+        {
+            "id": 29,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                30,
+                31
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 30,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                32
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 31,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                32
+            ]
+        },
+        {
+            "id": 32,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                33
+            ]
+        },
+        {
+            "id": 33,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                34,
+                35
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 34,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                36
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 35,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                36
+            ]
+        },
+        {
+            "id": 36,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                37
+            ]
+        },
+        {
+            "id": 37,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                38,
+                39
+            ]
+        },
+        {
             "add_index": false,
             "id": 38,
             "op": "collection_source",
@@ -575,7 +571,7 @@
                 }
             ],
             "predecessors": [
-                37
+                40
             ]
         },
         {
@@ -588,7 +584,7 @@
                 }
             ],
             "predecessors": [
-                37
+                40
             ]
         },
         {
@@ -607,7 +603,7 @@
                 }
             ],
             "predecessors": [
-                10
+                41
             ]
         },
         {
@@ -620,26 +616,30 @@
                 }
             ],
             "predecessors": [
-                40
+                42
             ]
         },
         {
-            "add_index": false,
             "id": 42,
-            "op": "collection_source",
+            "op": "parameter_lookup",
             "output_type": [
                 {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
-            "predecessors": [
-                40
-            ]
+            "predecessors": []
         }
     ],
     "outputs": [
         {
-            "op": 12,
+            "op": 0,
             "port": 0
         }
     ]
