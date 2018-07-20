@@ -100,21 +100,21 @@ class Executor:
     class __Inner:
         def __init__(self):
             self.lib_counter = 0
+            self.libgenerate = load_cffi(CPP_DIR + "src/" + GEN_HEADER_FILE,
+                                         CPP_DIR + "build/" + GENERATE_LIB,
+                                         FFI())
 
         def get_executor(self, context, dag_str, conf_str):
             cache_key = dag_str + conf_str
             executor = context.executor_cache.get(cache_key, None)
             if not executor:
                 ffi = FFI()
-                generator = load_cffi(CPP_DIR + "src/" + GEN_HEADER_FILE,
-                                      CPP_DIR + "build/" + GENERATE_LIB,
-                                      ffi)
                 dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
                 conf_c = ffi.new('char[]', conf_str.encode('utf-8'))
 
                 timer = Timer()
                 timer.start()
-                generator.GenerateExecutable(
+                self.libgenerate.GenerateExecutable(
                     conf_c, dag_c, self.lib_counter)
                 timer.end()
                 print("time: calling make " + str(timer.diff()))
