@@ -60,7 +60,6 @@ void BackEnd::Run(DAG* const dag) const {
                        " * Auto-generated execution plan\n"
                        " */\n";
 
-        includes.emplace("\"runtime/free.hpp\"");
         includes.emplace("<cstring>");
 
         for (const auto& incl : context.includes()) {
@@ -85,22 +84,11 @@ void BackEnd::Run(DAG* const dag) const {
                    "    return ret_ptr;"
                    "} }";
 
-        // Main executable file: free
-        source_file <<  //
-                "extern \"C\" {"
-                "    void free_result(const char* const s) {"
-                "        runtime::FreeValues(s);"
-                "        free(const_cast<void *>("
-                "                reinterpret_cast<const void*>(s)));"
-                "    }"
-                "}";
-
         // Header file
         boost::filesystem::ofstream header_file(header_file_path);
 
         header_file <<  //
-                "const char* execute(const char* inputs_str);\n"
-                "void free_result(const char*);";
+                "const char* execute(const char* inputs_str);";
     }
 
     // Compute hash value of generated code

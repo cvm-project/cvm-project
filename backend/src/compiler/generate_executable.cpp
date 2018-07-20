@@ -8,8 +8,8 @@
 #include <json.hpp>
 
 #include "compiler/compiler.hpp"
+#include "runtime/free.hpp"
 
-extern "C" {
 int GenerateExecutable(const char *const conf, const char *const dagstr,
                        const unsigned long counter) {  // NOLINT
     auto conf_json = nlohmann::json::parse(conf).flatten();
@@ -22,4 +22,8 @@ int GenerateExecutable(const char *const conf, const char *const dagstr,
     // TODO(ingo): better error handling
     return 0;
 }
-}  // extern "C"
+
+void FreeResult(const char *const s) {
+    runtime::FreeValues(s);
+    free(const_cast<void *>(reinterpret_cast<const void *>(s)));
+}

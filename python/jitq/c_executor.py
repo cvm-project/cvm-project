@@ -45,7 +45,7 @@ def load_cffi(header, lib_path, ffi):
 
 
 # pylint: disable=inconsistent-return-statements
-def wrap_result(res, type_, ffi, executor):
+def wrap_result(res, type_, ffi):
 
     values = json.loads(ffi.string(res).decode('utf-8'))
     assert len(values) == 1
@@ -74,10 +74,6 @@ def wrap_result(res, type_, ffi, executor):
                                count=total_count)
         np_arr = np_arr.view(NumpyResult)
         np_arr.ptr = res
-
-        # Keep the reference of FFI library, which contains the free
-        # function that is called by GC when the object goes out of scope
-        np_arr.ex = executor
 
         return np_arr
 
@@ -139,11 +135,11 @@ class Executor:
             res = executor.execute(args_c)
             # Add a free function to the result object that allows the C++
             # layer to clean up
-            res = ffi.gc(res, executor.free_result)
+            res = ffi.gc(res, self.libgenerate.FreeResult)
 
             timer.end()
             print("execute " + str(timer.diff()))
-            res = wrap_result(res, output_type, ffi, executor)
+            res = wrap_result(res, output_type, ffi)
 
             return res
 
