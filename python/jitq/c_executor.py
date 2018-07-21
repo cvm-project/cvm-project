@@ -17,7 +17,7 @@ GEN_DIR = JITQ_PATH + "/backend/gen/"
 GEN_HEADER_FILE = "compiler/generate_executable.h"
 EXECUTOR_HEADER_FILE = "execute.h"
 GENERATE_LIB = "libgenerate"
-EXECUTE_LIB = "execute"
+EXECUTE_LIB = "libexecute"
 
 
 def load_cffi(header, lib_path, ffi):

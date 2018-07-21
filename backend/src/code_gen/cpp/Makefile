@@ -21,10 +21,10 @@ DEBUG ?= 0
 ifeq ($(DEBUG), 1)
     CXXFLAGS += -g3 -DDEBUG
     LDFLAGS += -g
-    LIB = execute.dbg.so
+    LIB = libexecute.dbg.so
 else
     CXXFLAGS += -DNDEBUG -O3 -ffast-math -march=native -mtune=native
-    LIB = execute.opt.so
+    LIB = libexecute.opt.so
 endif
 
 # Set inputs
@@ -37,7 +37,7 @@ GCHEADER = $(SCRIPT_DIR)/operators/Operators.h.gch
 GENHEADER = $(SCRIPT_DIR)/operators/Operators.h.sh
 
 # Rules
-all: execute.so
+all: libexecute.so
 
 .PRECIOUS: %.ll
 
@@ -62,13 +62,13 @@ $(GCHEADER): $(MAINHEADER)
 $(MAINHEADER): $(HEADERS)
 	$(GENHEADER) $@
 
-execute.%.so: $(UDF_OBJECTS) execute.%.o
+libexecute.%.so: $(UDF_OBJECTS) execute.%.o
 	 $(CXX) $^ -o $@ -shared $(LDFLAGS)
 
-execute.so: $(LIB)
+libexecute.so: $(LIB)
 	cp $^ $@
 
-execute.s: execute.so
+execute.s: libexecute.so
 	objdump -D $^ > $@
 
 clean:

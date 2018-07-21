@@ -166,9 +166,9 @@ void BackEnd::Run(DAG* const dag) const {
     auto const gen_dir = get_lib_path() / "backend/gen";
     const size_t counter = config.value("/counter", 0);
 
-    auto const lib_path = lib_dir.filename() / "execute.so";
+    auto const lib_path = lib_dir.filename() / "libexecute.so";
     auto const lib_symlink =
-            gen_dir / ("execute" + std::to_string(counter) + ".so");
+            gen_dir / ("libexecute" + std::to_string(counter) + ".so");
     boost::filesystem::remove(lib_symlink);
     boost::filesystem::create_symlink(lib_path, lib_symlink);
 
