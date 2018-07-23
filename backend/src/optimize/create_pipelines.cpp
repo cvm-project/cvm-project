@@ -16,6 +16,7 @@ bool IsPipelineDriver(DAGOperator *const op) {
     return IsInstanceOf<              //
             DAGMaterializeRowVector,  //
             DAGEnsureSingleTuple,     //
+            DAGGroupBy,               //
             DAGParallelMap            //
             >(op);
 }

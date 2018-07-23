@@ -86,7 +86,10 @@ void Parallelize::Run(DAG *const dag) const {
     }
 
     // Extend parallelize operator
-    for (const auto op : parallelize_operators) {
+    while (!parallelize_operators.empty()) {
+        auto const op = *(parallelize_operators.begin());
+        parallelize_operators.erase(parallelize_operators.begin());
+
         auto const inner_dag = dag->inner_dag(op);
         do {
             if (dag->out_degree(op) != 1) break;
@@ -123,31 +126,99 @@ void Parallelize::Run(DAG *const dag) const {
             }
             if (IsInstanceOf<DAGReduceByKey>(dag->successor(op)) ||
                 IsInstanceOf<DAGReduceByKeyGrouped>(dag->successor(op))) {
-                auto const other_op = dag->successor(op);
+                auto const red_op = dag->successor(op);
+                const auto next_op = dag->successor(red_op);
 
+                auto const inner_flow = dag->out_flow(op);
+                auto const out_flow = dag->out_flow(red_op);
+
+                // Bypass original reduce in outer DAG
+                dag->RemoveFlow(inner_flow);
+                dag->RemoveFlow(out_flow);
+                dag->AddFlow(op, next_op, out_flow.target.port);
+
+                // Pre-reduce operator
                 DAGOperator *pre_reduction_op{};
-                if (IsInstanceOf<DAGReduceByKey>(other_op)) {
+                if (IsInstanceOf<DAGReduceByKey>(red_op)) {
                     auto const vpr =
                             inner_dag->AddOperator(new DAGReduceByKey());
                     pre_reduction_op = inner_dag->to_operator(vpr);
                 } else {
-                    assert(IsInstanceOf<DAGReduceByKeyGrouped>(other_op));
+                    assert(IsInstanceOf<DAGReduceByKeyGrouped>(red_op));
                     auto const vpr =
                             inner_dag->AddOperator(new DAGReduceByKeyGrouped());
                     pre_reduction_op = inner_dag->to_operator(vpr);
                 }
+                pre_reduction_op->llvm_ir = red_op->llvm_ir;
 
-                pre_reduction_op->llvm_ir = other_op->llvm_ir;
+                // Partition by group key
+                auto const part_op = new DAGPartition();
+                inner_dag->AddOperator(part_op);
 
+                // End this parallel operator
                 inner_dag->AddFlow(inner_dag->output().op, pre_reduction_op);
-                inner_dag->set_output(pre_reduction_op);
+                inner_dag->AddFlow(pre_reduction_op, part_op);
+                inner_dag->set_output(part_op);
+
+                // GroupBy operator after the first parallel map
+                auto const ex_op = new DAGGroupBy();
+                dag->AddOperator(ex_op);
+
+                auto const proj_op = new DAGProjection();
+                dag->AddOperator(proj_op);
+                proj_op->positions = {1};
+
+                // Next parallel map (for post reduction)
+                auto const next_pop = new DAGParallelMap();
+                dag->AddOperator(next_pop);
+                dag->set_inner_dag(next_pop, new DAG());
+                auto const next_inner_dag = dag->inner_dag(next_pop);
+
+                // Reconnect outer level
+                auto const outer_out_flow = dag->out_flow(op);
+                dag->RemoveFlow(outer_out_flow);
+                dag->AddFlow(op, ex_op);
+                dag->AddFlow(ex_op, proj_op);
+                dag->AddFlow(proj_op, next_pop);
+                dag->AddFlow(next_pop, outer_out_flow.target.op,
+                             outer_out_flow.target.port);
+
+                // Start next parallel map
+                auto const next_param_op = new DAGParameterLookup();
+                next_inner_dag->AddOperator(next_param_op);
+
+                // Scan operators for (1) partitioning and (2) groupby
+                auto const scan_op1 = new DAGCollection();
+                next_inner_dag->AddOperator(scan_op1);
+
+                auto const scan_op2 = new DAGCollection();
+                next_inner_dag->AddOperator(scan_op2);
+
+                // Original reduce as post-reduce operator
+                dag->MoveOperator(next_inner_dag, red_op);
+
+                // Connect new operators in next inner DAG
+                next_inner_dag->set_input(next_param_op);
+                next_inner_dag->AddFlow(next_param_op, scan_op1);
+                next_inner_dag->AddFlow(scan_op1, scan_op2);
+                next_inner_dag->AddFlow(scan_op2, red_op);
+                next_inner_dag->set_output(red_op);
+
+                // Remember the next parallel map such that it can be extended
+                parallelize_operators.emplace(next_pop);
 
                 break;
             }
             break;
         } while (true);
 
-        if (IsInstanceOf<DAGReduce>(inner_dag->output().op)) return;
+        if (IsInstanceOf<                     //
+                    DAGReduce,                //
+                    DAGMaterializeRowVector,  //
+                    DAGEnsureSingleTuple      //
+                    >(inner_dag->output().op)) {
+            return;
+        }
 
         // Add materialize operator at end of inner plan of parallel map
         auto const mat_op = new DAGMaterializeRowVector();
