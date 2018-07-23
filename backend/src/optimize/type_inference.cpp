@@ -143,6 +143,14 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return op->tuple->type;
         }
 
+        const Tuple *operator()(const DAGPartition *const op) const {
+            auto const element_type = dag_->predecessor(op)->tuple->type;
+
+            return Tuple::MakeTuple(
+                    {Atomic::MakeAtomic("long"),
+                     Array::MakeArray(element_type, ArrayLayout::kC, 1)});
+        }
+
         const Tuple *operator()(const DAGPipeline *const op) const {
             assert(dag_->has_inner_dag(op));
             auto const inner_dag = dag_->inner_dag(op);

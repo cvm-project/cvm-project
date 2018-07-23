@@ -84,6 +84,13 @@ void CodeGenVisitor::operator()(DAGParameterLookup *op) {
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {input_arg});
 }
 
+void CodeGenVisitor::operator()(DAGPartition *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "PartitionOperator");
+
+    emitOperatorMake(var_name, "PartitionOperator", op, {}, {"256"});
+}
+
 void CodeGenVisitor::operator()(DAGReduce *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ReduceOperator");

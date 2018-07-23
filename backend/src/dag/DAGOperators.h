@@ -12,6 +12,7 @@
 #include "DAGMaterializeRowVector.h"
 #include "DAGParallelMap.h"
 #include "DAGParameterLookup.h"
+#include "DAGPartition.h"
 #include "DAGPipeline.h"
 #include "DAGRange.h"
 #include "DAGReduce.h"

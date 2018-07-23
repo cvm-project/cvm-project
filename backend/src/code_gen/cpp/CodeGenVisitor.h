@@ -44,6 +44,7 @@ public:
     void operator()(DAGMaterializeRowVector *op);
     void operator()(DAGParallelMap *op);
     void operator()(DAGParameterLookup *op);
+    void operator()(DAGPartition *op);
     void operator()(DAGPipeline *op);
     void operator()(DAGReduce *op);
     void operator()(DAGRange *op);
