@@ -389,6 +389,25 @@ class TestMap(TestCaseBase):
         self.assertEqual(1, res[0]["field0"])
         self.assertEqual(2, res[0]["field1"])
 
+    def test_small_return_struct(self):
+        # due to ABI {i4, i4} would be merged into i8 by clang if returned
+        # by value
+        # test that it does not happen
+        context = JitqContext()
+        input_ = np.array([(1, 2)], dtype="i4,i4")
+        res1 = context.collection(input_).map(lambda x: x).collect()
+        self.assertListEqual([(1, 2)], res1.astuplelist())
+
+    def test_inlining(self):
+        # due to ABI {f4, f4} turns into <f4, f4> if returned
+        # by value
+        # the test happens to execute successfully, but the inline test should
+        # fail
+        context = JitqContext()
+        input_ = np.array([(3, 8)], dtype="f4,f4")
+        res1 = context.collection(input_).map(lambda x: x).collect()
+        self.assertListEqual([(3, 8)], res1.astuplelist())
+
 
 class TestReduce(TestCaseBase):
 

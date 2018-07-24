@@ -60,6 +60,8 @@ def make_test_func(test_name):
         test_case.run_optimizer()
         files = glob.glob(join(LIB_PATH, "*.so"))
         for file_name in files:
+            print("checking inlining in file " + file_name)
+            print("test name: " + test_name)
             result = subprocess.run(
                 ['objdump', '-D', file_name], stdout=subprocess.PIPE)
             file_content = str(result.stdout)
