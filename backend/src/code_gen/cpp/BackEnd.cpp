@@ -52,7 +52,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
                       " * Auto-generated execution plan\n"
                       " */\n";
 
-    includes.emplace("\"../../../runtime/free.hpp\"");
+    includes.emplace("\"runtime/free.hpp\"");
 
     for (const auto &incl : context.includes()) {
         mainSourceFile << "#include " << incl << std::endl;

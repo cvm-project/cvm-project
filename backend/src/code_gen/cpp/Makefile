@@ -10,11 +10,13 @@ ifeq ($(origin CXX),default)
     CXX = clang++
 endif
 
+BACKEND_DIR = $(SCRIPT_DIR)/../../../
+
 # Set flags
-INC = -I $(SCRIPT_DIR)/operators
+INC = -I$(SCRIPT_DIR)/operators -I$(BACKEND_DIR)/src
 CFLAGS = -DNDEBUG -O3 -ffast-math -march=native -mtune=native -fPIC -flto
 CXXFLAGS = $(CFLAGS) -std=c++14
-LDFLAGS = -fuse-ld=gold -flto -L$(SCRIPT_DIR)/../../../build -lruntime
+LDFLAGS = -fuse-ld=gold -flto -L$(BACKEND_DIR)/build -lruntime
 
 # Set inputs
 UDF_SOURCES = llvm_funcs.ll

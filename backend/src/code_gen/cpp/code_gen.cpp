@@ -192,12 +192,12 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
 
     // Includes needed for generate_values
     context->includes().emplace("\"Optional.h\"");
-    context->includes().emplace("\"../../../runtime/values/array.hpp\"");
-    context->includes().emplace("\"../../../runtime/values/atomics.hpp\"");
-    context->includes().emplace("\"../../../runtime/values/json_parsing.hpp\"");
-    context->includes().emplace("\"../../../runtime/values/none.hpp\"");
-    context->includes().emplace("\"../../../runtime/values/tuple.hpp\"");
-    context->includes().emplace("\"../../../runtime/values/value.hpp\"");
+    context->includes().emplace("\"runtime/values/array.hpp\"");
+    context->includes().emplace("\"runtime/values/atomics.hpp\"");
+    context->includes().emplace("\"runtime/values/json_parsing.hpp\"");
+    context->includes().emplace("\"runtime/values/none.hpp\"");
+    context->includes().emplace("\"runtime/values/tuple.hpp\"");
+    context->includes().emplace("\"runtime/values/value.hpp\"");
 
     context->declarations() << "using namespace runtime::values;" << std::endl;
 
