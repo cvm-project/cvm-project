@@ -4,7 +4,7 @@ from llvmlite.ir import VoidType
 from numba import sigutils
 from numba.ccallback import CFunc
 
-from jitq.utils import get_type_size, replace_unituple, flatten
+from jitq.utils import get_type_size, replace_unituple, flatten, replace_record
 
 # types larger than this are classified as "MEMORY" in amd64 ABI
 MINIMAL_TYPE_SIZE = 16  # bytes
@@ -16,8 +16,8 @@ def get_llvm_ir(sig, func, **options):
     args, return_type = sig
     # replace the unituple with tuple
     # abi compliance
-    return_type = replace_unituple(return_type)
-    args = tuple([replace_unituple(arg) for arg in args])
+    return_type = replace_record(replace_unituple(return_type))
+    args = tuple([replace_record(replace_unituple(arg)) for arg in args])
 
     res = JITQCFunc(func, (args, return_type), {}, options=options)
 

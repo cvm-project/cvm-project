@@ -2,9 +2,10 @@ from json import JSONEncoder
 import os
 import sys
 import time
+from collections import namedtuple
 
 import numba as nb
-from numba import from_dtype, typeof
+from numba import from_dtype, typeof, types
 from numba.numpy_support import as_dtype
 import numpy as np
 
@@ -93,11 +94,11 @@ def numba_type_to_dtype(type_):
 def dtype_to_numba(type_):
     if type_.fields:
         # composite type
-        types = []
+        types_ = []
         for _, val in type_.fields.items():
             numba_type = dtype_to_numba(val[0])
-            types.append(numba_type)
-        return "(" + ",".join(types) + ")"
+            types_.append(numba_type)
+        return "(" + ",".join(types_) + ")"
     return typeof(type_.name)
 
 
@@ -108,11 +109,9 @@ def get_type_size(type_):
     except AttributeError:
         if isinstance(type_, nb.types.Boolean):
             return 1
-        if isinstance(type_, nb.types.Tuple):
+        if isinstance(type_, nb.types.BaseTuple):
             for child_type in type_.types:
                 size += get_type_size(child_type)
-        elif isinstance(type_, nb.types.UniTuple):
-            size = get_type_size(type_.dtype) * type_.count
         elif isinstance(type_, nb.types.Record):
             size = type_.size
         else:
@@ -198,14 +197,16 @@ def flatten(iterable_):
             if isinstance(i, (tuple, list)):
                 for j in rec(i):
                     yield j
-            elif isinstance(i, (nb.types.UniTuple, nb.types.Tuple)):
+            elif isinstance(i, (nb.types.UniTuple, nb.types.Tuple,
+                                nb.types.NamedTuple)):
                 for j in rec(i.types):
                     yield j
             else:
                 yield i
 
     if not isinstance(iterable_,
-                      (tuple, list, nb.types.UniTuple, nb.types.Tuple)):
+                      (tuple, list, nb.types.UniTuple, nb.types.Tuple,
+                       nb.types.NamedTuple)):
         return (iterable_,)
     return tuple(rec(iterable_))
 
@@ -235,3 +236,30 @@ def measure_time(func, max_rep=3, show_runs=False):
         if show_runs:
             print("run " + str(i) + " " + str(time_2 - time_1))
     return mean(res) * 1000
+
+
+NAMED_TUPLE_REGISTRY = {}
+
+
+def replace_record(type_):
+    if isinstance(type_, types.BaseAnonymousTuple):
+        child_types = [replace_record(t) for t in type_.types]
+        return make_tuple(child_types)
+    if isinstance(type_, types.Array):
+        dtype = replace_record(type_.dtype)
+        return types.Array(dtype, type_.ndim, type_.layout, False,
+                           type_.name, type_.aligned)
+    if isinstance(type_, types.Record):
+        fields_sorted = sorted(
+            type_.dtype.fields.items(),
+            key=lambda item: item[1][1])
+        child_types = [replace_record(from_dtype(v[1][0]))
+                       for v in fields_sorted]
+        child_names = [v[0] for v in fields_sorted]
+        key = str([child_names] + [child_types])
+        namedtpl = NAMED_TUPLE_REGISTRY.setdefault(
+            key, namedtuple('Record', child_names))
+        return types.NamedTuple(child_types, namedtpl)
+    if str(type_) in NUMPY_DTYPE_MAP:
+        return type_
+    raise TypeError("Can only replace UniTuple on valid nested objects.")
