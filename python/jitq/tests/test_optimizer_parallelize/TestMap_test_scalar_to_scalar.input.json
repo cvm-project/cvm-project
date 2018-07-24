@@ -38,7 +38,7 @@
             ]
         },
         {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = add nsw i64 %.1, 2\n  ret i64 %.14.i\n}\n\nattributes #0 = { norecurse nounwind }\nattributes #1 = { norecurse nounwind readnone }\n",
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.2, 2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 2,
             "op": "map",
             "output_type": [

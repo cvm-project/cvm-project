@@ -68,7 +68,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind readnone\ndefine { i64, i64 } @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.16.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.2, 0\n  %.16.fca.1.insert = insertvalue { i64, i64 } %.16.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.16.fca.1.insert\n}\n\nattributes #0 = { alwaysinline norecurse nounwind readnone }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.3, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 2,
                         "op": "map",
                         "output_type": [
@@ -84,7 +84,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine i1 @cfuncnotuniquename(i64 %.1, i64 %.2) #0 {\nentry:\n  %.28.i = icmp eq i64 %.1, 2\n  ret i1 %.28.i\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.28.i = icmp eq i64 %.2, 2\n  %.20 = bitcast i8* %.1 to i1*\n  store i1 %.28.i, i1* %.20, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                         "id": 3,
                         "op": "filter",
                         "output_type": [
@@ -237,7 +237,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind readnone\ndefine { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.1, 1\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.14.i, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\nattributes #0 = { alwaysinline norecurse nounwind readnone }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.2, 1\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.14.i, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 1,
                         "op": "map",
                         "output_type": [

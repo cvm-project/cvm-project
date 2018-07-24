@@ -205,9 +205,12 @@ std::string Function::AdjustFilterSignature(
         types.push_back(ComputeLLVMType(&context_, f.get()));
     }
 
+    // add the return pointer type to the argument types
+    types.insert(types.begin(), llvm::Type::getInt8PtrTy(context_));
+
     auto old_function = module_->getFunctionList().begin();
     llvm::FunctionType *FT =
-            llvm::FunctionType::get(llvm::Type::getInt1Ty(context_),
+            llvm::FunctionType::get(llvm::Type::getVoidTy(context_),
                                     llvm::ArrayRef<llvm::Type *>(types), false);
     llvm::Function *filter_predicate =
             llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
@@ -235,10 +238,15 @@ std::string Function::AdjustFilterSignature(
         const auto new_pos = input_field->get()->position();
 
         // replace all uses of oldPos argument to use of newPos argument
-        auto old_arg = old_function->arg_begin() + old_pos;
-        auto new_arg = filter_predicate->arg_begin() + new_pos;
+        // +1 accounts for the return pointer
+        auto old_arg = old_function->arg_begin() + old_pos + 1;
+        auto new_arg = filter_predicate->arg_begin() + new_pos + 1;
         old_arg->replaceAllUsesWith(new_arg);
     }
+    // return pointer
+    auto old_arg = old_function->arg_begin();
+    auto new_arg = filter_predicate->arg_begin();
+    old_arg->replaceAllUsesWith(new_arg);
     std::string ret;
     llvm::raw_string_ostream OS(ret);
     OS << *new_mod;

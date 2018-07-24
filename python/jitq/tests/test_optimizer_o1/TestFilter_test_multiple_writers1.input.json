@@ -38,7 +38,7 @@
             ]
         },
         {
-            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = add nsw i64 %.1, 1\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.14.i, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\nattributes #0 = { norecurse nounwind }\nattributes #1 = { norecurse nounwind readnone }\n",
+            "func": "define void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.2, 1\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.14.i, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 2,
             "op": "map",
             "output_type": [
@@ -54,7 +54,7 @@
             ]
         },
         {
-            "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.34.i = add nsw i64 %.2, %.1\n  %.61.i = srem i64 %.34.i, 3\n  %.63.i = icmp slt i64 %.61.i, 0\n  %.72.i = add nsw i64 %.61.i, 3\n  %.53.0.i = select i1 %.63.i, i64 %.72.i, i64 %.61.i\n  %.94.i = icmp eq i64 %.53.0.i, 0\n  ret i1 %.94.i\n}\n\nattributes #0 = { norecurse nounwind }\nattributes #1 = { norecurse nounwind readnone }\n",
+            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.34.i = add nsw i64 %.3, %.2\n  %.61.i = srem i64 %.34.i, 3\n  %.63.i = icmp slt i64 %.61.i, 0\n  %.72.i = add nsw i64 %.61.i, 3\n  %.53.0.i = select i1 %.63.i, i64 %.72.i, i64 %.61.i\n  %.94.i = icmp eq i64 %.53.0.i, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.94.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 3,
             "op": "filter",
             "output_type": [

@@ -409,15 +409,17 @@ std::string GenerateLlvmFunctor(
             format("class %s {"
                    "public:"
                    "    auto operator()(%s) {"
-                   "        return %s(%s);"
+                   "        %s res;"
+                   "        %s(&res, %s);"
+                   "        return res;"
                    "    }"
                    "};") %
-                    class_name % join(input_args, ",") % func_name %
-                    join(call_args, ",");
+                    class_name % join(input_args, ",") % return_type %
+                    func_name % join(call_args, ",");
 
     // Emit function declaration
-    context->declarations() << format("extern \"C\" { %s %s(%s); }") %
-                                       return_type % func_name %
+    context->declarations() << format("extern \"C\" { void %s(%s*, %s); }") %
+                                       func_name % return_type %
                                        join(call_types, ",");
 
     return class_name;
