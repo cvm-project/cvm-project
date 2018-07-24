@@ -73,13 +73,17 @@ class TestCollection(TestCaseBase):
 
     def test_pandas_tuple(self):
         input_ = [(i, 2 * i) for i in range(10)]
-        res = self.context.collection(pd.DataFrame(list(input_))).collect()
+        input_df = pd.DataFrame(list(input_), columns=['v0', 'v1'])
+        res = self.context.collection(input_df) \
+            .map(lambda t: (t.v0, t.v1 + 0)).collect()
         self.assertListEqual(sorted(res.astuples()), input_)
 
     def test_pandas_scalar_index(self): \
             # pragma pylint: disable=invalid-name
         input_ = list(range(10))
-        res = self.context.collection(pd.DataFrame(input_), add_index=True) \
+        res = self.context.collection(pd.DataFrame(pd.DataFrame(
+            input_, columns=["f0"])), add_index=True) \
+            .map(lambda x: (x.f0, x.f00 + 0)) \
             .collect()
         truth = list(enumerate([(i,) for i in input_]))
         self.assertListEqual(sorted(res.astuples()), truth)
@@ -87,7 +91,9 @@ class TestCollection(TestCaseBase):
     def test_pandas_tuple_index(self): \
             # pragma pylint: disable=invalid-name
         input_ = [(i, 2 * i) for i in range(10)]
-        res = self.context.collection(pd.DataFrame(input_), add_index=True) \
+        input_df = pd.DataFrame(list(input_), columns=['v0', 'v1'])
+        res = self.context.collection(input_df, add_index=True) \
+            .map(lambda t: (t.v00, t.v0, t.v1 + 0)) \
             .collect()
         truth = [(i, ) + r for i, r in enumerate(input_)]
         self.assertListEqual(sorted(res.astuples()), truth)
@@ -99,12 +105,13 @@ class TestCollection(TestCaseBase):
         res = self.context.collection(np.array(input_)).collect()
         self.assertListEqual(sorted(res.astuples()), input_)
 
-    # pylint: disable=no-self-use
     @unittest.skip("Not implemented")
     def test_array_record(self):
         input_ = np.array(
             [(1, 2 * 2)], dtype=[('first_int', 'i4'), ('second_float', 'f4')])
-        res = self.context.collection(np.array(input_)).collect()
+        res = self.context.collection(np.array(input_)) \
+            .filter(lambda t: t.first_int == 1 or t.second_float == 4) \
+            .collect()
         assert_array_equal(res, input_)
 
     @unittest.skip("Not implemented")
@@ -368,6 +375,19 @@ class TestMap(TestCaseBase):
             .map(lambda t: (t, t * 10)) \
             .count()
         self.assertEqual(res, 10)
+
+    def test_record1(self):
+        jitq_context = JitqContext()
+        input_ = np.array([(1, 2)], dtype=[('field0', 'i8'), ('field1', 'i8')])
+        res = jitq_context.collection(input_).map(lambda x: x.field1).collect()
+        self.assertListEqual([2], res.astuplelist())
+
+    def test_record2(self):
+        jitq_context = JitqContext()
+        input_ = np.array([(1, 2)], dtype=[('field0', 'i8'), ('field1', 'i8')])
+        res = jitq_context.collection(input_).map(lambda x: x).collect()
+        self.assertEqual(1, res[0]["field0"])
+        self.assertEqual(2, res[0]["field1"])
 
 
 class TestReduce(TestCaseBase):
