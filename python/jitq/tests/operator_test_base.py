@@ -20,47 +20,47 @@ class TestCollection(unittest.TestCase):
         context = JitqContext()
         input_ = range(10)
         res = context.collection(input_).map(lambda x: x + 0).collect()
-        self.assertListEqual(res.astuplelist(), list(input_))
+        self.assertListEqual(sorted(res.astuples()), list(input_))
 
     def test_tuple(self):
         context = JitqContext()
         input_ = [(i, 2 * i) for i in range(10)]
         res = context.collection(input_).collect()
-        self.assertListEqual(res.astuplelist(), input_)
+        self.assertListEqual(sorted(res.astuples()), input_)
 
     def test_scalar_index(self):
         context = JitqContext()
         input_ = range(10)
         res = context.collection(input_, add_index=True).collect()
-        self.assertListEqual(res.astuplelist(), list(enumerate(input_)))
+        self.assertListEqual(sorted(res.astuples()), list(enumerate(input_)))
 
     def test_tuple_index(self):
         context = JitqContext()
         input_ = [(i, 2 * i) for i in range(10)]
         res = context.collection(input_, add_index=True).collect()
         truth = [(i, ) + r for i, r in enumerate(input_)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_array_scalar(self):
         context = JitqContext()
         input_ = range(10)
         res = context.collection(np.array(input_)) \
             .map(lambda x: x + 0).collect()
-        self.assertListEqual(res.astuplelist(), list(input_))
+        self.assertListEqual(sorted(res.astuples()), list(input_))
 
     def test_array_tuple(self):
         context = JitqContext()
         input_ = [(i, 2 * i) for i in range(10)]
         # make sure to get array of records
         res = context.collection(np.array(input_, dtype="i4,i4")).collect()
-        self.assertListEqual(res.astuplelist(), input_)
+        self.assertListEqual(sorted(res.astuples()), input_)
 
     def test_array_scalar_index(self):
         context = JitqContext()
         input_ = range(10)
         res = context.collection(np.array(input_), add_index=True) \
             .collect()
-        self.assertListEqual(res.astuplelist(), list(enumerate(input_)))
+        self.assertListEqual(sorted(res.astuples()), list(enumerate(input_)))
 
     def test_array_tuple_index(self):
         context = JitqContext()
@@ -68,20 +68,20 @@ class TestCollection(unittest.TestCase):
         res = context.collection(np.array(input_, dtype="i4,i4"),
                                  add_index=True).collect()
         truth = [(i,) + r for i, r in enumerate(input_)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_pandas_scalar(self):
         context = JitqContext()
         input_ = range(10)
         res = context.collection(pd.DataFrame(list(input_))[0]) \
             .map(lambda x: x + 0).collect()
-        self.assertListEqual(res.astuplelist(), list(input_))
+        self.assertListEqual(sorted(res.astuples()), list(input_))
 
     def test_pandas_tuple(self):
         context = JitqContext()
         input_ = [(i, 2 * i) for i in range(10)]
         res = context.collection(pd.DataFrame(list(input_))).collect()
-        self.assertListEqual(res.astuplelist(), input_)
+        self.assertListEqual(sorted(res.astuples()), input_)
 
     def test_pandas_scalar_index(self): \
             # pragma pylint: disable=invalid-name
@@ -90,7 +90,7 @@ class TestCollection(unittest.TestCase):
         res = context.collection(pd.DataFrame(input_), add_index=True) \
             .collect()
         truth = list(enumerate([(i,) for i in input_]))
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_pandas_tuple_index(self): \
             # pragma pylint: disable=invalid-name
@@ -99,7 +99,7 @@ class TestCollection(unittest.TestCase):
         res = context.collection(pd.DataFrame(input_), add_index=True) \
             .collect()
         truth = [(i, ) + r for i, r in enumerate(input_)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     @unittest.skip("Not implemented")
     def test_array_tuple_hetosize(self):
@@ -107,7 +107,7 @@ class TestCollection(unittest.TestCase):
         input_ = [(i, 2 * i) for i in range(10)] + \
                  [(i, i + 1, i * 2) for i in range(5)]
         res = context.collection(np.array(input_)).collect()
-        self.assertListEqual(res.astuplelist(), input_)
+        self.assertListEqual(sorted(res.astuples()), input_)
 
     # pylint: disable=no-self-use
     @unittest.skip("Not implemented")
@@ -170,22 +170,25 @@ class TestRange(unittest.TestCase):
     def test_simple(self):
         context = JitqContext()
         res = context.range_(0, 10).collect()
-        self.assertListEqual(res.astuplelist(), list(range(10)))
+        self.assertListEqual(sorted(res.astuples()),
+                             list(range(10)))
 
     def test_start(self):
         context = JitqContext()
         res = context.range_(10, 20).collect()
-        self.assertListEqual(res.astuplelist(), list(range(10, 20)))
+        self.assertListEqual(sorted(res.astuples()),
+                             list(range(10, 20)))
 
     def test_step(self):
         context = JitqContext()
         res = context.range_(10, 20, 2).collect()
-        self.assertListEqual(res.astuplelist(), list(range(10, 20, 2)))
+        self.assertListEqual(sorted(res.astuples()),
+                             list(range(10, 20, 2)))
 
     def test_float(self):
         context = JitqContext()
         res = context.range_(10.5, 20.0, 2.0).collect()
-        self.assertListEqual(res.astuplelist(),
+        self.assertListEqual(sorted(res.astuples()),
                              list(np.arange(10.5, 20.0, 2.0)))
 
     def test_reiterable(self):
@@ -207,7 +210,7 @@ class TestJoin(unittest.TestCase):
         data2 = jitq_context.collection(input_2)
         res = data1.join(data2).collect()
         truth = [i for i in input_1 if i in input_2]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     @unittest.skip("Bug in CPP back-end related to empty structs")
     def test_scalar_left(self):
@@ -219,7 +222,7 @@ class TestJoin(unittest.TestCase):
         data2 = jitq_context.collection(input_2)
         res = data1.join(data2).collect()
         truth = [t for t in input_2 if t[0] in input_1]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_scalar_right(self):
         input_1 = list(enumerate(range(10)))
@@ -230,7 +233,7 @@ class TestJoin(unittest.TestCase):
         data2 = jitq_context.collection(input_2)
         res = data1.join(data2).collect()
         truth = [t for t in input_1 if t[0] in input_2]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_nonmatching_keys(self):
         input_1 = list(enumerate(range(10)))
@@ -250,7 +253,7 @@ class TestJoin(unittest.TestCase):
 
         res = data1.join(data2).collect()
         truth = [(r, r * 10, r * 13, r + 100) for r in range(5, 10)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     @unittest.skip("Bug in CPP back-end related to empty structs")
     def test_left_single_field(self):
@@ -262,7 +265,7 @@ class TestJoin(unittest.TestCase):
 
         res = data1.join(data2).collect()
         truth = [(r, r * 13, r + 100) for r in range(5, 10)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_right_single_field(self):
         jitq_context = JitqContext()
@@ -273,7 +276,7 @@ class TestJoin(unittest.TestCase):
 
         res = data1.join(data2).collect()
         truth = [(r, r * 10) for r in range(5, 10)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_repeated_keys(self):
         jitq_context = JitqContext()
@@ -286,7 +289,7 @@ class TestJoin(unittest.TestCase):
         res = joined.collect()
         truth = [(1, 2, 22, 33), (1, 3, 22, 33), (1, 2, 44, 55),
                  (1, 3, 44, 55), (2, 4, 33, 44), (2, 6, 33, 44)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), sorted(truth))
 
 
 class TestFilter(unittest.TestCase):
@@ -305,7 +308,7 @@ class TestFilter(unittest.TestCase):
             .filter(lambda w: w % 2 == 0) \
             .collect()
         truth = list(filter(lambda w: w % 2 == 0, range(0, 10)))
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_count_tuple(self):
         jitq_context = JitqContext()
@@ -323,7 +326,7 @@ class TestFilter(unittest.TestCase):
             .filter(lambda w: w[0] % 2 == 0) \
             .collect()
         truth = list(filter(lambda w: w[0] % 2 == 0, input_))
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_constant_false(self):
         jitq_context = JitqContext()
@@ -331,7 +334,7 @@ class TestFilter(unittest.TestCase):
         res = jitq_context.collection(input_) \
             .filter(lambda t: False) \
             .collect()
-        self.assertListEqual(res.astuplelist(), [])
+        self.assertListEqual(sorted(res.astuples()), [])
 
     def test_move_around(self):
         jitq_context = JitqContext()
@@ -341,7 +344,7 @@ class TestFilter(unittest.TestCase):
             .filter(lambda t: t[1] % 2 == 0) \
             .collect()
         truth = [(0, 0), (0, 2), (0, 4), (0, 6), (0, 8)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_multiple_writers1(self):
         jitq_context = JitqContext()
@@ -351,7 +354,7 @@ class TestFilter(unittest.TestCase):
             .filter(lambda t: (t[0] + t[1]) % 3 == 0) \
             .collect()
         truth = [(1, 2), (4, 5), (7, 8)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_multiple_writers2(self):
         jitq_context = JitqContext()
@@ -361,7 +364,7 @@ class TestFilter(unittest.TestCase):
             .filter(lambda t: t[0] + t[1] < 10) \
             .collect()
         truth = list(enumerate(range(5)))
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
 
 class TestMap(unittest.TestCase):
@@ -371,7 +374,8 @@ class TestMap(unittest.TestCase):
         res = jitq_context.collection(range(0, 10)) \
             .map(lambda i: i + 2) \
             .collect()
-        self.assertListEqual(res.astuplelist(), [i + 2 for i in range(0, 10)])
+        self.assertListEqual(sorted(res.astuples()),
+                             [i + 2 for i in range(0, 10)])
 
     def test_scalar_to_tuple(self):
         jitq_context = JitqContext()
@@ -379,7 +383,7 @@ class TestMap(unittest.TestCase):
             .map(lambda i: (i, (i, i * 10))) \
             .collect()
         truth = [(i, (i, i * 10)) for i in range(0, 10)]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_tuple_to_scalar(self):
         jitq_context = JitqContext()
@@ -387,7 +391,8 @@ class TestMap(unittest.TestCase):
         res = jitq_context.collection(input_) \
             .map(lambda t: t[0] + t[1]) \
             .collect()
-        self.assertListEqual(res.astuplelist(), [t[0] + t[1] for t in input_])
+        self.assertListEqual(sorted(res.astuples()),
+                             [t[0] + t[1] for t in input_])
 
     def test_tuple_to_tuple(self):
         jitq_context = JitqContext()
@@ -396,7 +401,7 @@ class TestMap(unittest.TestCase):
             .map(lambda t: (t[0] * 2, t[1] * 2)) \
             .collect()
         truth = [(t[0] * 2, t[1] * 2) for t in input_]
-        self.assertListEqual(res.astuplelist(), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_count(self):
         jitq_context = JitqContext()
@@ -550,14 +555,14 @@ class TestCache(unittest.TestCase):
             res = context.collection(range(0, 10)) \
                 .map(lambda t: t + 1) \
                 .collect()
-            self.assertListEqual(list(res), list(range(1, 11)))
+            self.assertListEqual(sorted(res.astuples()), list(range(1, 11)))
 
     def test_map2(self):
         context = JitqContext()
         res = context.collection(range(0, 10)) \
             .map(lambda t: t + 2) \
             .collect()
-        self.assertListEqual(list(res), list(range(2, 12)))
+        self.assertListEqual(sorted(res.astuples()), list(range(2, 12)))
 
     def test_filter1(self):
         for _ in range(2):
@@ -565,14 +570,14 @@ class TestCache(unittest.TestCase):
             res = context.collection(range(0, 10)) \
                 .filter(lambda t: t % 2 == 0) \
                 .collect()
-            self.assertListEqual(list(res), list(range(0, 10, 2)))
+            self.assertListEqual(sorted(res.astuples()), list(range(0, 10, 2)))
 
     def test_filter2(self):
         context = JitqContext()
         res = context.collection(range(0, 10)) \
             .filter(lambda t: t % 2 == 1) \
             .collect()
-        self.assertListEqual(list(res), list(range(1, 10, 2)))
+        self.assertListEqual(sorted(res.astuples()), list(range(1, 10, 2)))
 
         # TODO(sabir): test cases for the caching mechanism of all operators
 
@@ -584,7 +589,7 @@ class TestSortedness(unittest.TestCase):
                      .reduce_by_key(lambda i1, i2: i1 + i2)\
                      .collect()
         truth = list(enumerate(range(10)))
-        self.assertListEqual(sorted(res.astuplelist()), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_range_grouped(self):
         context = JitqContext()
@@ -593,7 +598,7 @@ class TestSortedness(unittest.TestCase):
                      .reduce_by_key(lambda i1, i2: i1 + i2)\
                      .collect()
         truth = list(enumerate(range(10)))
-        self.assertListEqual(sorted(res.astuplelist()), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_cartesian_grouped(self):
         context = JitqContext()
@@ -603,7 +608,7 @@ class TestSortedness(unittest.TestCase):
                      .reduce_by_key(lambda i1, i2: i1 + i2)\
                      .collect()
         truth = [(i, sum(range(5))) for i in range(2)]
-        self.assertListEqual(sorted(res.astuplelist()), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_join_right_grouped(self):
         context = JitqContext()
@@ -614,7 +619,7 @@ class TestSortedness(unittest.TestCase):
                      .reduce_by_key(lambda i1, i2: i1 + i2)\
                      .collect()
         truth = [(i, int(i / 2)) for i in range(10)]
-        self.assertListEqual(sorted(res.astuplelist()), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_join_key_grouped(self):
         context = JitqContext()
@@ -624,7 +629,7 @@ class TestSortedness(unittest.TestCase):
                      .reduce_by_key(lambda i1, i2: i1 + i2)\
                      .collect()
         truth = [(i, int(i / 2)) for i in range(10)]
-        self.assertListEqual(sorted(res.astuplelist()), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_join_left_grouped(self):
         context = JitqContext()
@@ -635,7 +640,7 @@ class TestSortedness(unittest.TestCase):
                      .reduce_by_key(lambda i1, i2: i1 + i2)\
                      .collect()
         truth = [(i, i * 4 + 1) for i in range(5)]
-        self.assertListEqual(sorted(res.astuplelist()), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
 
 class TestFilterPushDown(unittest.TestCase):
@@ -647,7 +652,7 @@ class TestFilterPushDown(unittest.TestCase):
                      .filter(lambda a: a[1] == a[2]) \
                      .collect()
         truth = [(c, a, a) for c, a in input_]
-        self.assertListEqual(sorted(res.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(res.astuples()), sorted(truth))
 
     def test_push_up(self):
         context = JitqContext()
@@ -657,7 +662,7 @@ class TestFilterPushDown(unittest.TestCase):
                      .join(context.collection(input_)) \
                      .collect()
         truth = [(2, 4, 4), (2, 4, 6), (2, 6, 4), (2, 6, 6)]
-        self.assertListEqual(sorted(res.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(res.astuples()), sorted(truth))
 
     def test_dag1(self):
         jitq_context = JitqContext()
@@ -665,7 +670,7 @@ class TestFilterPushDown(unittest.TestCase):
         result = input1.map(lambda t: t).filter(lambda i: i == 0) \
                        .cartesian(input1).collect()
         truth = [(0, 0), (0, 1)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_dag2(self):
         jitq_context = JitqContext()
@@ -674,7 +679,7 @@ class TestFilterPushDown(unittest.TestCase):
                        .filter(lambda t: t[0] == 0) \
                        .collect()
         truth = [(0, 0), (0, 1)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_dag3(self):
         jitq_context = JitqContext()
@@ -683,7 +688,7 @@ class TestFilterPushDown(unittest.TestCase):
                        .filter(lambda t: t[1] == 0) \
                        .collect()
         truth = [(0, 0), (1, 0)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_dag4(self):
         jitq_context = JitqContext()
@@ -692,7 +697,7 @@ class TestFilterPushDown(unittest.TestCase):
                        .filter(lambda t: t[0] == 2) \
                        .collect()
         truth = [(2, 3, 1)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_dag5(self):
         jitq_context = JitqContext()
@@ -701,7 +706,7 @@ class TestFilterPushDown(unittest.TestCase):
                        .filter(lambda t: t[1] == 2) \
                        .collect()
         truth = [(1, 2, 0)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_dag6(self):
         jitq_context = JitqContext()
@@ -710,7 +715,7 @@ class TestFilterPushDown(unittest.TestCase):
                        .filter(lambda t: t[2] == 2) \
                        .collect()
         truth = [(3, 4, 2)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
 
 class TestIntegration(unittest.TestCase):
@@ -720,14 +725,16 @@ class TestIntegration(unittest.TestCase):
         input_ = jitq_context.collection(range(0, 2))
         res1 = input_.collect()
         res2 = input_.collect()
-        self.assertListEqual(res1.astuplelist(), res2.astuplelist())
+        self.assertListEqual(sorted(res1.astuples()),
+                             sorted(res2.astuples()))
 
     def test_reuse_and_modify_dag(self):
         jitq_context = JitqContext()
         input_ = jitq_context.collection(range(0, 2))
         res1 = input_.collect()
         res2 = input_.filter(lambda t: True).collect()
-        self.assertListEqual(res1.astuplelist(), res2.astuplelist())
+        self.assertListEqual(sorted(res1.astuples()),
+                             sorted(res2.astuples()))
 
     def test_dag_explosion(self):
         jitq_context = JitqContext()
@@ -736,21 +743,21 @@ class TestIntegration(unittest.TestCase):
         for _ in range(10):
             operator = operator.join(operator)
         res = operator.collect()
-        self.assertListEqual(res.astuplelist(), list(input_))
+        self.assertListEqual(sorted(res.astuples()), list(input_))
 
     def test_dag1(self):
         jitq_context = JitqContext()
         input1 = jitq_context.collection(range(0, 2))
         result = input1.cartesian(input1).collect()
         truth = [(0, 0), (0, 1), (1, 0), (1, 1)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_dag2(self):
         jitq_context = JitqContext()
         input1 = jitq_context.collection(range(0, 2)).filter(lambda t: True)
         result = input1.cartesian(input1).collect()
         truth = [(0, 0), (0, 1), (1, 0), (1, 1)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_map_filter_map(self):
         jitq_context = JitqContext()
@@ -771,7 +778,7 @@ class TestIntegration(unittest.TestCase):
             .map(map_2) \
             .collect()
         truth = list(map(map_2, filter(filter_1, map(map_1, input_))))
-        self.assertListEqual(list(res), truth)
+        self.assertListEqual(sorted(res.astuples()), truth)
 
     def test_join_input_order(self):
         jitq_context = JitqContext()
@@ -781,7 +788,7 @@ class TestIntegration(unittest.TestCase):
                        .filter(lambda t: t[1] == 2) \
                        .collect()
         truth = [(1, 2, 0)]
-        self.assertListEqual(sorted(result.astuplelist()), sorted(truth))
+        self.assertListEqual(sorted(result.astuples()), sorted(truth))
 
     def test_all_operators(self):
         context = JitqContext()
