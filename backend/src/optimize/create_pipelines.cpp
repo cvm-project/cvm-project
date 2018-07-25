@@ -18,6 +18,14 @@ bool IsPipelineDriver(DAGOperator *const op) {
             >(op);
 }
 
+bool IsSingleTupleProducer(DAGOperator *const op) {
+    return IsInstanceOf<              //
+            DAGMaterializeRowVector,  //
+            DAGEnsureSingleTuple,     //
+            DAGReduce                 //
+            >(op);
+}
+
 bool IsPipelinePredecessor(DAGOperator *const op) {
     return IsInstanceOf<         //
             DAGParameterLookup,  //
@@ -112,5 +120,26 @@ void CreatePipelines::optimize() {
 
         // Done with this pipeline; now it should be a tree
         assert(inner_dag->IsTree());
+
+        // If necessary, materialize at end of pipeline and unnest before all
+        // consuming operators
+        if (!IsSingleTupleProducer(driver)) {
+            auto const mat_op = new DAGMaterializeRowVector();
+            inner_dag->AddOperator(mat_op);
+            inner_dag->AddFlow(inner_dag->output().op, mat_op);
+            inner_dag->set_output(mat_op);
+
+            auto const scan_op = new DAGCollection();
+            dag_->AddOperator(scan_op);
+
+            std::vector<DAG::Flow> out_flows;
+            boost::copy(dag_->out_flows(pop), std::back_inserter(out_flows));
+            for (auto const f : out_flows) {
+                dag_->RemoveFlow(f);
+                dag_->AddFlow(scan_op, f.target.op, f.target.port);
+            }
+
+            dag_->AddFlow(pop, scan_op);
+        }
     }
 }
