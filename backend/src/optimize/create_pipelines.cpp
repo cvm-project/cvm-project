@@ -2,9 +2,11 @@
 
 #include <unordered_set>
 
+#include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/range/algorithm.hpp>
 
 #include "dag/DAGOperators.h"
+#include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
 
 using dag::utils::IsInstanceOf;
@@ -24,20 +26,17 @@ bool IsPipelinePredecessor(DAGOperator *const op) {
 }
 
 void CreatePipelines::optimize() {
-    std::unordered_set<DAGOperator *> pipeline_drivers;
+    std::vector<DAGOperator *> pipeline_drivers;
 
-    // Collect pipeline drivers: multiple consumers
-    for (auto const op : dag_->operators()) {
-        if (dag_->out_degree(op) > 1) pipeline_drivers.insert(op);
-    }
-
-    // Collect pipeline drivers: main sink
-    pipeline_drivers.insert(dag_->output().op);
-
-    // Collect pipeline drivers: materialization points
-    for (auto const op : dag_->operators()) {
-        if (IsPipelineDriver(op)) pipeline_drivers.insert(op);
-    }
+    // Collect pipeline drivers: specific operator types and operators with
+    // multiple consumers
+    dag::utils::ApplyInReverseTopologicalOrder(
+            dag_, [&](DAGOperator *const op) {
+                if (dag_->out_degree(op) > 1 || IsPipelineDriver(op)) {
+                    pipeline_drivers.push_back(op);
+                }
+            });
+    assert(boost::algorithm::any_of_equal(pipeline_drivers, dag_->output().op));
 
     // Create a tree-shaped sub-plan for each pipeline driver
     for (const auto driver : pipeline_drivers) {
@@ -80,8 +79,7 @@ void CreatePipelines::optimize() {
             pending_in_flows.pop_back();
 
             // Handle beginning of pipeline: create input parameter
-            if (pipeline_drivers.count(in_flow.source.op) > 0 ||
-                IsPipelinePredecessor(in_flow.source.op)) {
+            if (IsPipelinePredecessor(in_flow.source.op)) {
                 // Connect outer predecessor to new input port of the pipeline
                 auto const input_port = pop->num_inputs++;
                 dag_->AddFlow(in_flow.source.op, in_flow.source.port, pop,
