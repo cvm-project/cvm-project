@@ -1,5 +1,7 @@
+#include "runtime/free.hpp"
 #include "runtime/values/array.hpp"
 #include "runtime/values/atomics.hpp"
 #include "runtime/values/json_parsing.hpp"
+#include "runtime/values/none.hpp"
 #include "runtime/values/tuple.hpp"
 #include "runtime/values/value.hpp"
