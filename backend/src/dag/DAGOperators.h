@@ -7,6 +7,7 @@
 #include "DAGConstantTuple.h"
 #include "DAGEnsureSingleTuple.h"
 #include "DAGFilter.h"
+#include "DAGGroupBy.h"
 #include "DAGJoin.h"
 #include "DAGMap.h"
 #include "DAGMaterializeRowVector.h"

@@ -16,6 +16,7 @@ class DAGCollection;
 class DAGConstantTuple;
 class DAGEnsureSingleTuple;
 class DAGFilter;
+class DAGGroupBy;
 class DAGJoin;
 class DAGMap;
 class DAGMaterializeRowVector;
@@ -40,6 +41,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGConstantTuple,                   //
         DAGEnsureSingleTuple,               //
         DAGFilter,                          //
+        DAGGroupBy,                         //
         DAGJoin,                            //
         DAGMap,                             //
         DAGMaterializeRowVector,            //

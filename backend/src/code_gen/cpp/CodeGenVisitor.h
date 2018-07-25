@@ -40,6 +40,7 @@ public:
     void operator()(DAGAssertCorrectOpenNextClose *op);
     void operator()(DAGCollection *op);
     void operator()(DAGConstantTuple *op);
+    void operator()(DAGGroupBy *op);
     void operator()(DAGMap *op);
     void operator()(DAGMaterializeRowVector *op);
     void operator()(DAGParallelMap *op);

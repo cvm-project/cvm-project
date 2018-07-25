@@ -82,6 +82,22 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return dag_->predecessor(op)->tuple->type;
         }
 
+        const Tuple *operator()(const DAGGroupBy *const op) const {
+            auto const input_type = dag_->predecessor(op)->tuple->type;
+            auto const partition_id_type = input_type->field_types[0];
+
+            if (partition_id_type != Atomic::MakeAtomic("long")) {
+                throw std::invalid_argument(
+                        "First field of GroupBy must be 'long'");
+            }
+            auto const element_type =
+                    Tuple::MakeTuple({input_type->field_types[1]});
+
+            return Tuple::MakeTuple(
+                    {partition_id_type,
+                     Array::MakeArray(element_type, ArrayLayout::kC, 1)});
+        }
+
         const Tuple *operator()(const DAGFilter *const op) const {
             return dag_->predecessor(op)->tuple->type;
         }

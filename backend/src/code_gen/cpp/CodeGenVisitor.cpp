@@ -50,6 +50,13 @@ void CodeGenVisitor::operator()(DAGConstantTuple *op) {
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {tuple_arg});
 }
 
+void CodeGenVisitor::operator()(DAGGroupBy *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "GroupByOperator");
+
+    emitOperatorMake(var_name, "GroupByOperator", op, {}, {});
+}
+
 void CodeGenVisitor::operator()(DAGMap *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
