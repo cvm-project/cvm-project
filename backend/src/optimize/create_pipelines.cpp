@@ -2,28 +2,26 @@
 
 #include <unordered_set>
 
-#include <boost/mpl/list.hpp>
 #include <boost/range/algorithm.hpp>
 
 #include "dag/DAGOperators.h"
-#include "utils/visitor.hpp"
+#include "dag/utils/type_traits.hpp"
 
-class CollectPipelineDriversVisitor
-    : public Visitor<CollectPipelineDriversVisitor, DAGOperator,
-                     boost::mpl::list<                 //
-                             DAGMaterializeRowVector,  //
-                             DAGEnsureSingleTuple      //
-                             >::type> {
-public:
-    void operator()(DAGMaterializeRowVector *const op) {
-        pipeline_drivers_.insert(op);
-    }
-    void operator()(DAGEnsureSingleTuple *const op) {
-        pipeline_drivers_.insert(op);
-    }
+using dag::utils::IsInstanceOf;
 
-    std::unordered_set<DAGOperator *> pipeline_drivers_;
-};
+bool IsPipelineDriver(DAGOperator *const op) {
+    return IsInstanceOf<              //
+            DAGMaterializeRowVector,  //
+            DAGEnsureSingleTuple      //
+            >(op);
+}
+
+bool IsPipelinePredecessor(DAGOperator *const op) {
+    return IsInstanceOf<         //
+            DAGParameterLookup,  //
+            DAGPipeline          //
+            >(op);
+}
 
 void CreatePipelines::optimize() {
     std::unordered_set<DAGOperator *> pipeline_drivers;
@@ -37,13 +35,9 @@ void CreatePipelines::optimize() {
     pipeline_drivers.insert(dag_->output().op);
 
     // Collect pipeline drivers: materialization points
-    CollectPipelineDriversVisitor collect_visitor;
     for (auto const op : dag_->operators()) {
-        collect_visitor.Visit(op);
+        if (IsPipelineDriver(op)) pipeline_drivers.insert(op);
     }
-    std::copy(collect_visitor.pipeline_drivers_.begin(),
-              collect_visitor.pipeline_drivers_.end(),
-              std::inserter(pipeline_drivers, pipeline_drivers.end()));
 
     // Create a tree-shaped sub-plan for each pipeline driver
     for (const auto driver : pipeline_drivers) {
@@ -87,8 +81,7 @@ void CreatePipelines::optimize() {
 
             // Handle beginning of pipeline: create input parameter
             if (pipeline_drivers.count(in_flow.source.op) > 0 ||
-                dag_->in_degree(in_flow.source.op) == 0 ||
-                in_flow.source.op->name() == "pipeline") {
+                IsPipelinePredecessor(in_flow.source.op)) {
                 // Connect outer predecessor to new input port of the pipeline
                 auto const input_port = pop->num_inputs++;
                 dag_->AddFlow(in_flow.source.op, in_flow.source.port, pop,
