@@ -1,3 +1,6 @@
+#ifndef DAG_ALL_OPERATOR_DECLARATIONS_HPP
+#define DAG_ALL_OPERATOR_DECLARATIONS_HPP
+
 #include <type_traits>
 
 #include <boost/mpl/list.hpp>
@@ -44,3 +47,5 @@ using AllOperatorPointerTypes = typename boost::mpl::transform_view<
         AllOperatorTypes, std::add_pointer<boost::mpl::placeholders::_>>::type;
 
 }  // namespace dag
+
+#endif  // DAG_ALL_OPERATOR_DECLARATIONS_HPP
