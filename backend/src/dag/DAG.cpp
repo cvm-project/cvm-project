@@ -335,6 +335,7 @@ void DAG::set_input(const int dag_input_port, DAGOperator *const op,
 }
 
 void DAG::add_input(const int dag_input_port, const FlowTip &input) {
+    assert(to_operator(to_vertex(input.op)) == input.op);
     inputs_.emplace(dag_input_port, input);
 }
 
@@ -375,6 +376,7 @@ void DAG::set_output(DAGOperator *const op, const int operator_output_port) {
 }
 
 void DAG::set_output(const int dag_output_port, const FlowTip &output) {
+    assert(to_operator(to_vertex(output.op)) == output.op);
     outputs_[dag_output_port] = output;
 }
 
