@@ -117,7 +117,7 @@ class JITQCFunc(CFunc):
         # sig.args and c_args should both be flatten
         sig.args = flatten(sig.args)
         _, out = context.call_conv.call_function(
-            builder, function_ir, sig.return_type, sig.args, c_args, env=None)
+            builder, function_ir, sig.return_type, sig.args, c_args)
         if not self.is_small_return_type:
 
             # the out must be written to the retptr
