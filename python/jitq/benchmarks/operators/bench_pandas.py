@@ -95,7 +95,6 @@ def bench_map_reduce_by_key_map():
         result = result * 3 + 7
         grouped = result.groupby([0]).sum()
         grouped['bitmap'] = grouped > 0
-        return
 
     return run
 

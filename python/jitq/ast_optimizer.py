@@ -85,7 +85,7 @@ def ast_optimize(func, opts):
     lines = src.split("\n")
     tabs = 0
     for line in lines[0]:
-        if line == "\t" or line == " ":
+        if line in ("\t", " "):
             tabs += 1
         else:
             break

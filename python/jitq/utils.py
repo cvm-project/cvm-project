@@ -206,7 +206,7 @@ def flatten(iterable_):
 
     if not isinstance(iterable_,
                       (tuple, list, nb.types.UniTuple, nb.types.Tuple)):
-        return iterable_,
+        return (iterable_,)
     return tuple(rec(iterable_))
 
 

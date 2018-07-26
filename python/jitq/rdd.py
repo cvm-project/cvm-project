@@ -4,8 +4,7 @@ import json
 
 import io
 import numba
-import numba.types as types
-from numba import typeof
+from numba import typeof, types
 import numpy as np
 from pandas import DataFrame
 from cffi import FFI
@@ -62,7 +61,7 @@ class RDD(abc.ABC):
 
     """
 
-    class Visitor(object):
+    class Visitor:
         def __init__(self, func):
             self.func = func
             self.visited = set()
