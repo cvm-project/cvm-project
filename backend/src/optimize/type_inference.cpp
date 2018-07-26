@@ -17,6 +17,7 @@
 using dag::type::Array;
 using dag::type::ArrayLayout;
 using dag::type::Atomic;
+using dag::type::FieldType;
 using dag::type::Tuple;
 
 const Tuple *ComputeOutputType(const DAG *const dag,
@@ -155,6 +156,29 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             assert(dag_->has_inner_dag(op));
             auto const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
+        }
+
+        const Tuple *operator()(const DAGProjection *const op) const {
+            auto const input_type = dag_->predecessor(op)->tuple->type;
+            auto const &input_field_types = input_type->field_types;
+
+            std::vector<const FieldType *> output_field_types;
+            for (auto const pos : op->positions) {
+                if (pos >= input_field_types.size()) {
+                    auto const num_input_fields =
+                            std::to_string(input_field_types.size());
+                    throw std::invalid_argument(
+                            std::string() +
+                            "Input of Projection operator has fewer fields "
+                            "than it refers to.\n" +
+                            "    Number of fields: " + num_input_fields + "\n" +
+                            "    Field accessed:   " + std::to_string(pos));
+                }
+
+                output_field_types.emplace_back(input_field_types.at(pos));
+            }
+
+            return Tuple::MakeTuple(output_field_types);
         }
 
         const Tuple *operator()(const DAGRange *const op) const {

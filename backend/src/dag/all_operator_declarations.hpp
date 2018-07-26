@@ -23,6 +23,7 @@ class DAGParallelMap;
 class DAGParameterLookup;
 class DAGPartition;
 class DAGPipeline;
+class DAGProjection;
 class DAGRange;
 class DAGReduce;
 class DAGReduceByKey;
@@ -46,6 +47,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGParameterLookup,                 //
         DAGPartition,                       //
         DAGPipeline,                        //
+        DAGProjection,                      //
         DAGRange,                           //
         DAGReduce,                          //
         DAGReduceByKey,                     //

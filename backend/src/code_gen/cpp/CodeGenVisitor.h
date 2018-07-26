@@ -46,6 +46,7 @@ public:
     void operator()(DAGParameterLookup *op);
     void operator()(DAGPartition *op);
     void operator()(DAGPipeline *op);
+    void operator()(DAGProjection *op);
     void operator()(DAGReduce *op);
     void operator()(DAGRange *op);
     void operator()(DAGEnsureSingleTuple *op);

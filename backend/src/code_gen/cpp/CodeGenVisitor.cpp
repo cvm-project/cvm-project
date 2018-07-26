@@ -91,6 +91,34 @@ void CodeGenVisitor::operator()(DAGPartition *op) {
     emitOperatorMake(var_name, "PartitionOperator", op, {}, {"256"});
 }
 
+void CodeGenVisitor::operator()(DAGProjection *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "MapOperator");
+
+    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
+    auto return_type = operator_descs_[op].return_type;
+
+    const auto functor_class =
+            context_->GenerateSymbolName(var_name + "_func", true);
+
+    std::vector<std::string> call_args;
+    for (auto const pos : op->positions) {
+        call_args.emplace_back("t." + input_type->names[pos]);
+    }
+
+    context_->definitions() <<  //
+            format("class %s {"
+                   "public:"
+                   "    auto operator()(const %s &t) {"
+                   "        return %s{%s};"
+                   "    }"
+                   "};") %
+                    functor_class % input_type->name % return_type->name %
+                    join(call_args, ",");
+
+    emitOperatorMake(var_name, "MapOperator", op, {}, {functor_class + "()"});
+}
+
 void CodeGenVisitor::operator()(DAGReduce *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ReduceOperator");

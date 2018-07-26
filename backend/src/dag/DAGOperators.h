@@ -14,6 +14,7 @@
 #include "DAGParameterLookup.h"
 #include "DAGPartition.h"
 #include "DAGPipeline.h"
+#include "DAGProjection.h"
 #include "DAGRange.h"
 #include "DAGReduce.h"
 #include "DAGReduceByKey.h"
