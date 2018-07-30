@@ -23,7 +23,7 @@
 
 using PortInfoMap = std::unordered_map<
         const DAGOperator *,
-        std::unordered_map<int, std::tuple<Agnode_t *, std::string>>>;
+        std::unordered_multimap<int, std::tuple<Agnode_t *, std::string>>>;
 
 std::string node_name(const std::string &graph_name,
                       const DAGOperator *const op) {
@@ -218,24 +218,35 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
 
     // Compute edges from flows
     for (const auto &f : dag->flows()) {
-        // Lookup port info for source and target
-        const auto source_info =
-                output_port_labels.at(f.source.op).at(f.source.port);
-        const auto target_info =
-                input_port_labels.at(f.target.op).at(f.target.port);
+        // Lookup port infos for source and target
+        const auto source_infos =
+                output_port_labels.at(f.source.op).equal_range(f.source.port);
+        const auto target_infos =
+                input_port_labels.at(f.target.op).equal_range(f.target.port);
 
-        const auto source_node = get<0>(source_info);
-        const auto target_node = get<0>(target_info);
+        const auto source_info_range = boost::make_iterator_range(source_infos);
+        const auto target_info_range = boost::make_iterator_range(target_infos);
 
-        // Create edge
-        const auto edge_name = std::to_string(f.source.port) + "-" +
-                               std::to_string(f.target.port);
-        Agedge_t *const edge =
-                agedge(g, source_node, target_node, to_char_ptr(edge_name), 1);
+        // Add an edge for each combination
+        for (auto const &source_info : source_info_range) {
+            for (auto const &target_info : target_info_range) {
+                const auto source_node = get<0>(source_info.second);
+                const auto target_node = get<0>(target_info.second);
 
-        // Set edge ports
-        agsafeset(edge, "headport", to_char_ptr(get<1>(target_info)), "");
-        agsafeset(edge, "tailport", to_char_ptr(get<1>(source_info)), "");
+                const auto &source_port_label = get<1>(source_info.second);
+                const auto &target_port_label = get<1>(target_info.second);
+
+                // Create edge
+                const auto edge_name = std::to_string(f.source.port) + "-" +
+                                       std::to_string(f.target.port);
+                Agedge_t *const edge = agedge(g, source_node, target_node,
+                                              to_char_ptr(edge_name), 1);
+
+                // Set edge ports
+                agsafeset(edge, "headport", to_char_ptr(target_port_label), "");
+                agsafeset(edge, "tailport", to_char_ptr(source_port_label), "");
+            }
+        }
     }
 }
 
