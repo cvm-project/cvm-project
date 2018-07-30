@@ -126,3 +126,7 @@ python3 -m unittest discover -v -s python/jitq/tests
 cd backend/build
 ctest -V
 ```
+## Common Issues
+1. libruntime.so cannot be found by python cffi
+
+Add $JITQPATH/backend/build to the environment variable LD_LIBRARY_PATH.
