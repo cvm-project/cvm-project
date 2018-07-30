@@ -1,17 +1,16 @@
 #ifndef OPTIMIZE_ATTRIBUTEID_TRACKING_HPP
 #define OPTIMIZE_ATTRIBUTEID_TRACKING_HPP
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class AttributeIdTracking {
+namespace optimize {
+
+class AttributeIdTracking : public DagTransformation {
 public:
-    explicit AttributeIdTracking(DAG* const dag) : dag_(dag) {}
-
-    void optimize();
-
-private:
-    DAG* const dag_;
+    void Run(DAG *dag) const override;
+    std::string name() const override { return "attribute_id_tracking"; }
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_ATTRIBUTEID_TRACKING_HPP

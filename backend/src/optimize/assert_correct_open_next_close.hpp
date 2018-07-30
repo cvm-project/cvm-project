@@ -1,17 +1,18 @@
 #ifndef OPTIMIZE_ASSERT_CORRECT_OPEN_NEXT_CLOSE_H
 #define OPTIMIZE_ASSERT_CORRECT_OPEN_NEXT_CLOSE_H
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class AssertCorrectOpenNextClose {
+namespace optimize {
+
+class AssertCorrectOpenNextClose : public DagTransformation {
 public:
-    explicit AssertCorrectOpenNextClose(DAG* const dag) : dag_(dag) {}
-
-    void optimize();
-
-private:
-    DAG* const dag_;
+    void Run(DAG *dag) const override;
+    std::string name() const override {
+        return "assert_correct_open_next_close";
+    }
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_ASSERT_CORRECT_OPEN_NEXT_CLOSE_H

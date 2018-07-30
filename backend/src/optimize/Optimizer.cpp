@@ -16,58 +16,58 @@
 
 void Optimizer::run(DAG *dag) {
     // Verify tuple types
-    TypeInference ti_check(dag, true);
-    TypeInference ti(dag);
-    ti_check.optimize();
+    optimize::TypeInference ti_check(true);
+    optimize::TypeInference ti;
+    ti_check.Run(dag);
 
     // Materialize results that are consumed multiple times
-    MaterializeMultipleReads mmr(dag);
-    mmr.optimize();
+    optimize::MaterializeMultipleReads mmr;
+    mmr.Run(dag);
 
     // Recompute output types
-    ti.optimize();
+    ti.Run(dag);
 
     // Column tracking
-    AttributeIdTracking ct(dag);
-    ct.optimize();
+    optimize::AttributeIdTracking ct;
+    ct.Run(dag);
 #ifndef NDEBUG
-    ti_check.optimize();
+    ti_check.Run(dag);
 #endif  // NDEBUG
 
     // Move around filters
-    SimplePredicateMoveAround spma(dag);
-    spma.optimize();
+    optimize::SimplePredicateMoveAround spma;
+    spma.Run(dag);
 #ifndef NDEBUG
-    ti_check.optimize();
+    ti_check.Run(dag);
 #endif  // NDEBUG
 
     // Determine sortedness
-    DetermineSortedness sort(dag);
-    sort.optimize();
+    optimize::DetermineSortedness sort;
+    sort.Run(dag);
 #ifndef NDEBUG
-    ti_check.optimize();
+    ti_check.Run(dag);
 #endif  // NDEBUG
 
     // Replace GroupByKey with grouped variant
-    GroupedReduceByKey grbk(dag);
-    grbk.optimize();
+    optimize::GroupedReduceByKey grbk;
+    grbk.Run(dag);
 #ifndef NDEBUG
-    ti_check.optimize();
+    ti_check.Run(dag);
 #endif  // NDEBUG
 
     // Split the plan into tree-shaped sub-plans
-    CreatePipelines cp(dag);
-    cp.optimize();
-    ti.optimize();
-    sort.optimize();
+    optimize::CreatePipelines cp;
+    cp.Run(dag);
+    ti.Run(dag);
+    sort.Run(dag);
 
 #ifdef ASSERT_OPEN_NEXT_CLOSE
-    AssertCorrectOpenNextClose acopn(dag);
-    acopn.optimize();
-    ti.optimize();
+    optimize::AssertCorrectOpenNextClose acopn;
+    acopn.Run(dag);
+    ti.Run(dag);
 #endif  // ASSERT_OPEN_NEXT_CLOSE
 
     // Make ID and order canonical
-    Canonicalize canon(dag);
-    canon.optimize();
+    optimize::Canonicalize canon;
+    canon.Run(dag);
 }

@@ -1,17 +1,16 @@
 #ifndef OPTIMIZE_MATERIALIZE_MULTIPLE_READS_H
 #define OPTIMIZE_MATERIALIZE_MULTIPLE_READS_H
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class MaterializeMultipleReads {
+namespace optimize {
+
+class MaterializeMultipleReads : public DagTransformation {
 public:
-    explicit MaterializeMultipleReads(DAG* const dag) : dag_(dag) {}
-
-    void optimize();
-
-private:
-    DAG* const dag_;
+    void Run(DAG *dag) const override;
+    std::string name() const override { return "materialize_multiple_reads"; }
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_MATERIALIZE_MULTIPLE_READS_H

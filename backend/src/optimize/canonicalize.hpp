@@ -1,17 +1,16 @@
 #ifndef OPTIMIZE_CANONICALIZE_HPP
 #define OPTIMIZE_CANONICALIZE_HPP
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class Canonicalize {
+namespace optimize {
+
+class Canonicalize : public DagTransformation {
 public:
-    explicit Canonicalize(DAG* const dag) : dag_(dag) {}
-
-    void optimize();
-
-private:
-    DAG* const dag_;
+    void Run(DAG *dag) const override;
+    std::string name() const override { return "canonicalize"; }
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_CANONICALIZE_HPP

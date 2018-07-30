@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 
+#include "dag/DAG.h"
 #include "dag/DAGOperator.h"
 #include "dag/DAGOperators.h"
 #include "dag/all_operator_declarations.hpp"
@@ -143,27 +144,29 @@ private:
     const DAG *const dag_;
 };
 
-void AttributeIdTracking::optimize() {
+namespace optimize {
+
+void AttributeIdTracking::Run(DAG *const dag) const {
     // Track attribute_ids
-    const AttributeIdTrackingVisitor attribute_id_tracking_visitor(dag_);
+    const AttributeIdTrackingVisitor attribute_id_tracking_visitor(dag);
     dag::utils::ApplyInReverseTopologicalOrder(
-            dag_, attribute_id_tracking_visitor.functor());
+            dag, attribute_id_tracking_visitor.functor());
 
     // Reset and recompute read sets
-    for (const auto op : dag_->operators()) {
+    for (const auto op : dag->operators()) {
         op->read_set.clear();
     }
 
-    const DetermineReadSetVisitor determine_read_set_visitor(dag_);
+    const DetermineReadSetVisitor determine_read_set_visitor(dag);
     dag::utils::ApplyInReverseTopologicalOrder(
-            dag_, determine_read_set_visitor.functor());
+            dag, determine_read_set_visitor.functor());
 
     // Determine write set
-    for (const auto op : dag_->operators()) {
+    for (const auto op : dag->operators()) {
         op->write_set.clear();
 
         std::unordered_set<const dag::AttributeId *> input_attribute_ids;
-        for (const auto flow : dag_->in_flows(op)) {
+        for (const auto flow : dag->in_flows(op)) {
             const auto input_op = flow.source.op;
             for (const auto &field : input_op->tuple->fields) {
                 input_attribute_ids.insert(field->attribute_id().get());
@@ -177,3 +180,5 @@ void AttributeIdTracking::optimize() {
         }
     }
 }
+
+}  // namespace optimize

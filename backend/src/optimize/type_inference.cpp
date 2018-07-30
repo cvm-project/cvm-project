@@ -4,6 +4,7 @@
 
 #include <boost/format.hpp>
 
+#include "dag/DAG.h"
 #include "dag/DAGOperators.h"
 #include "dag/all_operator_declarations.hpp"
 #include "dag/type/array.hpp"
@@ -246,14 +247,18 @@ void SetInnerGraphInputTypes(DAGOperator *const op, const DAG *const dag) {
     }
 }
 
-void TypeInference::optimize() {
+namespace optimize {
+
+void TypeInference::Run(DAG *const dag) const {
     if (only_check_) {
         // Check output type
-        dag::utils::ApplyInReverseTopologicalOrderRecursively(dag_,
+        dag::utils::ApplyInReverseTopologicalOrderRecursively(dag,
                                                               CheckOutputType);
     } else {
         // Update output type
         dag::utils::ApplyInReverseTopologicalOrderRecursively(
-                dag_, SetInnerGraphInputTypes, RecomputeOutputType);
+                dag, SetInnerGraphInputTypes, RecomputeOutputType);
     }
 }
+
+}  // namespace optimize

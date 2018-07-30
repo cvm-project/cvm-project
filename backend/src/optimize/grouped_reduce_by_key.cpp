@@ -2,6 +2,7 @@
 
 #include <boost/mpl/list.hpp>
 
+#include "dag/DAG.h"
 #include "dag/DAGOperators.h"
 #include "utils/visitor.hpp"
 
@@ -20,9 +21,11 @@ struct CollectReduceByKeyVisitor
     const DAG *const dag_;
 };
 
-void GroupedReduceByKey::optimize() {
-    CollectReduceByKeyVisitor visitor(dag_);
-    for (auto const op : dag_->operators()) {
+namespace optimize {
+
+void GroupedReduceByKey::Run(DAG *const dag) const {
+    CollectReduceByKeyVisitor visitor(dag);
+    for (auto const op : dag->operators()) {
         visitor.Visit(op);
     }
 
@@ -34,17 +37,19 @@ void GroupedReduceByKey::optimize() {
         new_op->tuple = std::make_unique<dag::collection::Tuple>(*op->tuple);
         new_op->llvm_ir = op->llvm_ir;
 
-        dag_->AddOperator(new_op_ptr.release());
+        dag->AddOperator(new_op_ptr.release());
 
-        const auto out_flow = dag_->out_flow(op);
-        const auto in_flow = dag_->in_flow(op);
+        const auto out_flow = dag->out_flow(op);
+        const auto in_flow = dag->in_flow(op);
 
-        dag_->RemoveFlow(out_flow);
-        dag_->RemoveFlow(in_flow);
+        dag->RemoveFlow(out_flow);
+        dag->RemoveFlow(in_flow);
 
-        dag_->AddFlow(new_op, 0, out_flow.target.op, out_flow.target.port);
-        dag_->AddFlow(in_flow.source.op, in_flow.source.port, new_op, 0);
+        dag->AddFlow(new_op, 0, out_flow.target.op, out_flow.target.port);
+        dag->AddFlow(in_flow.source.op, in_flow.source.port, new_op, 0);
 
-        dag_->RemoveOperator(op);
+        dag->RemoveOperator(op);
     }
 }
+
+}  // namespace optimize

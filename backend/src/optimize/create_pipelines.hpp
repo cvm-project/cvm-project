@@ -1,17 +1,16 @@
 #ifndef OPTIMIZE_CREATE_PIPELINES_HPP
 #define OPTIMIZE_CREATE_PIPELINES_HPP
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class CreatePipelines {
+namespace optimize {
+
+class CreatePipelines : public DagTransformation {
 public:
-    explicit CreatePipelines(DAG* const dag) : dag_(dag) {}
-
-    void optimize();
-
-private:
-    DAG* const dag_;
+    void Run(DAG *dag) const override;
+    std::string name() const override { return "create_pipelines"; }
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_CREATE_PIPELINES_HPP

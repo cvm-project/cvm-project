@@ -17,14 +17,16 @@
 using VertexLabelMap = std::unordered_map<const DAGOperator *, std::string>;
 using ReverseLabelMap = std::map<std::string, const DAGOperator *>;
 
-void Canonicalize::optimize() {
+namespace optimize {
+
+void Canonicalize::Run(DAG *const dag) const {
     // Assign deterministic label based on outoing path
     VertexLabelMap outgoing_path_label;
     dag::utils::ApplyInTopologicalOrder(
-            dag_,  //
+            dag,  //
             [&](const DAGOperator *const op) {
                 std::string label;
-                for (auto const f : dag_->out_flows(op)) {
+                for (auto const f : dag->out_flows(op)) {
                     auto const successor_label =
                             outgoing_path_label.at(f.target.op);
                     label = std::max(label, (boost::format("%1%#%2%#%3%") %
@@ -39,10 +41,10 @@ void Canonicalize::optimize() {
     // Assign deterministic label based on incoming path
     VertexLabelMap incoming_path_label;
     dag::utils::ApplyInReverseTopologicalOrder(
-            dag_,  //
+            dag,  //
             [&](const DAGOperator *const op) {
                 std::string label;
-                for (auto const f : dag_->in_flows(op)) {
+                for (auto const f : dag->in_flows(op)) {
                     auto const predecessor_label =
                             incoming_path_label.at(f.source.op);
                     label = std::max(label, (boost::format("%1%#%2%#%3%") %
@@ -56,7 +58,7 @@ void Canonicalize::optimize() {
 
     // Compute unique label (=combination of incoming and outgoing path labels)
     ReverseLabelMap sorted_labels;
-    for (auto const op : dag_->operators()) {
+    for (auto const op : dag->operators()) {
         auto const label =
                 incoming_path_label[op] + "_" + outgoing_path_label[op];
         sorted_labels.emplace(label, op);
@@ -70,7 +72,7 @@ void Canonicalize::optimize() {
         vertex_ids.emplace(it.second, vertex_ids.size());
     }
 
-    for (auto const op : dag_->operators()) {
+    for (auto const op : dag->operators()) {
         op->id = vertex_ids.at(op);
     }
 
@@ -80,10 +82,10 @@ void Canonicalize::optimize() {
     std::vector<std::pair<int, DAG::FlowTip>> temp_inputs;
     std::vector<std::pair<int, DAG::FlowTip>> temp_outputs;
 
-    boost::copy(dag_->operators(), std::back_inserter(temp_ops));
-    boost::copy(dag_->flows(), std::back_inserter(temp_flows));
-    boost::copy(dag_->inputs(), std::back_inserter(temp_inputs));
-    boost::copy(dag_->outputs(), std::back_inserter(temp_outputs));
+    boost::copy(dag->operators(), std::back_inserter(temp_ops));
+    boost::copy(dag->flows(), std::back_inserter(temp_flows));
+    boost::copy(dag->inputs(), std::back_inserter(temp_inputs));
+    boost::copy(dag->outputs(), std::back_inserter(temp_outputs));
 
     // Sort operators and flows
     boost::sort(temp_ops, [](const auto op1, const auto op2) {
@@ -97,45 +99,46 @@ void Canonicalize::optimize() {
     });
 
     // Unset DAG componenets except operators
-    dag_->reset_inputs();
-    dag_->reset_outputs();
+    dag->reset_inputs();
+    dag->reset_outputs();
     for (auto const f : temp_flows) {
-        dag_->RemoveFlow(f);
+        dag->RemoveFlow(f);
     }
 
     // Move out operators -- this resets their IDs!
     DAG temp_dag;
     for (auto const op : temp_ops) {
-        dag_->MoveOperator(&temp_dag, op);
+        dag->MoveOperator(&temp_dag, op);
     }
 
     // Add back everything (in deterministic order)
     for (auto const op : temp_ops) {
-        temp_dag.MoveOperator(dag_, op);
+        temp_dag.MoveOperator(dag, op);
     }
 
     for (auto const &f : temp_flows) {
-        dag_->AddFlow(f.source.op, f.source.port, f.target.op, f.target.port);
+        dag->AddFlow(f.source.op, f.source.port, f.target.op, f.target.port);
     }
 
     for (auto const &input : temp_inputs) {
-        dag_->add_input(input.first, input.second);
+        dag->add_input(input.first, input.second);
     }
 
     for (auto const &output : temp_outputs) {
-        dag_->set_output(output.first, output.second);
+        dag->set_output(output.first, output.second);
     }
 
     // Reassign recomputed IDs (they where reset by the moving)
-    for (auto const op : dag_->operators()) {
+    for (auto const op : dag->operators()) {
         op->id = vertex_ids.at(op);
     }
 
     // Recurse
-    for (auto const op : dag_->operators()) {
-        if (dag_->has_inner_dag(op)) {
-            Canonicalize inner_canon(dag_->inner_dag(op));
-            inner_canon.optimize();
+    for (auto const op : dag->operators()) {
+        if (dag->has_inner_dag(op)) {
+            Run(dag->inner_dag(op));
         }
     }
 }
+
+}  // namespace optimize

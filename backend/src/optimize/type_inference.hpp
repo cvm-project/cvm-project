@@ -1,19 +1,22 @@
 #ifndef OPTIMIZE_TYPE_INFERENCE_HPP
 #define OPTIMIZE_TYPE_INFERENCE_HPP
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class TypeInference {
+namespace optimize {
+
+class TypeInference : public DagTransformation {
 public:
-    explicit TypeInference(DAG* const dag, const bool only_check = false)
-        : dag_(dag), only_check_(only_check) {}
+    explicit TypeInference(const bool only_check = false)
+        : only_check_(only_check) {}
 
-    void optimize();
+    void Run(DAG *dag) const override;
+    std::string name() const override { return "type_inference"; }
 
 private:
-    DAG* const dag_;
     const bool only_check_;
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_TYPE_INFERENCE_HPP

@@ -1,17 +1,16 @@
 #ifndef OPTIMIZE_DETERMINE_SORTEDNESS_HPP
 #define OPTIMIZE_DETERMINE_SORTEDNESS_HPP
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class DetermineSortedness {
+namespace optimize {
+
+class DetermineSortedness : public DagTransformation {
 public:
-    explicit DetermineSortedness(DAG* const dag) : dag_(dag) {}
-
-    void optimize();
-
-private:
-    DAG* const dag_;
+    void Run(DAG *dag) const override;
+    std::string name() const override { return "determine_sortedness"; }
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_DETERMINE_SORTEDNESS_HPP

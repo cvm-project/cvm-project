@@ -10,6 +10,7 @@
 
 #include <boost/mpl/list.hpp>
 
+#include "dag/DAG.h"
 #include "dag/DAGFilter.h"
 #include "llvm_helpers/function.hpp"
 #include "utils/visitor.hpp"
@@ -21,10 +22,12 @@ struct CollectFiltersVisitor
     std::vector<DAGFilter *> filters_;
 };
 
-void SimplePredicateMoveAround::optimize() {
+namespace optimize {
+
+void SimplePredicateMoveAround::Run(DAG *const dag) const {
     // 1. gather filters
     CollectFiltersVisitor filter_collector;
-    for (auto const op : dag_->operators()) {
+    for (auto const op : dag->operators()) {
         filter_collector.Visit(op);
     }
 
@@ -32,13 +35,12 @@ void SimplePredicateMoveAround::optimize() {
     for (const auto &filter : filter_collector.filters_) {
         // Go as high up as the filter could go
         DAGOperator *tip = filter;
-        while (dag_->out_degree(tip) == 1 &&
+        while (dag->out_degree(tip) == 1 &&
                std::all_of(filter->read_set.begin(), filter->read_set.end(),
                            [&](auto c) {
-                               return dag_->successor(tip)->HasInOutput(
-                                       c.get());
+                               return dag->successor(tip)->HasInOutput(c.get());
                            })) {
-            tip = dag_->successor(tip);
+            tip = dag->successor(tip);
         }
 
         // From the tip, push the filter down as far as possible
@@ -50,7 +52,7 @@ void SimplePredicateMoveAround::optimize() {
             q.pop_back();
 
             bool can_swap = false;
-            for (auto const flow : dag_->in_flows(currentOp)) {
+            for (auto const flow : dag->in_flows(currentOp)) {
                 auto const pred = flow.source.op;
                 if (currentOp->name() != "collection_source" &&
                     currentOp->name() != "range_source" &&
@@ -80,39 +82,39 @@ void SimplePredicateMoveAround::optimize() {
             new_predecessors.insert(currentOp);
         }
 
-        const auto pred = dag_->predecessor(filter);
+        const auto pred = dag->predecessor(filter);
         const bool keep_original = new_predecessors.count(pred) > 0;
         new_predecessors.erase(pred);
 
         // Bypass the filter, i.e., connect the predecessors and successors if
         // this is the sink, reassign the sink
         if (!keep_original) {
-            const auto in_flow = dag_->in_flow(filter);
-            const auto out_flow = dag_->out_flow(filter);
+            const auto in_flow = dag->in_flow(filter);
+            const auto out_flow = dag->out_flow(filter);
 
-            dag_->RemoveFlow(in_flow);
-            dag_->RemoveFlow(out_flow);
+            dag->RemoveFlow(in_flow);
+            dag->RemoveFlow(out_flow);
 
-            dag_->AddFlow(in_flow.source.op, in_flow.source.port,
-                          out_flow.target.op, out_flow.target.port);
+            dag->AddFlow(in_flow.source.op, in_flow.source.port,
+                         out_flow.target.op, out_flow.target.port);
         }
 
         // Add copy of the filter into the new places
         for (auto const currentOp : new_predecessors) {
             DAGFilter *filt = filter->copy();
-            dag_->AddOperator(filt);
+            dag->AddOperator(filt);
 
             // insert the filter after this operator
-            const auto out_flow = dag_->out_flow(currentOp, 0);
-            dag_->RemoveFlow(out_flow);
+            const auto out_flow = dag->out_flow(currentOp, 0);
+            dag->RemoveFlow(out_flow);
 
-            dag_->AddFlow(filt, 0, out_flow.target.op, out_flow.target.port);
-            dag_->AddFlow(currentOp, 0, filt, 0);
+            dag->AddFlow(filt, 0, out_flow.target.op, out_flow.target.port);
+            dag->AddFlow(currentOp, 0, filt, 0);
 
             // change the llvm ir signature
             llvm_helpers::Function parser(filt->llvm_ir);
             filt->llvm_ir =
-                    parser.AdjustFilterSignature(filt, dag_->predecessor(filt));
+                    parser.AdjustFilterSignature(filt, dag->predecessor(filt));
 
             // copy the tuple
             filt->tuple =
@@ -121,7 +123,9 @@ void SimplePredicateMoveAround::optimize() {
 
         // Remove the filter
         if (!keep_original) {
-            dag_->RemoveOperator(filter);
+            dag->RemoveOperator(filter);
         }
     }
 }
+
+}  // namespace optimize

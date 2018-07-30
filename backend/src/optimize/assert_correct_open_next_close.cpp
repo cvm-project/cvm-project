@@ -5,6 +5,7 @@
 #include <boost/mpl/list.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
+#include "dag/DAG.h"
 #include "dag/DAGAssertCorrectOpenNextClose.h"
 #include "dag/DAGOperator.h"
 #include "dag/DAGPipeline.h"
@@ -50,9 +51,13 @@ private:
     DAG *const dag_;
 };
 
-void AssertCorrectOpenNextClose::optimize() {
+namespace optimize {
+
+void AssertCorrectOpenNextClose::Run(DAG *const dag) const {
     dag::utils::ApplyInReverseTopologicalOrderRecursively(
-            dag_, [](const DAGOperator *const op, DAG *const dag) {
+            dag, [](const DAGOperator *const op, DAG *const dag) {
                 AddAssertionsVisitor(dag).Visit(op);
             });
 }
+
+}  // namespace optimize

@@ -5,17 +5,16 @@
 #ifndef OPTIMIZE_SIMPLE_PREDICATE_MOVE_AROUND_HPP
 #define OPTIMIZE_SIMPLE_PREDICATE_MOVE_AROUND_HPP
 
-#include "dag/DAG.h"
+#include "dag_transformation.hpp"
 
-// cppcheck-suppress noConstructor
-class SimplePredicateMoveAround {
+namespace optimize {
+
+class SimplePredicateMoveAround : public DagTransformation {
 public:
-    explicit SimplePredicateMoveAround(DAG* const dag) : dag_(dag) {}
-
-    void optimize();
-
-private:
-    DAG* const dag_;
+    void Run(DAG *dag) const override;
+    std::string name() const override { return "simple_predicate_move_around"; }
 };
+
+}  // namespace optimize
 
 #endif  // OPTIMIZE_SIMPLE_PREDICATE_MOVE_AROUND_HPP

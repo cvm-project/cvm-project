@@ -1,5 +1,6 @@
 #include "determine_sortedness.hpp"
 
+#include "dag/DAG.h"
 #include "dag/DAGOperators.h"
 #include "dag/all_operator_declarations.hpp"
 #include "dag/utils/apply_visitor.hpp"
@@ -135,20 +136,22 @@ private:
     const DAG *const dag_;
 };
 
-void DetermineSortedness::optimize() {
+namespace optimize {
+
+void DetermineSortedness::Run(DAG *dag) const {
     // Clear all attributes
-    for (auto op : dag_->operators()) {
+    for (auto op : dag->operators()) {
         for (auto &field : op->tuple->fields) {
             field->ClearProperties();
         }
     }
 
     // Derive attributes from predecessors
-    DetermineSortednessVisitor visitor(dag_);
-    dag::utils::ApplyInReverseTopologicalOrder(dag_, visitor.functor());
+    DetermineSortednessVisitor visitor(dag);
+    dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
     // 'grouped' is implied by 'unique' or 'sorted'
-    for (auto op : dag_->operators()) {
+    for (auto op : dag->operators()) {
         for (auto &field : op->tuple->fields) {
             if (field->properties().count(FL_UNIQUE) > 0) {
                 field->AddProperty(FL_GROUPED);
@@ -159,3 +162,5 @@ void DetermineSortedness::optimize() {
         }
     }
 }
+
+}  // namespace optimize
