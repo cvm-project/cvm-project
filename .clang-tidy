@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp,-cert-env33-c'
+Checks:          '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp'
 WarningsAsErrors: '*'
 CheckOptions:
   - key: readability-braces-around-statements.ShortStatementLines
