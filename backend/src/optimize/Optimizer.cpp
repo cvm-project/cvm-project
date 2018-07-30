@@ -8,6 +8,7 @@
 #include "attribute_id_tracking.hpp"
 #include "canonicalize.hpp"
 #include "create_pipelines.hpp"
+#include "dag_transformation.hpp"
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
 #include "materialize_multiple_reads.hpp"
@@ -15,59 +16,54 @@
 #include "type_inference.hpp"
 
 void Optimizer::run(DAG *dag) {
+    std::vector<std::unique_ptr<const optimize::DagTransformation>>
+            transformations;
+
     // Verify tuple types
-    optimize::TypeInference ti_check(true);
-    optimize::TypeInference ti;
-    ti_check.Run(dag);
+    transformations.emplace_back(new optimize::TypeInference(true));
 
     // Materialize results that are consumed multiple times
-    optimize::MaterializeMultipleReads mmr;
-    mmr.Run(dag);
-
-    // Recompute output types
-    ti.Run(dag);
+    transformations.emplace_back(new optimize::MaterializeMultipleReads);
+    transformations.emplace_back(new optimize::TypeInference);
 
     // Column tracking
-    optimize::AttributeIdTracking ct;
-    ct.Run(dag);
+    transformations.emplace_back(new optimize::AttributeIdTracking);
 #ifndef NDEBUG
-    ti_check.Run(dag);
+    transformations.emplace_back(new optimize::TypeInference(true));
 #endif  // NDEBUG
 
     // Move around filters
-    optimize::SimplePredicateMoveAround spma;
-    spma.Run(dag);
+    transformations.emplace_back(new optimize::SimplePredicateMoveAround);
 #ifndef NDEBUG
-    ti_check.Run(dag);
+    transformations.emplace_back(new optimize::TypeInference(true));
 #endif  // NDEBUG
 
     // Determine sortedness
-    optimize::DetermineSortedness sort;
-    sort.Run(dag);
+    transformations.emplace_back(new optimize::DetermineSortedness);
 #ifndef NDEBUG
-    ti_check.Run(dag);
+    transformations.emplace_back(new optimize::TypeInference(true));
 #endif  // NDEBUG
 
     // Replace GroupByKey with grouped variant
-    optimize::GroupedReduceByKey grbk;
-    grbk.Run(dag);
+    transformations.emplace_back(new optimize::GroupedReduceByKey);
 #ifndef NDEBUG
-    ti_check.Run(dag);
+    transformations.emplace_back(new optimize::TypeInference(true));
 #endif  // NDEBUG
 
     // Split the plan into tree-shaped sub-plans
-    optimize::CreatePipelines cp;
-    cp.Run(dag);
-    ti.Run(dag);
-    sort.Run(dag);
+    transformations.emplace_back(new optimize::CreatePipelines);
+    transformations.emplace_back(new optimize::TypeInference);
+    transformations.emplace_back(new optimize::DetermineSortedness);
 
 #ifdef ASSERT_OPEN_NEXT_CLOSE
-    optimize::AssertCorrectOpenNextClose acopn;
-    acopn.Run(dag);
-    ti.Run(dag);
+    transformations.emplace_back(new optimize::AssertCorrectOpenNextClose);
+    transformations.emplace_back(new optimize::TypeInference);
 #endif  // ASSERT_OPEN_NEXT_CLOSE
 
     // Make ID and order canonical
-    optimize::Canonicalize canon;
-    canon.Run(dag);
+    transformations.emplace_back(new optimize::Canonicalize);
+
+    for (auto const &transformation : transformations) {
+        transformation->Run(dag);
+    }
 }
