@@ -3,7 +3,7 @@ variables:
 
 format-cpp:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   script:
     - cd backend/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
@@ -11,7 +11,7 @@ format-cpp:
 
 format-python:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   before_script:
     - pip3 install -r requirements.txt
     - pip3 install -r python/jitq/benchmarks/requirements.txt
@@ -21,7 +21,7 @@ format-python:
 
 rel-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   script:
     - cd backend/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
@@ -32,7 +32,7 @@ rel-build:
 
 dbg-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   script:
     - cd backend/build
     - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -45,7 +45,7 @@ clang-tidy:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   script:
     - cd backend/build
     - make -k check-tidy
@@ -54,7 +54,7 @@ cppcheck:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   script:
     - cd backend/build
     - make cppcheck
@@ -63,7 +63,7 @@ python-tests:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   variables:
     PYTHONPATH: $CI_PROJECT_DIR
     JITQPATH: $CI_PROJECT_DIR
@@ -79,7 +79,7 @@ cpp-test:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-07-25
+  image: ingomuellernet/buildenv-jitq:2018-07-30
   variables:
     GTEST_COLOR: "1"
   script:
