@@ -17,7 +17,6 @@ std::string string_replace(const std::string &str, const std::string &from,
 std::vector<std::string> split_string(const std::string &str,
                                       const std::string &delimiter);
 boost::filesystem::path get_lib_path();
-std::string exec(const char *cmd);
 
 template <typename Pointee>
 class raw_ptr {
