@@ -50,8 +50,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 
 # Set up Boost
-find_package(Boost 1.58 REQUIRED COMPONENTS
+find_package(Boost 1.64 REQUIRED COMPONENTS
+        filesystem
         program_options
+        system
     )
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
@@ -129,6 +131,8 @@ set(GENERATE_SOURCE_FILES
     )
 add_library(generate SHARED ${GENERATE_SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
         ${LLVM_LIBS}
         runtime
     )

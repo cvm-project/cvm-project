@@ -10,6 +10,8 @@
 #include <memory>
 #include <string>
 
+#include <boost/filesystem/path.hpp>
+
 std::string snake_to_camel_string(const std::string &str) {
     std::string camelString = str;
 
@@ -55,13 +57,14 @@ std::vector<std::string> split_string(const std::string &str,
     return list;
 }
 
-std::string get_lib_path() {
-    const char *const projectPath = std::getenv("JITQPATH");
-    if (projectPath == nullptr) {
-        std::cerr << "JITQPATH is not defined, set it to your jitq "
-                     "installation path\n";
+boost::filesystem::path get_lib_path() {
+    const auto lib_path = std::getenv("JITQPATH");
+    if (lib_path == nullptr) {
+        throw std::runtime_error(
+                "JITQPATH is not defined, set it to your jitq installation "
+                "path\n");
     }
-    return std::string(projectPath);
+    return boost::filesystem::path(lib_path);
 }
 
 std::string exec(const char *cmd) {

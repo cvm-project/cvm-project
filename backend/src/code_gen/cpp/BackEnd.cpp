@@ -7,7 +7,10 @@
 #include <unordered_map>
 
 #include <boost/algorithm/string/join.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
+#include <boost/process.hpp>
 
 #include <sys/stat.h>
 
@@ -18,19 +21,17 @@ namespace code_gen {
 namespace cpp {
 
 void BackEnd::GenerateCode(DAG *const dag) {
-    const std::string gen_dir = get_lib_path() + "/backend/gen/";
-    exec(("bash -c 'rm -r -f " + gen_dir + "/*'").c_str());
+    // Create (empty) output directory
+    auto const gen_dir = get_lib_path() / "backend/gen";
+    boost::filesystem::remove_all(gen_dir);
+    boost::filesystem::create_directory(gen_dir);
 
-    // Create output directory
-    const int dir_err = system(("mkdir -p " + gen_dir).c_str());
-    if (0 != dir_err) {
-        std::cerr << ("Error creating gen directory!") << std::endl;
-        std::exit(1);
-    }
+    auto const llvm_code_path = gen_dir / "llvm_funcs.ll";
+    auto const source_file_path = gen_dir / "execute.cpp";
+    auto const header_file_path = gen_dir / "execute.h";
 
     // Setup visitor and run it
-    std::string llvm_code_path = gen_dir + "llvm_funcs.ll";
-    std::ofstream llvm_code(llvm_code_path);
+    boost::filesystem::ofstream llvm_code(llvm_code_path);
 
     std::stringstream declarations;
     std::stringstream definitions;
@@ -46,7 +47,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
     assert(execute_values == "execute_pipelines");
 
     // Main executable file: declarations
-    std::ofstream source_file(gen_dir + "execute.cpp");
+    boost::filesystem::ofstream source_file(source_file_path);
 
     source_file << "/**\n"
                    " * Auto-generated execution plan\n"
@@ -86,7 +87,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
             "}";
 
     // Header file
-    std::ofstream header_file(gen_dir + "execute.h");
+    boost::filesystem::ofstream header_file(header_file_path);
 
     header_file <<  //
             "const char* execute(const char* inputs_str);\n"
@@ -94,10 +95,29 @@ void BackEnd::GenerateCode(DAG *const dag) {
 }
 
 void BackEnd::Compile(const uint64_t counter) {
-    exec(("cd " + get_lib_path() +
-          "/backend/gen && make LIB_ID=" + std::to_string(counter) + " -f " +
-          get_lib_path() + "/backend/src/code_gen/cpp/Makefile -j")
-                 .c_str());
+    auto const gen_dir = get_lib_path() / "backend/gen";
+    boost::filesystem::current_path(gen_dir);
+
+    auto const makefile_path =
+            get_lib_path() / "backend/src/code_gen/cpp/Makefile";
+    auto const make = boost::process::search_path("make");
+
+    boost::process::ipstream make_std_out;
+    boost::process::ipstream make_std_err;
+    const int exit_code = boost::process::system(
+            make, "LIB_ID=" + std::to_string(counter), "-j", "-f",
+            makefile_path, boost::process::std_out > make_std_out,
+            boost::process::std_err > make_std_err);
+
+    if (exit_code != 0) {
+        throw std::runtime_error(
+                (boost::format(
+                         "Error while generating library (exit code %1%).\n\n"
+                         "--- stdout: ---------------------------\n%2%"
+                         "--- stderr: ---------------------------\n%3%") %
+                 exit_code % make_std_out.rdbuf() % make_std_err.rdbuf())
+                        .str());
+    }
 }
 
 }  // namespace cpp
