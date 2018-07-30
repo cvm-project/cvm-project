@@ -2,7 +2,7 @@
 // Created by sabir on 29.08.17.
 //
 
-#include "SimplePredicateMoveAround.h"
+#include "simple_predicate_move_around.hpp"
 
 #include <algorithm>
 #include <unordered_set>

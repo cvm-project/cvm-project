@@ -11,9 +11,8 @@
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
 #include "materialize_multiple_reads.hpp"
+#include "simple_predicate_move_around.hpp"
 #include "type_inference.hpp"
-
-#include "SimplePredicateMoveAround.h"
 
 void Optimizer::run(DAG *dag) {
     // Verify tuple types
