@@ -11,6 +11,9 @@ class BackEnd : public common::BackEnd {
 public:
     void GenerateCode(DAG *dag) final;
     void Compile(uint64_t counter) final;
+
+private:
+    boost::filesystem::path lib_dir_;
 };
 
 }  // namespace cpp

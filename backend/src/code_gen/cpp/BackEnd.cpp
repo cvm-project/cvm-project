@@ -10,6 +10,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/process.hpp>
 
 #include <sys/stat.h>
@@ -21,51 +22,56 @@ namespace code_gen {
 namespace cpp {
 
 void BackEnd::GenerateCode(DAG *const dag) {
+    const boost::filesystem::path temp_path_model =
+            get_lib_path() / "backend/gen/build-%%%%-%%%%-%%%%-%%%%";
+
     // Create (empty) output directory
-    auto const gen_dir = get_lib_path() / "backend/gen";
-    boost::filesystem::remove_all(gen_dir);
-    boost::filesystem::create_directory(gen_dir);
+    auto const temp_dir = boost::filesystem::unique_path(temp_path_model);
+    boost::filesystem::create_directories(temp_dir);
 
-    auto const llvm_code_path = gen_dir / "llvm_funcs.ll";
-    auto const source_file_path = gen_dir / "execute.cpp";
-    auto const header_file_path = gen_dir / "execute.h";
+    auto const llvm_code_path = temp_dir / "llvm_funcs.ll";
+    auto const source_file_path = temp_dir / "execute.cpp";
+    auto const header_file_path = temp_dir / "execute.h";
 
-    // Setup visitor and run it
-    boost::filesystem::ofstream llvm_code(llvm_code_path);
+    // Generate C++ code
+    {
+        // Setup visitor and run it
+        boost::filesystem::ofstream llvm_code(llvm_code_path);
 
-    std::stringstream declarations;
-    std::stringstream definitions;
+        std::stringstream declarations;
+        std::stringstream definitions;
 
-    std::unordered_map<std::string, size_t> unique_counters;
-    std::set<std::string> includes;
-    Context::TupleTypeRegistry tuple_type_descs;
+        std::unordered_map<std::string, size_t> unique_counters;
+        std::set<std::string> includes;
+        Context::TupleTypeRegistry tuple_type_descs;
 
-    Context context(&declarations, &definitions, &llvm_code, &unique_counters,
-                    &includes, &tuple_type_descs);
+        Context context(&declarations, &definitions, &llvm_code,
+                        &unique_counters, &includes, &tuple_type_descs);
 
-    auto execute_values = GenerateExecutePipelines(&context, dag);
-    assert(execute_values == "execute_pipelines");
+        auto execute_values = GenerateExecutePipelines(&context, dag);
+        assert(execute_values == "execute_pipelines");
 
-    // Main executable file: declarations
-    boost::filesystem::ofstream source_file(source_file_path);
+        // Main executable file: declarations
+        boost::filesystem::ofstream source_file(source_file_path);
 
-    source_file << "/**\n"
-                   " * Auto-generated execution plan\n"
-                   " */\n";
+        source_file << "/**\n"
+                       " * Auto-generated execution plan\n"
+                       " */\n";
 
-    includes.emplace("\"runtime/free.hpp\"");
+        includes.emplace("\"runtime/free.hpp\"");
 
-    for (const auto &incl : context.includes()) {
-        source_file << "#include " << incl << std::endl;
-    }
+        for (const auto &incl : context.includes()) {
+            source_file << "#include " << incl << std::endl;
+        }
 
-    source_file << "using namespace runtime::values;" << std::endl;
+        source_file << "using namespace runtime::values;" << std::endl;
 
-    source_file << declarations.str();
-    source_file << definitions.str();
+        source_file << declarations.str();
+        source_file << definitions.str();
 
-    // Main executable file: exported execute function
-    source_file << "extern \"C\" { const char* execute("
+        // Main executable file: exported execute function
+        source_file
+                << "extern \"C\" { const char* execute("
                    "        const char *const inputs_str) {"
                    "    const auto inputs = ConvertFromJsonString(inputs_str);"
                    "    const auto ret = execute_pipelines(inputs);"
@@ -76,27 +82,59 @@ void BackEnd::GenerateCode(DAG *const dag) {
                    "    return ret_ptr;"
                    "} }";
 
-    // Main executable file: free
-    source_file <<  //
-            "extern \"C\" {"
-            "    void free_result(const char* const s) {"
-            "        runtime::FreeValues(s);"
-            "        free(const_cast<void *>("
-            "                reinterpret_cast<const void*>(s)));"
-            "    }"
-            "}";
+        // Main executable file: free
+        source_file <<  //
+                "extern \"C\" {"
+                "    void free_result(const char* const s) {"
+                "        runtime::FreeValues(s);"
+                "        free(const_cast<void *>("
+                "                reinterpret_cast<const void*>(s)));"
+                "    }"
+                "}";
 
-    // Header file
-    boost::filesystem::ofstream header_file(header_file_path);
+        // Header file
+        boost::filesystem::ofstream header_file(header_file_path);
 
-    header_file <<  //
-            "const char* execute(const char* inputs_str);\n"
-            "void free_result(const char*);";
+        header_file <<  //
+                "const char* execute(const char* inputs_str);\n"
+                "void free_result(const char*);";
+    }
+
+    // Compute hash value of generated code
+    boost::filesystem::current_path(temp_dir);
+
+    boost::process::pipe pipe;
+    boost::process::ipstream sha256sum_std_out;
+    auto const sha256sum = boost::process::search_path("sha256sum");
+
+    auto const ret1 = boost::process::system(
+            sha256sum, source_file_path.filename(), header_file_path.filename(),
+            llvm_code_path.filename(), boost::process::std_out > pipe);
+    assert(ret1 == 0);
+
+    auto const ret2 = boost::process::system(
+            sha256sum, boost::process::std_in<pipe, boost::process::std_out>
+                               sha256sum_std_out);
+    assert(ret2 == 0);
+
+    auto const hash =
+            boost::lexical_cast<std::string>(sha256sum_std_out.rdbuf())
+                    .substr(0, 32);
+
+    // Rename temporary folder to name based on hash value
+    lib_dir_ = get_lib_path() / ("backend/gen/lib-" + hash);
+
+    if (!boost::filesystem::exists(lib_dir_)) {
+        boost::filesystem::rename(temp_dir, lib_dir_);
+    } else {
+        assert(boost::filesystem::is_directory(lib_dir_));
+        boost::filesystem::remove_all(temp_dir);
+    }
 }
 
 void BackEnd::Compile(const uint64_t counter) {
-    auto const gen_dir = get_lib_path() / "backend/gen";
-    boost::filesystem::current_path(gen_dir);
+    // Compile inside temporary directory
+    boost::filesystem::current_path(lib_dir_);
 
     auto const makefile_path =
             get_lib_path() / "backend/src/code_gen/cpp/Makefile";
@@ -104,10 +142,10 @@ void BackEnd::Compile(const uint64_t counter) {
 
     boost::process::ipstream make_std_out;
     boost::process::ipstream make_std_err;
-    const int exit_code = boost::process::system(
-            make, "LIB_ID=" + std::to_string(counter), "-j", "-f",
-            makefile_path, boost::process::std_out > make_std_out,
-            boost::process::std_err > make_std_err);
+    const int exit_code =
+            boost::process::system(make, "-j", "-f", makefile_path,
+                                   boost::process::std_out > make_std_out,
+                                   boost::process::std_err > make_std_err);
 
     if (exit_code != 0) {
         throw std::runtime_error(
@@ -118,6 +156,20 @@ void BackEnd::Compile(const uint64_t counter) {
                  exit_code % make_std_out.rdbuf() % make_std_err.rdbuf())
                         .str());
     }
+
+    // Create symlinks for front-end
+    auto const gen_dir = get_lib_path() / "backend/gen";
+
+    auto const lib_path = lib_dir_.filename() / "execute.so";
+    auto const lib_symlink =
+            gen_dir / ("execute" + std::to_string(counter) + ".so");
+    boost::filesystem::remove(lib_symlink);
+    boost::filesystem::create_symlink(lib_path, lib_symlink);
+
+    auto const header_path = lib_dir_.filename() / "execute.h";
+    auto const header_symlink = gen_dir / "execute.h";
+    boost::filesystem::remove(header_symlink);
+    boost::filesystem::create_symlink(header_path, header_symlink);
 }
 
 }  // namespace cpp
