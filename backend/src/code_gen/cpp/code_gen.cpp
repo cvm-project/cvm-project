@@ -153,9 +153,21 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
     dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
     // Compute execute function parameters
-    std::vector<std::string> packed_input_args;
+    std::map<size_t, const DAGOperator *> inputs;
     for (auto const input : dag->inputs()) {
         auto const op = input.second.op;
+        auto const dag_port = input.first;
+        assert(input.second.port == 0);
+
+        auto const ret = inputs.emplace(dag_port, op);
+        if (!ret.second) {
+            assert(ret.first->second->tuple->type == op->tuple->type);
+        }
+    }
+
+    std::vector<std::string> packed_input_args;
+    for (auto const input : inputs) {
+        auto const op = input.second;
         auto const dag_port = input.first;
 
         const std::string param_num = std::to_string(dag_port);
