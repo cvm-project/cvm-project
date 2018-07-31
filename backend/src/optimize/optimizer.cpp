@@ -2,16 +2,28 @@
 // Created by sabir on 29.08.17.
 //
 
-#include "Optimizer.h"
+#include "optimizer.hpp"
 
 #include <string>
 #include <vector>
 
+#include <json.hpp>
+
 #include "composite_transformation.hpp"
 #include "dag_transformation.hpp"
 
-void Optimizer::run(DAG *dag) {
-    optimize::LoadDagTransformations();
+namespace optimize {
+
+// cppcheck-suppress passedByValue
+Optimizer::Optimizer(std::string config) : config_(std::move(config)) {
+    LoadDagTransformations();
+}
+void Optimizer::Run(DAG *const dag) {
+    auto config = nlohmann::json::parse(config_).at("optimizer").flatten();
+
+    if (config.value("/optimization-level", 0) <= 0) {
+        return;
+    }
 
     std::vector<std::string> transformations;
 
@@ -59,6 +71,8 @@ void Optimizer::run(DAG *dag) {
     // Make ID and order canonical
     transformations.emplace_back("canonicalize");
 
-    optimize::CompositeTransformation pipeline(transformations);
+    CompositeTransformation pipeline(transformations);
     pipeline.Run(dag);
 }
+
+}  // namespace optimize

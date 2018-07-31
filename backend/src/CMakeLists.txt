@@ -124,7 +124,7 @@ set(GENERATE_SOURCE_FILES
         optimize/dag_transformation.cpp
         optimize/determine_sortedness.cpp
         optimize/materialize_multiple_reads.cpp
-        optimize/Optimizer.cpp
+        optimize/optimizer.cpp
         optimize/type_inference.cpp
         optimize/grouped_reduce_by_key.cpp
         optimize/simple_predicate_move_around.cpp

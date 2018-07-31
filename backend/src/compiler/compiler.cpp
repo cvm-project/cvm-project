@@ -9,7 +9,7 @@
 #include "code_gen/cpp/BackEnd.hpp"
 #include "dag/DAG.h"
 #include "dag/dag_factory.hpp"
-#include "optimize/Optimizer.h"
+#include "optimize/optimizer.hpp"
 
 namespace compiler {
 
@@ -19,10 +19,8 @@ Compiler::Compiler(const std::string &dagstr, const std::string &confstr)
 
 void Compiler::GenerateExecutable() {
     // Optimize
-    Optimizer opt;
-    if (conf_.value("/optimizer/optimization-level", 0) > 0) {
-        opt.run(dag_.get());
-    }
+    optimize::Optimizer opt(conf_.unflatten().dump());
+    opt.Run(dag_.get());
 
     // Select code gen back-end
     // TODO(ingo): pass back-end-specific config to back-end
