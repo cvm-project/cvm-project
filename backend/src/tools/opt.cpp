@@ -50,6 +50,7 @@ int main(int argc, char* argv[]) {
     std::string output_file_name;
     OutputFormat output_format{};
     size_t opt_level = 0;
+    bool verbose = false;
     std::vector<std::string> optimizations;
 
     po::options_description desc("Deserialize, optimize, and serialize a DAG");
@@ -68,7 +69,12 @@ int main(int argc, char* argv[]) {
             ("output-format,f",
              po::value<OutputFormat>(&output_format)
                      ->default_value(OutputFormat::kJson),
-             "Output format (JSON, DOT, BIN)");
+             "Output format (JSON, DOT, BIN)")  //
+            ("verbose,v",
+             po::value<bool>(&verbose)
+                     ->default_value(false)   //
+                     ->implicit_value(true),  //
+             "Print some debug information");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -100,6 +106,8 @@ int main(int argc, char* argv[]) {
     for (auto const& opt : optimizations) {
         conf_json["/optimizer/optimizations/" + opt] = true;
     }
+
+    conf_json["/optimizer/verbose"] = verbose;
 
     // Run the compiler
     compiler::Compiler compiler(dagstr, conf_json.unflatten().dump());

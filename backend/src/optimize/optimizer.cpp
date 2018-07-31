@@ -20,6 +20,7 @@ Optimizer::Optimizer(std::string config) : config_(std::move(config)) {
 }
 void Optimizer::Run(DAG *const dag) {
     auto config = nlohmann::json::parse(config_).at("optimizer").flatten();
+    const bool verbose = config.value("/verbose", false);
 
     // Activate passes according to optimization level
     if (config.value("/optimization-level", 0) <= 0) {
@@ -96,6 +97,13 @@ void Optimizer::Run(DAG *const dag) {
     // Make ID and order canonical
     if (config.value("/optimizations/canonicalize", false)) {
         transformations.emplace_back("canonicalize");
+    }
+
+    if (verbose) {
+        printf("Running the following transformations:\n");
+        for (auto const &t : transformations) {
+            printf("  %s\n", t.c_str());
+        }
     }
 
     // Run pipeline
