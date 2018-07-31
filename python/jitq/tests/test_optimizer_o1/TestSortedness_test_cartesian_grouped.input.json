@@ -1,0 +1,150 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 2,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0
+            ]
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 3,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2
+            ]
+        },
+        {
+            "id": 4,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1,
+                3
+            ]
+        },
+        {
+            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.16.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.2, 0\n  %.16.fca.1.insert = insertvalue { i64, i64 } %.16.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.16.fca.1.insert\n}\n\n\n\n",
+            "id": 5,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                4
+            ]
+        },
+        {
+            "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+            "id": 6,
+            "op": "reduce_by_key",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                5
+            ]
+        },
+        {
+            "id": 7,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                6
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 7,
+            "port": 0
+        }
+    ]
+}

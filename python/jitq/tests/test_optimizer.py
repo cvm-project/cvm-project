@@ -89,9 +89,15 @@ class TestParser(unittest.TestCase, TestBase):
                     self.assertEqual(input_file.read(), output_file.read())
 
 
-# Test class instantiation for optimizer
-class TestOptimizer(unittest.TestCase, TestBase):
-    TEST_DIR = join(TEST_BASE_DIR, "test_optimizer")
+# Test class instantiation for optimizer with "-O1"
+class TestOptimizerO1(unittest.TestCase, TestBase):
+    TEST_DIR = join(TEST_BASE_DIR, "test_optimizer_o1")
+    TEST_OPTIONS = ["-O1"]
+
+
+# Test class instantiation for optimizer with "-O2"
+class TestOptimizerO2(unittest.TestCase, TestBase):
+    TEST_DIR = join(TEST_BASE_DIR, "test_optimizer_o2")
     TEST_OPTIONS = ["-O2"]
 
 
@@ -107,7 +113,11 @@ def make_test_func(test_name):
     return test_func
 
 
-TEST_CLASSES = [TestParser, TestOptimizer]
+TEST_CLASSES = [
+    TestParser,
+    TestOptimizerO1,
+    TestOptimizerO2,
+]
 
 
 def attach_test_cases():

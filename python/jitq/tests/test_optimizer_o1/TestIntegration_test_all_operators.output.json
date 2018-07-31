@@ -1,0 +1,387 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 3,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 2,
+            "op_port": 0
+        },
+        {
+            "dag_port": 2,
+            "op": 1,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 16,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 15,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 2,
+                        "op": 14,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "ensure_single_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+                        "id": 1,
+                        "op": "reduce",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  ret i64 %.3\n}\n\n\n\n",
+                        "id": 2,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            3
+                        ]
+                    },
+                    {
+                        "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  %.43.i = srem i64 %.1, 3\n  %.45.i = icmp slt i64 %.43.i, 0\n  %.54.i = add nsw i64 %.43.i, 3\n  %.35.0.i = select i1 %.45.i, i64 %.54.i, i64 %.43.i\n  %.76.i = icmp eq i64 %.35.0.i, 0\n  ret i1 %.76.i\n}\n\n\n\n",
+                        "id": 3,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "cartesian",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5,
+                            10
+                        ]
+                    },
+                    {
+                        "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+                        "id": 5,
+                        "op": "reduce_by_key",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            6
+                        ]
+                    },
+                    {
+                        "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  %.17.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.17.fca.1.insert = insertvalue { i64, i64 } %.17.fca.0.insert, i64 %.3, 1\n  ret { i64, i64 } %.17.fca.1.insert\n}\n\n\n\n",
+                        "id": 6,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            7
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            8,
+                            9
+                        ]
+                    },
+                    {
+                        "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+                        "id": 8,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            11
+                        ]
+                    },
+                    {
+                        "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = shl nsw i64 %.1, 1\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.14.i, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+                        "id": 9,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            12
+                        ]
+                    },
+                    {
+                        "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret { i64, i64 } { i64 1, i64 1 }\n}\n\n\n\n",
+                        "id": 10,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            13
+                        ]
+                    },
+                    {
+                        "id": 11,
+                        "op": "range_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            14
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 12,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            15
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 13,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            16
+                        ]
+                    },
+                    {
+                        "id": 14,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 15,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 16,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1,
+                2,
+                3
+            ]
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 3,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        }
+    ],
+    "outputs": [
+        {
+            "op": 0,
+            "port": 0
+        }
+    ]
+}

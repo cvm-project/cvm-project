@@ -51,7 +51,6 @@ void Optimizer::Run(DAG *const dag) {
 
     // Move around filters
     if (config.value("/optimizations/simple-predicate-move-around", false)) {
-        ;
         transformations.emplace_back("attribute_id_tracking");
 #ifndef NDEBUG
         transformations.emplace_back("type_check");

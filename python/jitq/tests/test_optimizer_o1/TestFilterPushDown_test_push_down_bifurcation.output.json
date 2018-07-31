@@ -1,0 +1,245 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 2,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 1,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 6,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 5,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  %.35.i = icmp eq i64 %.2, %.3\n  ret i1 %.35.i\n}\n\n\n\n",
+                        "id": 1,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            3,
+                            4
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 4,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            6
+                        ]
+                    },
+                    {
+                        "id": 5,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 6,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                1,
+                2
+            ]
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        }
+    ],
+    "outputs": [
+        {
+            "op": 0,
+            "port": 0
+        }
+    ]
+}

@@ -1,0 +1,154 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 1,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 4,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "func": "define i64 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.15.i = add nsw i64 %.2, %.1\n  ret i64 %.15.i\n}\n\n\n\n",
+                        "id": 1,
+                        "op": "reduce_by_key",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.15.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0\n  %.15.fca.1.insert = insertvalue { i64, i64 } %.15.fca.0.insert, i64 %.1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+                        "id": 2,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            3
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "op": "range_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        }
+    ],
+    "outputs": [
+        {
+            "op": 0,
+            "port": 0
+        }
+    ]
+}

@@ -1,0 +1,81 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "add_index": true,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                }
+            ],
+            "predecessors": [
+                0
+            ]
+        },
+        {
+            "id": 2,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 2,
+            "port": 0
+        }
+    ]
+}
