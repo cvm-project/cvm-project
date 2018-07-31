@@ -101,6 +101,12 @@ class TestOptimizerO2(unittest.TestCase, TestBase):
     TEST_OPTIONS = ["-O2"]
 
 
+# Test class instantiation for optimizer with "-O2" and parallelization
+class TestOptimizerParallelize(unittest.TestCase, TestBase):
+    TEST_DIR = join(TEST_BASE_DIR, "test_optimizer_parallelize")
+    TEST_OPTIONS = ["-O2", "-tparallelize"]
+
+
 # Factory for generic test cases
 def make_test_func(test_name):
     # Implementation of generic test case
@@ -117,6 +123,7 @@ TEST_CLASSES = [
     TestParser,
     TestOptimizerO1,
     TestOptimizerO2,
+    TestOptimizerParallelize,
 ]
 
 

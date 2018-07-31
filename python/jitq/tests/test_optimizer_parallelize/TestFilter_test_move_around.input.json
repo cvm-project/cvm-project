@@ -1,0 +1,101 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0
+            ]
+        },
+        {
+            "func": "define { i64, i64 } @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.15.fca.1.insert = insertvalue { i64, i64 } { i64 0, i64 undef }, i64 %.1, 1\n  ret { i64, i64 } %.15.fca.1.insert\n}\n\n\n\n",
+            "id": 2,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  %.41.i = srem i64 %.2, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  ret i1 %.74.i\n}\n\n\n\n",
+            "id": 3,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2
+            ]
+        },
+        {
+            "id": 4,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                3
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 4,
+            "port": 0
+        }
+    ]
+}

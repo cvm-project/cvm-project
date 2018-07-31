@@ -1,0 +1,79 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "collection_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0
+            ]
+        },
+        {
+            "func": "define i1 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.28.i = srem i64 %.1, 2\n  %.30.i = icmp slt i64 %.28.i, 0\n  %.39.i = add nsw i64 %.28.i, 2\n  %.20.0.i = select i1 %.30.i, i64 %.39.i, i64 %.28.i\n  %.61.i = icmp eq i64 %.20.0.i, 1\n  ret i1 %.61.i\n}\n\n\n\n",
+            "id": 2,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "id": 3,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                2
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 3,
+            "port": 0
+        }
+    ]
+}
