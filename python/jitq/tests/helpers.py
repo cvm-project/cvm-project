@@ -5,10 +5,62 @@ import sys
 import unittest
 
 from jitq.utils import get_project_path
+from jitq.tests import operator_test_base
 
 
 def format_json(json_string):
     return json.dumps(json.loads(json_string), sort_keys=True, indent=4)
+
+
+def operator_test_base_classes():
+    suites = unittest.loader.defaultTestLoader.loadTestsFromModule(
+        operator_test_base)
+
+    classes = set()
+    for suite in suites:
+        for test in suite:
+            classes.add(test.__class__)
+
+    return classes
+
+
+def patch_class(class_, functions):
+    def wrapper(class_, func_name, new_f):
+        existing_f = getattr(class_, func_name)
+
+        def func(*args, **kwargs):
+            existing_f(*args, **kwargs)
+            new_f(*args, **kwargs)
+        return func
+
+    for func_name, func in functions.items():
+        setattr(class_, func_name, wrapper(class_, func_name, func))
+
+
+def patch_operator_test_cases(name_suffix, functions):
+    classes = []
+    for test_class in operator_test_base_classes():
+        class_name = test_class.__name__ + name_suffix
+        test_class = type(class_name, (test_class,), {})
+        patch_class(test_class, functions)
+        classes.append(test_class)
+    return classes
+
+
+# Loads patched test cases into calling module
+def load_and_patch_common_tests(functions):
+    for test_class in patch_operator_test_cases("", functions):
+        setattr(sys.modules['__main__'], test_class.__name__, test_class)
+
+
+# Loads patched test cases using unittest's 'load_tests' protocol for test
+# discovery
+def load_tests_common_patched(loader, name_suffix, functions):
+    suite = unittest.TestSuite()
+    for test_class in patch_operator_test_cases(name_suffix, functions):
+        tests = loader.loadTestsFromTestCase(test_class)
+        suite.addTests(tests)
+    return suite
 
 
 def enable_dag_dumping():
