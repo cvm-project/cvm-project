@@ -92,7 +92,7 @@ class TestParser(unittest.TestCase, TestBase):
 # Test class instantiation for optimizer
 class TestOptimizer(unittest.TestCase, TestBase):
     TEST_DIR = join(TEST_BASE_DIR, "test_optimizer")
-    TEST_OPTIONS = ["-O1"]
+    TEST_OPTIONS = ["-O2"]
 
 
 # Factory for generic test cases

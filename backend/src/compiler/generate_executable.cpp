@@ -14,7 +14,7 @@ int GenerateExecutable(const char *const conf, const char *const dagstr,
                        const unsigned long counter) {  // NOLINT
     auto conf_json = nlohmann::json::parse(conf).flatten();
     conf_json["/backend/counter"] = counter;
-    conf_json.emplace("/optimizer/optimization-level", 1);
+    conf_json.emplace("/optimizer/optimization-level", 2);
 
     compiler::Compiler compiler(dagstr, conf_json.unflatten().dump());
     compiler.GenerateExecutable();

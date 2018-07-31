@@ -50,12 +50,16 @@ int main(int argc, char* argv[]) {
     std::string output_file_name;
     OutputFormat output_format{};
     size_t opt_level = 0;
+    std::vector<std::string> optimizations;
 
     po::options_description desc("Deserialize, optimize, and serialize a DAG");
     desc.add_options()                             //
             ("help", "Produce this help message")  //
             ("optimization-level,O",
              po::value<size_t>(&opt_level)->default_value(0),
+             "Optimization level")  //
+            ("optimizations,t",
+             po::value<std::vector<std::string>>(&optimizations),
              "Optimization level")  //
             ("input,i", po::value<std::string>(&input_file_name),
              "Path to input file")  //
@@ -91,6 +95,10 @@ int main(int argc, char* argv[]) {
 
     if (output_format != OutputFormat::kBin) {
         conf_json["/optimizer/codegen"] = false;
+    }
+
+    for (auto const& opt : optimizations) {
+        conf_json["/optimizer/optimizations/" + opt] = true;
     }
 
     // Run the compiler
