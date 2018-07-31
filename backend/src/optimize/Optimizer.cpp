@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "composite_transformation.hpp"
 #include "dag_transformation.hpp"
 
 void Optimizer::run(DAG *dag) {
@@ -58,9 +59,6 @@ void Optimizer::run(DAG *dag) {
     // Make ID and order canonical
     transformations.emplace_back("canonicalize");
 
-    for (auto const &name : transformations) {
-        auto const transformation =
-                optimize::DagTransformationRegistry::transformation(name);
-        transformation->Run(dag);
-    }
+    optimize::CompositeTransformation pipeline(transformations);
+    pipeline.Run(dag);
 }
