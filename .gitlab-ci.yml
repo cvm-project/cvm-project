@@ -75,7 +75,7 @@ python-tests:
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python
-    - python3 -m unittest discover -v -s jitq/tests
+    - catchsegv python3 -m unittest discover -v -s jitq/tests
 
 cpp-test:
   stage: test
