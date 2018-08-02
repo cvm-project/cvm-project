@@ -140,11 +140,13 @@ void BackEnd::Run(DAG* const dag) const {
     auto const makefile_path =
             get_lib_path() / "backend/src/code_gen/cpp/Makefile";
     auto const make = boost::process::search_path("make");
+    const bool do_debug_build = config.value("/debug", false);
+    auto const flag = std::string("DEBUG=") + (do_debug_build ? "1" : "0");
 
     boost::process::ipstream make_std_out;
     boost::process::ipstream make_std_err;
     const int exit_code =
-            boost::process::system(make, "-j", "-f", makefile_path,
+            boost::process::system(make, "-j", "-f", makefile_path, flag,
                                    boost::process::std_out > make_std_out,
                                    boost::process::std_err > make_std_err);
 
