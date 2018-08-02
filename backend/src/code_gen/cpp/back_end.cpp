@@ -22,7 +22,7 @@ namespace code_gen {
 namespace cpp {
 
 void BackEnd::Run(DAG* const dag) const {
-    auto const config = nlohmann::json::parse(config_).at("codegen").flatten();
+    auto const config = nlohmann::json::parse(config_)["codegen"].flatten();
 
     const boost::filesystem::path temp_path_model =
             get_lib_path() / "backend/gen/build-%%%%-%%%%-%%%%-%%%%";
