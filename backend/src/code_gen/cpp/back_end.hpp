@@ -9,11 +9,12 @@ namespace cpp {
 
 class BackEnd : public common::BackEnd {
 public:
-    void GenerateCode(DAG *dag) final;
-    void Compile(uint64_t counter) final;
+    // cppcheck-suppress passedByValue
+    explicit BackEnd(std::string config) : config_(std::move(config)) {}
+    void Run(DAG* dag) const override;
 
 private:
-    boost::filesystem::path lib_dir_;
+    const std::string config_;
 };
 
 }  // namespace cpp

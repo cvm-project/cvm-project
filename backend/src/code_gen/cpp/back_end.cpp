@@ -21,7 +21,9 @@
 namespace code_gen {
 namespace cpp {
 
-void BackEnd::GenerateCode(DAG *const dag) {
+void BackEnd::Run(DAG* const dag) const {
+    auto const config = nlohmann::json::parse(config_).at("codegen").flatten();
+
     const boost::filesystem::path temp_path_model =
             get_lib_path() / "backend/gen/build-%%%%-%%%%-%%%%-%%%%";
 
@@ -60,7 +62,7 @@ void BackEnd::GenerateCode(DAG *const dag) {
 
         includes.emplace("\"runtime/free.hpp\"");
 
-        for (const auto &incl : context.includes()) {
+        for (const auto& incl : context.includes()) {
             source_file << "#include " << incl << std::endl;
         }
 
@@ -122,19 +124,18 @@ void BackEnd::GenerateCode(DAG *const dag) {
                     .substr(0, 32);
 
     // Rename temporary folder to name based on hash value
-    lib_dir_ = get_lib_path() / ("backend/gen/lib-" + hash);
+    boost::filesystem::path lib_dir =
+            get_lib_path() / ("backend/gen/lib-" + hash);
 
-    if (!boost::filesystem::exists(lib_dir_)) {
-        boost::filesystem::rename(temp_dir, lib_dir_);
+    if (!boost::filesystem::exists(lib_dir)) {
+        boost::filesystem::rename(temp_dir, lib_dir);
     } else {
-        assert(boost::filesystem::is_directory(lib_dir_));
+        assert(boost::filesystem::is_directory(lib_dir));
         boost::filesystem::remove_all(temp_dir);
     }
-}
 
-void BackEnd::Compile(const uint64_t counter) {
     // Compile inside temporary directory
-    boost::filesystem::current_path(lib_dir_);
+    boost::filesystem::current_path(lib_dir);
 
     auto const makefile_path =
             get_lib_path() / "backend/src/code_gen/cpp/Makefile";
@@ -159,14 +160,15 @@ void BackEnd::Compile(const uint64_t counter) {
 
     // Create symlinks for front-end
     auto const gen_dir = get_lib_path() / "backend/gen";
+    const size_t counter = config.at("/counter");
 
-    auto const lib_path = lib_dir_.filename() / "execute.so";
+    auto const lib_path = lib_dir.filename() / "execute.so";
     auto const lib_symlink =
             gen_dir / ("execute" + std::to_string(counter) + ".so");
     boost::filesystem::remove(lib_symlink);
     boost::filesystem::create_symlink(lib_path, lib_symlink);
 
-    auto const header_path = lib_dir_.filename() / "execute.h";
+    auto const header_path = lib_dir.filename() / "execute.h";
     auto const header_symlink = gen_dir / "execute.h";
     boost::filesystem::remove(header_symlink);
     boost::filesystem::create_symlink(header_path, header_symlink);

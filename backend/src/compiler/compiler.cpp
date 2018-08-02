@@ -26,19 +26,15 @@ void Compiler::GenerateExecutable() {
     // TODO(ingo): pass back-end-specific config to back-end
     using CodeGenBackEnd = std::unique_ptr<code_gen::common::BackEnd>;
     std::unordered_map<std::string, CodeGenBackEnd> code_generators;
-    code_generators.emplace("cpp",
-                            CodeGenBackEnd(new code_gen::cpp::BackEnd()));
+    code_generators.emplace("cpp", CodeGenBackEnd(new code_gen::cpp::BackEnd(
+                                           conf_.unflatten().dump())));
 
     const std::string codegen_backend = conf_.value("/codegen/backend", "cpp");
     const auto code_gen_backend = code_generators.at(codegen_backend).get();
 
     if (conf_.value("/optimizer/codegen", true)) {
-        // Generate code
-        code_gen_backend->GenerateCode(dag_.get());
-
-        // Compile to native machine code
-        // TODO(ingo): think again about this interface
-        code_gen_backend->Compile(conf_.value("/backend/counter", 0));
+        // Generate code and compile
+        code_gen_backend->Run(dag_.get());
     }
 }
 
