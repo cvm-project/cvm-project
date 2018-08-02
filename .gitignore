@@ -1,6 +1,9 @@
 #generated query code
 /backend/gen/
 
+# Local configurations
+/jitq_config.json
+
 # benchmark data
 /python/benchmarks/crime_data/
 *.h5
