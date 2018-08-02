@@ -5,12 +5,12 @@ from jitq.tests.helpers import run_tests, load_and_patch_common_tests, \
 from jitq.jitq_context import JitqContext
 
 
-def set_up():
-    JitqContext.default_conf = {"codegen": {"backend": "cpp"}}
+def set_up(self):
+    self.context = JitqContext(conf={"codegen": {"backend": "cpp"}})
 
 
 NAME_SUFFIX = "Cpp"
-FUNCTIONS = {"setUp": lambda self: set_up()}
+FUNCTIONS = {"setUp": set_up}
 
 
 def load_tests(loader, _standard_tests, _pattern):
