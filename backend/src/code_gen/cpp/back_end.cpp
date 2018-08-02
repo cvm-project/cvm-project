@@ -163,7 +163,7 @@ void BackEnd::Run(DAG* const dag) const {
 
     // Create symlinks for front-end
     auto const gen_dir = get_lib_path() / "backend/gen";
-    const size_t counter = config.at("/counter");
+    const size_t counter = config.value("/counter", 0);
 
     auto const lib_path = lib_dir.filename() / "execute.so";
     auto const lib_symlink =
