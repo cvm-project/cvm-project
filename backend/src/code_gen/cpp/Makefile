@@ -51,6 +51,6 @@ execute.s: execute.so
 	objdump -D $^ > $@
 
 clean:
-	rm -f *.bc execute *.asm functions_llvm/*.o *.o *.so *.ll $(GCHEADER) $(MAINHEADER)
+	rm -f *.bc *.asm *.o *.so $(GCHEADER) $(MAINHEADER)
 
 .PHONY: clean
