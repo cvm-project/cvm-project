@@ -1,6 +1,7 @@
 #ifndef CPP_MATERIALIZEROWVECTOROPERATOR_H
 #define CPP_MATERIALIZEROWVECTOROPERATOR_H
 
+#include <stdexcept>
 #include <type_traits>
 
 #include "Operator.h"
