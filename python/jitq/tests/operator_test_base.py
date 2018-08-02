@@ -11,9 +11,6 @@ import pandas as pd
 from jitq.jitq_context import JitqContext
 
 
-# Disable "too-many-public-methods": this is not an interface, but a collection
-# of test cases, which may be long.
-# pylint: disable=R0904
 class TestCollection(unittest.TestCase):
 
     def test_scalar(self):
