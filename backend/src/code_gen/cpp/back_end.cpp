@@ -61,6 +61,7 @@ void BackEnd::Run(DAG* const dag) const {
                        " */\n";
 
         includes.emplace("\"runtime/free.hpp\"");
+        includes.emplace("<cstring>");
 
         for (const auto& incl : context.includes()) {
             source_file << "#include " << incl << std::endl;
