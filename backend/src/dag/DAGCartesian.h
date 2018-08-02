@@ -9,8 +9,6 @@
 
 class DAGCartesian : public DAGOperatorBase<DAGCartesian> {
 public:
-    bool stream_right = true;
-
     constexpr static const char *kName = "cartesian";
     constexpr static size_t kNumInPorts = 2;
     constexpr static size_t kNumOutPorts = 1;

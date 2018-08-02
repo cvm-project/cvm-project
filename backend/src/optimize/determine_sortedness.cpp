@@ -20,25 +20,13 @@ public:
         const auto &left_fields = dag_->predecessor(op, 0)->tuple->fields;
         const auto &right_fields = dag_->predecessor(op, 1)->tuple->fields;
 
-        if (op->stream_right) {
-            for (size_t i = 0; i < right_fields.size(); i++) {
-                auto &field = op->tuple->fields[i + left_fields.size()];
-                if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
-                    field->AddProperty(FL_GROUPED);
-                }
-                if (right_fields[i]->properties().count(FL_SORTED) > 0) {
-                    field->AddProperty(FL_SORTED);
-                }
+        for (size_t i = 0; i < right_fields.size(); i++) {
+            auto &field = op->tuple->fields[i + left_fields.size()];
+            if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
+                field->AddProperty(FL_GROUPED);
             }
-        } else {
-            for (size_t i = 0; i < left_fields.size(); i++) {
-                auto &field = op->tuple->fields[i];
-                if (left_fields[i]->properties().count(FL_UNIQUE) > 0) {
-                    field->AddProperty(FL_GROUPED);
-                }
-                if (left_fields[i]->properties().count(FL_SORTED) > 0) {
-                    field->AddProperty(FL_SORTED);
-                }
+            if (right_fields[i]->properties().count(FL_SORTED) > 0) {
+                field->AddProperty(FL_SORTED);
             }
         }
     }
@@ -79,20 +67,11 @@ public:
                     field->AddProperty(FL_UNIQUE);
                 }
             }
-        } else {
-            if (is_left_unique && !op->stream_right) {
-                for (size_t i = 0; i < left_fields.size(); i++) {
-                    auto &field = op->tuple->fields[i];
-                    if (left_fields[i]->properties().count(FL_UNIQUE) > 0) {
-                        field->AddProperty(FL_GROUPED);
-                    }
-                }
-            } else if (is_right_unique && op->stream_right) {
-                for (size_t i = 1; i < right_fields.size(); i++) {
-                    auto &field = op->tuple->fields[i + left_fields.size() - 1];
-                    if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
-                        field->AddProperty(FL_GROUPED);
-                    }
+        } else if (is_right_unique) {
+            for (size_t i = 1; i < right_fields.size(); i++) {
+                auto &field = op->tuple->fields[i + left_fields.size() - 1];
+                if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
+                    field->AddProperty(FL_GROUPED);
                 }
             }
         }
