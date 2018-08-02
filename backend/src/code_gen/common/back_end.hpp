@@ -1,5 +1,5 @@
-#ifndef CODE_GEN_COMMON_BACKEND_HPP
-#define CODE_GEN_COMMON_BACKEND_HPP
+#ifndef CODE_GEN_COMMON_BACK_END_HPP
+#define CODE_GEN_COMMON_BACK_END_HPP
 
 #include <cstdint>
 
@@ -16,4 +16,4 @@ struct BackEnd {
 }  // namespace common
 }  // namespace code_gen
 
-#endif  // CODE_GEN_COMMON_BACKEND_HPP
+#endif  // CODE_GEN_COMMON_BACK_END_HPP

@@ -93,7 +93,7 @@ include(GoogleTest)
 
 # Set up generate library
 set(GENERATE_SOURCE_FILES
-        code_gen/cpp/BackEnd.cpp
+        code_gen/cpp/back_end.cpp
         code_gen/cpp/code_gen.cpp
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/context.cpp

@@ -5,8 +5,8 @@
 
 #include <json.hpp>
 
-#include "code_gen/common/BackEnd.hpp"
-#include "code_gen/cpp/BackEnd.hpp"
+#include "code_gen/common/back_end.hpp"
+#include "code_gen/cpp/back_end.hpp"
 #include "dag/DAG.h"
 #include "dag/dag_factory.hpp"
 #include "optimize/optimizer.hpp"

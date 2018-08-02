@@ -1,7 +1,7 @@
-#ifndef CODE_GEN_CPP_BACKEND_HPP
-#define CODE_GEN_CPP_BACKEND_HPP
+#ifndef CODE_GEN_CPP_BACK_END_HPP
+#define CODE_GEN_CPP_BACK_END_HPP
 
-#include "code_gen/common/BackEnd.hpp"
+#include "code_gen/common/back_end.hpp"
 #include "dag/DAG.h"
 
 namespace code_gen {
@@ -19,4 +19,4 @@ private:
 }  // namespace cpp
 }  // namespace code_gen
 
-#endif  // CODE_GEN_CPP_BACKEND_HPP
+#endif  // CODE_GEN_CPP_BACK_END_HPP
