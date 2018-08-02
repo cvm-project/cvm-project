@@ -14,9 +14,18 @@ BACKEND_DIR = $(SCRIPT_DIR)/../../../
 
 # Set flags
 INC = -I$(SCRIPT_DIR)/operators -I$(BACKEND_DIR)/src
-CFLAGS = -DNDEBUG -O3 -ffast-math -march=native -mtune=native -fPIC -flto
-CXXFLAGS = $(CFLAGS) -std=c++14
+CXXFLAGS = -fPIC -flto -std=c++14
 LDFLAGS = -fuse-ld=gold -flto -L$(BACKEND_DIR)/build -lruntime
+
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+    CXXFLAGS += -g3 -DDEBUG
+    LDFLAGS += -g
+    LIB = execute.dbg.so
+else
+    CXXFLAGS += -DNDEBUG -O3 -ffast-math -march=native -mtune=native
+    LIB = execute.opt.so
+endif
 
 # Set inputs
 UDF_SOURCES = llvm_funcs.ll
@@ -35,8 +44,17 @@ all: execute.so
 %.o: %.ll
 	$(CXX) -c $< -o $@ $(CXXFLAGS) -Wno-override-module
 
-execute.o: execute.cpp $(GCHEADER)
+execute.opt.cpp: execute.cpp
+	cp $^ $@
+
+execute.dbg.cpp: execute.cpp
+	clang-format-5.0 $< > $@
+
+execute.opt.o: execute.opt.cpp $(GCHEADER)
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(INC) -include-pch $(GCHEADER)
+
+execute.dbg.o: execute.dbg.cpp $(MAINHEADER)
+	$(CXX) -c $< -o $@ $(CXXFLAGS) $(INC)
 
 $(GCHEADER): $(MAINHEADER)
 	$(CXX) $(CXXFLAGS) $(INC) -x c++-header $< -o $@
@@ -44,8 +62,11 @@ $(GCHEADER): $(MAINHEADER)
 $(MAINHEADER): $(HEADERS)
 	$(GENHEADER) $@
 
-execute.so: $(UDF_OBJECTS) execute.o
-	 $(CXX)  $^ -o execute${LIB_ID}.so -shared $(LDFLAGS)
+execute.%.so: $(UDF_OBJECTS) execute.%.o
+	 $(CXX) $^ -o $@ -shared $(LDFLAGS)
+
+execute.so: $(LIB)
+	cp $^ $@
 
 execute.s: execute.so
 	objdump -D $^ > $@
