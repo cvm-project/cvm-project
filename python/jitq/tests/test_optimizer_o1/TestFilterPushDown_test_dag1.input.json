@@ -38,7 +38,7 @@
             ]
         },
         {
-            "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
+            "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\nattributes #0 = { norecurse nounwind }\nattributes #1 = { norecurse nounwind readnone }\n",
             "id": 2,
             "op": "map",
             "output_type": [
@@ -51,7 +51,7 @@
             ]
         },
         {
-            "func": "define i1 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = icmp eq i64 %.1, 0\n  ret i1 %.14.i\n}\n\n\n\n",
+            "func": "define i1 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  %.14.i = icmp eq i64 %.1, 0\n  ret i1 %.14.i\n}\n\nattributes #0 = { norecurse nounwind }\nattributes #1 = { norecurse nounwind readnone }\n",
             "id": 3,
             "op": "filter",
             "output_type": [

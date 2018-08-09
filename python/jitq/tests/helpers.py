@@ -69,6 +69,8 @@ def enable_dag_dumping():
         # no better way to get this
         func = self._testMethodName
         cls = type(self).__name__
+        from jitq.tests.test_cpp_backend import NAME_SUFFIX
+        cls = cls[:len(cls) - len(NAME_SUFFIX)]
         # read generated json
         inp = get_project_path() + "/dag.json"
         from jitq.tests.test_optimizer import TEST_CLASSES
@@ -78,8 +80,7 @@ def enable_dag_dumping():
                 with open(out, 'w') as output_file:
                     output_file.write(format_json(input_file.read()))
 
-    # pylint: disable=unused-argument
-    def remove_old_dag_json(self):
+    def remove_old_dag_json(_):
         try:
             os.remove(get_project_path() + "/dag.json")
         except BaseException:
@@ -98,20 +99,15 @@ def enable_dag_dumping():
             remove_old_dag_json(self)
 
         return inner
-
-    test_suites = unittest.loader.defaultTestLoader.loadTestsFromModule(
-        __import__("__main__"))
-    for suit in test_suites:
-        for test in suit:
-            cls = test.__class__
-            if cls.tearDown:
-                cls.tearDown = tear_down_wrapper(cls.tearDown)
-            else:
-                cls.tearDown = augment_with_dag_dumping_power
-            if cls.setUp:
-                cls.setUp = setup_wrapper(cls.setUp)
-            else:
-                cls.setUp = remove_old_dag_json
+    for cls in operator_test_base_classes():
+        if cls.tearDown:
+            cls.tearDown = tear_down_wrapper(cls.tearDown)
+        else:
+            cls.tearDown = augment_with_dag_dumping_power
+        if cls.setUp:
+            cls.setUp = setup_wrapper(cls.setUp)
+        else:
+            cls.setUp = remove_old_dag_json
 
 
 def run_tests():

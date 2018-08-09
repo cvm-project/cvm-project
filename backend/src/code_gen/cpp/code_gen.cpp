@@ -428,7 +428,7 @@ void StoreLlvmCode(Context *const context, const std::string &llvm_ir,
     std::string patched_ir = llvm_ir;
 
     // Remove 'local_unnamed_addr', which is not llvm-3.7 compatible:
-    std::regex reg1("local_unnamed_addr #.? ");
+    std::regex reg1("local_unnamed_addr");
     patched_ir = std::regex_replace(patched_ir, reg1, "");
 
     // Replace the func name with ours

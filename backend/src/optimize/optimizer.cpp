@@ -31,6 +31,7 @@ void Optimizer::Run(DAG *const dag) {
         config.emplace("/optimizations/canonicalize", true);
         config.emplace("/optimizations/create-pipelines", true);
         config.emplace("/optimizations/materialize-multiple-reads", true);
+        config.emplace("/optimizations/add-always-inline", true);
     }
 
     if (config.value("/optimization-level", 0) >= 2) {
@@ -85,6 +86,11 @@ void Optimizer::Run(DAG *const dag) {
 #ifndef NDEBUG
         transformations.emplace_back("type_check");
 #endif  // NDEBUG
+    }
+
+    // Add alwaysinline attribute to UDFs
+    if (config.value("/optimizations/add-always-inline", false)) {
+        transformations.emplace_back("add_always_inline");
     }
 
     if (config.value("/optimizations/create-pipelines", false)) {

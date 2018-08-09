@@ -24,7 +24,7 @@
                 ],
                 "operators": [
                     {
-                        "func": "; ModuleID = 'filter'\nsource_filename = \"filter\"\n\ndefine i1 @cfuncnotuniquename(i64 %.1) {\nentry:\n  %.27.i = icmp eq i64 %.1, 0\n  ret i1 %.27.i\n}\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine i1 @cfuncnotuniquename(i64 %.1) #0 {\nentry:\n  %.27.i = icmp eq i64 %.1, 0\n  ret i1 %.27.i\n}\n\nattributes #0 = { alwaysinline }\n",
                         "id": 0,
                         "op": "filter",
                         "output_type": [

@@ -38,7 +38,7 @@
                         ]
                     },
                     {
-                        "func": "define i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #1 {\nentry:\n  ret i64 %.1\n}\n\n\n\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind readnone\ndefine i64 @cfuncnotuniquename(i64 %.1) local_unnamed_addr #0 {\nentry:\n  ret i64 %.1\n}\n\nattributes #0 = { alwaysinline norecurse nounwind readnone }\n",
                         "id": 1,
                         "op": "map",
                         "output_type": [

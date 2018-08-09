@@ -34,6 +34,7 @@ public:
 
     std::string AdjustFilterSignature(DAGFilter *pFilter,
                                       const DAGOperator *predecessor);
+    std::string AddInlineAttribute();
 
 private:
     /**

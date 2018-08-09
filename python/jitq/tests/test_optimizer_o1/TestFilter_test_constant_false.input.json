@@ -44,7 +44,7 @@
             ]
         },
         {
-            "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i1 false\n}\n\n\n\n",
+            "func": "define i1 @cfuncnotuniquename(i64 %.1, i64 %.2) local_unnamed_addr #1 {\nentry:\n  ret i1 false\n}\n\nattributes #0 = { norecurse nounwind }\nattributes #1 = { norecurse nounwind readnone }\n",
             "id": 2,
             "op": "filter",
             "output_type": [

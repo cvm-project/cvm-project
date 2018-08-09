@@ -33,7 +33,6 @@ def get_llvm_ir(sig, func, **options):
     # sabir 14.02.18: somehow pylint does not understand S = DOTALL = ... in re
     code_group = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
     code_string = code_group.group(0)
-    code_string = re.sub("attributes.*}", "", code_string)
 
     # make the function name not unique
     code_string = re.sub("@.*\".*\"", "@cfuncnotuniquename", code_string)

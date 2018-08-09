@@ -248,4 +248,14 @@ std::string Function::AdjustFilterSignature(
     return ret;
 }
 
+std::string Function::AddInlineAttribute() {
+    auto function = module_->getFunctionList().begin();
+    function->addFnAttr(llvm::Attribute::AlwaysInline);
+    std::string ret;
+    llvm::raw_string_ostream OS(ret);
+    OS << *module_;
+    OS.flush();
+    return ret;
+}
+
 }  // namespace llvm_helpers

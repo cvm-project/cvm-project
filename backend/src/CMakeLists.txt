@@ -117,6 +117,7 @@ set(GENERATE_SOURCE_FILES
         dag/type/tuple.cpp
         dag/utils/apply_visitor.cpp
         llvm_helpers/function.cpp
+        optimize/add_always_inline.cpp
         optimize/assert_correct_open_next_close.cpp
         optimize/attribute_id_tracking.cpp
         optimize/canonicalize.cpp

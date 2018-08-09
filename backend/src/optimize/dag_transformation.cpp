@@ -4,6 +4,7 @@
 
 #include <boost/range/iterator_range.hpp>
 
+#include "add_always_inline.hpp"
 #include "assert_correct_open_next_close.hpp"
 #include "attribute_id_tracking.hpp"
 #include "canonicalize.hpp"
@@ -62,6 +63,7 @@ void LoadDagTransformations() {
     RegisterDefault(new Parallelize());
     RegisterDefault(new SimplePredicateMoveAround());
     RegisterDefault(new TypeInference());
+    RegisterDefault(new AddAlwaysInline());
     Register("type_check", new TypeInference(true));
 
     has_loaded = true;
