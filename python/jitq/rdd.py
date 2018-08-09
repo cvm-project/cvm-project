@@ -109,11 +109,11 @@ class RDD(abc.ABC):
 
         return op_dicts
 
-    def execute_dag(self):
-        hash_ = str(hash(self))
+    def get_final_dict(self):
         inputs = self.get_inputs()
-        dag_dict, output_type = self.context.serialization_cache \
-            .get(hash_, (None, None))
+        hash_ = str(hash(self))
+        dag_dict, output_type = self.context.serialization_cache.get(
+            hash_, None)
 
         if not dag_dict:
             dag_dict = dict()
@@ -134,19 +134,23 @@ class RDD(abc.ABC):
             } for (op, (n, _)) in sorted(inputs.items(),
                                          key=lambda e: e[1][0])]
 
-            output_type = self.output_type
-
             self.context.serialization_cache[hash_] = (dag_dict, output_type)
             # write to file
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
                     json.dump(dag_dict, fp=fp, cls=RDDEncoder, indent=3)
+        self.output_type = output_type
+        return dag_dict
+
+    def execute_dag(self):
+        inputs = self.get_inputs()
+        dag_dict = self.get_final_dict()
 
         input_values = [v for (_, v) in
                         sorted(list(inputs.values()),
                                key=lambda input_: input_[0])]
         return ExecutorManager().execute(
-            self.context, dag_dict, input_values, output_type)
+            self.context, dag_dict, input_values, self.output_type)
 
     def __hash__(self):
         hashes = []
