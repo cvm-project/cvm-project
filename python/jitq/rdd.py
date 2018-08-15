@@ -247,6 +247,13 @@ class BinaryRDD(RDD):
         pass
 
 
+class NaryRDD(RDD):
+
+    @abc.abstractmethod
+    def self_write_dag(self, dic):
+        pass
+
+
 class PipeRDD(UnaryRDD):
     def __init__(self, context, parent, func):
         super(PipeRDD, self).__init__(context, parent)
