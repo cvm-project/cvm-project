@@ -113,7 +113,7 @@ class RDD(abc.ABC):
         inputs = self.get_inputs()
         hash_ = str(hash(self))
         dag_dict, output_type = self.context.serialization_cache.get(
-            hash_, None)
+            hash_, (None, None))
 
         if not dag_dict:
             dag_dict = dict()
@@ -133,6 +133,7 @@ class RDD(abc.ABC):
                 'dag_port': n,
             } for (op, (n, _)) in sorted(inputs.items(),
                                          key=lambda e: e[1][0])]
+            output_type = self.output_type
 
             self.context.serialization_cache[hash_] = (dag_dict, output_type)
             # write to file
@@ -272,20 +273,29 @@ class PipeRDD(UnaryRDD):
 class EnsureSingleTuple(UnaryRDD):
     NAME = 'ensure_single_tuple'
 
-    def self_write_dag(self, dic):
+    def __init__(self, context, parent):
+        super(EnsureSingleTuple, self).__init__(context, parent)
         self.output_type = self.parents[0].output_type
+
+    def self_write_dag(self, dic):
+        pass
 
 
 class Map(PipeRDD):
     NAME = 'map'
 
-    def self_write_dag(self, dic):
-        dic['func'], self.output_type = get_llvm_ir_and_output_type(
+    def __init__(self, context, parent, func):
+        super(Map, self).__init__(context, parent, func)
+        self.output_type = self.parents[0].output_type
+        self.llvm_ir, self.output_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
         if not is_item_type(self.output_type):
             raise BaseException(
                 "Function given to map has the wrong return type:\n"
                 "  found:    {0}".format(self.output_type))
+
+    def self_write_dag(self, dic):
+        dic['func'] = self.llvm_ir
 
 
 class MaterializeRowVector(UnaryRDD):
@@ -314,8 +324,9 @@ class MaterializeRowVector(UnaryRDD):
 class Filter(PipeRDD):
     NAME = 'filter'
 
-    def self_write_dag(self, dic):
-        dic['func'], return_type = get_llvm_ir_and_output_type(
+    def __init__(self, context, parent, func):
+        super(Filter, self).__init__(context, parent, func)
+        self.llvm_ir, return_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
         if str(return_type) != "bool":
             raise BaseException(
@@ -324,12 +335,19 @@ class Filter(PipeRDD):
                 "  found:    {1}".format("bool", return_type))
         self.output_type = self.parents[0].output_type
 
+    def self_write_dag(self, dic):
+        dic['func'] = self.llvm_ir
+
 
 class FlatMap(PipeRDD):
     NAME = 'flat_map'
 
+    def __init__(self, context, parent, func):
+        super(FlatMap, self).__init__(context, parent, func)
+        self.llvm_ir, self.output_type = get_llvm_ir_for_generator(self.func)
+
     def self_write_dag(self, dic):
-        dic['func'], self.output_type = get_llvm_ir_for_generator(self.func)
+        dic['func'] = self.llvm_ir
 
 
 class Join(BinaryRDD):
@@ -341,6 +359,7 @@ class Join(BinaryRDD):
 
     def __init__(self, context, left, right):
         super(Join, self).__init__(context, [left, right])
+        self.output_type = self.compute_output_type()
 
     def compute_output_type(self):
         left_type = self.parents[0].output_type
@@ -370,7 +389,7 @@ class Join(BinaryRDD):
         return make_tuple((key_type,) + left_payload + right_payload)
 
     def self_write_dag(self, dic):
-        self.output_type = self.compute_output_type()
+        pass
 
 
 class Cartesian(BinaryRDD):
@@ -378,6 +397,7 @@ class Cartesian(BinaryRDD):
 
     def __init__(self, context, left, right):
         super(Cartesian, self).__init__(context, [left, right])
+        self.output_type = self.compute_output_type()
 
     def compute_output_type(self):
         left_type = self.parents[0].output_type
@@ -389,7 +409,7 @@ class Cartesian(BinaryRDD):
         return make_tuple(left_type.types + right_type.types)
 
     def self_write_dag(self, dic):
-        self.output_type = self.compute_output_type()
+        pass
 
 
 class Reduce(UnaryRDD):
@@ -404,6 +424,14 @@ class Reduce(UnaryRDD):
     def __init__(self, context, parent, func):
         super(Reduce, self).__init__(context, parent)
         self.func = func
+        aggregate_type = self.parents[0].output_type
+        self.llvm_ir, self.output_type = get_llvm_ir_and_output_type(
+            self.func, [aggregate_type, aggregate_type])
+        if str(aggregate_type) != str(self.output_type):
+            raise BaseException(
+                "Function given to reduce has the wrong return type:\n"
+                "  expected: {0}\n"
+                "  found:    {1}".format(aggregate_type, self.output_type))
 
     def self_hash(self):
         file_ = io.StringIO()
@@ -411,14 +439,7 @@ class Reduce(UnaryRDD):
         return hash(file_.getvalue())
 
     def self_write_dag(self, dic):
-        aggregate_type = self.parents[0].output_type
-        dic['func'], self.output_type = get_llvm_ir_and_output_type(
-            self.func, [aggregate_type, aggregate_type])
-        if str(aggregate_type) != str(self.output_type):
-            raise BaseException(
-                "Function given to reduce has the wrong return type:\n"
-                "  expected: {0}\n"
-                "  found:    {1}".format(aggregate_type, self.output_type))
+        dic['func'] = self.llvm_ir
 
 
 class ReduceByKey(UnaryRDD):
@@ -433,6 +454,17 @@ class ReduceByKey(UnaryRDD):
     def __init__(self, context, parent, func):
         super(ReduceByKey, self).__init__(context, parent)
         self.func = func
+        aggregate_type = make_tuple(self.parents[0].output_type.types[1:])
+        if len(aggregate_type) == 1:
+            aggregate_type = aggregate_type.types[0]
+        self.llvm_ir, output_type = get_llvm_ir_and_output_type(
+            func, [aggregate_type, aggregate_type])
+        if str(aggregate_type) != str(output_type):
+            raise BaseException(
+                "Function given to reduce_by_key has the wrong return type:\n"
+                "  expected: {0}\n"
+                "  found:    {1}".format(aggregate_type, output_type))
+        self.output_type = self.parents[0].output_type
 
     def self_hash(self):
         file_ = io.StringIO()
@@ -440,17 +472,7 @@ class ReduceByKey(UnaryRDD):
         return hash(file_.getvalue())
 
     def self_write_dag(self, dic):
-        aggregate_type = make_tuple(self.parents[0].output_type.types[1:])
-        if len(aggregate_type) == 1:
-            aggregate_type = aggregate_type.types[0]
-        dic['func'], output_type = get_llvm_ir_and_output_type(
-            self.func, [aggregate_type, aggregate_type])
-        if str(aggregate_type) != str(output_type):
-            raise BaseException(
-                "Function given to reduce_by_key has the wrong return type:\n"
-                "  expected: {0}\n"
-                "  found:    {1}".format(aggregate_type, output_type))
-        self.output_type = self.parents[0].output_type
+        dic['func'] = self.llvm_ir
 
 
 class CSVSource(SourceRDD):
@@ -463,6 +485,9 @@ class CSVSource(SourceRDD):
         self.dtype = dtype
         self.add_index = add_index
         self.delimiter = delimiter
+        df = np.genfromtxt(
+            self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
+        self.output_type = item_typeof(df[0])
 
     def self_hash(self):
         hash_objects = [
@@ -474,9 +499,6 @@ class CSVSource(SourceRDD):
         return hash("#".join(hash_objects))
 
     def self_write_dag(self, dic):
-        df = np.genfromtxt(
-            self.path, dtype=self.dtype, delimiter=self.delimiter, max_rows=1)
-        self.output_type = item_typeof(df[0])
         dic['data_path'] = self.path
         dic['add_index'] = self.add_index
 
@@ -715,6 +737,7 @@ class GeneratorSource(SourceRDD):
     def __init__(self, context, func):
         super(GeneratorSource, self).__init__(context)
         self.func = func
+        self.llvm_ir, self.output_type = get_llvm_ir_for_generator(self.func)
 
     def self_hash(self):
         file_ = io.StringIO()
@@ -722,4 +745,4 @@ class GeneratorSource(SourceRDD):
         return hash(file_.getvalue())
 
     def self_write_dag(self, dic):
-        dic['func'], self.output_type = get_llvm_ir_for_generator(self.func)
+        dic['func'] = self.llvm_ir

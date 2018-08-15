@@ -242,7 +242,7 @@ class TestJoin(TestCaseBase):
 
         data1 = self.context.collection(input_1)
         data2 = self.context.collection(input_2)
-        self.assertRaises(TypeError, data1.join(data2).collect)
+        self.assertRaises(TypeError, data1.join, data2)
 
     def test_overlap(self):
         input_1 = [(r, r * 10) for r in range(10)]
