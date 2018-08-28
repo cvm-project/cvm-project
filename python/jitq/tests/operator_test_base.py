@@ -65,6 +65,12 @@ class TestCollection(TestCaseBase):
         truth = [(i,) + r for i, r in enumerate(input_)]
         self.assertListEqual(sorted(res.astuples()), truth)
 
+    def test_array_mixed_widths(self):
+        input_ = [(np.int32(i), np.int64(2 * i)) for i in range(10)]
+        res = self.context.collection(input_) \
+            .map(lambda t: (t[0] + 0, t[1] + 0)).collect()
+        self.assertListEqual(sorted(res.astuples()), input_)
+
     def test_pandas_scalar(self):
         input_ = range(10)
         res = self.context.collection(pd.DataFrame(list(input_))[0]) \
