@@ -565,6 +565,13 @@ class TestCache(TestCaseBase):
             .collect()
         self.assertListEqual(sorted(res.astuples()), list(range(1, 10, 2)))
 
+    def test_reuse_input(self):
+        context = JitqContext()
+        input_ = context.collection(range(0, 10))
+        res1 = input_.count()
+        res2 = input_.count()
+        self.assertEqual(res1, res2)
+
         # TODO(sabir): test cases for the caching mechanism of all operators
 
 
