@@ -112,7 +112,8 @@ class RDD(abc.ABC):
     def execute_dag(self):
         hash_ = str(hash(self))
         inputs = self.get_inputs()
-        dag_dict = self.context.serialization_cache.get(hash_, None)
+        dag_dict, output_type = self.context.serialization_cache \
+            .get(hash_, (None, None))
 
         if not dag_dict:
             dag_dict = dict()
@@ -133,7 +134,9 @@ class RDD(abc.ABC):
             } for (op, (n, _)) in sorted(inputs.items(),
                                          key=lambda e: e[1][0])]
 
-            self.context.serialization_cache[hash_] = dag_dict
+            output_type = self.output_type
+
+            self.context.serialization_cache[hash_] = (dag_dict, output_type)
             # write to file
             if DUMP_DAG:
                 with open(get_project_path() + '/dag.json', 'w') as fp:
@@ -143,7 +146,7 @@ class RDD(abc.ABC):
                         sorted(list(inputs.values()),
                                key=lambda input_: input_[0])]
         return Executor().execute(self.context, dag_dict, input_values,
-                                  self.output_type)
+                                  output_type)
 
     def __hash__(self):
         hashes = []
