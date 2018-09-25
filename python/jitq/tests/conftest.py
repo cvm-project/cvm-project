@@ -24,6 +24,24 @@ def pytest_addoption(parser):
         '-G', '--generate_testcases', action='store_true',
         help='Generate test input files for the optimizer and parser.')
     parser.addoption(
+        '--tpch_print_result', action='store_true',
+        help='Print result after running TPC-H test cases.')
+    parser.addoption(
+        '--tpch_scale', action='store', default='0.001m',
+        help='TPC-H Scale Factor.')
+    parser.addoption(
+        '--tpch_input_format', action='append', default=[],
+        help='Input format of TPC-H data.')
+    parser.addoption(
+        '--tpch_input_path', action='store',
+        default='{jitqpath}/python/jitq/tests/tpch/'
+                '{format}-{sf}/{table}.{format}',
+        help='Format string for path to input files.')
+    parser.addoption(
+        '--tpch_ref_path', action='store',
+        default='{jitqpath}/python/jitq/tests/tpch/ref-{sf}/Q{q}.ref.pkl',
+        help='Format string for path to reference result.')
+    parser.addoption(
         '--write_outputs', action='store_true',
         help='Rewrite reference output files of optimizer test '
              'based on current test results.')
@@ -56,6 +74,38 @@ def pytest_generate_tests(metafunc):
             [metafunc.config.option.generate_testcases]
         metafunc.parametrize('generate_testcases_enabled',
                              generate_testcases,
+                             scope='session')
+
+    if 'tpch_print_result' in metafunc.fixturenames:
+        tpch_print_result = [metafunc.config.option.tpch_print_result]
+        metafunc.parametrize('tpch_print_result',
+                             tpch_print_result,
+                             scope='session')
+
+    if 'tpch_scale' in metafunc.fixturenames:
+        tpch_scale = [metafunc.config.option.tpch_scale]
+        metafunc.parametrize('tpch_scale',
+                             tpch_scale,
+                             scope='session')
+
+    if 'tpch_input_format' in metafunc.fixturenames:
+        tpch_input_format = metafunc.config.option.tpch_input_format or \
+            ['pandas/csv']
+        tpch_input_format = list(set(tpch_input_format))
+        metafunc.parametrize('tpch_input_format',
+                             tpch_input_format,
+                             scope='session')
+
+    if 'tpch_input_path' in metafunc.fixturenames:
+        tpch_input_path = [metafunc.config.option.tpch_input_path]
+        metafunc.parametrize('tpch_input_path',
+                             tpch_input_path,
+                             scope='session')
+
+    if 'tpch_ref_path' in metafunc.fixturenames:
+        tpch_ref_path = [metafunc.config.option.tpch_ref_path]
+        metafunc.parametrize('tpch_ref_path',
+                             tpch_ref_path,
                              scope='session')
 
 
