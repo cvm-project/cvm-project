@@ -69,8 +69,6 @@ def enable_dag_dumping():
         # no better way to get this
         func = self._testMethodName
         cls = type(self).__name__
-        from jitq.tests.test_cpp_backend import NAME_SUFFIX
-        cls = cls[:len(cls) - len(NAME_SUFFIX)]
         # read generated json
         inp = get_project_path() + "/dag.json"
         from jitq.tests.test_optimizer import TEST_CLASSES
