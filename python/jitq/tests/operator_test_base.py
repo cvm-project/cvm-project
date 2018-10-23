@@ -611,6 +611,18 @@ class TestSortedness(TestCaseBase):
         truth = [(i, int(i / 2)) for i in range(10)]
         self.assertListEqual(sorted(res.astuples()), truth)
 
+    def test_join_right_unique(self):
+        res = self.context.range_(0, 10) \
+            .map(lambda i: (i % 3, i % 5)) \
+            .join(self.context.range_(0, 10)
+                      .map(lambda i: (i % 5, 1))
+                      .reduce_by_key(lambda i1, i2: i1 + i2)) \
+            .map(lambda t: (t[1], 1)) \
+            .reduce_by_key(lambda i1, i2: i1 + i2)\
+            .collect()
+        truth = [(i, 2) for i in range(5)]
+        self.assertListEqual(sorted(res.astuples()), truth)
+
     def test_join_key_grouped(self):
         res = self.context.range_(0, 10) \
             .map(lambda i: (i, int(i / 2))) \
