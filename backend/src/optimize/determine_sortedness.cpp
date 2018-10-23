@@ -73,7 +73,7 @@ public:
                     field->AddProperty(FL_UNIQUE);
                 }
             }
-            for (size_t i = 0; i < right_fields.size(); i++) {
+            for (size_t i = 1; i < right_fields.size(); i++) {
                 auto &field = op->tuple->fields[i + left_fields.size() - 1];
                 if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
                     field->AddProperty(FL_UNIQUE);
@@ -88,7 +88,7 @@ public:
                     }
                 }
             } else if (is_right_unique && op->stream_right) {
-                for (size_t i = 0; i < right_fields.size(); i++) {
+                for (size_t i = 1; i < right_fields.size(); i++) {
                     auto &field = op->tuple->fields[i + left_fields.size() - 1];
                     if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
                         field->AddProperty(FL_GROUPED);
