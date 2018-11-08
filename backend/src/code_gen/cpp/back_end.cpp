@@ -115,9 +115,10 @@ void BackEnd::Run(DAG* const dag) const {
             llvm_code_path.filename(), boost::process::std_out > pipe);
     assert(ret1 == 0);
 
-    auto const ret2 = boost::process::system(
-            sha256sum, boost::process::std_in<pipe, boost::process::std_out>
-                               sha256sum_std_out);
+    auto std_in_pipe = boost::process::std_in < pipe;
+    auto const ret2 =
+            boost::process::system(sha256sum, "-", std_in_pipe,
+                                   boost::process::std_out > sha256sum_std_out);
     assert(ret2 == 0);
 
     auto const hash =
