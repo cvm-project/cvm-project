@@ -14,9 +14,8 @@
 #include "dag/DAGCompiledPipeline.h"
 #include "optimize/optimizer.hpp"
 #include "runtime/execute_plan.hpp"
-#include "runtime/free.hpp"
 
-int GenerateExecutable(const char *const conf, const char *const dagstr) {
+int64_t GenerateExecutable(const std::string &conf, const std::string &dagstr) {
     auto conf_json = nlohmann::json::parse(conf).flatten();
     conf_json.emplace("/optimizer/optimization-level", 2);
 
@@ -39,17 +38,3 @@ int GenerateExecutable(const char *const conf, const char *const dagstr) {
 
     return plan_id;
 }
-
-void FreeResult(const char *const s) {
-    runtime::FreeValues(s);
-    free(const_cast<void *>(reinterpret_cast<const void *>(s)));
-}
-
-const char *ExecutePlan(int plan_id, const char *input_str) {
-    const auto ret_str = runtime::ExecutePlan(plan_id, input_str);
-    const auto ret_ptr = reinterpret_cast<char *>(malloc(ret_str.size() + 1));
-    strncpy(ret_ptr, ret_str.c_str(), ret_str.size() + 1);
-    return ret_ptr;
-}
-
-void ClearPlans() { runtime::ClearPlans(); }

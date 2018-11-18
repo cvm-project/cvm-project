@@ -9,8 +9,8 @@ import numpy as np
 from pandas import DataFrame
 from cffi import FFI
 
+from jitq import c_executor
 from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
-from jitq.c_executor import ExecutorManager
 from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.libs.numba.llvm_ir import get_llvm_ir
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
@@ -150,7 +150,7 @@ class RDD(abc.ABC):
         input_values = [v for (_, v) in
                         sorted(list(inputs.values()),
                                key=lambda input_: input_[0])]
-        return ExecutorManager().execute(
+        return c_executor.execute(
             self.context, dag_dict, input_values, self.output_type)
 
     def __hash__(self):

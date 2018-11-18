@@ -1,51 +1,20 @@
 import json
 from functools import reduce
-from sys import platform
 
 import numpy as np
 from cffi import FFI
 from numba import types
 
+from jitq import backend
 from jitq.rdd_result import NumpyResult
-
-from jitq.utils import get_project_path, RDDEncoder, Timer, \
+from jitq.utils import RDDEncoder, Timer, \
     numba_type_to_dtype, get_type_size
-
-JITQ_PATH = get_project_path()
-CPP_DIR = JITQ_PATH + "/backend/"
-GEN_DIR = JITQ_PATH + "/backend/gen/"
-GEN_HEADER_FILE = "generate_executable.h"
-GENERATE_LIB = "libgenerate"
-
-
-def load_cffi(header, lib_path, ffi):
-    cdef_from_file = None
-    try:
-        with open(header, 'r') as libtestcffi_header:
-            cdef_from_file = libtestcffi_header.read()
-    except FileNotFoundError:
-        print('Unable to find "%s"' % header)
-        exit(2)
-    except IOError:
-        print('Unable to open "%s"' % header)
-        exit(3)
-    finally:
-        if cdef_from_file == '':
-            print('File "%s" is empty' % header)
-            exit(1)
-
-    ffi.cdef(cdef_from_file)
-    if platform.startswith('win'):
-        lib_extension = '.dll'
-    else:
-        lib_extension = '.so'
-    return ffi.dlopen(lib_path + lib_extension)
 
 
 # pylint: disable=inconsistent-return-statements
-def wrap_result(res, type_, ffi):
+def wrap_result(res, type_):
 
-    values = json.loads(ffi.string(res).decode('utf-8'))
+    values = json.loads(res.string)
     assert len(values) == 1
 
     if values[0]['type'] == 'none':
@@ -65,13 +34,14 @@ def wrap_result(res, type_, ffi):
             assert offset == 0
         dtype_size = get_type_size(type_.dtype)
         total_count = reduce(lambda t1, t2: t1 * t2, outer_shape)
+        ffi = FFI()
         c_buffer = ffi.buffer(ffi.cast("void *", result[0]['data']),
                               total_count * dtype_size)
         np_arr = np.frombuffer(c_buffer,
                                dtype=numba_type_to_dtype(type_.dtype),
                                count=total_count)
         np_arr = np_arr.view(NumpyResult)
-        np_arr.ptr = res
+        np_arr.handle = res
 
         return np_arr
 
@@ -85,65 +55,40 @@ def wrap_result(res, type_, ffi):
     assert False
 
 
-class ExecutorManager:
-    """
-    Singleton class to execute query
-    Keeps track of generated code to avoid recompilation
-    """
+class ResultHandle:
+    def __init__(self, string):
+        self.string = string
 
-    class __Inner:
-        def __init__(self):
-            self.libgenerate = load_cffi(CPP_DIR + "src/" + GEN_HEADER_FILE,
-                                         CPP_DIR + "build/" + GENERATE_LIB,
-                                         FFI())
+    def __del__(self):
+        backend.FreeResult(self.string)
 
-        def __del__(self):
-            self.libgenerate.ClearPlans()
 
-        def get_executor(self, context, dag_str, conf_str):
-            cache_key = dag_str + conf_str
-            plan_id = context.executor_cache.get(cache_key, None)
-            if not plan_id:
-                ffi = FFI()
-                dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
-                conf_c = ffi.new('char[]', conf_str.encode('utf-8'))
+def lookup_or_generate_plan(context, dag_str, conf_str):
+    cache_key = dag_str + conf_str
+    plan_id = context.executor_cache.get(cache_key, None)
+    if not plan_id:
+        timer = Timer()
+        timer.start()
+        plan_id = backend.GenerateExecutable(conf_str, dag_str)
+        timer.end()
+        print("time: calling make " + str(timer.diff()))
+        context.executor_cache[cache_key] = plan_id
+    return plan_id
 
-                timer = Timer()
-                timer.start()
-                plan_id = self.libgenerate.GenerateExecutable(
-                    conf_c, dag_c)
-                timer.end()
-                print("time: calling make " + str(timer.diff()))
-                context.executor_cache[cache_key] = plan_id
-            return plan_id
 
-        def execute(self, context, dag_dict, inputs, output_type):
-            ffi = FFI()
+def execute(context, dag_dict, inputs, output_type):
+    args_str = json.dumps(inputs)
+    dag_str = json.dumps(dag_dict, cls=RDDEncoder)
+    conf_str = json.dumps(context.conf)
 
-            args_c = ffi.new('char[]', json.dumps(inputs).encode('utf-8'))
-            dag_str = json.dumps(dag_dict, cls=RDDEncoder)
-            conf_str = json.dumps(context.conf)
+    plan_id = lookup_or_generate_plan(context, dag_str, conf_str)
 
-            plan_id = self.get_executor(context, dag_str, conf_str)
+    timer = Timer()
+    timer.start()
+    res = ResultHandle(backend.ExecutePlan(plan_id, args_str))
 
-            timer = Timer()
-            timer.start()
-            res = self.libgenerate.ExecutePlan(plan_id, args_c)
-            # Add a free function to the result object that allows the C++
-            # layer to clean up
-            res = ffi.gc(res, self.libgenerate.FreeResult)
+    timer.end()
+    print("execute " + str(timer.diff()))
+    res = wrap_result(res, output_type)
 
-            timer.end()
-            print("execute " + str(timer.diff()))
-            res = wrap_result(res, output_type, ffi)
-
-            return res
-
-    instance = None
-
-    def __init__(self):
-        if not ExecutorManager.instance:
-            ExecutorManager.instance = ExecutorManager.__Inner()
-
-    def __getattr__(self, name):
-        return getattr(self.instance, name)
+    return res

@@ -45,6 +45,12 @@ set(JSONLIB_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/json/src")
 get_filename_component(JSONLIB_INCLUDE_DIRS "${JSONLIB_INCLUDE_DIRS}" ABSOLUTE)
 include_directories(SYSTEM ${JSONLIB_INCLUDE_DIRS})
 
+# Set up pybind11
+add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/pybind11" pybind11)
+set(PYBIND11_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/pybind11/include")
+get_filename_component(PYBIND11_INCLUDE_DIRS "${PYBIND11_INCLUDE_DIRS}" ABSOLUTE)
+include_directories(SYSTEM "{$PYBIND11_INCLUDE_DIRS}")
+
 # Set up polymorphic_value
 set(POLYMORPHIC_VALUE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/jbcoe")
 get_filename_component(POLYMORPHIC_VALUE_INCLUDE_DIRS "${POLYMORPHIC_VALUE_INCLUDE_DIRS}" ABSOLUTE)
@@ -149,6 +155,15 @@ target_link_libraries(generate PUBLIC
         runtime
     )
 
+# Set up Python module
+pybind11_add_module(jitq_backend
+        python_module.cpp
+    )
+target_link_libraries(jitq_backend PUBLIC
+        generate
+        runtime
+    )
+
 # Set up runtime library
 set(RUNTIME_SOURCE_FILES
         runtime/execute_plan.cpp
@@ -201,12 +216,14 @@ if(cppcheck_FOUND)
             "--enable=warning,performance,style"
             "--error-exitcode=1"
             "--inline-suppr"
-            "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
+            "--suppress='*:/usr/*'"
+            "--suppress='*:${CATCH_INCLUDE_DIRS}/*'"
             "--suppress='*:${GRAPHVIZ_INCLUDE_DIRS}/*'"
             "--suppress='*:${GTEST_INCLUDE_DIRS}/*'"
-            "--suppress='*:${CATCH_INCLUDE_DIRS}/*'"
             "--suppress='*:${JSONLIB_INCLUDE_DIRS}/*'"
+            "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
             "--suppress='*:${POLYMORPHIC_VALUE_INCLUDE_DIRS}/*'"
+            "--suppress='*:${PYBIND11_INCLUDE_DIRS}/*'"
         )
 endif()
 

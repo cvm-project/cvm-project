@@ -16,8 +16,8 @@ struct FreeVisitor : public Visitor<FreeVisitor, const values::Value,
     void operator()(const values::Array* const v) { free(v->data); }
 };
 
-extern "C" void FreeValues(const char* const values_str) {
-    const auto values = values::ConvertFromJsonString(values_str);
+void FreeValues(const std::string& values_str) {
+    const auto values = values::ConvertFromJsonString(values_str.c_str());
     for (auto const& v : values) {
         FreeVisitor().Visit(v.get());
     }

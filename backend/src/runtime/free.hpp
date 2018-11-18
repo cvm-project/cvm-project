@@ -1,9 +1,11 @@
 #ifndef RUNTIME_FREE_FUNCTION_HPP
 #define RUNTIME_FREE_FUNCTION_HPP
 
+#include <string>
+
 namespace runtime {
 
-extern "C" void FreeValues(const char* values_str);
+void FreeValues(const std::string &values_str);
 
 }  // namespace runtime
 

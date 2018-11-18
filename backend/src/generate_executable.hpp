@@ -1,8 +1,8 @@
 #ifndef GENERATE_EXECUTABLE_HPP
 #define GENERATE_EXECUTABLE_HPP
 
-extern "C" {
-#include "generate_executable.h"
-}
+#include <string>
+
+int64_t GenerateExecutable(const std::string &conf, const std::string &dagstr);
 
 #endif  // GENERATE_EXECUTABLE_HPP

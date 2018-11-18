@@ -178,7 +178,7 @@ make
 
 ```bash
 export JITQPATH=$PWD
-export PYTHONPATH=$PWD/python
+export PYTHONPATH=$JITQPATH/python:$JITQPATH/backend/build
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-7.0.1/lib
 ```
 
