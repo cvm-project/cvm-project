@@ -87,7 +87,7 @@ def wrap_result(res, type_, ffi):
     assert False
 
 
-class Executor:
+class ExecutorManager:
     """
     Singleton class to execute query
     Keeps track of generated code to avoid recompilation
@@ -146,8 +146,8 @@ class Executor:
     instance = None
 
     def __init__(self):
-        if not Executor.instance:
-            Executor.instance = Executor.__Inner()
+        if not ExecutorManager.instance:
+            ExecutorManager.instance = ExecutorManager.__Inner()
 
     def __getattr__(self, name):
         return getattr(self.instance, name)
