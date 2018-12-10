@@ -546,7 +546,7 @@ class CollectionSource(UnaryRDD):
     to prevent freeing the input memory before the end of computation
     """
 
-    NAME = 'collection_source'
+    NAME = 'row_scan'
 
     @staticmethod
     def _make_parent(context, values):

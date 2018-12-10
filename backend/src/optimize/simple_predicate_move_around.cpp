@@ -54,7 +54,7 @@ void SimplePredicateMoveAround::Run(DAG *const dag) const {
             bool can_swap = false;
             for (auto const flow : dag->in_flows(currentOp)) {
                 auto const pred = flow.source.op;
-                if (currentOp->name() != "collection_source" &&
+                if (currentOp->name() != "row_scan" &&
                     currentOp->name() != "range_source" &&
                     std::all_of(filter->read_set.begin(),
                                 filter->read_set.end(), [&](auto c) {
