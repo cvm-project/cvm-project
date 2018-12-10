@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_COLLECTIONSOURCEOPERATOR_H
-#define CPP_COLLECTIONSOURCEOPERATOR_H
+#ifndef CPP_ROWSCANOPERATOR_H
+#define CPP_ROWSCANOPERATOR_H
 
 #include <cstring>
 
@@ -11,9 +11,9 @@
 #include "Utils.h"
 
 template <class Tuple, bool kAddIndex, class Upstream>
-class CollectionSourceOperator {
+class RowScanOperator {
 public:
-    CollectionSourceOperator(Upstream *const upstream) : upstream_(upstream) {}
+    RowScanOperator(Upstream *const upstream) : upstream_(upstream) {}
 
     INLINE void open() {
         upstream_->open();
@@ -65,9 +65,9 @@ private:
 };
 
 template <class Tuple, bool kAddIndex, class Upstream>
-CollectionSourceOperator<Tuple, kAddIndex, Upstream>
-makeCollectionSourceOperator(Upstream *const upstream) {
-    return CollectionSourceOperator<Tuple, kAddIndex, Upstream>(upstream);
+RowScanOperator<Tuple, kAddIndex, Upstream> makeRowScanOperator(
+        Upstream *const upstream) {
+    return RowScanOperator<Tuple, kAddIndex, Upstream>(upstream);
 }
 
-#endif  // CPP_COLLECTIONSOURCEOPERATOR_H
+#endif  // CPP_ROWSCANOPERATOR_H

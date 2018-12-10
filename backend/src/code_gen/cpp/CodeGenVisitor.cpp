@@ -32,9 +32,9 @@ void CodeGenVisitor::operator()(DAGAssertCorrectOpenNextClose *op) {
 
 void CodeGenVisitor::operator()(DAGRowScan *op) {
     const std::string var_name =
-            CodeGenVisitor::visit_common(op, "CollectionSourceOperator");
+            CodeGenVisitor::visit_common(op, "RowScanOperator");
 
-    emitOperatorMake(var_name, "CollectionSourceOperator", op,
+    emitOperatorMake(var_name, "RowScanOperator", op,
                      {op->add_index ? "true" : "false"}, {});
 }
 
