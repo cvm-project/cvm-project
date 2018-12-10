@@ -35,7 +35,7 @@
         {
             "add_index": false,
             "id": 1,
-            "op": "collection_source",
+            "op": "row_scan",
             "output_type": [
                 {
                     "type": "long"
@@ -68,7 +68,7 @@
         {
             "add_index": false,
             "id": 3,
-            "op": "collection_source",
+            "op": "row_scan",
             "output_type": [
                 {
                     "type": "long"

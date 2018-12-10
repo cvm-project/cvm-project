@@ -241,7 +241,7 @@
                     {
                         "add_index": false,
                         "id": 13,
-                        "op": "collection_source",
+                        "op": "row_scan",
                         "output_type": [
                             {
                                 "type": "long"
@@ -254,7 +254,7 @@
                     {
                         "add_index": false,
                         "id": 14,
-                        "op": "collection_source",
+                        "op": "row_scan",
                         "output_type": [
                             {
                                 "type": "long"

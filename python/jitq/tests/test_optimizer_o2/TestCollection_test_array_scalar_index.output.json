@@ -43,7 +43,7 @@
                     {
                         "add_index": true,
                         "id": 1,
-                        "op": "collection_source",
+                        "op": "row_scan",
                         "output_type": [
                             {
                                 "type": "long"

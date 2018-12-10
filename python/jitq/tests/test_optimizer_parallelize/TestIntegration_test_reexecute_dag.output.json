@@ -40,7 +40,7 @@
                     {
                         "add_index": false,
                         "id": 1,
-                        "op": "collection_source",
+                        "op": "row_scan",
                         "output_type": [
                             {
                                 "type": "long"
@@ -53,7 +53,7 @@
                     {
                         "add_index": false,
                         "id": 2,
-                        "op": "collection_source",
+                        "op": "row_scan",
                         "output_type": [
                             {
                                 "dim": 1,
@@ -190,7 +190,7 @@
                                 {
                                     "add_index": false,
                                     "id": 1,
-                                    "op": "collection_source",
+                                    "op": "row_scan",
                                     "output_type": [
                                         {
                                             "type": "long"

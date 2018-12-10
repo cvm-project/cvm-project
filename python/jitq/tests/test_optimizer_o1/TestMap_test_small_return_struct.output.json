@@ -59,7 +59,7 @@
                     {
                         "add_index": false,
                         "id": 2,
-                        "op": "collection_source",
+                        "op": "row_scan",
                         "output_type": [
                             {
                                 "type": "int"
