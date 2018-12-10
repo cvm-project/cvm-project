@@ -100,14 +100,14 @@ set(GENERATE_SOURCE_FILES
         compiler/compiler.cpp
         compiler/generate_executable.cpp
         dag/attribute_id.cpp
-        dag/DAGConstantTuple.cpp
         dag/DAG.cpp
-        dag/DAGCollection.cpp
+        dag/DAGConstantTuple.cpp
         dag/dag_factory.cpp
         dag/DAGFilter.cpp
         dag/DAGOperator.cpp
         dag/DAGPipeline.cpp
         dag/DAGProjection.cpp
+        dag/DAGRowScan.cpp
         dag/collection/field.cpp
         dag/collection/array.cpp
         dag/collection/tuple.cpp

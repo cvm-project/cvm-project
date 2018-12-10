@@ -12,22 +12,22 @@
 using dag::utils::IsInstanceOf;
 
 bool IsSourceOperator(DAGOperator *const op) {
-    return IsInstanceOf<    //
-            DAGCollection,  //
-            DAGRange        //
+    return IsInstanceOf<  //
+            DAGRowScan,   //
+            DAGRange      //
             >(op);
 }
 
 DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
     class MakeSplitOperatorVisitor
         : public Visitor<MakeSplitOperatorVisitor, const DAGOperator,
-                         boost::mpl::list<       //
-                                 DAGCollection,  //
-                                 DAGRange        //
+                         boost::mpl::list<    //
+                                 DAGRowScan,  //
+                                 DAGRange     //
                                  >::type,
                          DAGOperator *> {
     public:
-        DAGOperator *operator()(const DAGCollection * /*op*/) {
+        DAGOperator *operator()(const DAGRowScan * /*op*/) {
             return new DAGSplitCollection();
         }
         DAGOperator *operator()(const DAGRange * /*op*/) {
@@ -189,10 +189,10 @@ void Parallelize::Run(DAG *const dag) const {
                 next_inner_dag->AddOperator(next_param_op);
 
                 // Scan operators for (1) partitioning and (2) groupby
-                auto const scan_op1 = new DAGCollection();
+                auto const scan_op1 = new DAGRowScan();
                 next_inner_dag->AddOperator(scan_op1);
 
-                auto const scan_op2 = new DAGCollection();
+                auto const scan_op2 = new DAGRowScan();
                 next_inner_dag->AddOperator(scan_op2);
 
                 // Original reduce as post-reduce operator
@@ -295,16 +295,16 @@ void Parallelize::Run(DAG *const dag) const {
                 right_proj_op->positions = {1};
 
                 // Scan operators for (1) partitioning and (2) groupby
-                auto const left_scan_op1 = new DAGCollection();
+                auto const left_scan_op1 = new DAGRowScan();
                 next_inner_dag->AddOperator(left_scan_op1);
 
-                auto const left_scan_op2 = new DAGCollection();
+                auto const left_scan_op2 = new DAGRowScan();
                 next_inner_dag->AddOperator(left_scan_op2);
 
-                auto const right_scan_op1 = new DAGCollection();
+                auto const right_scan_op1 = new DAGRowScan();
                 next_inner_dag->AddOperator(right_scan_op1);
 
-                auto const right_scan_op2 = new DAGCollection();
+                auto const right_scan_op2 = new DAGRowScan();
                 next_inner_dag->AddOperator(right_scan_op2);
 
                 // Use the original join operator to do the actual join
@@ -355,7 +355,7 @@ void Parallelize::Run(DAG *const dag) const {
         auto const next_op = dag->successor(op);
         auto const out_flow = dag->out_flow(op);
 
-        auto const sop = new DAGCollection();
+        auto const sop = new DAGRowScan();
         dag->AddOperator(sop);
 
         dag->RemoveFlow(out_flow);

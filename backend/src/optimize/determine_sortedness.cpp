@@ -31,7 +31,7 @@ public:
         }
     }
 
-    void operator()(DAGCollection *op) const {
+    void operator()(DAGRowScan *op) const {
         if (op->add_index) {
             op->tuple->fields[0]->AddProperty(FL_UNIQUE);
             op->tuple->fields[0]->AddProperty(FL_SORTED);

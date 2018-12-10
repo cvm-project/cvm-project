@@ -51,7 +51,7 @@ void MaterializeMultipleReads::Run(DAG *const dag) const {
 
             dag->RemoveFlow(out_flow);
 
-            auto scan_op = new DAGCollection();
+            auto scan_op = new DAGRowScan();
             dag->AddOperator(scan_op);
             dag->AddFlow(mat_op, scan_op);
             dag->AddFlow(scan_op, out_flow.target.op, out_flow.target.port);

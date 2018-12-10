@@ -3,7 +3,6 @@
 
 #include "DAGAssertCorrectOpenNextClose.h"
 #include "DAGCartesian.h"
-#include "DAGCollection.h"
 #include "DAGConstantTuple.h"
 #include "DAGEnsureSingleTuple.h"
 #include "DAGFilter.h"
@@ -20,6 +19,7 @@
 #include "DAGReduce.h"
 #include "DAGReduceByKey.h"
 #include "DAGReduceByKeyGrouped.h"
+#include "DAGRowScan.h"
 #include "DAGSplitCollection.h"
 #include "DAGSplitRange.h"
 

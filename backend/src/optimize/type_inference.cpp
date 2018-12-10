@@ -45,12 +45,12 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(output_fields);
         }
 
-        const Tuple *operator()(const DAGCollection *const op) const {
+        const Tuple *operator()(const DAGRowScan *const op) const {
             auto const input_type = dag_->predecessor(op)->tuple->type;
 
             if (input_type->field_types.size() != 1) {
                 throw std::invalid_argument(
-                        "Input of Collection operator must have a single "
+                        "Input of RowScan operator must have a single "
                         "field");
             }
 
@@ -59,7 +59,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
 
             if (array_type == nullptr) {
                 throw std::invalid_argument(
-                        "Input of Collection operator must have an Array "
+                        "Input of RowScan operator must have an Array "
                         "field");
             }
 

@@ -2,12 +2,12 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef DAG_DAGCOLLECTION_H
-#define DAG_DAGCOLLECTION_H
+#ifndef DAG_DAGROWSCAN_H
+#define DAG_DAGROWSCAN_H
 
 #include "DAGOperator.h"
 
-class DAGCollection : public DAGOperatorBase<DAGCollection> {
+class DAGRowScan : public DAGOperatorBase<DAGRowScan> {
 public:
     bool add_index = false;
 
@@ -19,4 +19,4 @@ public:
     void from_json(const nlohmann::json &json) override;
 };
 
-#endif  // DAG_DAGCOLLECTION_H
+#endif  // DAG_DAGROWSCAN_H

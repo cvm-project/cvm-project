@@ -38,7 +38,6 @@ public:
      * Implementation of Visitor interface
      */
     void operator()(DAGAssertCorrectOpenNextClose *op);
-    void operator()(DAGCollection *op);
     void operator()(DAGConstantTuple *op);
     void operator()(DAGGroupBy *op);
     void operator()(DAGMap *op);
@@ -56,6 +55,7 @@ public:
     void operator()(DAGCartesian *op);
     void operator()(DAGReduceByKey *op);
     void operator()(DAGReduceByKeyGrouped *op);
+    void operator()(DAGRowScan *op);
     void operator()(DAGSplitCollection *op);
     void operator()(DAGSplitRange *op);
     void operator()(DAGOperator *op);

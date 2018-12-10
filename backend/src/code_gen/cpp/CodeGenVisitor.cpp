@@ -30,7 +30,7 @@ void CodeGenVisitor::operator()(DAGAssertCorrectOpenNextClose *op) {
                      {});
 }
 
-void CodeGenVisitor::operator()(DAGCollection *op) {
+void CodeGenVisitor::operator()(DAGRowScan *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "CollectionSourceOperator");
 

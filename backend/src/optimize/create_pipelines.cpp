@@ -133,7 +133,7 @@ void CreatePipelines::Run(DAG *const dag) const {
             inner_dag->AddFlow(inner_dag->output().op, mat_op);
             inner_dag->set_output(mat_op);
 
-            auto const scan_op = new DAGCollection();
+            auto const scan_op = new DAGRowScan();
             dag->AddOperator(scan_op);
 
             std::vector<DAG::Flow> out_flows;
