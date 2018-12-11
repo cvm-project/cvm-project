@@ -3,8 +3,7 @@ import os
 
 import jsonmerge
 
-from jitq.rdd import CollectionSource, GeneratorSource, \
-    Range, ParameterLookup
+from jitq.rdd import CollectionSource, GeneratorSource, Range
 from jitq.utils import get_project_path
 
 
@@ -32,10 +31,10 @@ class JitqContext:
         raise NotImplementedError
 
     def collection(self, values, add_index=False):
-        return CollectionSource(self, ParameterLookup(self, values), add_index)
+        return CollectionSource(self, values, add_index)
 
     def range_(self, from_, to, step=1):
-        return Range(self, ParameterLookup(self, (from_, to, step)))
+        return Range(self, from_, to, step)
 
     def generator(self, func):
         return GeneratorSource(self, func)

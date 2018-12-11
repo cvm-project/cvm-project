@@ -590,7 +590,8 @@ def compute_item_type(outer_type):
 class CollectionSource(UnaryRDD):
     NAME = 'collection_source'
 
-    def __init__(self, context, parent, add_index):
+    def __init__(self, context, values, add_index):
+        parent = ParameterLookup(context, values)
         super(CollectionSource, self).__init__(context, parent)
 
         self.output_type = compute_item_type(self.parents[0].output_type)
@@ -623,7 +624,8 @@ class CollectionSource(UnaryRDD):
 class Range(UnaryRDD):
     NAME = 'range_source'
 
-    def __init__(self, context, parent):
+    def __init__(self, context, from_, to, step):
+        parent = ParameterLookup(context, (from_, to, step))
         super(Range, self).__init__(context, parent)
         self.output_type = parent.output_type[0]
 
