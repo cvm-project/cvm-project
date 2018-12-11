@@ -11,22 +11,28 @@
 
 using dag::utils::IsInstanceOf;
 
+// XXX: Support parallelization of ColumnScan operator
 bool IsSourceOperator(DAGOperator *const op) {
-    return IsInstanceOf<  //
-            DAGRowScan,   //
-            DAGRange      //
+    return IsInstanceOf<    //
+            DAGColumnScan,  //
+            DAGRowScan,     //
+            DAGRange        //
             >(op);
 }
 
 DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
     class MakeSplitOperatorVisitor
         : public Visitor<MakeSplitOperatorVisitor, const DAGOperator,
-                         boost::mpl::list<    //
-                                 DAGRowScan,  //
-                                 DAGRange     //
+                         boost::mpl::list<       //
+                                 DAGColumnScan,  //
+                                 DAGRowScan,     //
+                                 DAGRange        //
                                  >::type,
                          DAGOperator *> {
     public:
+        DAGOperator *operator()(const DAGColumnScan * /*op*/) {
+            return new DAGSplitColumnData();
+        }
         DAGOperator *operator()(const DAGRowScan * /*op*/) {
             return new DAGSplitRowData();
         }

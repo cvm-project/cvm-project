@@ -12,6 +12,7 @@
 
 class DAGAssertCorrectOpenNextClose;
 class DAGCartesian;
+class DAGColumnScan;
 class DAGConstantTuple;
 class DAGEnsureSingleTuple;
 class DAGFilter;
@@ -29,6 +30,7 @@ class DAGReduce;
 class DAGReduceByKey;
 class DAGReduceByKeyGrouped;
 class DAGRowScan;
+class DAGSplitColumnData;
 class DAGSplitRange;
 class DAGSplitRowData;
 
@@ -37,6 +39,7 @@ namespace dag {
 using AllOperatorTypes = boost::mpl::list<  //
         DAGAssertCorrectOpenNextClose,      //
         DAGCartesian,                       //
+        DAGColumnScan,                      //
         DAGConstantTuple,                   //
         DAGEnsureSingleTuple,               //
         DAGFilter,                          //
@@ -54,6 +57,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGReduceByKey,                     //
         DAGReduceByKeyGrouped,              //
         DAGRowScan,                         //
+        DAGSplitColumnData,                 //
         DAGSplitRange,                      //
         DAGSplitRowData                     //
         >::type;

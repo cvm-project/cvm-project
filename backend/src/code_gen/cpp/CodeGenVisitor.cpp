@@ -13,6 +13,7 @@
 #include "dag/DAGOperators.h"
 #include "dag/collection/array.hpp"
 #include "dag/collection/atomic.hpp"
+#include "dag/type/array.hpp"
 #include "utils/utils.h"
 #include "utils/visitor.hpp"
 
@@ -48,6 +49,14 @@ void CodeGenVisitor::operator()(DAGConstantTuple *op) {
                     .str();
 
     emitOperatorMake(var_name, "ConstantTupleOperator", op, {}, {tuple_arg});
+}
+
+void CodeGenVisitor::operator()(DAGColumnScan *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ColumnScanOperator");
+
+    emitOperatorMake(var_name, "ColumnScanOperator", op,
+                     {op->add_index ? "true" : "false"}, {});
 }
 
 void CodeGenVisitor::operator()(DAGGroupBy *op) {
@@ -208,6 +217,14 @@ void CodeGenVisitor::operator()(DAGParallelMap *op) {
 
     emitOperatorMake(var_name, "ParallelMapOperator", op, {},
                      {inner_plan.name});
+}
+
+void CodeGenVisitor::operator()(DAGSplitColumnData *const op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "SplitColumnDataOperator");
+
+    emitOperatorMake(var_name, "SplitColumnDataOperator", op, {},
+                     {"omp_get_num_threads()"});
 }
 
 void CodeGenVisitor::operator()(DAGSplitRowData *const op) {

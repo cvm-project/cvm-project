@@ -2,6 +2,7 @@
 #define CODE_GEN_CPP_CODE_GEN_HPP
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "context.hpp"
@@ -36,10 +37,10 @@ std::string GenerateLlvmFunctor(
 void StoreLlvmCode(Context *context, const std::string &llvm_ir,
                    const std::string &func_name);
 
-const StructDef *EmitStructDefinition(Context *context,
-                                      const dag::type::Type *key,
-                                      const std::vector<std::string> &types,
-                                      const std::vector<std::string> &names);
+std::pair<const StructDef *, bool> EmitStructDefinition(
+        Context *context, const dag::type::Type *key,
+        const std::vector<std::string> &types,
+        const std::vector<std::string> &names);
 
 const StructDef *EmitTupleStructDefinition(Context *context,
                                            const dag::type::Tuple *tuple);

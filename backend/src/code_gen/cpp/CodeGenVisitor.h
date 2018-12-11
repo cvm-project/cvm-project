@@ -39,6 +39,7 @@ public:
      */
     void operator()(DAGAssertCorrectOpenNextClose *op);
     void operator()(DAGConstantTuple *op);
+    void operator()(DAGColumnScan *op);
     void operator()(DAGGroupBy *op);
     void operator()(DAGMap *op);
     void operator()(DAGMaterializeRowVector *op);
@@ -56,6 +57,7 @@ public:
     void operator()(DAGReduceByKey *op);
     void operator()(DAGReduceByKeyGrouped *op);
     void operator()(DAGRowScan *op);
+    void operator()(DAGSplitColumnData *op);
     void operator()(DAGSplitRange *op);
     void operator()(DAGSplitRowData *op);
     void operator()(DAGOperator *op);

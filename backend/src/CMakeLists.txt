@@ -102,6 +102,7 @@ set(GENERATE_SOURCE_FILES
         dag/attribute_id.cpp
         dag/DAG.cpp
         dag/DAGConstantTuple.cpp
+        dag/DAGColumnScan.cpp
         dag/dag_factory.cpp
         dag/DAGFilter.cpp
         dag/DAGOperator.cpp

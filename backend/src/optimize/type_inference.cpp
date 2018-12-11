@@ -45,6 +45,48 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(output_fields);
         }
 
+        const Tuple *operator()(const DAGColumnScan *const op) const {
+            auto const input_type = dag_->predecessor(op)->tuple->type;
+
+            if (input_type->field_types.empty()) {
+                throw std::invalid_argument(
+                        "Input of ColumnScan operator must have at least one"
+                        "field");
+            }
+
+            std::vector<const FieldType *> fields;
+
+            for (size_t i = 0; i < input_type->field_types.size(); i++) {
+                auto const array_type =
+                        dynamic_cast<const Array *>(input_type->field_types[0]);
+
+                if (array_type == nullptr) {
+                    throw std::invalid_argument(
+                            "Input of ColumnScan operator must be a tuple of "
+                            "arrays");
+                }
+
+                assert(array_type->number_dim == 1);
+                assert(array_type->layout == ArrayLayout::kC);
+
+                auto const field_types = array_type->tuple_type->field_types;
+
+                if (field_types.size() != 1) {
+                    throw std::invalid_argument(
+                            "Input of ColumnScan operator must be a tuple of "
+                            "arrays of atomics");
+                }
+
+                fields.push_back(field_types[0]);
+            }
+
+            if (op->add_index) {
+                fields.insert(fields.begin(), Atomic::MakeAtomic("long"));
+            }
+
+            return Tuple::MakeTuple(fields);
+        }
+
         const Tuple *operator()(const DAGRowScan *const op) const {
             auto const input_type = dag_->predecessor(op)->tuple->type;
 
@@ -252,6 +294,10 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             }
 
             return input_type;
+        }
+
+        const Tuple *operator()(const DAGSplitColumnData *const op) const {
+            return dag_->predecessor(op)->tuple->type;
         }
 
         const Tuple *operator()(const DAGSplitRowData *const op) const {

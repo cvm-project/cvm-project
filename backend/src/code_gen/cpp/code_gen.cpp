@@ -441,12 +441,12 @@ void StoreLlvmCode(Context *const context, const std::string &llvm_ir,
     context->llvm_code() << patched_ir;
 }
 
-const StructDef *EmitStructDefinition(Context *const context,
-                                      const dag::type::Type *key,
-                                      const std::vector<std::string> &types,
-                                      const std::vector<std::string> &names) {
+std::pair<const StructDef *, bool> EmitStructDefinition(
+        Context *const context, const dag::type::Type *key,
+        const std::vector<std::string> &types,
+        const std::vector<std::string> &names) {
     if (context->tuple_type_descs().count(key) > 0) {
-        return context->tuple_type_descs().at(key).get();
+        return std::make_pair(context->tuple_type_descs().at(key).get(), false);
     }
 
     auto tuple_typedef = std::make_unique<StructDef>(
@@ -457,7 +457,7 @@ const StructDef *EmitStructDefinition(Context *const context,
             context->tuple_type_descs().emplace(key, std::move(tuple_typedef));
     assert(ret.second);
 
-    return ret.first->second.get();
+    return std::make_pair(ret.first->second.get(), true);
 }
 
 const StructDef *EmitTupleStructDefinition(Context *const context,
@@ -490,7 +490,8 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
             types.emplace_back("size_t");
             types.emplace_back("size_t");
             types.emplace_back("size_t");
-            return EmitStructDefinition(context_, field, types, names)->name;
+            return EmitStructDefinition(context_, field, types, names)
+                    .first->name;
         }
 
         std::string operator()(const dag::type::FieldType *const field) const {
@@ -503,8 +504,10 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
         Context *const context_;
     };
 
+    // Visitor for struct definitions for nested types
     FieldTypeVisitor visitor(context);
 
+    // Compute and emit struct definition
     std::vector<std::string> types;
     std::vector<std::string> names;
     for (auto pos = 0; pos < tuple->field_types.size(); pos++) {
@@ -513,7 +516,37 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
         types.emplace_back(item_type);
         names.emplace_back("v" + std::to_string(pos));
     }
-    return EmitStructDefinition(context, tuple, types, names);
+    auto const ret = EmitStructDefinition(context, tuple, types, names);
+
+    // This call created the struct definition, so we also create the helpers
+    if (ret.second) {
+        std::vector<std::string> from_tuple_statements;
+        std::vector<std::string> field_expressions;
+        for (auto i = 0; i < names.size(); i++) {
+            from_tuple_statements.emplace_back(
+                    (format("ret.%1% = std::get<%2%>(t);") % names[i] % i)
+                            .str());
+            field_expressions.emplace_back("t." + names[i]);
+        }
+
+        context->declarations() <<  //
+                (format("template<>"
+                        "auto StdTupleToTuple<std::tuple<%2%>>("
+                        "        const std::tuple<%2%> &t) {"
+                        "    %1% ret;"
+                        "    %3%"
+                        "    return ret;"
+                        "}"
+                        "template<>"
+                        "auto TupleToStdTuple<%1%>(const %1% &t) {"
+                        "    return std::make_tuple(%4%);"
+                        "}") %
+                 ret.first->name % join(types, ", ") %
+                 join(from_tuple_statements, "") % join(field_expressions, ","))
+                        .str();
+    }
+
+    return ret.first;
 }
 
 }  // namespace cpp
