@@ -488,80 +488,11 @@ class ConstantTuple(SourceRDD):
 class ParameterLookup(SourceRDD):
     NAME = 'parameter_lookup'
 
-    """
-    accepts any python collections, numpy arrays or pandas dataframes
-
-    passed python collection will be copied into a numpy array
-    a reference to the array is stored in this instance
-    to prevent freeing the input memory before the end of computation
-    """
-
-    def __init__(self, context, values):
+    def __init__(self, context, output_type, value):
         super(ParameterLookup, self).__init__(context)
 
-        # pylint: disable=len-as-condition
-        # values could also be a numpy array
-        assert len(values) > 0, "Empty collection not allowed"
-
-        dtype = None
-
-        if isinstance(values, DataFrame):
-            self.array = values.to_records(index=False)
-            dtype = item_typeof(self.array[0])
-
-        elif isinstance(values, np.ndarray):
-            self.array = values
-            dtype = item_typeof(self.array[0])
-
-        elif isinstance(values, tuple):
-            self.input_value = {
-                'type': 'tuple',
-                'fields': [{'type': C_TYPE_MAP[str(item_typeof(v))],
-                            'value': v} for v in values],
-            }
-            self.output_type = item_typeof(values)
-
-        else:
-            # Any subscriptable iterator should work here
-            # Do not create numpy array directly
-            # It would infer the dtype incorrectly
-            dtype = item_typeof(values[0])
-            self.array = np.array(
-                values, dtype=numba_type_to_dtype(dtype))
-
-        if not isinstance(values, tuple):
-            ffi = FFI()
-            data = self.array.__array_interface__['data'][0]
-            data = int(ffi.cast("uintptr_t", ffi.cast("void*", data)))
-            outer_shape = self.array.shape
-            self.input_value = {
-                'type': 'tuple',
-                'fields': [{'type': 'array',
-                            'data': data,
-                            'outer_shape': outer_shape,
-                            'offsets': [0] * len(outer_shape),
-                            'shape': outer_shape}],
-            }
-
-            if isinstance(dtype, types.Array):
-                # right now we support only jagged arrays
-                self.output_type = types.List(dtype)
-                # create a jagged array until the backend can support an ndim
-                assert self.array.ndim == 2
-                inner_size = self.array.shape[1]
-                res_list = []
-                n_rows = self.input_value['fields'][0]['outer_shape'][0]
-                for i in range(n_rows):
-                    item_array = self.array[i]
-                    inner_ptr = item_array.__array_interface__['data'][0]
-                    res_list.append((inner_ptr, inner_size))
-                self.array = np.array(
-                    res_list, dtype=[
-                        ("data", int), ("outer_shape", int)])
-                self.data_ptr = self.array.__array_interface__['data'][0]
-
-            else:
-                self.output_type = types.Array(dtype, 1, "C")
+        self.output_type = output_type
+        self.input_value = value
 
     def self_hash(self):
         hash_objects = [str(self.output_type)]
@@ -575,7 +506,7 @@ class ParameterLookup(SourceRDD):
 
 
 # pylint: disable=inconsistent-return-statements
-def compute_item_type(outer_type):
+def _compute_item_type(outer_type):
     if isinstance(outer_type, types.Array):
         ndim = outer_type.ndim
         if ndim > 1:
@@ -587,31 +518,95 @@ def compute_item_type(outer_type):
     assert False, "Cannot have any other containers"
 
 
+def _compute_item_type_with_index(item_type):
+    assert is_item_type(item_type)
+
+    if isinstance(item_type, types.Tuple):
+        child_types = item_type.types
+        return make_tuple((typeof(0),) + child_types)
+
+    if isinstance(item_type, types.Record):
+        fields = item_type.dtype.descr
+        # Compute unique key name by extending
+        # the longest existing field name
+        longest_key = max(fields, key=lambda f: len(f[0]))[0]
+        dtypes = [(longest_key + "0", "i8")] + fields
+        return numba.from_dtype(np.dtype(dtypes))
+
+    # Atomic
+    return make_tuple((typeof(0),) + (item_type,))
+
+
 class CollectionSource(UnaryRDD):
+    """
+    accepts any python collections, numpy arrays or pandas dataframes
+
+    passed python collection will be copied into a numpy array
+    a reference to the array is stored in this instance
+    to prevent freeing the input memory before the end of computation
+    """
+
     NAME = 'collection_source'
 
-    def __init__(self, context, values, add_index):
-        parent = ParameterLookup(context, values)
-        super(CollectionSource, self).__init__(context, parent)
+    @staticmethod
+    def _make_parent(context, values):
+        assert isinstance(values, np.ndarray)
 
-        self.output_type = compute_item_type(self.parents[0].output_type)
+        # Determine parameter output type
+        item_type = item_typeof(values[0])
+        output_type = types.Array(item_type, 1, "C")
+
+        # Construct input parameter
+        ffi = FFI()
+        data = values.__array_interface__['data'][0]
+        data = int(ffi.cast("uintptr_t", ffi.cast("void*", data)))
+        outer_shape = values.shape
+        input_value = {
+            'type': 'tuple',
+            'fields': [{'type': 'array',
+                        'data': data,
+                        'outer_shape': outer_shape,
+                        'offsets': [0] * len(outer_shape),
+                        'shape': outer_shape}],
+        }
+
+        return ParameterLookup(context, output_type, input_value)
+
+    def __init__(self, context, values, add_index):
+        # pylint: disable=len-as-condition
+        # values could also be a numpy array
+        assert len(values) > 0, "Empty collection not allowed"
+
+        # Convert values to Numpy array
+        output_type = None
+        if not isinstance(values, np.ndarray):
+            if isinstance(values, DataFrame):
+                values = values.to_records(index=False)
+
+            else:
+                # Special treatment of general iterables: safe output type
+                # here, as a conversion to dtype and back turns Python tuples
+                # into Numpy records, which we don't want.
+                output_type = item_typeof(values[0])
+                values = np.array(values,
+                                  dtype=numba_type_to_dtype(output_type))
+
+        # Construct parameter lookup as parent
+        super(CollectionSource, self).__init__(
+            context, self._make_parent(context, values))
+
+        # Store data frame to prevent GC
+        self.data = values
+
+        # Store operator info
+        self.output_type = output_type
+        if self.output_type is None:
+            self.output_type = _compute_item_type(self.parents[0].output_type)
         self.add_index = add_index
 
+        # Update output type with field for index, if added
         if add_index:
-            if isinstance(self.output_type, types.Tuple):
-                child_types = self.output_type.types
-                self.output_type = make_tuple((typeof(0),) + child_types)
-            elif isinstance(self.output_type, types.Record):
-                fields = self.output_type.dtype.descr
-                # Compute unique key name by extending
-                # the longest existing field name
-                longest_key = max(fields, key=lambda f: len(f[0]))[0]
-                dtypes = [(longest_key + "0", "i8")] + fields
-                numba_type = numba.from_dtype(np.dtype(dtypes))
-                self.output_type = numba_type
-            else:
-                child_types = (self.output_type,)
-                self.output_type = make_tuple((typeof(0),) + child_types)
+            self.output_type = _compute_item_type_with_index(self.output_type)
 
     def self_hash(self):
         hash_objects = [str(self.output_type), str(self.add_index)]
@@ -625,7 +620,16 @@ class Range(UnaryRDD):
     NAME = 'range_source'
 
     def __init__(self, context, from_, to, step):
-        parent = ParameterLookup(context, (from_, to, step))
+        values = (from_, to, step)
+        value = {
+            'type': 'tuple',
+            'fields': [{'type': C_TYPE_MAP[str(item_typeof(v))],
+                        'value': v} for v in values],
+        }
+        parent_output_type = item_typeof(values)
+
+        parent = ParameterLookup(context, parent_output_type, value)
+
         super(Range, self).__init__(context, parent)
         self.output_type = parent.output_type[0]
 
