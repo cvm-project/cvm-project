@@ -1,11 +1,11 @@
-#ifndef CPP_SPLITCOLLECTIONOPERATOR_H
-#define CPP_SPLITCOLLECTIONOPERATOR_H
+#ifndef CPP_SPLITROWDATAOPERATOR_H
+#define CPP_SPLITROWDATAOPERATOR_H
 
 #include "Optional.h"
 #include "Utils.h"
 
 template <class Upstream, class Tuple>
-class SplitCollectionOperator {
+class SplitRowDataOperator {
 public:
     typedef decltype(Tuple().v0) ValueType;
 
@@ -23,7 +23,7 @@ private:
     }
 
 public:
-    SplitCollectionOperator(Upstream *const upstream, const size_t num_slices)
+    SplitRowDataOperator(Upstream *const upstream, const size_t num_slices)
         : upstream_(upstream), num_slices_(num_slices) {}
 
     void open() {
@@ -66,9 +66,9 @@ private:
 };
 
 template <class Tuple, class Upstream>
-SplitCollectionOperator<Upstream, Tuple> makeSplitCollectionOperator(
+SplitRowDataOperator<Upstream, Tuple> makeSplitRowDataOperator(
         Upstream *const upstream, const size_t num_slices) {
-    return SplitCollectionOperator<Upstream, Tuple>(upstream, num_slices);
+    return SplitRowDataOperator<Upstream, Tuple>(upstream, num_slices);
 };
 
-#endif  // CPP_SPLITCOLLECTIONOPERATOR_H
+#endif  // CPP_SPLITROWDATAOPERATOR_H

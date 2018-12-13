@@ -56,8 +56,8 @@ public:
     void operator()(DAGReduceByKey *op);
     void operator()(DAGReduceByKeyGrouped *op);
     void operator()(DAGRowScan *op);
-    void operator()(DAGSplitCollection *op);
     void operator()(DAGSplitRange *op);
+    void operator()(DAGSplitRowData *op);
     void operator()(DAGOperator *op);
 
     /*

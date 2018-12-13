@@ -29,8 +29,8 @@ class DAGReduce;
 class DAGReduceByKey;
 class DAGReduceByKeyGrouped;
 class DAGRowScan;
-class DAGSplitCollection;
 class DAGSplitRange;
+class DAGSplitRowData;
 
 namespace dag {
 
@@ -54,8 +54,8 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGReduceByKey,                     //
         DAGReduceByKeyGrouped,              //
         DAGRowScan,                         //
-        DAGSplitCollection,                 //
-        DAGSplitRange                       //
+        DAGSplitRange,                      //
+        DAGSplitRowData                     //
         >::type;
 
 using AllOperatorPointerTypes = typename boost::mpl::transform_view<

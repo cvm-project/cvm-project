@@ -254,7 +254,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return input_type;
         }
 
-        const Tuple *operator()(const DAGSplitCollection *const op) const {
+        const Tuple *operator()(const DAGSplitRowData *const op) const {
             return dag_->predecessor(op)->tuple->type;
         }
 

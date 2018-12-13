@@ -28,7 +28,7 @@ DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
                          DAGOperator *> {
     public:
         DAGOperator *operator()(const DAGRowScan * /*op*/) {
-            return new DAGSplitCollection();
+            return new DAGSplitRowData();
         }
         DAGOperator *operator()(const DAGRange * /*op*/) {
             return new DAGSplitRange();

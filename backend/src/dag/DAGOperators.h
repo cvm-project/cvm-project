@@ -20,7 +20,7 @@
 #include "DAGReduceByKey.h"
 #include "DAGReduceByKeyGrouped.h"
 #include "DAGRowScan.h"
-#include "DAGSplitCollection.h"
 #include "DAGSplitRange.h"
+#include "DAGSplitRowData.h"
 
 #endif

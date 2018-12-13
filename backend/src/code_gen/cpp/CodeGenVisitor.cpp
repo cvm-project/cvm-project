@@ -210,11 +210,11 @@ void CodeGenVisitor::operator()(DAGParallelMap *op) {
                      {inner_plan.name});
 }
 
-void CodeGenVisitor::operator()(DAGSplitCollection *const op) {
+void CodeGenVisitor::operator()(DAGSplitRowData *const op) {
     const std::string var_name =
-            CodeGenVisitor::visit_common(op, "SplitCollectionOperator");
+            CodeGenVisitor::visit_common(op, "SplitRowDataOperator");
 
-    emitOperatorMake(var_name, "SplitCollectionOperator", op, {},
+    emitOperatorMake(var_name, "SplitRowDataOperator", op, {},
                      {"omp_get_num_threads()"});
 }
 
