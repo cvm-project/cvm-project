@@ -274,7 +274,7 @@
                     },
                     {
                         "id": 2,
-                        "op": "split_collection",
+                        "op": "split_row_data",
                         "output_type": [
                             {
                                 "dim": 1,
