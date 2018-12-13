@@ -322,6 +322,7 @@
                     }
                 ]
             },
+            "num_inputs": 3,
             "op": "pipeline",
             "output_type": [
                 {

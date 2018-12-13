@@ -97,6 +97,7 @@
                     }
                 ]
             },
+            "num_inputs": 1,
             "op": "pipeline",
             "output_type": [
                 {

@@ -184,6 +184,7 @@
                     }
                 ]
             },
+            "num_inputs": 2,
             "op": "pipeline",
             "output_type": [
                 {
