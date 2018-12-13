@@ -128,7 +128,7 @@ void Canonicalize::Run(DAG *const dag) const {
         dag->set_output(output.first, output.second);
     }
 
-    // Reassign recomputed IDs (they where reset by the moving)
+    // Reassign recomputed IDs (they were reset by the moving)
     for (auto const op : dag->operators()) {
         op->id = vertex_ids.at(op);
     }
