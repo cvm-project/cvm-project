@@ -3,7 +3,10 @@ import os
 
 import jsonmerge
 
-from jitq.rdd import CollectionSource, GeneratorSource, Range
+from pandas import DataFrame
+
+from jitq.rdd import CollectionSource, GeneratorSource, Range, \
+    ColumnScan
 from jitq.utils import get_project_path
 
 
@@ -31,6 +34,8 @@ class JitqContext:
         raise NotImplementedError
 
     def collection(self, values, add_index=False):
+        if isinstance(values, DataFrame):
+            return ColumnScan(self, values, add_index)
         return CollectionSource(self, values, add_index)
 
     def range_(self, from_, to, step=1):

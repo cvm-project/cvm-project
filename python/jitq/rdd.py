@@ -537,6 +537,69 @@ def _compute_item_type_with_index(item_type):
     return make_tuple((typeof(0),) + (item_type,))
 
 
+class ColumnScan(UnaryRDD):
+    NAME = 'column_scan'
+
+    @staticmethod
+    def _make_parent(context, values):
+        # Construct output type
+        fields = []
+        for name, dtype in values.dtypes.iteritems():
+            fields.append(types.Array(numba.from_dtype(dtype), 1, "C"))
+        output_type = make_tuple(fields)
+
+        # Construct input parameter
+        column_values = []
+        ffi = FFI()
+        num_elements = len(values)
+        for name, dtype in values.dtypes.iteritems():
+            data = values[name].data
+            data = int(ffi.cast("uintptr_t", ffi.from_buffer(data)))
+            column_values.append({
+                'type': 'array',
+                'data': data,
+                'outer_shape': [num_elements],
+                'offsets': [0],
+                'shape': [num_elements],
+            })
+        input_value = {
+            'type': 'tuple',
+            'fields': column_values,
+        }
+
+        return ParameterLookup(context, output_type, input_value)
+
+    def __init__(self, context, values, add_index):
+        # pylint: disable=len-as-condition
+        # values could also be a numpy array
+        assert len(values) > 0, "Empty collection not allowed"
+        assert isinstance(values, DataFrame), \
+            "ColumnScan only supports DataFrames currently."
+
+        # Construct parameter lookup as parent
+        super(ColumnScan, self).__init__(
+            context, self._make_parent(context, values))
+
+        # Store data frame to prevent GC
+        self.data = values
+
+        # Store operator info
+        fields = [(name, dtype) for name, dtype in values.dtypes.iteritems()]
+        self.output_type = numba.from_dtype(np.dtype(fields))
+        self.add_index = add_index
+
+        # Update output type with field for index, if added
+        if add_index:
+            self.output_type = _compute_item_type_with_index(self.output_type)
+
+    def self_hash(self):
+        hash_objects = [str(self.output_type), str(self.add_index)]
+        return hash("#".join(hash_objects))
+
+    def self_write_dag(self, dic):
+        dic['add_index'] = self.add_index
+
+
 class CollectionSource(UnaryRDD):
     """
     accepts any python collections, numpy arrays or pandas dataframes
@@ -580,16 +643,11 @@ class CollectionSource(UnaryRDD):
         # Convert values to Numpy array
         output_type = None
         if not isinstance(values, np.ndarray):
-            if isinstance(values, DataFrame):
-                values = values.to_records(index=False)
-
-            else:
-                # Special treatment of general iterables: safe output type
-                # here, as a conversion to dtype and back turns Python tuples
-                # into Numpy records, which we don't want.
-                output_type = item_typeof(values[0])
-                values = np.array(values,
-                                  dtype=numba_type_to_dtype(output_type))
+            # Special treatment of general iterables: safe output type
+            # here, as a conversion to dtype and back turns Python tuples
+            # into Numpy records, which we don't want.
+            output_type = item_typeof(values[0])
+            values = np.array(values, dtype=numba_type_to_dtype(output_type))
 
         # Construct parameter lookup as parent
         super(CollectionSource, self).__init__(
