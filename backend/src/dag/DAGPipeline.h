@@ -12,6 +12,9 @@ public:
 
     size_t num_in_ports() const override { return num_inputs; }
 
+    void to_json(nlohmann::json *json) const override;
+    void from_json(const nlohmann::json &json) override;
+
     size_t num_inputs{};
 };
 
