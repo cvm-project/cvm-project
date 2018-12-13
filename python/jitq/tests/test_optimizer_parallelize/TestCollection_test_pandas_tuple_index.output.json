@@ -251,7 +251,7 @@
                                 {
                                     "add_index": true,
                                     "id": 2,
-                                    "op": "row_scan",
+                                    "op": "column_scan",
                                     "output_type": [
                                         {
                                             "type": "long"
@@ -277,7 +277,14 @@
                                             "output_type": [
                                                 {
                                                     "type": "long"
-                                                },
+                                                }
+                                            ],
+                                            "type": "array"
+                                        },
+                                        {
+                                            "dim": 1,
+                                            "layout": "C",
+                                            "output_type": [
                                                 {
                                                     "type": "long"
                                                 }
@@ -320,7 +327,7 @@
                     },
                     {
                         "id": 2,
-                        "op": "split_row_data",
+                        "op": "split_column_data",
                         "output_type": [
                             {
                                 "dim": 1,
@@ -328,7 +335,14 @@
                                 "output_type": [
                                     {
                                         "type": "long"
-                                    },
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
                                     {
                                         "type": "long"
                                     }
@@ -350,7 +364,14 @@
                                 "output_type": [
                                     {
                                         "type": "long"
-                                    },
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
                                     {
                                         "type": "long"
                                     }
@@ -409,7 +430,14 @@
                     "output_type": [
                         {
                             "type": "long"
-                        },
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
                         {
                             "type": "long"
                         }
