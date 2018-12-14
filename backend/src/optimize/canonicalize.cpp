@@ -20,6 +20,72 @@ using ReverseLabelMap = std::map<std::string, const DAGOperator *>;
 namespace optimize {
 
 void Canonicalize::Run(DAG *const dag) const {
+    // Recurse
+    for (auto const op : dag->operators()) {
+        if (dag->has_inner_dag(op)) {
+            // Canonicalize inner DAG
+            auto const inner_dag = dag->inner_dag(op);
+            Run(inner_dag);
+
+            // Bring inputs in pre-defined order
+
+            // Remember outer-level in-flows
+            std::vector<DAG::Flow> temp_in_flows;
+            for (auto const &f : dag->in_flows(op)) {
+                temp_in_flows.emplace_back(f);
+            }
+
+            // Remember inner-level inputs
+            std::vector<std::pair<DAG::FlowTip, std::vector<DAG::FlowTip>>>
+                    temp_inputs;
+
+            for (size_t i = 0; i < op->num_in_ports(); i++) {
+                assert(temp_inputs.size() == i);
+
+                const auto in_flow = dag->in_flow(op, i);
+                temp_inputs.emplace_back(in_flow.source,
+                                         std::vector<DAG::FlowTip>());
+
+                for (auto const input : inner_dag->inputs(i)) {
+                    temp_inputs.back().second.emplace_back(input);
+                }
+            }
+
+            // Remove all of them
+            inner_dag->reset_inputs();
+            for (auto const &f : temp_in_flows) {
+                dag->RemoveFlow(f);
+            }
+
+            // Order them by inner-level consumers
+            std::vector<decltype(temp_inputs)::value_type> temp_inputs_sorted(
+                    temp_inputs.begin(), temp_inputs.end());
+
+            // Order the consumers of the same input by (ID, port)
+            for (auto &it : temp_inputs_sorted) {
+                boost::sort(it.second, [](const auto &i1, const auto &i2) {
+                    return std::tie(i1.op->id, i1.port) <
+                           std::tie(i2.op->id, i2.port);
+                });
+            }
+
+            // Order the inputs by smallest (ID, port) of consumers
+            boost::sort(temp_inputs_sorted, [](const auto &i1, const auto &i2) {
+                return std::tie(i1.second[0].op->id, i1.second[0].port) <
+                       std::tie(i2.second[0].op->id, i2.second[0].port);
+            });
+
+            // Insert them again (in deterministic order)
+            for (size_t i = 0; i < temp_inputs_sorted.size(); i++) {
+                auto const &inputs = temp_inputs_sorted[i];
+                dag->AddFlow(inputs.first.op, inputs.first.port, op, i);
+                for (const auto &input : inputs.second) {
+                    inner_dag->add_input(i, input);
+                }
+            }
+        }
+    }
+
     // Assign deterministic label based on outoing path
     VertexLabelMap outgoing_path_label;
     dag::utils::ApplyInTopologicalOrder(
@@ -98,7 +164,7 @@ void Canonicalize::Run(DAG *const dag) const {
                         f2.target.port);
     });
 
-    // Unset DAG componenets except operators
+    // Unset DAG components except operators
     dag->reset_inputs();
     dag->reset_outputs();
     for (auto const f : temp_flows) {
@@ -131,13 +197,6 @@ void Canonicalize::Run(DAG *const dag) const {
     // Reassign recomputed IDs (they were reset by the moving)
     for (auto const op : dag->operators()) {
         op->id = vertex_ids.at(op);
-    }
-
-    // Recurse
-    for (auto const op : dag->operators()) {
-        if (dag->has_inner_dag(op)) {
-            Run(dag->inner_dag(op));
-        }
     }
 }
 
