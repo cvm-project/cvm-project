@@ -29,8 +29,7 @@ std::string StructDef::ComputeDefinition() const {
     for (auto i = 0; i < names.size(); i++) {
         name_types.emplace_back(types[i] + " " + names[i]);
     }
-    return (format("typedef struct { %s; } %s;") % join(name_types, "; ") %
-            name)
+    return (format("struct %1% { %2%; };") % name % join(name_types, "; "))
             .str();
 }
 
