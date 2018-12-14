@@ -13,12 +13,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -148,12 +148,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -283,12 +283,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -418,12 +418,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -553,12 +553,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -688,12 +688,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -823,12 +823,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -958,12 +958,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -1093,12 +1093,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
@@ -1228,12 +1228,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 4,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],

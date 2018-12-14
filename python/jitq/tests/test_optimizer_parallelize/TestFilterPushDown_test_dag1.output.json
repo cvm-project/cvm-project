@@ -13,6 +13,203 @@
                 "inputs": [
                     {
                         "dag_port": 0,
+                        "op": 7,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 8,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 0,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            3
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "op": "cartesian",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            0,
+                            4
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.14.i = icmp eq i64 %.2, 0\n  %.18 = bitcast i8* %.1 to i1*\n  store i1 %.14.i, i1* %.18, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "id": 3,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            5
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 4,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            6
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 5,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            7
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 6,
+                        "op": "collection_source",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            8
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 8,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "dim": 1,
+                                "layout": "C",
+                                "output_type": [
+                                    {
+                                        "dim": 1,
+                                        "layout": "C",
+                                        "output_type": [
+                                            {
+                                                "type": "long"
+                                            }
+                                        ],
+                                        "type": "array"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 1,
+                        "port": 0
+                    }
+                ]
+            },
+            "num_inputs": 2,
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                2,
+                1
+            ]
+        },
+        {
+            "id": 1,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
                         "op": 3,
                         "op_port": 0
                     }
@@ -195,203 +392,6 @@
                 }
             ],
             "predecessors": [
-                2
-            ]
-        },
-        {
-            "id": 1,
-            "inner_dag": {
-                "inputs": [
-                    {
-                        "dag_port": 0,
-                        "op": 8,
-                        "op_port": 0
-                    },
-                    {
-                        "dag_port": 1,
-                        "op": 7,
-                        "op_port": 0
-                    }
-                ],
-                "operators": [
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 0,
-                        "op": "map",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            3
-                        ]
-                    },
-                    {
-                        "id": 1,
-                        "op": "materialize_row_vector",
-                        "output_type": [
-                            {
-                                "dim": 1,
-                                "layout": "C",
-                                "output_type": [
-                                    {
-                                        "type": "long"
-                                    },
-                                    {
-                                        "type": "long"
-                                    }
-                                ],
-                                "type": "array"
-                            }
-                        ],
-                        "predecessors": [
-                            2
-                        ]
-                    },
-                    {
-                        "id": 2,
-                        "op": "cartesian",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            0,
-                            4
-                        ]
-                    },
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.14.i = icmp eq i64 %.2, 0\n  %.18 = bitcast i8* %.1 to i1*\n  store i1 %.14.i, i1* %.18, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
-                        "id": 3,
-                        "op": "filter",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            5
-                        ]
-                    },
-                    {
-                        "add_index": false,
-                        "id": 4,
-                        "op": "collection_source",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            6
-                        ]
-                    },
-                    {
-                        "add_index": false,
-                        "id": 5,
-                        "op": "collection_source",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            7
-                        ]
-                    },
-                    {
-                        "add_index": false,
-                        "id": 6,
-                        "op": "collection_source",
-                        "output_type": [
-                            {
-                                "dim": 1,
-                                "layout": "C",
-                                "output_type": [
-                                    {
-                                        "type": "long"
-                                    }
-                                ],
-                                "type": "array"
-                            }
-                        ],
-                        "predecessors": [
-                            8
-                        ]
-                    },
-                    {
-                        "id": 7,
-                        "op": "parameter_lookup",
-                        "output_type": [
-                            {
-                                "dim": 1,
-                                "layout": "C",
-                                "output_type": [
-                                    {
-                                        "type": "long"
-                                    }
-                                ],
-                                "type": "array"
-                            }
-                        ],
-                        "predecessors": []
-                    },
-                    {
-                        "id": 8,
-                        "op": "parameter_lookup",
-                        "output_type": [
-                            {
-                                "dim": 1,
-                                "layout": "C",
-                                "output_type": [
-                                    {
-                                        "dim": 1,
-                                        "layout": "C",
-                                        "output_type": [
-                                            {
-                                                "type": "long"
-                                            }
-                                        ],
-                                        "type": "array"
-                                    }
-                                ],
-                                "type": "array"
-                            }
-                        ],
-                        "predecessors": []
-                    }
-                ],
-                "outputs": [
-                    {
-                        "op": 1,
-                        "port": 0
-                    }
-                ]
-            },
-            "num_inputs": 2,
-            "op": "pipeline",
-            "output_type": [
-                {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        },
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
-                }
-            ],
-            "predecessors": [
-                0,
                 2
             ]
         },
@@ -719,7 +719,7 @@
     ],
     "outputs": [
         {
-            "op": 1,
+            "op": 0,
             "port": 0
         }
     ]

@@ -2,7 +2,7 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 3,
+            "op": 1,
             "op_port": 0
         },
         {
@@ -12,7 +12,7 @@
         },
         {
             "dag_port": 2,
-            "op": 1,
+            "op": 3,
             "op_port": 0
         }
     ],
@@ -23,7 +23,7 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 16,
+                        "op": 14,
                         "op_port": 0
                     },
                     {
@@ -33,7 +33,7 @@
                     },
                     {
                         "dag_port": 2,
-                        "op": 14,
+                        "op": 16,
                         "op_port": 0
                     }
                 ],
@@ -333,14 +333,13 @@
             "op": "parameter_lookup",
             "output_type": [
                 {
-                    "dim": 1,
-                    "layout": "C",
-                    "output_type": [
-                        {
-                            "type": "long"
-                        }
-                    ],
-                    "type": "array"
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
                 }
             ],
             "predecessors": []
@@ -367,13 +366,14 @@
             "op": "parameter_lookup",
             "output_type": [
                 {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
+                    "dim": 1,
+                    "layout": "C",
+                    "output_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
                 }
             ],
             "predecessors": []

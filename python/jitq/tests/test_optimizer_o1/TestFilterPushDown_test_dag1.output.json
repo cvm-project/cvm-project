@@ -13,12 +13,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 7,
+                        "op": 6,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 6,
+                        "op": 7,
                         "op_port": 0
                     }
                 ],
