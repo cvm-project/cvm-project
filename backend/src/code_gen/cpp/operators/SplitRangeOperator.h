@@ -3,10 +3,11 @@
 
 #include <omp.h>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple>
-class SplitRangeOperator : public Operator {
+class SplitRangeOperator {
 public:
     typedef decltype(Tuple().v0) ValueType;
 

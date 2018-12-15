@@ -8,10 +8,11 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple, class Function>
-class ReduceOperator : public Operator {
+class ReduceOperator {
 public:
     ReduceOperator(Upstream *const upstream, Function func)
         : upstream_(upstream), has_returned_(false), function_(func) {}

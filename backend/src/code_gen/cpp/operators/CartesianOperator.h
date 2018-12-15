@@ -7,7 +7,8 @@
 
 #include <vector>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 /**
  * Assumes the left operator is the smaller relation
@@ -15,7 +16,7 @@
  *
  */
 template <class Upstream1, class Upstream2, class Tuple, class UpstreamTuple>
-class CartesianOperator : public Operator {
+class CartesianOperator {
 public:
     Upstream1 *upstream1;
     Upstream2 *upstream2;

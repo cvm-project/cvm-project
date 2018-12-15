@@ -8,7 +8,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 using std::vector;
 
@@ -21,7 +22,7 @@ using std::vector;
  */
 template <class Upstream1, class Upstream2, class Tuple, class KeyType,
           class ValueType1, class ValueType2>
-class JoinOperator : public Operator {
+class JoinOperator {
 public:
     Upstream1 *upstream1;
     Upstream2 *upstream2;

@@ -5,10 +5,11 @@
 #include <type_traits>
 #include <vector>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple>
-class PartitionOperator : public Operator {
+class PartitionOperator {
 public:
     using InnerArray = decltype(std::declval<Tuple>().v1);
     using InnerTuple = typename std::remove_reference<decltype(

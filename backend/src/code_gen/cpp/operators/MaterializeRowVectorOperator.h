@@ -4,7 +4,8 @@
 #include <stdexcept>
 #include <type_traits>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <typename T, typename U>
 auto constexpr max(T x, U y) ->
@@ -13,7 +14,7 @@ auto constexpr max(T x, U y) ->
 }
 
 template <class OuterTuple, class InnerTuple, class Upstream>
-class MaterializeRowVectorOperator : public Operator {
+class MaterializeRowVectorOperator {
 public:
     MaterializeRowVectorOperator(Upstream *const upstream)
         : upstream_(upstream), has_returned_(false) {}

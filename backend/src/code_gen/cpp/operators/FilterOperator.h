@@ -5,10 +5,11 @@
 #ifndef CPP_FILTEROPERATOR_H
 #define CPP_FILTEROPERATOR_H
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple, class Function>
-class FilterOperator : public Operator {
+class FilterOperator {
 public:
     Upstream *upstream;
     Function function;

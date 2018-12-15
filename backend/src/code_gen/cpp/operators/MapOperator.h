@@ -5,10 +5,11 @@
 #ifndef CPP_MAPOPERATOR_H
 #define CPP_MAPOPERATOR_H
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple, class MapFunction>
-class MapOperator : public Operator {
+class MapOperator {
 public:
     MapOperator(Upstream *const upstream, MapFunction map_function)
         : upstream_(upstream), map_function_(map_function) {}

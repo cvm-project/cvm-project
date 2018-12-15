@@ -7,10 +7,11 @@
 
 #include <cstring>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Tuple, bool kAddIndex, class Upstream>
-class CollectionSourceOperator : public Operator {
+class CollectionSourceOperator {
 public:
     CollectionSourceOperator(Upstream *const upstream) : upstream_(upstream) {}
 

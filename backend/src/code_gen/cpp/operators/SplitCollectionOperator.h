@@ -1,10 +1,11 @@
 #ifndef CPP_SPLITCOLLECTIONOPERATOR_H
 #define CPP_SPLITCOLLECTIONOPERATOR_H
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple>
-class SplitCollectionOperator : public Operator {
+class SplitCollectionOperator {
 public:
     typedef decltype(Tuple().v0) ValueType;
 

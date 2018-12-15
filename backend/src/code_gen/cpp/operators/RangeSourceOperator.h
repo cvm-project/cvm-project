@@ -7,10 +7,11 @@
 
 #include <iostream>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple>
-class RangeSourceOperator : public Operator {
+class RangeSourceOperator {
 public:
     typedef decltype(Tuple().v0) ValueType;
 

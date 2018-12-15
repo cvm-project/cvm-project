@@ -7,10 +7,11 @@
 
 #include <omp.h>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class OutputTuple, class InnerPlanFunctor, class Upstream>
-class ParallelMapOperator : public Operator {
+class ParallelMapOperator {
 public:
     ParallelMapOperator(Upstream *const upstream,
                         const InnerPlanFunctor &inner_plan)

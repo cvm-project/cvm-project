@@ -1,10 +1,11 @@
 #ifndef CPP_CONSTANTTUPLEOPERATOR_H
 #define CPP_CONSTANTTUPLEOPERATOR_H
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Tuple>
-class ConstantTupleOperator : public Operator {
+class ConstantTupleOperator {
 public:
     ConstantTupleOperator(const Optional<Tuple> &tuple)
         : tuple_(tuple), has_returned_(false) {}

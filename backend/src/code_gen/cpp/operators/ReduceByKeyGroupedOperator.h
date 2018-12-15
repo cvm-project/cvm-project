@@ -8,7 +8,8 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 /**
  * Groups up the input tuples by key and reduces the values
@@ -21,7 +22,7 @@
  */
 template <class Upstream, class Tuple, class KeyType, class ValueType,
           class Function>
-class ReduceByKeyGroupedOperator : public Operator {
+class ReduceByKeyGroupedOperator {
 public:
     Upstream *upstream;
     Function func;

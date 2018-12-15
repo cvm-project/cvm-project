@@ -1,12 +1,13 @@
 #ifndef CPP_ENSURESINGLETUPLE_OPERATOR_H
 #define CPP_ENSURESINGLETUPLE_OPERATOR_H
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 #include <stdexcept>
 
 template <class Upstream, class Tuple>
-class EnsureSingleTupleOperator : public Operator {
+class EnsureSingleTupleOperator {
 public:
     EnsureSingleTupleOperator(Upstream *upstream) : upstream_(upstream) {}
 

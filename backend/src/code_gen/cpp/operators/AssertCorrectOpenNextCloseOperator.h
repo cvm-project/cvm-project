@@ -3,10 +3,11 @@
 
 #include <cassert>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple>
-class AssertCorrectOpenNextCloseOperator : public Operator {
+class AssertCorrectOpenNextCloseOperator {
 public:
     AssertCorrectOpenNextCloseOperator(Upstream *const upstream)
         : upstream_(upstream), is_open_(false) {}

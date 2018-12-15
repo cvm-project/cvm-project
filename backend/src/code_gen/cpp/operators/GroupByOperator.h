@@ -4,10 +4,11 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Operator.h"
+#include "Optional.h"
+#include "Utils.h"
 
 template <class Upstream, class Tuple>
-class GroupByOperator : public Operator {
+class GroupByOperator {
 public:
     using OutputArray = decltype(std::declval<Tuple>().v1);
     using InnerTuple = typename std::remove_reference<decltype(
