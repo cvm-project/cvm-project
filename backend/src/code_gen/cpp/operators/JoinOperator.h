@@ -5,6 +5,7 @@
 #ifndef CPP_JOINOPERATOR_H
 #define CPP_JOINOPERATOR_H
 
+#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -102,13 +103,12 @@ private:
     INLINE static Tuple BuildResult(const KeyType &key,
                                     const LeftValueType &left_val,
                                     const RightValueType &right_val) {
-        Tuple res;
-        char *resp = (char *)&res;
-        *((KeyType *)resp) = key;
-        *((LeftValueType *)(resp + sizeof(KeyType))) = left_val;
-        *((RightValueType *)(resp + sizeof(KeyType) + sizeof(LeftValueType))) =
-                right_val;
-        return res;
+        auto const left_tuple = TupleToStdTuple(left_val);
+        auto const right_tuple = TupleToStdTuple(right_val);
+        auto const key_tuple = TupleToStdTuple(key);
+        auto const ret_tuple =
+                std::tuple_cat(key_tuple, left_tuple, right_tuple);
+        return StdTupleToTuple(ret_tuple);
     }
 
     LeftUpstream *const left_upstream_;
