@@ -189,7 +189,8 @@ void CodeGenVisitor::operator()(DAGJoin *op) {
     auto value_tuple1 = up1Type->ComputeTailTuple();
     auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
 
-    auto value_type2 = EmitTupleStructDefinition(context_, up2Type);
+    auto value_tuple2 = up2Type->ComputeTailTuple();
+    auto value_type2 = EmitTupleStructDefinition(context_, value_tuple2);
 
     // Build operator
     std::vector<std::string> template_args = {key_type->name, value_type1->name,
