@@ -198,7 +198,6 @@ class TestJoin(TestCaseBase):
         truth = [i for i in input_1 if i in input_2]
         self.assertListEqual(sorted(res.astuples()), truth)
 
-    @unittest.skip("Bug in CPP back-end related to empty structs")
     def test_scalar_left(self):
         input_1 = range(10)
         input_2 = list(enumerate(range(10)))
@@ -237,7 +236,6 @@ class TestJoin(TestCaseBase):
         truth = [(r, r * 10, r * 13, r + 100) for r in range(5, 10)]
         self.assertListEqual(sorted(res.astuples()), truth)
 
-    @unittest.skip("Bug in CPP back-end related to empty structs")
     def test_left_single_field(self):
         input_1 = [(r,) for r in range(10)]
         input_2 = [(r, r * 13, r + 100) for r in range(5, 15)]
