@@ -26,43 +26,59 @@ public:
     JoinOperator(LeftUpstream *left_upstream, RightUpstream *right_upstream)
         : left_upstream_(left_upstream), right_upstream_(right_upstream){};
 
-    Optional<Tuple> INLINE next() {
-        if (intermediate_tuples_ != iterator_end_) {
-            auto res = *intermediate_tuples_;
-            intermediate_tuples_++;
-            // build result tuple here
-            // from iterator to the ht_ value vector
-            return BuildResult(last_key_, res, last_right_upstream_);
-        }
-        while (auto ret = right_upstream_->next()) {
-            auto key = ExtractKey(ret.value());
-            if (ht_.count(key)) {
-                intermediate_tuples_ = ht_[key].begin();
-                iterator_end_ = ht_[key].end();
-                last_right_upstream_ = ExtractRightValue(ret.value());
-                last_key_ = key;
-                return next();
-            }
-        }
-        return {};
-    }
-
     void INLINE open() {
         left_upstream_->open();
         right_upstream_->open();
+
+        // Build table already built
         if (!ht_.empty()) {
             return;
         }
+
+        // Build hash table from left upstream
         while (auto ret = left_upstream_->next()) {
-            if (ht_.count(ExtractKey(ret.value())) > 0) {
-                ht_[ExtractKey(ret.value())].push_back(
-                        ExtractLeftValue(ret.value()));
-            } else {
-                std::vector<LeftValueType> values;
-                values.push_back(ExtractLeftValue(ret.value()));
-                ht_.emplace(ExtractKey(ret.value()), values);
+            auto const key = ExtractKey(ret.value());
+            auto const left_value = ExtractLeftValue(ret.value());
+
+            auto const[it, _] = ht_.insert({key, {}});
+            it->second.emplace_back(left_value);
+        }
+
+        // Reset iterators of left matches
+        left_matches_it_ = left_matches_end_;
+    }
+
+    Optional<Tuple> INLINE next() {
+        // If there are no matches from the left upstream left to produces
+        // results, we need a new tuple from the right upstream
+        while (left_matches_it_ == left_matches_end_) {
+            const auto ret = right_upstream_->next();
+            if (!ret) return {};
+
+            const auto key = ExtractKey(ret.value());
+            const auto it = ht_.find(key);
+            if (it != ht_.end()) {
+                left_matches_it_ = it->second.begin();
+                left_matches_end_ = it->second.end();
+                last_right_upstream_ = ExtractRightValue(ret.value());
+                last_key_ = key;
             }
         }
+
+        // At this point, we have a tuple from the right side with at least one
+        // match on the left --> produce the next result
+
+        auto const left_value = *left_matches_it_;
+        left_matches_it_++;
+
+        // Concate fields using std::tuple
+        auto const key_tuple = TupleToStdTuple(last_key_);
+        auto const left_tuple = TupleToStdTuple(left_value);
+        auto const right_tuple = TupleToStdTuple(last_right_upstream_);
+        auto const ret_tuple =
+                std::tuple_cat(key_tuple, left_tuple, right_tuple);
+
+        return StdTupleToTuple(ret_tuple);
     }
 
     void INLINE close() {
@@ -100,24 +116,13 @@ private:
         return *((RightValueType *)(((char *)&t) + sizeof(KeyType)));
     }
 
-    INLINE static Tuple BuildResult(const KeyType &key,
-                                    const LeftValueType &left_val,
-                                    const RightValueType &right_val) {
-        auto const left_tuple = TupleToStdTuple(left_val);
-        auto const right_tuple = TupleToStdTuple(right_val);
-        auto const key_tuple = TupleToStdTuple(key);
-        auto const ret_tuple =
-                std::tuple_cat(key_tuple, left_tuple, right_tuple);
-        return StdTupleToTuple(ret_tuple);
-    }
-
     LeftUpstream *const left_upstream_;
     RightUpstream *const right_upstream_;
     std::unordered_map<KeyType, std::vector<LeftValueType>, hash, pred> ht_;
     RightValueType last_right_upstream_;
     KeyType last_key_;
-    typename std::vector<LeftValueType>::iterator intermediate_tuples_;
-    typename std::vector<LeftValueType>::iterator iterator_end_;
+    typename std::vector<LeftValueType>::iterator left_matches_it_;
+    typename std::vector<LeftValueType>::iterator left_matches_end_;
 };
 
 template <class Tuple, class KeyType, class LeftValueType, class RightValueType,
