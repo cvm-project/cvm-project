@@ -11,8 +11,6 @@
 #include "Optional.h"
 #include "Utils.h"
 
-using std::vector;
-
 /**
  * For input tuples (K, V) and (K, W) returns (K, V, W)
  * Returns every combination in case of repeating keys
@@ -20,31 +18,28 @@ using std::vector;
  * Current implementation builds map on the left input operator
  * Keeps the right operator input ordered
  */
-template <class Upstream1, class Upstream2, class Tuple, class KeyType,
-          class ValueType1, class ValueType2>
+template <class LeftUpstream, class RightUpstream, class Tuple, class KeyType,
+          class LeftValueType, class RightValueType>
 class JoinOperator {
 public:
-    Upstream1 *upstream1;
-    Upstream2 *upstream2;
-
-    JoinOperator(Upstream1 *upstream1, Upstream2 *upstream2)
-        : upstream1(upstream1), upstream2(upstream2){};
+    JoinOperator(LeftUpstream *left_upstream, RightUpstream *right_upstream)
+        : left_upstream_(left_upstream), right_upstream_(right_upstream){};
 
     Optional<Tuple> INLINE next() {
-        if (intermediateTuples != iteratorEnd) {
-            auto res = *intermediateTuples;
-            intermediateTuples++;
+        if (intermediate_tuples_ != iterator_end_) {
+            auto res = *intermediate_tuples_;
+            intermediate_tuples_++;
             // build result tuple here
-            // from iterator to the ht value vector
-            return buildResult(lastKey, res, lastUpstream2);
+            // from iterator to the ht_ value vector
+            return BuildResult(last_key_, res, last_right_upstream_);
         }
-        while (auto ret = upstream2->next()) {
-            auto key = getKey(ret.value());
-            if (ht.count(key)) {
-                intermediateTuples = ht[key].begin();
-                iteratorEnd = ht[key].end();
-                lastUpstream2 = getValue2(ret.value());
-                lastKey = key;
+        while (auto ret = right_upstream_->next()) {
+            auto key = ExtractKey(ret.value());
+            if (ht_.count(key)) {
+                intermediate_tuples_ = ht_[key].begin();
+                iterator_end_ = ht_[key].end();
+                last_right_upstream_ = ExtractRightValue(ret.value());
+                last_key_ = key;
                 return next();
             }
         }
@@ -52,25 +47,26 @@ public:
     }
 
     void INLINE open() {
-        upstream1->open();
-        upstream2->open();
-        if (!ht.empty()) {
+        left_upstream_->open();
+        right_upstream_->open();
+        if (!ht_.empty()) {
             return;
         }
-        while (auto ret = upstream1->next()) {
-            if (ht.count(getKey(ret.value())) > 0) {
-                ht[getKey(ret.value())].push_back(getValue1(ret.value()));
+        while (auto ret = left_upstream_->next()) {
+            if (ht_.count(ExtractKey(ret.value())) > 0) {
+                ht_[ExtractKey(ret.value())].push_back(
+                        ExtractLeftValue(ret.value()));
             } else {
-                vector<ValueType1> values;
-                values.push_back(getValue1(ret.value()));
-                ht.emplace(getKey(ret.value()), values);
+                std::vector<LeftValueType> values;
+                values.push_back(ExtractLeftValue(ret.value()));
+                ht_.emplace(ExtractKey(ret.value()), values);
             }
         }
     }
 
     void INLINE close() {
-        upstream1->close();
-        upstream2->close();
+        left_upstream_->close();
+        right_upstream_->close();
     }
 
 private:
@@ -86,44 +82,53 @@ private:
         }
     };
 
-    std::unordered_map<KeyType, std::vector<ValueType1>, hash, pred> ht;
-    ValueType2 lastUpstream2;
-    KeyType lastKey;
-    typename std::vector<ValueType1>::iterator intermediateTuples;
-    typename std::vector<ValueType1>::iterator iteratorEnd;
-
     template <class UpstreamTuple>
-    INLINE static constexpr KeyType getKey(const UpstreamTuple &t) {
+    INLINE static constexpr KeyType ExtractKey(const UpstreamTuple &t) {
         return *(const_cast<KeyType *>((KeyType *)(&t)));
     }
 
     template <class UpstreamTuple>
-    INLINE static constexpr ValueType1 getValue1(const UpstreamTuple &t) {
-        return *((ValueType1 *)(((char *)&t) + sizeof(KeyType)));
+    INLINE static constexpr LeftValueType ExtractLeftValue(
+            const UpstreamTuple &t) {
+        return *((LeftValueType *)(((char *)&t) + sizeof(KeyType)));
     }
 
     template <class UpstreamTuple>
-    INLINE static constexpr ValueType2 getValue2(const UpstreamTuple &t) {
-        return *((ValueType2 *)(((char *)&t) + sizeof(KeyType)));
+    INLINE static constexpr RightValueType ExtractRightValue(
+            const UpstreamTuple &t) {
+        return *((RightValueType *)(((char *)&t) + sizeof(KeyType)));
     }
 
-    INLINE static Tuple buildResult(const KeyType &key, const ValueType1 &val1,
-                                    const ValueType2 &val2) {
+    INLINE static Tuple BuildResult(const KeyType &key,
+                                    const LeftValueType &left_val,
+                                    const RightValueType &right_val) {
         Tuple res;
         char *resp = (char *)&res;
         *((KeyType *)resp) = key;
-        *((ValueType1 *)(resp + sizeof(KeyType))) = val1;
-        *((ValueType2 *)(resp + sizeof(KeyType) + sizeof(ValueType1))) = val2;
+        *((LeftValueType *)(resp + sizeof(KeyType))) = left_val;
+        *((RightValueType *)(resp + sizeof(KeyType) + sizeof(LeftValueType))) =
+                right_val;
         return res;
     }
+
+    LeftUpstream *const left_upstream_;
+    RightUpstream *const right_upstream_;
+    std::unordered_map<KeyType, std::vector<LeftValueType>, hash, pred> ht_;
+    RightValueType last_right_upstream_;
+    KeyType last_key_;
+    typename std::vector<LeftValueType>::iterator intermediate_tuples_;
+    typename std::vector<LeftValueType>::iterator iterator_end_;
 };
 
-template <class Tuple, class KeyType, class ValueType1, class ValueType2,
-          class Upstream1, class Upstream2>
-JoinOperator<Upstream1, Upstream2, Tuple, KeyType, ValueType1, ValueType2>
-        INLINE makeJoinOperator(Upstream1 *upstream1, Upstream2 *upstream2) {
-    return JoinOperator<Upstream1, Upstream2, Tuple, KeyType, ValueType1,
-                        ValueType2>(upstream1, upstream2);
+template <class Tuple, class KeyType, class LeftValueType, class RightValueType,
+          class LeftUpstream, class RightUpstream>
+JoinOperator<LeftUpstream, RightUpstream, Tuple, KeyType, LeftValueType,
+             RightValueType>
+        INLINE makeJoinOperator(LeftUpstream *left_upstream,
+                                RightUpstream *right_upstream) {
+    return JoinOperator<LeftUpstream, RightUpstream, Tuple, KeyType,
+                        LeftValueType, RightValueType>(left_upstream,
+                                                       right_upstream);
 };
 
 #endif  // CPP_JOINOPERATOR_H
