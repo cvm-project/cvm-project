@@ -16,6 +16,7 @@ class TestCaseBase(unittest.TestCase):
         self.context = JitqContext()
 
 
+# pragma pylint: disable=too-many-public-methods
 class TestCollection(TestCaseBase):
 
     def test_scalar(self):
@@ -70,6 +71,17 @@ class TestCollection(TestCaseBase):
         res = self.context.collection(input_) \
             .map(lambda t: (t[0] + 0, t[1] + 0)).collect()
         self.assertListEqual(sorted(res.astuples()), input_)
+
+    def test_array_aligned_tuple(self):
+        dtype = np.dtype([('x', np.int32), ('y', np.int64)], align=True)
+        input_ = [(np.int32(i), np.int64(2 * i)) for i in range(10)]
+        input_array = np.array(input_, dtype=dtype)
+
+        def run():
+            self.context.collection(input_array) \
+                .map(lambda t: (t.x + 0, t.y + 0)).collect()
+
+        self.assertRaises(NotImplementedError, run)
 
     def test_pandas_scalar(self):
         input_ = range(10)
