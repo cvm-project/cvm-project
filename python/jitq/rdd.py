@@ -649,6 +649,9 @@ class CollectionSource(UnaryRDD):
             output_type = item_typeof(values[0])
             values = np.array(values, dtype=numba_type_to_dtype(output_type))
 
+        if values.dtype.isalignedstruct:
+            raise NotImplementedError
+
         # Construct parameter lookup as parent
         super(CollectionSource, self).__init__(
             context, self._make_parent(context, values))
