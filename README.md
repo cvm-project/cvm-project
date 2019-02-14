@@ -109,6 +109,8 @@ sudo apt-get install libgraphviz-dev
 ```
 cd jitq/backend/build
 cmake ../src/
+# or whatever binary you installed above, such as:
+cmake-v3.10 ../src
 make
 cd ../../
 ```
