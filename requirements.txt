@@ -1,5 +1,5 @@
 numpy
-numba
+numba==0.40.0
 pandas
 cffi
 jsonmerge
