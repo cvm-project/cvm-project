@@ -174,7 +174,7 @@ auto DAG::to_vertex(const DAGOperator *const op) const -> Vertex {
                     boost::adaptors::filtered([&](const auto &v) {
                         return operator_map[v].get() == op;
                     });
-    assert(distance(vr) == 1);
+    assert(boost::distance(vr) == 1);
     return vr.front();
 }
 
