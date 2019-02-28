@@ -74,7 +74,7 @@ python-tests:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev
     - pip3 install -r requirements.txt
     - pip3 install -r python/jitq/tests/requirements.txt
-    - echo -e "CC=clang-5.0\nCXX=clang++-5.0" > backend/src/code_gen/cpp/Makefile.local
+    - echo -e "CC=clang-5.0\nCXX=clang++-5.0\nLIBOMPDIR=/opt/clang+llvm-5.0.0/lib" > backend/src/code_gen/cpp/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python
