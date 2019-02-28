@@ -104,7 +104,7 @@ void CodeGenVisitor::operator()(DAGPartition *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "PartitionOperator");
 
-    emitOperatorMake(var_name, "PartitionOperator", op, {}, {"256"});
+    emitOperatorMake(var_name, "PartitionOperator", op, {}, {"16"});
 }
 
 void CodeGenVisitor::operator()(DAGProjection *op) {
