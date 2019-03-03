@@ -168,8 +168,11 @@ def replace_unituple(type_):
     if isinstance(type_, nb.types.BaseAnonymousTuple):
         child_types = [replace_unituple(t) for t in type_.types]
         return make_tuple(child_types)
-    # This numba numpy types cannot contain numba Tuple type
-    if isinstance(type_, (nb.types.Array, nb.types.Record)):
+    # This numba numpy type cannot contain numba Tuple type
+    if isinstance(type_, nb.types.Record):
+        return type_
+    if isinstance(type_, nb.types.Array):
+        type_.dtype = replace_unituple(type_.dtype)
         return type_
     if str(type_) in NUMPY_DTYPE_MAP:
         return type_

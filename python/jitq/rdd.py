@@ -318,7 +318,7 @@ class MaterializeRowVector(UnaryRDD):
             # we cannot guarantee that all sub-arrays will be of the same size
             self.output_type = types.List(dtype)
         else:
-            self.output_type = types.Array(dtype, 1, "C")
+            self.output_type = replace_unituple(types.Array(dtype, 1, "C"))
 
 
 class Filter(PipeRDD):
