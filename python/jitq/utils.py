@@ -61,17 +61,13 @@ def is_item_type(type_):
     if str(type_) in NUMPY_DTYPE_MAP:
         return True
     if isinstance(type_, nb.types.Tuple):
-        if all(map(is_item_type, type_.types)):
-            return True
+        return all(map(is_item_type, type_.types))
     if isinstance(type_, nb.types.Array):
-        if is_item_type(type_.dtype):
-            return True
+        return is_item_type(type_.dtype)
     if isinstance(type_, nb.types.Record):
-        if all(map(lambda tp: is_item_type(tp[0]), type_.fields.values())):
-            return True
+        return all(map(lambda tp: is_item_type(tp[0]), type_.fields.values()))
     if isinstance(type_, nb.types.List):
-        if is_item_type(type_.dtype):
-            return True
+        return is_item_type(type_.dtype)
     return False
 
 
