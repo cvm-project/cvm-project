@@ -174,6 +174,8 @@ def replace_unituple(type_):
     if isinstance(type_, nb.types.Array):
         type_.dtype = replace_unituple(type_.dtype)
         return type_
+    if isinstance(type_, nb.types.IntegerLiteral):
+        type_ = nb.types.Integer.from_bitwidth(type_.bitwidth, type_.signed)
     if str(type_) in NUMPY_DTYPE_MAP:
         return type_
     raise TypeError("Can only replace UniTuple on valid nested objects.")
