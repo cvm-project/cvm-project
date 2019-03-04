@@ -194,6 +194,36 @@ make test
 (cd ../../python/jitq/tests/ && python3 -m unittest discover -v)
 ```
 
+## Compile and run with sanitizers
+
+You can compile and run JITQ with "sanitizers", which do extra checks during runtime.
+Currently, Clang's [LeakSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizerLeakSanitizer) (LSan),
+[AddressSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) (ASan),
+and [UndefinedBehavioSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) (UBSan)
+are pre-setup.
+
+To compile, add the following flag to `cmake` and recompile:
+
+```bash
+cmake <...> -DLLVM_ASAN=ON
+```
+
+Then, set up the following environment variables:
+
+```bash
+export ASAN_SYMBOLIZER_PATH=/opt/clang+llvm-7.0.1/bin/llvm-symbolizer
+export ASAN_LIBRARY_PATH=/opt/clang+llvm-7.0.1/lib/clang/7.0.1/lib/linux/libclang_rt.asan-x86_64.so
+```
+
+Finally, run unittests or queries you want to test.
+Any executable compiled by CMake will work out of the box.
+Python-based tests must be run through a script, e.g.:
+
+```bash
+cd $JITQPATH/python
+../tools/run_with_asan.sh python3 -u -m unittest discover -v -s jitq/tests
+```
+
 ## Common Issues
 
 1. `libruntime.so` cannot be found by python cffi.

@@ -10,6 +10,20 @@ from numba.numpy_support import as_dtype
 import numpy as np
 
 
+# pylint: disable=unused-import
+#         We need to load the native module first before modifying the env
+import jitq.backend
+
+# After importing the native module, remove the Clang address sanitizer from
+# LD_PRELOAD (if we are using it); otherwise, external processes will be called
+# with through the sanitizer, which will most likely not work.
+if 'LD_PRELOAD' in os.environ:
+    os.environ['LD_PRELOAD'] = ' '.join(
+        [v for v in os.environ['LD_PRELOAD'].split(' ')
+         if 'dlclose_noop' not in v and
+         v != os.environ.get('ASAN_LIBRARY_PATH', '')])
+
+
 def mean(lst):
     return sum(lst) / len(lst)
 

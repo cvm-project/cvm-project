@@ -1,0 +1,18 @@
+# Suppress leaks comming from the Python interpreter and other system
+# libraries. Suppressing these is rather aggressive, i.e., they might suppress
+# some leaks that are actually ours, but this seems preferable over an
+# extremely high number of false positives/leaks we can't do anything about.
+leak:^/usr/bin/python
+leak:^/usr/lib/python
+
+# Numpy has a few leaks
+leak:^/io/numpy/numpy/core/src/
+
+# Some deep dependency as a leak:
+leak:pyrsistent/pvectorcmodule.c
+
+# Numba/llvmlite has some leaks
+leak:site-packages/llvmlite/binding/libllvmlite.so
+
+# I suspect that this is from Numba/llvmlit as well
+leak:std::string::_Rep::_S_create

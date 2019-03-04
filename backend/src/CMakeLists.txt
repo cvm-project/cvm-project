@@ -4,6 +4,8 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/cmake/")
 
+set(LLVM_ASAN OFF CACHE BOOL "Enable compilation with LLVM address, undefined, and leak sanitizer.")
+
 include_directories("${PROJECT_SOURCE_DIR}")
 
 include (ReleaseAsDefault)
@@ -59,6 +61,14 @@ include_directories(SYSTEM ${POLYMORPHIC_VALUE_INCLUDE_DIRS})
 # Set up compilation options
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
+
+# Set up sanitizers
+if(${LLVM_ASAN} AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    message(STATUS "Enabling LLVM's sanitizers.")
+    set(LLVM_LSAN_FLAGS "-fno-omit-frame-pointer -fsanitize=address,undefined -fno-sanitize=vptr")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${LLVM_LSAN_FLAGS}")
+    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} ${LLVM_LSAN_FLAGS}")
+endif()
 
 # Set up Boost
 set(Boost_NO_BOOST_CMAKE ON)
@@ -176,6 +186,9 @@ set(RUNTIME_SOURCE_FILES
         runtime/values/value_parser.cpp
     )
 add_library(runtime SHARED ${RUNTIME_SOURCE_FILES} )
+
+# Set up dummy dlclose library
+add_library(dlclose_noop SHARED tools/dlclose_noop.c)
 
 # Set up benchmark utils
 add_executable(benchmark benchmarks/main.cpp)
