@@ -1,4 +1,9 @@
 ---
+# Reasoning for deactivating checks:
+#   llvm-header-guard: does not work with src/ prefix
+#   cppcoreguidelines-no-malloc/hicpp-no-malloc: we need malloc in a few places
+#   cppcoreguidelines-pro-*: too strict for now
+#   cert-err60-cpp: something with exceptions -- to lazy to understand for now
 Checks:          '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp'
 WarningsAsErrors: '*'
 CheckOptions:
