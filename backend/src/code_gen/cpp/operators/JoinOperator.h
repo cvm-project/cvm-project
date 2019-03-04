@@ -40,7 +40,7 @@ public:
             auto const key = ExtractKey(ret.value());
             auto const left_value = ExtractLeftValue(ret.value());
 
-            auto const[it, _] = ht_.insert({key, {}});
+            auto const [it, _] = ht_.insert({key, {}});
             it->second.emplace_back(left_value);
         }
 

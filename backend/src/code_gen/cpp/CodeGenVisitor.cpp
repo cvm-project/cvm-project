@@ -17,8 +17,8 @@
 #include "utils/utils.h"
 #include "utils/visitor.hpp"
 
-using boost::algorithm::join;
 using boost::format;
+using boost::algorithm::join;
 
 namespace code_gen {
 namespace cpp {

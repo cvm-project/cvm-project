@@ -7,8 +7,8 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
 
-using boost::algorithm::join;
 using boost::format;
+using boost::algorithm::join;
 
 namespace code_gen {
 namespace cpp {

@@ -19,8 +19,8 @@
 #include "dag/type/atomic.hpp"
 #include "dag/utils/apply_visitor.hpp"
 
-using boost::algorithm::join;
 using boost::format;
+using boost::algorithm::join;
 
 namespace code_gen {
 namespace cpp {
