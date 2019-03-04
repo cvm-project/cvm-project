@@ -4,9 +4,16 @@
 #   cppcoreguidelines-no-malloc/hicpp-no-malloc: we need malloc in a few places
 #   cppcoreguidelines-pro-*: too strict for now
 #   cert-err60-cpp: something with exceptions -- to lazy to understand for now
-Checks:          '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp'
+#   fuchsia-*: way too strict
+#   hicpp-vararg: this would forbid printf
+#   cert-msc32-c,cert-msc51-cpp: we need deterministic "random" numbers for testing
+#   bugprone-exception-escape: TODO(ingo): we should fix this one day
+#   cppcoreguidelines-owning-memory: TODO(ingo): fix this
+Checks: '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-hicpp-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp,-fuchsia-*,-hicpp-no-array-decay,-cert-msc32-c,-cert-msc51-cpp,-hicpp-vararg,-bugprone-exception-escape,-cppcoreguidelines-owning-memory'
 WarningsAsErrors: '*'
 CheckOptions:
+  - key: hicpp-braces-around-statements.ShortStatementLines
+    value: 1
   - key: readability-braces-around-statements.ShortStatementLines
     value: 1
   - key: google-global-names-in-headers.HeaderFileExtensions
