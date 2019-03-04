@@ -6,6 +6,8 @@
 #define DAG_COLUMN_H
 
 #include <iostream>
+#include <memory>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
