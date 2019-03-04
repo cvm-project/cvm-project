@@ -3,15 +3,15 @@ variables:
 
 format-cpp:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   script:
     - cd backend/build
-    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
+    - CC=clang-7.0 CXX=clang++-7.0 cmake-3.13 ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
     - make check-format
 
 format-python:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   before_script:
     - pip3 install -r requirements.txt
     - pip3 install -r python/jitq/benchmarks/requirements.txt
@@ -22,10 +22,10 @@ format-python:
 
 rel-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   script:
     - cd backend/build
-    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/
+    - CC=clang-7.0 CXX=clang++-7.0 cmake-3.13 ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
     - make
   artifacts:
     paths:
@@ -33,10 +33,10 @@ rel-build:
 
 dbg-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   script:
     - cd backend/build
-    - CC=clang-5.0 CXX=clang++-5.0 cmake-3.10 ../src -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    - CC=clang-7.0 CXX=clang++-7.0 cmake-3.13 ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
     - make
   artifacts:
     paths:
@@ -46,7 +46,7 @@ clang-tidy:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   script:
     - cd backend/build
     - make -k check-tidy
@@ -55,7 +55,7 @@ cppcheck:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   script:
     - cd backend/build
     - make cppcheck
@@ -64,17 +64,17 @@ python-tests:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   variables:
     JITQPATH: $CI_PROJECT_DIR
-    LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-5.0.0/lib
+    LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-7.0.1/lib
     PYTHONPATH: $CI_PROJECT_DIR
     OMP_NUM_THREADS: 8
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev
     - pip3 install -r requirements.txt
     - pip3 install -r python/jitq/tests/requirements.txt
-    - echo -e "CC=clang-5.0\nCXX=clang++-5.0\nLIBOMPDIR=/opt/clang+llvm-5.0.0/lib" > backend/src/code_gen/cpp/Makefile.local
+    - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/code_gen/cpp/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python
@@ -84,9 +84,9 @@ cpp-test:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2018-08-02
+  image: ingomuellernet/buildenv-jitq:2019-03-05
   variables:
     GTEST_COLOR: "1"
   script:
     - cd backend/build
-    - ctest -V
+    - ctest-3.13 -V

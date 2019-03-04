@@ -52,7 +52,7 @@ execute.opt.cpp: execute.cpp
 	cp $^ $@
 
 execute.dbg.cpp: execute.cpp
-	clang-format-5.0 $< > $@
+	clang-format-7.0 $< > $@
 
 execute.opt.o: execute.opt.cpp $(GCHEADER)
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(INC) -include-pch $(GCHEADER)

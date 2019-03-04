@@ -51,13 +51,13 @@ done
 Download and add links:
 
 ```bash
-sudo mkdir /opt/clang+llvm-5.0.0/ && \
-cd /opt/clang+llvm-5.0.0/ && \
-wget http://releases.llvm.org/5.0.0/clang+llvm-5.0.0-linux-x86_64-ubuntu16.04.tar.xz -O - \
+sudo mkdir /opt/clang+llvm-7.0.1/ && \
+cd /opt/clang+llvm-7.0.1/ && \
+wget http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz -O - \
      | sudo tar -x -I xz --strip-components=1 && \
 for file in bin/*; \
 do \
-    sudo ln -s $PWD/$file /usr/bin/$(basename $file)-5.0; \
+    sudo ln -s $PWD/$file /usr/bin/$(basename $file)-7.0; \
 done
 ```
 
@@ -71,11 +71,11 @@ Download and build with ninja:
 
 ```bash
 cd /tmp/ && \
-wget http://releases.llvm.org/5.0.0/llvm-5.0.0.src.tar.xz && \
-tar -xf llvm-5.0.0.src.tar.xz && \
-mkdir /tmp/llvm-5.0.0.src/build && \
-cd /tmp/llvm-5.0.0.src/build && \
-CXX=clang++-5.0 CC=clang-5.0 cmake-3.13 -G Ninja ../ \
+wget http://releases.llvm.org/7.0.1/llvm-7.0.1.src.tar.xz && \
+tar -xf llvm-7.0.1.src.tar.xz && \
+mkdir /tmp/llvm-7.0.1.src/build && \
+cd /tmp/llvm-7.0.1.src/build && \
+CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 -G Ninja ../ \
     -DLLVM_BINUTILS_INCDIR=/usr/include \
     -DLLVM_TARGETS_TO_BUILD=X86 \
     -DCMAKE_BUILD_TYPE=MinSizeRel \
@@ -86,7 +86,7 @@ ninja LLVMgold
 Copy goldlinker:
 
 ```bash
-sudo cp /tmp/llvm-5.0.0.src/build/lib/LLVMgold.so /opt/clang+llvm-5.0.0/lib
+sudo cp /tmp/llvm-7.0.1.src/build/lib/LLVMgold.so /opt/clang+llvm-7.0.1/lib
 ```
 
 6. cppcheck
@@ -133,8 +133,8 @@ cd /tmp/ && \
 wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz -O - \
     | tar -xz && \
 cd /tmp/boost_1_69_0 && \
-echo "using clang : 5.0 : $(which clang-5.0) ; " > tools/build/src/user-config.jam && \
-./bjam --toolset=clang-5.0 --python=$PYTHONVERSION -j6 --prefix=/opt/boost-1.69.0 && \
+echo "using clang : 7.0 : $(which clang-7.0) ; " > tools/build/src/user-config.jam && \
+./bjam --toolset=clang-7.0 --python=$PYTHONVERSION -j6 --prefix=/opt/boost-1.69.0 && \
 sudo ./bjam install
 ```
 
@@ -146,13 +146,13 @@ Configure CMake:
 
 ```bash
 cd jitq/backend/build
-CXX=clang++-5.0 CC=clang-5.0 cmake-3.13 ../src/ -DLLVM_DIR=/opt/clang+llvm-5.0.0/lib/cmake/llvm -DBOOSTROOT=/opt/boost-1.69.0
+CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm -DBOOSTROOT=/opt/boost-1.69.0
 ```
 
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-5.0\nCXX=clang++-5.0\nLIBOMPDIR=/opt/clang+llvm-5.0.0/lib" > .../src/code_gen/cpp/Makefile.local
+echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > .../src/code_gen/cpp/Makefile.local
 ```
 
 1. Build:
@@ -166,7 +166,7 @@ make
 ```bash
 export JITQPATH=$PWD
 export PYTHONPATH=$PWD/python
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-5.0.0/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-7.0.1/lib
 ```
 
 3. Run tests and format checkers before commit:

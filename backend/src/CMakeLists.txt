@@ -10,13 +10,13 @@ include (ReleaseAsDefault)
 include (ExternalProject)
 
 # Setup clang-format
-find_package (ClangFormat 5.0 EXACT)
+find_package (ClangFormat 7.0 EXACT)
 if(ClangFormat_FOUND)
     enable_clang_format_targets()
 endif()
 
 # Setup clang-tidy
-find_package (ClangTidy 5.0 EXACT)
+find_package (ClangTidy 7.0 EXACT)
 if(ClangTidy_FOUND)
     enable_clang_tidy_targets()
 endif()
@@ -186,7 +186,7 @@ target_link_libraries(opt-cli PUBLIC
     )
 
 # Setup cppcheck
-find_package(cppcheck 1.81)
+find_package(cppcheck 1.81 EXACT)
 if(cppcheck_FOUND)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     add_custom_target(
