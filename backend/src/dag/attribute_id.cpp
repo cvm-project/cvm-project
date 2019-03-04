@@ -25,7 +25,7 @@ void AttributeId::RemoveField(collection::Field *field) {
     field->attribute_id_ = nullptr;
 }
 
-void AttributeId::MoveFields(AttributeId *other) {
+void AttributeId::MoveFields(const std::shared_ptr<AttributeId> &other) {
     auto count = other->fields_.size();
     for (auto &field : other->fields_) {
         fields_.insert(field);

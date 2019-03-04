@@ -24,7 +24,7 @@ public:
 
     void AddField(collection::Field *field);
 
-    void MoveFields(AttributeId *other);
+    void MoveFields(const std::shared_ptr<AttributeId> &other);
     void RemoveField(collection::Field *field);
     bool operator==(const AttributeId &other) { return id_ == other.id_; }
 

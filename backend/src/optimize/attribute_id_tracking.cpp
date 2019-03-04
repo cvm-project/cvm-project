@@ -45,7 +45,7 @@ public:
 
         // remap left input's key attribute_id to right input's one
         left->tuple->fields[0]->attribute_id()->MoveFields(
-                right->tuple->fields[0]->attribute_id().get());
+                right->tuple->fields[0]->attribute_id());
 
         auto &left_input_fields = dag_->predecessor(op, 0)->tuple->fields;
         auto &right_input_fields = dag_->predecessor(op, 1)->tuple->fields;
