@@ -8,7 +8,7 @@
 
 #include "utils/timing.h"
 
-#define MAX 1l << 29
+#define MAX (1ul << 29u)
 
 template <typename T>
 T *realloc_or_throw(T *old_ptr, const size_t n_elements) {
@@ -198,7 +198,7 @@ struct result_struct {
     tuple_4 *data;
 };
 
-size_t len2 = MAX >> 1;
+size_t len2 = MAX >> 1u;
 
 result_struct join(tuple_2 *array1, tuple_3 *array2) {
     // build ht
