@@ -78,7 +78,8 @@ ArrayLayout nlohmann::adl_serializer<ArrayLayout>::from_json(
     if (layout_ == "F") {
         return ArrayLayout::kF;
     }
-    throw(boost::format("Unknown array layout %s") % layout_).str();
+    throw std::runtime_error(
+            (boost::format("Unknown array layout %s") % layout_).str());
 }
 
 void nlohmann::adl_serializer<ArrayLayout>::to_json(nlohmann::json &json,
