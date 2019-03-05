@@ -406,7 +406,7 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         DAGOperator *op = nullptr;
         {
             std::unique_ptr<DAGOperator> op_ptr(
-                    DagFactory::instance().MakeOperator(op_name));
+                    DagFactory::MakeOperator(op_name));
             op = op_ptr.get();
             ::from_json(it, *op_ptr);
             dag->AddOperator(op_ptr.release(), op->id);
