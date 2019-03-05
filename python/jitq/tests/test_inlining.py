@@ -2,7 +2,6 @@
 
 import glob
 import json
-import shutil
 import subprocess
 import unittest
 
@@ -55,8 +54,6 @@ class TestInlining(unittest.TestCase):
 def make_test_func(test_name):
     # Implementation of generic test case
     def test_func(self):
-        # remove previous compilation results
-        shutil.rmtree(LIB_PATH)
         test_case = InliningTestCase(self, test_name)
         output = test_case.run_optimizer()
         output = json.loads(output)
