@@ -119,14 +119,21 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
             get_lib_path() / "backend/src/code_gen/cpp/Makefile";
     auto const make = boost::process::search_path("make");
     const bool do_debug_build = jconfig.value("/debug", false);
-    auto const flag = std::string("DEBUG=") + (do_debug_build ? "1" : "0");
+    auto const debug_flag =
+            std::string("DEBUG=") + (do_debug_build ? "1" : "0");
+
+#if defined(LLVM_ASAN)
+    auto const asan_flag = "LLVM_ASAN=1";
+#else
+    auto const asan_flag = "LLVM_ASAN=0";
+#endif
 
     boost::process::ipstream make_std_out;
     boost::process::ipstream make_std_err;
-    const int exit_code =
-            boost::process::system(make, "-j", "-f", makefile_path, flag,
-                                   boost::process::std_out > make_std_out,
-                                   boost::process::std_err > make_std_err);
+    const int exit_code = boost::process::system(
+            make, "-j", "-f", makefile_path, debug_flag, asan_flag,
+            boost::process::std_out > make_std_out,
+            boost::process::std_err > make_std_err);
 
     if (exit_code != 0) {
         throw std::runtime_error(

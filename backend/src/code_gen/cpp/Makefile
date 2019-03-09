@@ -31,6 +31,12 @@ else
     LIB = libexecute.opt.so
 endif
 
+LLVM_ASAN ?= 0
+ifeq ($(LLVM_ASAN), 1)
+    CXXFLAGS += -fsanitize=address,undefined -fno-sanitize=vptr,alignment
+    LDFLAGS += -fsanitize=address,undefined -fno-sanitize=vptr,alignment
+endif
+
 # Set inputs
 UDF_SOURCES = llvm_funcs.ll
 UDF_OBJECTS = $(UDF_SOURCES:.ll=.o)
