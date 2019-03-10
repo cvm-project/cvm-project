@@ -8,6 +8,7 @@
 #include "assert_correct_open_next_close.hpp"
 #include "attribute_id_tracking.hpp"
 #include "canonicalize.hpp"
+#include "code_gen.hpp"
 #include "create_pipelines.hpp"
 #include "determine_sortedness.hpp"
 #include "grouped_reduce_by_key.hpp"
@@ -30,6 +31,7 @@ void LoadDagTransformations() {
     RegisterDefault(std::make_unique<AssertCorrectOpenNextClose>());
     RegisterDefault(std::make_unique<AttributeIdTracking>());
     RegisterDefault(std::make_unique<Canonicalize>());
+    RegisterDefault(std::make_unique<CodeGen>());
     RegisterDefault(std::make_unique<CreatePipelines>());
     RegisterDefault(std::make_unique<DetermineSortedness>());
     RegisterDefault(std::make_unique<GroupedReduceByKey>());

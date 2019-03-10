@@ -108,8 +108,9 @@ set(GENERATE_SOURCE_FILES
         compiler/generate_executable.cpp
         dag/attribute_id.cpp
         dag/DAG.cpp
-        dag/DAGConstantTuple.cpp
         dag/DAGColumnScan.cpp
+        dag/DAGConstantTuple.cpp
+        dag/DAGCompiledPipeline.cpp
         dag/DAGOperator.cpp
         dag/DAGPipeline.cpp
         dag/DAGProjection.cpp
@@ -124,6 +125,7 @@ set(GENERATE_SOURCE_FILES
         dag/utils/apply_visitor.cpp
         llvm_helpers/function.cpp
         optimize/add_always_inline.cpp
+        optimize/code_gen.cpp
         optimize/assert_correct_open_next_close.cpp
         optimize/attribute_id_tracking.cpp
         optimize/canonicalize.cpp

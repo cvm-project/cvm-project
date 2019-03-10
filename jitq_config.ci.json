@@ -1,8 +1,8 @@
 {
     "optimizer": {
-        "verbose": true
-    },
-    "codegen": {
-        "debug": true
+        "verbose": true,
+        "optimizations": {
+            "code_gen": { "debug": true }
+        }
     }
 }

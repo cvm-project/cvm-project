@@ -9,11 +9,10 @@ from jitq.jitq_context import JitqContext
 
 
 def set_up(self):
-    self.context = JitqContext(conf={
-        "codegen": {"backend": "cpp"},
-        "verbose": True,
-        "optimizer": {"optimizations": {"parallelize": True}},
-    })
+    self.context = JitqContext(conf={"optimizer": {"optimizations": {
+        "parallelize": {"active": True},
+        "code_gen": {"backend": "cpp"}
+    }}})
 
 
 class TestParallelTestEnvironment(unittest.TestCase):

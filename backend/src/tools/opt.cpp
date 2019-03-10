@@ -4,7 +4,8 @@
 
 #include <boost/program_options.hpp>
 
-#include "compiler/compiler.hpp"
+#include "dag/DAG.h"
+#include "optimize/optimizer.hpp"
 #include "utils/printDAG.h"
 
 namespace po = boost::program_options;
@@ -93,14 +94,16 @@ int main(int argc, char* argv[]) {
     std::ostream output(vm.count("output") > 0 ? output_file.rdbuf()
                                                : std::cout.rdbuf());
 
+    // Parse DAG
     const std::string dagstr(std::istreambuf_iterator<char>(input), {});
+    std::unique_ptr<DAG> dag(ParseDag(dagstr));
 
     // Assemble backend configuration
     nlohmann::json conf_json;
     conf_json["/optimizer/optimization-level"] = opt_level;
 
     if (output_format != OutputFormat::kBin) {
-        conf_json["/optimizer/codegen"] = false;
+        conf_json["/optimizer/optimizations/code_gen/active"] = false;
     }
 
     for (auto const& opt : optimizations) {
@@ -109,18 +112,18 @@ int main(int argc, char* argv[]) {
 
     conf_json["/optimizer/verbose"] = verbose;
 
-    // Run the compiler
-    compiler::Compiler compiler(dagstr, conf_json.unflatten().dump());
-    compiler.GenerateExecutable();
+    // Run the optimizer
+    optimize::Optimizer opt(conf_json.unflatten().dump());
+    opt.Run(dag.get());
 
     // Produce output
     switch (output_format) {
         case OutputFormat::kJson: {
-            nlohmann::json json(compiler.dag());
+            nlohmann::json json(dag);
             output << json << std::endl;
         } break;
         case OutputFormat::kDot: {
-            ToDotStream(compiler.dag(), &output);
+            ToDotStream(dag.get(), &output);
         } break;
         case OutputFormat::kBin: {
         } break;

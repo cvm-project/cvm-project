@@ -6,7 +6,9 @@ from jitq.jitq_context import JitqContext
 
 
 def set_up(self):
-    self.context = JitqContext(conf={"codegen": {"backend": "cpp"}})
+    self.context = JitqContext(conf={"optimizer": {"optimizations": {
+        "code_gen": {"backend": "cpp"}
+    }}})
 
 
 NAME_SUFFIX = "Cpp"

@@ -117,6 +117,12 @@ void Optimizer::Run(DAG *const dag) {
         transformations.emplace_back("canonicalize");
     }
 
+    // Just-in-Time compilation
+    if (config.value("/optimizations/code_gen/active", true)) {
+        transformations.emplace_back("code_gen");
+        transformations.emplace_back("canonicalize");
+    }
+
     if (verbose) {
         printf("Running the following transformations:\n");
         for (auto const &t : transformations) {
