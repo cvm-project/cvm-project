@@ -104,8 +104,6 @@ set(GENERATE_SOURCE_FILES
         code_gen/cpp/code_gen.cpp
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/context.cpp
-        compiler/compiler.cpp
-        compiler/generate_executable.cpp
         dag/attribute_id.cpp
         dag/DAG.cpp
         dag/DAGColumnScan.cpp
@@ -123,6 +121,7 @@ set(GENERATE_SOURCE_FILES
         dag/type/field_type.cpp
         dag/type/tuple.cpp
         dag/utils/apply_visitor.cpp
+        generate_executable.cpp
         llvm_helpers/function.cpp
         optimize/add_always_inline.cpp
         optimize/code_gen.cpp

@@ -2,12 +2,12 @@
 
 #include <cstddef>
 #include <cstring>
-#include <iostream>
-#include <unordered_map>
+#include <memory>
 
 #include <json.hpp>
 
-#include "compiler/compiler.hpp"
+#include "dag/DAG.h"
+#include "optimize/optimizer.hpp"
 #include "runtime/free.hpp"
 
 int GenerateExecutable(const char *const conf, const char *const dagstr,
@@ -16,8 +16,9 @@ int GenerateExecutable(const char *const conf, const char *const dagstr,
     conf_json["/optimizer/optimizations/code_gen/counter"] = counter;
     conf_json.emplace("/optimizer/optimization-level", 2);
 
-    compiler::Compiler compiler(dagstr, conf_json.unflatten().dump());
-    compiler.GenerateExecutable();
+    std::unique_ptr<DAG> dag(ParseDag(dagstr));
+    optimize::Optimizer opt(conf_json.unflatten().dump());
+    opt.Run(dag.get());
 
     // TODO(ingo): better error handling
     return 0;

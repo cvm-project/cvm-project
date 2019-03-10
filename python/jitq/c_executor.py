@@ -14,7 +14,7 @@ from jitq.utils import get_project_path, RDDEncoder, Timer, \
 JITQ_PATH = get_project_path()
 CPP_DIR = JITQ_PATH + "/backend/"
 GEN_DIR = JITQ_PATH + "/backend/gen/"
-GEN_HEADER_FILE = "compiler/generate_executable.h"
+GEN_HEADER_FILE = "generate_executable.h"
 EXECUTOR_HEADER_FILE = "execute.h"
 GENERATE_LIB = "libgenerate"
 EXECUTE_LIB = "libexecute"
