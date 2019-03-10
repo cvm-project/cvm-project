@@ -26,7 +26,8 @@ struct CollectFiltersVisitor
 
 namespace optimize {
 
-void SimplePredicateMoveAround::Run(DAG *const dag) const {
+void SimplePredicateMoveAround::Run(DAG *const dag,
+                                    const std::string & /*config*/) const {
     // 1. gather filters
     CollectFiltersVisitor filter_collector;
     for (auto const op : dag->operators()) {

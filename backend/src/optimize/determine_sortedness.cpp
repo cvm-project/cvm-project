@@ -124,7 +124,8 @@ private:
 
 namespace optimize {
 
-void DetermineSortedness::Run(DAG *dag) const {
+void DetermineSortedness::Run(DAG *const dag,
+                              const std::string & /*config*/) const {
     // Clear all attributes
     for (auto op : dag->operators()) {
         for (auto &field : op->tuple->fields) {

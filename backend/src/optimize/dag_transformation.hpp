@@ -12,7 +12,7 @@ namespace optimize {
 class DagTransformation {
 public:
     virtual ~DagTransformation() = default;
-    virtual void Run(DAG *dag) const = 0;
+    virtual void Run(DAG *dag, const std::string &config) const = 0;
     virtual std::string name() const = 0;
 };
 

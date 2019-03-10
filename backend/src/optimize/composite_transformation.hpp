@@ -13,7 +13,7 @@ public:
     // cppcheck-suppress passedByValue
     explicit CompositeTransformation(std::vector<std::string> transformations)
         : transformations_(std::move(transformations)) {}
-    void Run(DAG *dag) const override;
+    void Run(DAG *dag, const std::string &config) const override;
     std::string name() const override { return "composite_transformation"; }
 
 private:

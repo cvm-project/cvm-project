@@ -19,13 +19,13 @@ using ReverseLabelMap = std::map<std::string, const DAGOperator *>;
 
 namespace optimize {
 
-void Canonicalize::Run(DAG *const dag) const {
+void Canonicalize::Run(DAG *const dag, const std::string &config) const {
     // Recurse
     for (auto const op : dag->operators()) {
         if (dag->has_inner_dag(op)) {
             // Canonicalize inner DAG
             auto const inner_dag = dag->inner_dag(op);
-            Run(inner_dag);
+            Run(inner_dag, config);
 
             // Bring inputs in pre-defined order
 

@@ -45,7 +45,7 @@ DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
 
 namespace optimize {
 
-void Parallelize::Run(DAG *const dag) const {
+void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
     std::unordered_set<DAGParallelMap *> parallelize_operators;
 
     // Insert (parallelize) --> (sequentialize) operators before all source

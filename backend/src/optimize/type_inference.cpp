@@ -359,7 +359,7 @@ void SetInnerGraphInputTypes(DAGOperator *const op, const DAG *const dag) {
 
 namespace optimize {
 
-void TypeInference::Run(DAG *const dag) const {
+void TypeInference::Run(DAG *const dag, const std::string & /*config*/) const {
     if (only_check_) {
         // Check output type
         dag::utils::ApplyInReverseTopologicalOrderRecursively(dag,

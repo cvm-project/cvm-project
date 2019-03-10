@@ -146,7 +146,8 @@ private:
 
 namespace optimize {
 
-void AttributeIdTracking::Run(DAG *const dag) const {
+void AttributeIdTracking::Run(DAG *const dag,
+                              const std::string & /*config*/) const {
     // Track attribute_ids
     const AttributeIdTrackingVisitor attribute_id_tracking_visitor(dag);
     dag::utils::ApplyInReverseTopologicalOrder(

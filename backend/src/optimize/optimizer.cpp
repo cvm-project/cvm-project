@@ -29,15 +29,17 @@ void Optimizer::Run(DAG *const dag) {
     }
 
     if (config.value("/optimization-level", 0) >= 1) {
-        config.emplace("/optimizations/canonicalize", true);
-        config.emplace("/optimizations/create-pipelines", true);
-        config.emplace("/optimizations/materialize-multiple-reads", true);
-        config.emplace("/optimizations/add-always-inline", true);
+        config.emplace("/optimizations/canonicalize/active", true);
+        config.emplace("/optimizations/create-pipelines/active", true);
+        config.emplace("/optimizations/materialize-multiple-reads/active",
+                       true);
+        config.emplace("/optimizations/add-always-inline/active", true);
     }
 
     if (config.value("/optimization-level", 0) >= 2) {
-        config.emplace("/optimizations/grouped-reduce-by-key", true);
-        config.emplace("/optimizations/simple-predicate-move-around", true);
+        config.emplace("/optimizations/grouped-reduce-by-key/active", true);
+        config.emplace("/optimizations/simple-predicate-move-around/active",
+                       true);
     }
 
     // Assemble transformation pipeline
@@ -47,13 +49,15 @@ void Optimizer::Run(DAG *const dag) {
     transformations.emplace_back("type_check");
 
     // Materialize results that are consumed multiple times
-    if (config.value("/optimizations/materialize-multiple-reads", false)) {
+    if (config.value("/optimizations/materialize-multiple-reads/active",
+                     false)) {
         transformations.emplace_back("materialize_multiple_reads");
         transformations.emplace_back("type_inference");
     }
 
     // Move around filters
-    if (config.value("/optimizations/simple-predicate-move-around", false)) {
+    if (config.value("/optimizations/simple-predicate-move-around/active",
+                     false)) {
         transformations.emplace_back("attribute_id_tracking");
 #ifndef NDEBUG
         transformations.emplace_back("type_check");
@@ -66,13 +70,13 @@ void Optimizer::Run(DAG *const dag) {
     }
 
     // Parallelize
-    if (config.value("/optimizations/parallelize", false)) {
+    if (config.value("/optimizations/parallelize/active", false)) {
         transformations.emplace_back("parallelize");
         transformations.emplace_back("type_inference");
     }
 
     // Replace GroupByKey with grouped variant
-    if (config.value("/optimizations/grouped-reduce-by-key", false)) {
+    if (config.value("/optimizations/grouped-reduce-by-key/active", false)) {
         transformations.emplace_back("attribute_id_tracking");
 #ifndef NDEBUG
         transformations.emplace_back("type_check");
@@ -90,11 +94,11 @@ void Optimizer::Run(DAG *const dag) {
     }
 
     // Add alwaysinline attribute to UDFs
-    if (config.value("/optimizations/add-always-inline", false)) {
+    if (config.value("/optimizations/add-always-inline/active", false)) {
         transformations.emplace_back("add_always_inline");
     }
 
-    if (config.value("/optimizations/create-pipelines", false)) {
+    if (config.value("/optimizations/create-pipelines/active", false)) {
         // Split the plan into tree-shaped sub-plans
         transformations.emplace_back("create_pipelines");
         transformations.emplace_back("type_inference");
@@ -102,13 +106,14 @@ void Optimizer::Run(DAG *const dag) {
     }
 
     // Assert that operators implement Open-Next-Close interface correctly
-    if (config.value("/optimizations/assert-correct-open-next-close", false)) {
+    if (config.value("/optimizations/assert-correct-open-next-close/active",
+                     false)) {
         transformations.emplace_back("assert_correct_open_next_close");
         transformations.emplace_back("type_inference");
     }
 
     // Make ID and order canonical
-    if (config.value("/optimizations/canonicalize", false)) {
+    if (config.value("/optimizations/canonicalize/active", false)) {
         transformations.emplace_back("canonicalize");
     }
 
@@ -121,7 +126,7 @@ void Optimizer::Run(DAG *const dag) {
 
     // Run pipeline
     CompositeTransformation pipeline(transformations);
-    pipeline.Run(dag);
+    pipeline.Run(dag, config.unflatten().at("optimizations").dump());
 }
 
 }  // namespace optimize

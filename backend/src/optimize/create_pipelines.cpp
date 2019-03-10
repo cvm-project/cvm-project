@@ -38,7 +38,8 @@ bool IsPipelinePredecessor(DAGOperator *const op) {
 
 namespace optimize {
 
-void CreatePipelines::Run(DAG *const dag) const {
+void CreatePipelines::Run(DAG *const dag,
+                          const std::string & /*config*/) const {
     std::vector<DAGOperator *> pipeline_drivers;
 
     // Collect pipeline drivers: specific operator types and operators with

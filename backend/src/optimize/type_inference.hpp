@@ -10,7 +10,7 @@ public:
     explicit TypeInference(const bool only_check = false)
         : only_check_(only_check) {}
 
-    void Run(DAG *dag) const override;
+    void Run(DAG *dag, const std::string &config) const override;
     std::string name() const override { return "type_inference"; }
 
 private:

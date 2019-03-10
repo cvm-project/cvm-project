@@ -28,7 +28,8 @@ private:
 
 namespace optimize {
 
-void MaterializeMultipleReads::Run(DAG *const dag) const {
+void MaterializeMultipleReads::Run(DAG *const dag,
+                                   const std::string & /*config*/) const {
     // Collect all operators with several consumers
     CollectMultipleReadsVisitor operator_collector(dag);
     for (auto const op : dag->operators()) {

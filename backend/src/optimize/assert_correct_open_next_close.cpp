@@ -53,7 +53,8 @@ private:
 
 namespace optimize {
 
-void AssertCorrectOpenNextClose::Run(DAG *const dag) const {
+void AssertCorrectOpenNextClose::Run(DAG *const dag,
+                                     const std::string & /*config*/) const {
     dag::utils::ApplyInReverseTopologicalOrderRecursively(
             dag, [](const DAGOperator *const op, DAG *const dag) {
                 AddAssertionsVisitor(dag).Visit(op);

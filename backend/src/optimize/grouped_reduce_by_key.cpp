@@ -25,7 +25,8 @@ struct CollectReduceByKeyVisitor
 
 namespace optimize {
 
-void GroupedReduceByKey::Run(DAG *const dag) const {
+void GroupedReduceByKey::Run(DAG *const dag,
+                             const std::string & /*config*/) const {
     CollectReduceByKeyVisitor visitor(dag);
     for (auto const op : dag->operators()) {
         visitor.Visit(op);

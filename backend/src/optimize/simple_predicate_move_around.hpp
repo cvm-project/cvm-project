@@ -11,7 +11,7 @@ namespace optimize {
 
 class SimplePredicateMoveAround : public DagTransformation {
 public:
-    void Run(DAG *dag) const override;
+    void Run(DAG *dag, const std::string &config) const override;
     std::string name() const override { return "simple_predicate_move_around"; }
 };
 

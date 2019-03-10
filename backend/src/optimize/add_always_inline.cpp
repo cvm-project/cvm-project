@@ -12,7 +12,8 @@ void AddInline(DAGOperator *const op, const DAG *const /*dag*/) {
 }
 
 namespace optimize {
-void AddAlwaysInline::Run(DAG *dag) const {
+void AddAlwaysInline::Run(DAG *const dag,
+                          const std::string & /*config*/) const {
     dag::utils::ApplyInTopologicalOrderRecursively(dag, AddInline);
 }
 }  // namespace optimize

@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     }
 
     for (auto const& opt : optimizations) {
-        conf_json["/optimizer/optimizations/" + opt] = true;
+        conf_json["/optimizer/optimizations/" + opt + "/active"] = true;
     }
 
     conf_json["/optimizer/verbose"] = verbose;
