@@ -12,7 +12,7 @@ namespace common {
 class BackEnd {
 public:
     virtual ~BackEnd() = default;
-    virtual void Run(DAG* dag) const = 0;
+    virtual std::string Run(DAG* dag) const = 0;
 };
 
 }  // namespace common

@@ -1,6 +1,8 @@
 #ifndef CODE_GEN_CPP_BACK_END_HPP
 #define CODE_GEN_CPP_BACK_END_HPP
 
+#include <string>
+
 #include "code_gen/common/back_end.hpp"
 #include "dag/DAG.h"
 
@@ -11,7 +13,7 @@ class BackEnd : public common::BackEnd {
 public:
     // cppcheck-suppress passedByValue
     explicit BackEnd(std::string config) : config_(std::move(config)) {}
-    void Run(DAG* dag) const override;
+    std::string Run(DAG* dag) const override;
 
 private:
     const std::string config_;

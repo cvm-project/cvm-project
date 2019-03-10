@@ -21,7 +21,7 @@
 namespace code_gen {
 namespace cpp {
 
-void BackEnd::Run(DAG* const dag) const {
+std::string BackEnd::Run(DAG* const dag) const {
     auto const config = nlohmann::json::parse(config_)["codegen"].flatten();
 
     const boost::filesystem::path temp_path_model =
@@ -164,6 +164,8 @@ void BackEnd::Run(DAG* const dag) const {
     auto const header_symlink = gen_dir / "execute.h";
     boost::filesystem::remove(header_symlink);
     boost::filesystem::create_symlink(header_path, header_symlink);
+
+    return lib_path.string();
 }
 
 }  // namespace cpp
