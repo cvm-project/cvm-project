@@ -66,6 +66,27 @@ auto DAG::AddFlow(const DAGOperator *const source,
     return AddFlow(source, 0, target, target_port);
 }
 
+void DAG::Clear() {
+    reset_inputs();
+    reset_outputs();
+
+    std::vector<Flow> temp_flows;
+    for (auto const &f : flows()) {
+        temp_flows.emplace_back(f);
+    }
+    for (auto const &f : temp_flows) {
+        RemoveFlow(f);
+    }
+
+    std::vector<DAGOperator *> temp_operators;
+    for (auto const &f : operators()) {
+        temp_operators.emplace_back(f);
+    }
+    for (auto const &f : temp_operators) {
+        RemoveOperator(f);
+    }
+}
+
 auto DAG::AddFlow(const DAGOperator *const source, const int source_port,
                   const DAGOperator *const target, const int target_port)
         -> Edge {

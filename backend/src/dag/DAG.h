@@ -212,6 +212,8 @@ public:
     void RemoveFlow(const Flow &f) { RemoveFlow(f.e); }
     void RemoveFlow(const Edge &e);
 
+    void Clear();
+
     bool HasCycle() const;
     bool IsTree() const;
 
