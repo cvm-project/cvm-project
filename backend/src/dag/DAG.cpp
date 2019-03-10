@@ -13,6 +13,7 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
+#include <boost/range/adaptor/uniqued.hpp>
 
 #include "DAGOperator.h"
 
@@ -302,6 +303,13 @@ void DAG::remove_inner_dag(const DAGOperator *const op) {
 
 size_t DAG::in_degree() const { return inputs_.size(); }
 
+size_t DAG::num_in_ports() const {
+    return boost::distance(boost::make_iterator_range(inputs_) |
+                           boost::adaptors::transformed(
+                                   [](auto const &it) { return it.first; }) |
+                           boost::adaptors::uniqued);
+}
+
 DAG::InputRange DAG::inputs() const {
     return boost::make_iterator_range(inputs_.cbegin(), inputs_.cend());
 }
@@ -368,6 +376,8 @@ void DAG::add_input(const int dag_input_port, DAGOperator *const op,
 void DAG::reset_inputs() { inputs_.clear(); }
 
 size_t DAG::out_degree() const { return outputs_.size(); }
+
+size_t DAG::num_out_ports() const { return out_degree(); }
 
 DAG::OutputRange DAG::outputs() const {
     return boost::make_iterator_range(outputs_.cbegin(), outputs_.cend());

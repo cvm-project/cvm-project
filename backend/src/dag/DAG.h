@@ -258,6 +258,7 @@ public:
     void remove_inner_dag(const DAGOperator *op);
 
     size_t in_degree() const;
+    size_t num_in_ports() const;
     InputRange inputs() const;
     InputRangeTips inputs(int dag_input_port) const;
     InputRangeByOperator inputs(const DAGOperator *op) const;
@@ -276,6 +277,7 @@ public:
     void reset_inputs();
 
     size_t out_degree() const;
+    size_t num_out_ports() const;
     OutputRange outputs() const;
     OutputRangeByOperator outputs(const DAGOperator *op) const;
     FlowTip output() const;
