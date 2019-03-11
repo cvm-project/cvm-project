@@ -3,17 +3,16 @@
 
 #include <string>
 
-#include "code_gen/common/back_end.hpp"
 #include "dag/DAG.h"
 
 namespace code_gen {
 namespace cpp {
 
-class BackEnd : public common::BackEnd {
+class BackEnd {
 public:
     // cppcheck-suppress passedByValue
     explicit BackEnd(std::string config) : config_(std::move(config)) {}
-    std::string Run(DAG* dag) const override;
+    std::string Run(DAG* dag) const;
 
 private:
     const std::string config_;

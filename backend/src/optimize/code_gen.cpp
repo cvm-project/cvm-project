@@ -6,7 +6,6 @@
 
 #include <json.hpp>
 
-#include "code_gen/common/back_end.hpp"
 #include "code_gen/cpp/back_end.hpp"
 #include "dag/DAG.h"
 #include "dag/DAGCompiledPipeline.h"
@@ -17,18 +16,9 @@ namespace optimize {
 void CodeGen::Run(DAG *const dag, const std::string &config) const {
     const nlohmann::json conf = nlohmann::json::parse(config).flatten();
 
-    // Select code gen back-end
-    // TODO(ingo): pass back-end-specific config to back-end
-    using CodeGenBackEnd = std::unique_ptr<code_gen::common::BackEnd>;
-    std::unordered_map<std::string, CodeGenBackEnd> code_generators;
-    code_generators.emplace("cpp", CodeGenBackEnd(new code_gen::cpp::BackEnd(
-                                           conf.unflatten().dump())));
-
-    const std::string codegen_backend = conf.value("/backend", "cpp");
-    const auto code_gen_backend = code_generators.at(codegen_backend).get();
-
     // Generate code and compile
-    auto const lib_path = code_gen_backend->Run(dag);
+    const auto code_gen = code_gen::cpp::BackEnd(config);
+    auto const lib_path = code_gen.Run(dag);
 
     // Create new DAGCompiledPipeline operator
     std::unique_ptr<DAGCompiledPipeline> pipeline_op_ptr(
