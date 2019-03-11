@@ -8,7 +8,7 @@ namespace optimize {
 void CompositeTransformation::Run(DAG *const dag) const {
     for (auto const &name : transformations_) {
         auto const transformation =
-                optimize::DagTransformationRegistry::transformation(name);
+                optimize::DagTransformationRegistry::at(name);
         transformation->Run(dag);
     }
 }

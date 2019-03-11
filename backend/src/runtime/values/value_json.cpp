@@ -13,7 +13,7 @@ namespace values {
 // NOLINTNEXTLINE google-runtime-references
 void to_json(nlohmann::json &json, const Value *const val) {
     LoadValueParsers();  // TODO(ingo): load in a central place
-    for (const auto &it : ValueParserRegistry::parsers()) {
+    for (const auto &it : ValueParserRegistry::objects()) {
         if (it.second->try_to_json(json, val)) {
             json.emplace("type", it.first);
             return;
@@ -37,7 +37,7 @@ std::shared_ptr<Value> adl_serializer<std::shared_ptr<Value>>::from_json(
 std::unique_ptr<Value> adl_serializer<std::unique_ptr<Value>>::from_json(
         const nlohmann::json &json) {
     runtime::values::LoadValueParsers();  // TODO(ingo): load in a central place
-    return runtime::values::ValueParserRegistry::parser(json.at("type"))
+    return runtime::values::ValueParserRegistry::at(json.at("type"))
             ->from_json(json);
 }
 

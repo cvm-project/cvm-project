@@ -2,12 +2,10 @@
 #define RUNTIME_VALUES_VALUE_PARSER_HPP
 
 #include <memory>
-#include <string>
-#include <unordered_map>
 
-#include <boost/range/iterator_range.hpp>
 #include <json.hpp>
 
+#include "utils/registry.hpp"
 #include "value.hpp"
 
 namespace runtime {
@@ -21,23 +19,7 @@ struct ValueParser {
             const nlohmann::json &json) const = 0;
 };
 
-class ValueParserRegistry {
-private:
-    std::unordered_map<std::string, std::unique_ptr<const ValueParser>>
-            parsers_;
-
-public:
-    using ParserRange =
-            boost::iterator_range<decltype(parsers_)::const_iterator>;
-
-    static bool RegisterParser(const std::string &type_name,
-                               const ValueParser *parser);
-    static const ValueParser *parser(const std::string &type_name);
-    static ParserRange parsers();
-
-private:
-    static ValueParserRegistry *instance();
-};
+using ValueParserRegistry = utils::Registry<const ValueParser>;
 
 void LoadValueParsers();
 

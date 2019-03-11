@@ -18,53 +18,27 @@
 
 namespace optimize {
 
-bool DagTransformationRegistry::RegisterTransformation(
-        const std::string &name,
-        const DagTransformation *const transformation) {
-    std::unique_ptr<const DagTransformation> transformation_ptr(transformation);
-    return instance()
-            ->transformations_.emplace(name, std::move(transformation_ptr))
-            .second;
-}
-
-const DagTransformation *DagTransformationRegistry::transformation(
-        const std::string &name) {
-    const auto it = instance()->transformations_.find(name);
-    if (it != instance()->transformations_.end()) {
-        return it->second.get();
-    }
-    throw std::runtime_error("Unknown transformation " + name);
-}
-
-auto DagTransformationRegistry::transformations() -> TransformationRange {
-    return boost::make_iterator_range(instance()->transformations_.begin(),
-                                      instance()->transformations_.end());
-}
-
-DagTransformationRegistry *DagTransformationRegistry::instance() {
-    static auto registry = std::make_unique<DagTransformationRegistry>();
-    return registry.get();
-}
-
 void LoadDagTransformations() {
     static bool has_loaded = false;
     if (has_loaded) return;
 
-    auto const Register = DagTransformationRegistry::RegisterTransformation;
-    auto const RegisterDefault = [&](auto const t) { Register(t->name(), t); };
+    auto const Register = DagTransformationRegistry::Register;
+    auto const RegisterDefault = [&](auto &&t) {
+        Register(t->name(), std::forward<decltype(t)>(t));
+    };
 
-    RegisterDefault(new AssertCorrectOpenNextClose());
-    RegisterDefault(new AttributeIdTracking());
-    RegisterDefault(new Canonicalize());
-    RegisterDefault(new CreatePipelines());
-    RegisterDefault(new DetermineSortedness());
-    RegisterDefault(new GroupedReduceByKey());
-    RegisterDefault(new MaterializeMultipleReads());
-    RegisterDefault(new Parallelize());
-    RegisterDefault(new SimplePredicateMoveAround());
-    RegisterDefault(new TypeInference());
-    RegisterDefault(new AddAlwaysInline());
-    Register("type_check", new TypeInference(true));
+    RegisterDefault(std::make_unique<AssertCorrectOpenNextClose>());
+    RegisterDefault(std::make_unique<AttributeIdTracking>());
+    RegisterDefault(std::make_unique<Canonicalize>());
+    RegisterDefault(std::make_unique<CreatePipelines>());
+    RegisterDefault(std::make_unique<DetermineSortedness>());
+    RegisterDefault(std::make_unique<GroupedReduceByKey>());
+    RegisterDefault(std::make_unique<MaterializeMultipleReads>());
+    RegisterDefault(std::make_unique<Parallelize>());
+    RegisterDefault(std::make_unique<SimplePredicateMoveAround>());
+    RegisterDefault(std::make_unique<TypeInference>());
+    RegisterDefault(std::make_unique<AddAlwaysInline>());
+    Register("type_check", std::make_unique<TypeInference>(true));
 
     has_loaded = true;
 }
