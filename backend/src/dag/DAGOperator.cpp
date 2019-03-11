@@ -1,5 +1,9 @@
 #include "DAGOperator.h"
 
+#include <boost/mpl/for_each.hpp>
+
+#include "DAGOperators.h"
+#include "dag/all_operator_declarations.hpp"
 #include "dag/type/array.hpp"
 
 using dag::collection::Tuple;
@@ -51,4 +55,28 @@ bool DAGOperator::Writes(const dag::AttributeId *attribute) const {
         if (*col == *attribute) return true;
     }
     return false;
+}
+
+struct LoadOperatorFunctor {
+    template <class OperatorType>
+    void operator()(OperatorType * /*unused*/) {
+        const std::string name(OperatorType::kName);
+        OperatorParserRegistry::Register(
+                name, std::make_unique<make_dag_function>(
+                              &OperatorType::make_dag_operator));
+    }
+};
+
+void LoadOperators() {
+    static bool has_loaded = false;
+    if (has_loaded) return;
+
+    boost::mpl::for_each<dag::AllOperatorPointerTypes>(LoadOperatorFunctor{});
+
+    has_loaded = true;
+}
+
+DAGOperator *MakeDAGOperator(const std::string &op_name) {
+    LoadOperators();
+    return (*OperatorParserRegistry::at(op_name))();
 }

@@ -13,6 +13,7 @@
 #include "dag/attribute_id.h"
 #include "dag/collection/field.hpp"
 #include "dag/collection/tuple.hpp"
+#include "utils/registry.hpp"
 
 // cppcheck-suppress noConstructor
 class DAGOperator {
@@ -58,5 +59,10 @@ void to_json(nlohmann::json &json, const DAGOperator &op);
 void to_json(nlohmann::json &json, const DAGOperator *op);
 // NOLINTNEXTLINE google-runtime-references
 void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op);
+
+using make_dag_function = DAGOperator *(*)();  // function pointer type
+using OperatorParserRegistry = utils::Registry<make_dag_function>;
+
+DAGOperator *MakeDAGOperator(const std::string &op_name);
 
 #endif  // DAG_DAGOPERATOR_H
