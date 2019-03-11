@@ -18,6 +18,7 @@ namespace optimize {
 Optimizer::Optimizer(std::string config) : config_(std::move(config)) {
     LoadDagTransformations();
 }
+
 void Optimizer::Run(DAG *const dag) {
     auto config = nlohmann::json::parse(config_).at("optimizer").flatten();
     const bool verbose = config.value("/verbose", false);
