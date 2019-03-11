@@ -19,13 +19,13 @@ namespace type {
 
 const Tuple *Tuple::MakeTuple(
         const std::vector<const FieldType *> &field_types) {
-    auto ret = new Tuple();
+    std::unique_ptr<Tuple> ret(new Tuple());
     ret->field_types = field_types;
+
+    const auto str = ret->to_string();
+    TypeRegistry::Register(str, std::move(ret));
     return boost::polymorphic_pointer_downcast<const Tuple>(
-            registry()
-                    .emplace(ret->to_string(),
-                             std::unique_ptr<const Tuple>(ret))
-                    .first->second.get());
+            TypeRegistry::at(str));
 }
 
 const Tuple *Tuple::ComputeHeadTuple(size_t head_size) const {

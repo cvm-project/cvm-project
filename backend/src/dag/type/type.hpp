@@ -5,9 +5,9 @@
 #ifndef CPP_DAG_TYPE_TYPE_HPP
 #define CPP_DAG_TYPE_TYPE_HPP
 
-#include <memory>
 #include <string>
-#include <unordered_map>
+
+#include "utils/registry.hpp"
 
 namespace dag {
 namespace type {
@@ -25,11 +25,11 @@ public:
 
 protected:
     Type() = default;
-
-    static std::unordered_map<std::string, std::unique_ptr<const Type>>
-            &registry();
 };
+
+using TypeRegistry = ::utils::Registry<const Type>;
 
 }  // namespace type
 }  // namespace dag
+
 #endif  // CPP_DAG_TYPE_TYPE_HPP

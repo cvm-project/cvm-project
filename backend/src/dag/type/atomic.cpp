@@ -17,13 +17,13 @@ namespace dag {
 namespace type {
 
 const Atomic *Atomic::MakeAtomic(const std::string &type) {
-    auto ret = new Atomic();
+    std::unique_ptr<Atomic> ret(new Atomic());
     ret->type = type;
+
+    const auto str = ret->to_string();
+    TypeRegistry::Register(str, std::move(ret));
     return boost::polymorphic_pointer_downcast<const Atomic>(
-            registry()
-                    .emplace(ret->to_string(),
-                             std::unique_ptr<const Atomic>(ret))
-                    .first->second.get());
+            TypeRegistry::at(str));
 }
 
 std::string Atomic::to_string() const { return type; }

@@ -114,7 +114,6 @@ set(GENERATE_SOURCE_FILES
         dag/type/array.cpp
         dag/type/atomic.cpp
         dag/type/field_type.cpp
-        dag/type/type.cpp
         dag/type/tuple.cpp
         dag/utils/apply_visitor.cpp
         llvm_helpers/function.cpp

@@ -4,6 +4,8 @@
 
 #include "array.hpp"
 
+#include <memory>
+
 #include <boost/format.hpp>
 #include <boost/polymorphic_pointer_cast.hpp>
 
@@ -21,13 +23,14 @@ namespace type {
 const Array *Array::MakeArray(const dag::type::Tuple *type,
                               const ArrayLayout &layout,
                               const size_t &number_dim) {
-    auto ar = new Array(type);
-    ar->layout = layout;
-    ar->number_dim = number_dim;
+    std::unique_ptr<Array> ret(new Array(type));
+    ret->layout = layout;
+    ret->number_dim = number_dim;
+
+    const auto str = ret->to_string();
+    TypeRegistry::Register(str, std::move(ret));
     return boost::polymorphic_pointer_downcast<const Array>(
-            registry()
-                    .emplace(ar->to_string(), std::unique_ptr<const Type>(ar))
-                    .first->second.get());
+            TypeRegistry::at(str));
 }
 
 string Array::to_string() const {
