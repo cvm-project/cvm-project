@@ -6,7 +6,7 @@
 
 #include <json.hpp>
 
-#include "code_gen/cpp/back_end.hpp"
+#include "code_gen/cpp/code_gen.hpp"
 #include "dag/DAG.h"
 #include "dag/DAGCompiledPipeline.h"
 #include "optimize/optimizer.hpp"
@@ -17,8 +17,7 @@ void CodeGen::Run(DAG *const dag, const std::string &config) const {
     const nlohmann::json conf = nlohmann::json::parse(config).flatten();
 
     // Generate code and compile
-    const auto code_gen = code_gen::cpp::BackEnd(config);
-    auto const lib_path = code_gen.Run(dag);
+    auto const lib_path = code_gen::cpp::GenerateCode(dag, config);
 
     // Create new DAGCompiledPipeline operator
     std::unique_ptr<DAGCompiledPipeline> pipeline_op_ptr(

@@ -12,6 +12,8 @@
 namespace code_gen {
 namespace cpp {
 
+std::string GenerateCode(DAG *dag, const std::string &config);
+
 std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name);
 
 std::string ComputeStructToValue(std::ostream &output, Context *context,
