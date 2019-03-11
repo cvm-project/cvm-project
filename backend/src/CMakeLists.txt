@@ -61,6 +61,8 @@ find_package(Boost 1.64 REQUIRED COMPONENTS
         system
     )
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+add_compile_definitions("BOOST_MPL_LIMIT_LIST_SIZE=30")
+add_compile_definitions("BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS")
 
 # Set up google unit test framework
 ExternalProject_Add(googletest
