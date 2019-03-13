@@ -45,6 +45,11 @@ set(JSONLIB_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/json/src")
 get_filename_component(JSONLIB_INCLUDE_DIRS "${JSONLIB_INCLUDE_DIRS}" ABSOLUTE)
 include_directories(SYSTEM ${JSONLIB_INCLUDE_DIRS})
 
+# Set up polymorphic_value
+set(POLYMORPHIC_VALUE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/jbcoe")
+get_filename_component(POLYMORPHIC_VALUE_INCLUDE_DIRS "${POLYMORPHIC_VALUE_INCLUDE_DIRS}" ABSOLUTE)
+include_directories(SYSTEM ${POLYMORPHIC_VALUE_INCLUDE_DIRS})
+
 # Set up compilation options
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
@@ -199,6 +204,7 @@ if(cppcheck_FOUND)
             "--suppress='*:${GTEST_INCLUDE_DIRS}/*'"
             "--suppress='*:${CATCH_INCLUDE_DIRS}/*'"
             "--suppress='*:${JSONLIB_INCLUDE_DIRS}/*'"
+            "--suppress='*:${POLYMORPHIC_VALUE_INCLUDE_DIRS}/*'"
         )
 endif()
 

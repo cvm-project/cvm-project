@@ -2,6 +2,8 @@
 
 #include <boost/mpl/list.hpp>
 
+#include <jbcoe/polymorphic_value.h>
+
 #include "dag/DAG.h"
 #include "dag/DAGOperators.h"
 #include "utils/visitor.hpp"
@@ -34,7 +36,8 @@ void GroupedReduceByKey::Run(DAG *const dag) const {
                 new DAGReduceByKeyGrouped());
         auto const new_op = new_op_ptr.get();
 
-        new_op->tuple = std::make_unique<dag::collection::Tuple>(*op->tuple);
+        new_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                *op->tuple);
         new_op->llvm_ir = op->llvm_ir;
 
         dag->AddOperator(new_op_ptr.release());

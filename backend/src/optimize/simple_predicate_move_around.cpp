@@ -10,6 +10,8 @@
 
 #include <boost/mpl/list.hpp>
 
+#include <jbcoe/polymorphic_value.h>
+
 #include "dag/DAG.h"
 #include "dag/DAGFilter.h"
 #include "llvm_helpers/function.hpp"
@@ -117,8 +119,8 @@ void SimplePredicateMoveAround::Run(DAG *const dag) const {
                     parser.AdjustFilterSignature(filt, dag->predecessor(filt));
 
             // copy the tuple
-            filt->tuple =
-                    std::make_unique<dag::collection::Tuple>(*currentOp->tuple);
+            filt->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                    *currentOp->tuple);
         }
 
         // Remove the filter

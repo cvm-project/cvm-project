@@ -10,6 +10,8 @@
 #include <set>
 #include <vector>
 
+#include <jbcoe/polymorphic_value.h>
+
 #include "attribute_id.h"
 #include "collection/field.hpp"
 #include "collection/tuple.hpp"
@@ -18,7 +20,7 @@
 // cppcheck-suppress noConstructor
 class DAGOperator {
 public:
-    std::unique_ptr<dag::collection::Tuple> tuple;
+    jbcoe::polymorphic_value<dag::collection::Tuple> tuple;
     std::set<std::shared_ptr<dag::AttributeId>> read_set;
     std::set<std::shared_ptr<dag::AttributeId>> write_set;
     std::string llvm_ir;

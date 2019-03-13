@@ -75,7 +75,7 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
 
             // Fields
             std::vector<std::string> fields;
-            if (op->tuple != nullptr) {
+            if (op->tuple) {
                 for (const auto &f : op->tuple->fields) {
                     const std::string column_name =
                             f->attribute_id() != nullptr
