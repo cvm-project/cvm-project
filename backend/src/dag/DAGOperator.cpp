@@ -3,8 +3,8 @@
 #include <boost/mpl/for_each.hpp>
 
 #include "DAGOperators.h"
-#include "dag/all_operator_declarations.hpp"
-#include "dag/type/array.hpp"
+#include "all_operator_declarations.hpp"
+#include "type/array.hpp"
 
 using dag::collection::Tuple;
 

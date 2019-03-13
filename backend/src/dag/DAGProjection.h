@@ -1,6 +1,10 @@
 #ifndef DAG_DAGPROJECTION_H
 #define DAG_DAGPROJECTION_H
 
+#include <vector>
+
+#include <json.hpp>
+
 #include "DAGOperator.h"
 
 class DAGProjection : public DAGOperatorBase<DAGProjection> {

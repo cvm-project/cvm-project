@@ -10,9 +10,9 @@
 #include <set>
 #include <vector>
 
-#include "dag/attribute_id.h"
-#include "dag/collection/field.hpp"
-#include "dag/collection/tuple.hpp"
+#include "attribute_id.h"
+#include "collection/field.hpp"
+#include "collection/tuple.hpp"
 #include "utils/registry.hpp"
 
 // cppcheck-suppress noConstructor

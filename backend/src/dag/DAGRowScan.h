@@ -5,6 +5,8 @@
 #ifndef DAG_DAGROWSCAN_H
 #define DAG_DAGROWSCAN_H
 
+#include <json.hpp>
+
 #include "DAGOperator.h"
 
 class DAGRowScan : public DAGOperatorBase<DAGRowScan> {

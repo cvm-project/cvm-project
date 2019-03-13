@@ -1,7 +1,8 @@
 #ifndef DAG_DAGPIPELINE_H
 #define DAG_DAGPIPELINE_H
 
-#include "DAG.h"
+#include <json.hpp>
+
 #include "DAGOperator.h"
 
 class DAGPipeline : public DAGOperatorBase<DAGPipeline> {

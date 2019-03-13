@@ -1,8 +1,6 @@
 #ifndef DAG_DAGSINGLETUPLE_H
 #define DAG_DAGSINGLETUPLE_H
 
-#include <iostream>
-
 #include "DAGOperator.h"
 
 class DAGEnsureSingleTuple : public DAGOperatorBase<DAGEnsureSingleTuple> {

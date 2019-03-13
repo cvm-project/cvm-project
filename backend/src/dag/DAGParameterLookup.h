@@ -1,8 +1,6 @@
 #ifndef DAG_DAGPARAMETERLOOKUP_H
 #define DAG_DAGPARAMETERLOOKUP_H
 
-#include <json.hpp>
-
 #include "DAGOperator.h"
 
 class DAGParameterLookup : public DAGOperatorBase<DAGParameterLookup> {

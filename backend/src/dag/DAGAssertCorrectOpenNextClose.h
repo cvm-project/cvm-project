@@ -1,8 +1,6 @@
 #ifndef DAG_DAGASSERTCORRECTOPENNEXTCLOSE_H
 #define DAG_DAGASSERTCORRECTOPENNEXTCLOSE_H
 
-#include <json.hpp>
-
 #include "DAGOperator.h"
 
 class DAGAssertCorrectOpenNextClose

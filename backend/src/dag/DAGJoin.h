@@ -5,8 +5,6 @@
 #ifndef DAG_DAGJOIN_H
 #define DAG_DAGJOIN_H
 
-#include <iostream>
-
 #include "DAGOperator.h"
 
 class DAGJoin : public DAGOperatorBase<DAGJoin> {

@@ -1,6 +1,8 @@
 #ifndef DAG_DAGCOLUMNSCAN_H
 #define DAG_DAGCOLUMNSCAN_H
 
+#include <json.hpp>
+
 #include "DAGOperator.h"
 
 class DAGColumnScan : public DAGOperatorBase<DAGColumnScan> {
