@@ -13,8 +13,6 @@ class DAGFilter : public DAGOperator {
 public:
     size_t num_in_ports() const override { return 1; }
     size_t num_out_ports() const override { return 1; }
-
-    DAGFilter *copy();
 };
 
 #endif  // DAG_DAGFILTER_H

@@ -103,7 +103,7 @@ void SimplePredicateMoveAround::Run(DAG *const dag) const {
 
         // Add copy of the filter into the new places
         for (auto const currentOp : new_predecessors) {
-            DAGFilter *filt = filter->copy();
+            DAGFilter *const filt = filter->Clone();
             dag->AddOperator(filt);
 
             // insert the filter after this operator
