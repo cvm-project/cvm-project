@@ -3,11 +3,12 @@
 
 #include "DAGOperator.h"
 
-class DAGSplitRange : public DAGOperatorBase<DAGSplitRange> {
+class DAGSplitRange : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGSplitRange, "split_range");
+
 public:
-    constexpr static const char *kName = "split_range";
-    constexpr static size_t kNumInPorts = 1;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 1; }
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGSPLITRANGE_H

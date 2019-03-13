@@ -8,16 +8,17 @@
 
 #include "DAGOperator.h"
 
-class DAGConstantTuple : public DAGOperatorBase<DAGConstantTuple> {
-public:
-    constexpr static const char *kName = "constant_tuple";
-    constexpr static size_t kNumInPorts = 0;
-    constexpr static size_t kNumOutPorts = 1;
+class DAGConstantTuple : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGConstantTuple, "constant_tuple");
 
-    std::vector<std::string> values;
+public:
+    size_t num_in_ports() const override { return 0; }
+    size_t num_out_ports() const override { return 1; }
 
     void to_json(nlohmann::json *json) const override;
     void from_json(const nlohmann::json &json) override;
+
+    std::vector<std::string> values;
 };
 
 #endif  // DAG_DAGCONSTANTTUPLE_H

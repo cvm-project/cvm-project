@@ -3,12 +3,15 @@
 
 #include "DAGOperator.h"
 
-class DAGAssertCorrectOpenNextClose
-    : public DAGOperatorBase<DAGAssertCorrectOpenNextClose> {
+class DAGAssertCorrectOpenNextClose : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGAssertCorrectOpenNextClose,
+                     "assert_correct_open_next_close");
+
 public:
-    constexpr static const char *kName = "assert_correct_open_next_close";
-    constexpr static size_t kNumInPorts = 1;  // XXX: make this dynamic
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override {
+        return 1;
+    }  // XXX: make this dynamic
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGASSERTCORRECTOPENNEXTCLOSE_H

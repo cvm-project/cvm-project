@@ -3,11 +3,12 @@
 
 #include "DAGOperator.h"
 
-class DAGGroupBy : public DAGOperatorBase<DAGGroupBy> {
+class DAGGroupBy : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGGroupBy, "groupby");
+
 public:
-    constexpr static const char *kName = "groupby";
-    constexpr static size_t kNumInPorts = 1;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 1; }
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGGROUPBY_H

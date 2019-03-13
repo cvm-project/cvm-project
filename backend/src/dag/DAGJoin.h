@@ -7,11 +7,12 @@
 
 #include "DAGOperator.h"
 
-class DAGJoin : public DAGOperatorBase<DAGJoin> {
+class DAGJoin : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGJoin, "join");
+
 public:
-    constexpr static const char *kName = "join";
-    constexpr static size_t kNumInPorts = 2;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 2; }
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGJOIN_H

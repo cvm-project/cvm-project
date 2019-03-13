@@ -7,11 +7,12 @@
 
 #include "DAGOperator.h"
 
-class DAGFilter : public DAGOperatorBase<DAGFilter> {
+class DAGFilter : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGFilter, "filter");
+
 public:
-    constexpr static const char *kName = "filter";
-    constexpr static size_t kNumInPorts = 1;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 1; }
+    size_t num_out_ports() const override { return 1; }
 
     DAGFilter *copy();
 };

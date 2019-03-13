@@ -7,11 +7,12 @@
 
 #include "DAGOperator.h"
 
-class DAGReduce : public DAGOperatorBase<DAGReduce> {
+class DAGReduce : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGReduce, "reduce");
+
 public:
-    constexpr static const char *kName = "reduce";
-    constexpr static size_t kNumInPorts = 1;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 1; }
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGREDUCE_H

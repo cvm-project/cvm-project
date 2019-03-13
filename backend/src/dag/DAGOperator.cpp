@@ -65,7 +65,7 @@ struct LoadOperatorFunctor {
         const std::string name(OperatorType::kName);
         OperatorParserRegistry::Register(
                 name, std::make_unique<make_dag_function>(
-                              &OperatorType::make_dag_operator));
+                              &OperatorType::MakeDagOperator));
     }
 };
 

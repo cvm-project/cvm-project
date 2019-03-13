@@ -7,11 +7,12 @@
 
 #include "DAGOperator.h"
 
-class DAGMap : public DAGOperatorBase<DAGMap> {
+class DAGMap : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGMap, "map");
+
 public:
-    constexpr static const char *kName = "map";
-    constexpr static size_t kNumInPorts = 1;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 1; }
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGMAP_H

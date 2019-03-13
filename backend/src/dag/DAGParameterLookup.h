@@ -3,11 +3,12 @@
 
 #include "DAGOperator.h"
 
-class DAGParameterLookup : public DAGOperatorBase<DAGParameterLookup> {
+class DAGParameterLookup : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGParameterLookup, "parameter_lookup");
+
 public:
-    constexpr static const char *kName = "parameter_lookup";
-    constexpr static size_t kNumInPorts = 0;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 0; }
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGPARAMETERLOOKUP_H

@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <json.hpp>
 #include <set>
+#include <type_traits>
 #include <vector>
 
 #include <jbcoe/polymorphic_value.h>
@@ -28,30 +29,31 @@ public:
 
     virtual ~DAGOperator() = default;
 
+    virtual DAGOperator *Clone() const = 0;
+
     virtual std::string name() const = 0;
     virtual size_t num_in_ports() const = 0;
     virtual size_t num_out_ports() const = 0;
 
-    virtual void to_json(nlohmann::json *json) const = 0;
-    virtual void from_json(const nlohmann::json &json) = 0;
+    virtual void to_json(nlohmann::json *json) const {};
+    virtual void from_json(const nlohmann::json &json){};
 
     bool HasInOutput(const dag::AttributeId *attribute) const;
     bool Reads(const dag::AttributeId *attribute) const;
     bool Writes(const dag::AttributeId *attribute) const;
 };
 
-template <class OperatorType>
-class DAGOperatorBase : public DAGOperator {
-public:
-    static DAGOperator *make_dag_operator() { return new OperatorType(); }
-
-    std::string name() const override { return OperatorType::kName; }
-    size_t num_in_ports() const override { return OperatorType::kNumInPorts; }
-    size_t num_out_ports() const override { return OperatorType::kNumOutPorts; }
-
-    void to_json(nlohmann::json * /*json*/) const override {}
-    void from_json(const nlohmann::json & /*json*/) override {}
-};
+#define JITQ_DAGOPERATOR(CLASS_NAME, OPERATOR_NAME)                     \
+public:                                                                 \
+    constexpr static const char *kName = OPERATOR_NAME;                 \
+    static DAGOperator *MakeDagOperator() { return new CLASS_NAME(); }  \
+    /* NOLINTNEXTLINE bugprone-macro-parentheses,-warnings-as-errors */ \
+    virtual CLASS_NAME *Clone() const override {                        \
+        static_assert(std::is_base_of<DAGOperator, CLASS_NAME>::value,  \
+                      #CLASS_NAME " must be derived from DAGOperator"); \
+        return new CLASS_NAME(*this);                                   \
+    }                                                                   \
+    std::string name() const override { return kName; }
 
 // NOLINTNEXTLINE google-runtime-references
 void from_json(const nlohmann::json &json, DAGOperator &op);

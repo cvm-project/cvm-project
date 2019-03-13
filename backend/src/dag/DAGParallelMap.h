@@ -3,11 +3,12 @@
 
 #include "DAGOperator.h"
 
-class DAGParallelMap : public DAGOperatorBase<DAGParallelMap> {
+class DAGParallelMap : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGParallelMap, "parallel_map");
+
 public:
-    constexpr static const char *kName = "parallel_map";
-    constexpr static size_t kNumInPorts = 1;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 1; }
+    size_t num_out_ports() const override { return 1; }
 };
 
 #endif  // DAG_DAGPARALLELMAP_H

@@ -7,11 +7,12 @@
 
 #include "DAGOperator.h"
 
-class DAGProjection : public DAGOperatorBase<DAGProjection> {
+class DAGProjection : public DAGOperator {
+    JITQ_DAGOPERATOR(DAGProjection, "projection");
+
 public:
-    constexpr static const char *kName = "projection";
-    constexpr static size_t kNumInPorts = 1;
-    constexpr static size_t kNumOutPorts = 1;
+    size_t num_in_ports() const override { return 1; }
+    size_t num_out_ports() const override { return 1; }
 
     void to_json(nlohmann::json *json) const override;
     void from_json(const nlohmann::json &json) override;
