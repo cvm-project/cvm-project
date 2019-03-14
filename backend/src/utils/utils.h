@@ -21,14 +21,18 @@ boost::filesystem::path get_lib_path();
 template <typename Pointee>
 class raw_ptr {
 public:
-    //  raw_ptr() = default;
-    explicit raw_ptr(Pointee *ptr) : ptr_(ptr) {}
+    explicit raw_ptr(Pointee *const ptr) : ptr_(ptr) {}
 
-    Pointee *operator->() { return ptr_; }
+    raw_ptr() = default;
+    raw_ptr(const raw_ptr &other) = default;
+    raw_ptr(raw_ptr &&other) noexcept = default;
+    raw_ptr &operator=(const raw_ptr &other) = default;
+    raw_ptr &operator=(raw_ptr &&other) noexcept = default;
+    ~raw_ptr() = default;
 
-    Pointee &operator*() { return *ptr_; }
-
-    Pointee *get() { return ptr_; }
+    Pointee *operator->() const { return ptr_; }
+    Pointee &operator*() const { return *ptr_; }
+    Pointee *get() const { return ptr_; }
 
 private:
     Pointee *ptr_;
