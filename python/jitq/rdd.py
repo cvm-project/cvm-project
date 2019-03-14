@@ -286,7 +286,6 @@ class Map(PipeRDD):
 
     def __init__(self, context, parent, func):
         super(Map, self).__init__(context, parent, func)
-        self.output_type = self.parents[0].output_type
         self.llvm_ir, self.output_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
         if not is_item_type(self.output_type):
