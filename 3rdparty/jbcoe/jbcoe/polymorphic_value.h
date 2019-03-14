@@ -377,6 +377,12 @@ namespace jbcoe
       return *ptr_;
     }
 
+    const T* get() const
+    {
+      assert(ptr_);
+      return ptr_;
+    }
+
     T* operator->()
     {
       assert(*this);
@@ -387,6 +393,12 @@ namespace jbcoe
     {
       assert(*this);
       return *ptr_;
+    }
+
+    T* get()
+    {
+      assert(*this);
+      return ptr_;
     }
   };
 
