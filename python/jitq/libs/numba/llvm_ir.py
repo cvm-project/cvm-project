@@ -1,4 +1,5 @@
 import re
+from hashlib import sha256
 from llvmlite import ir
 from llvmlite.ir import VoidType
 from numba import sigutils
@@ -25,15 +26,31 @@ def get_llvm_ir(sig, func, **options):
     res.compile()
     code = res.inspect_llvm()
 
-    # Extract just the code of the function
-    # pylint: disable=no-member
-    # sabir 14.02.18: somehow pylint does not understand S = DOTALL = ... in re
-    code_group = re.search('define [^\n\r]* @"cfunc.*', code, re.DOTALL)
-    code_string = code_group.group(0)
+    # Make some symbol names deterministic to enable caching, e.g.,
+    # @.const.pickledata.140459385745328, which must be derived from some
+    # memory address.
+    # picklebufs have a (initially non-deterministic) pickledata name in their
+    # content, so make first the latter unique, then the former
+    for match in re.finditer('(@.const.pickledata.[0-9]+) = .* c"(.*)"',
+                             code):
+        old_name = match.group(1)
+        new_sha = sha256(str(match.group(2)).encode()).hexdigest()
+        new_name = '@.const.pickledata.' + new_sha
+        code = code.replace(old_name, new_name)
 
-    # make the function name not unique
-    code_string = re.sub("@.*\".*\"", "@cfuncnotuniquename", code_string)
-    return code_string
+    for match in re.finditer('(@.const.picklebuf.[0-9]+) = .* {(.*)}',
+                             code):
+        old_name = match.group(1)
+        new_sha = sha256(str(match.group(2)).encode()).hexdigest()
+        new_name = '@.const.picklebuf.' + new_sha
+        code = code.replace(old_name, new_name)
+
+    # Make function name deterministic
+    func_name = re.match(r'cfunc\.(.*)', res.native_name).group(1)
+    code = code.replace(func_name,
+                        'notuniquename218303dba31a092a63fd8a50e54f2c15')
+
+    return code
 
 
 class JITQCFunc(CFunc):

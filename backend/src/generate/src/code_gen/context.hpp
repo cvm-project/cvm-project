@@ -38,23 +38,34 @@ public:
                                                  std::unique_ptr<StructDef>>;
 
     Context(std::ostream *const declarations, std::ostream *const definitions,
-            std::ostream *const llvm_code,
+            // cppcheck-suppress passedByValue
+            std::string llvm_code_dir,
+            std::vector<std::string> *const llvm_code_files,
             std::unordered_map<std::string, size_t> *const unique_counters,
             std::set<std::string> *const includes,
             TupleTypeRegistry *const tuple_type_descs)
         : declarations_(declarations),
           definitions_(definitions),
-          llvm_code_(llvm_code),
+          llvm_code_dir_(std::move(llvm_code_dir)),
+          llvm_code_files_(llvm_code_files),
           unique_counters_(unique_counters),
           includes_(includes),
           tuple_type_descs_(tuple_type_descs) {}
 
     auto GenerateSymbolName(const std::string &prefix,
                             bool try_empty_suffix = false) -> std::string;
+    auto GenerateLlvmCodeFileName(const std::string &prefix) -> std::string {
+        llvm_code_files_->emplace_back(llvm_code_dir_ + "/" +
+                                       GenerateSymbolName(prefix, true) +
+                                       ".ll");
+        return llvm_code_files_->back();
+    }
 
     auto declarations() -> std::ostream & { return *declarations_; }
     auto definitions() -> std::ostream & { return *definitions_; }
-    auto llvm_code() -> std::ostream & { return *llvm_code_; }
+    [[nodiscard]] auto llvm_code_files() const -> auto & {
+        return llvm_code_files_;
+    }
 
     auto includes() -> std::set<std::string> & { return *includes_; }
     auto tuple_type_descs() -> TupleTypeRegistry & {
@@ -64,7 +75,8 @@ public:
 private:
     std::ostream *const declarations_;
     std::ostream *const definitions_;
-    std::ostream *const llvm_code_;
+    const std::string llvm_code_dir_;
+    std::vector<std::string> *const llvm_code_files_;
     std::unordered_map<std::string, size_t> *const unique_counters_;
     std::set<std::string> *const includes_;
     TupleTypeRegistry *const tuple_type_descs_;

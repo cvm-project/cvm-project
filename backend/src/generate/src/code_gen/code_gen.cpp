@@ -1,8 +1,8 @@
 #include "code_gen/code_gen.hpp"
 
+#include <algorithm>
 #include <map>
 #include <ostream>
-#include <regex>
 #include <set>
 #include <sstream>
 #include <string>
@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -21,6 +22,7 @@
 #include "dag/type/array.hpp"
 #include "dag/type/atomic.hpp"
 #include "dag/utils/apply_visitor.hpp"
+#include "llvm_helpers/function.hpp"
 #include "utils/lib_path.hpp"
 
 using boost::format;
@@ -38,15 +40,18 @@ auto GenerateCode(DAG *const dag, const std::string &config)
     // Create (empty) output directory
     auto const temp_dir = boost::filesystem::unique_path(temp_path_model);
     boost::filesystem::create_directories(temp_dir);
+    boost::filesystem::current_path(temp_dir);
 
-    auto const llvm_code_path = temp_dir / "llvm_funcs.ll";
+    auto const llvm_code_dir = temp_dir / "llvm_funcs";
     auto const source_file_path = temp_dir / "execute.cpp";
+
     std::string function_name;
+    std::vector<std::string> llvm_code_files;
 
     // Generate C++ code
     {
         // Setup visitor and run it
-        boost::filesystem::ofstream llvm_code(llvm_code_path);
+        boost::filesystem::create_directories(llvm_code_dir);
 
         std::stringstream declarations;
         std::stringstream definitions;
@@ -55,10 +60,13 @@ auto GenerateCode(DAG *const dag, const std::string &config)
         std::set<std::string> includes;
         Context::TupleTypeRegistry tuple_type_descs;
 
-        Context context(&declarations, &definitions, &llvm_code,
+        Context context(&declarations, &definitions,
+                        llvm_code_dir.filename().string(), &llvm_code_files,
                         &unique_counters, &includes, &tuple_type_descs);
 
         function_name = GenerateExecutePipelines(&context, dag);
+
+        std::sort(llvm_code_files.begin(), llvm_code_files.end());
 
         // Main executable file: declarations
         boost::filesystem::ofstream source_file(source_file_path);
@@ -86,14 +94,13 @@ auto GenerateCode(DAG *const dag, const std::string &config)
     }
 
     // Compute hash value of generated code
-    boost::filesystem::current_path(temp_dir);
-
     boost::process::pipe pipe;
     boost::process::ipstream sha256sum_std_out;
     auto const sha256sum = boost::process::search_path("sha256sum");
 
+    // NOLINTNEXTLINE(clang-analyzer-core.NonNullParamChecker)  Boost problem
     auto const ret1 = boost::process::system(
-            sha256sum, source_file_path.filename(), llvm_code_path.filename(),
+            sha256sum, source_file_path.filename(), llvm_code_files,
             boost::process::std_out > pipe);
     assert(ret1 == 0);
 
@@ -579,18 +586,21 @@ auto GenerateLlvmFunctor(Context *const context,
 
 void StoreLlvmCode(Context *const context, const std::string &llvm_ir,
                    const std::string &func_name) {
-    std::string patched_ir = llvm_ir;
+    llvm_helpers::Function func(llvm_ir);
+    func.AdjustLinkage();
 
-    // Remove 'local_unnamed_addr', which is not llvm-3.7 compatible:
-    std::regex reg1("local_unnamed_addr");
-    patched_ir = std::regex_replace(patched_ir, reg1, "");
+    // Replace the function name with ours
+    auto patched_ir = boost::replace_all_copy(
+            llvm_ir, llvm_helpers::Function::kEntryFunctionName, func_name);
 
-    // Replace the func name with ours
-    std::regex reg("@cfuncnotuniquename");
-    patched_ir = std::regex_replace(patched_ir, reg, "@\"" + func_name + "\"");
+    // Replace all related symbols with a unique name
+    boost::replace_all(patched_ir, llvm_helpers::Function::kNotUniqueName,
+                       func_name + "_helper");
 
     // Write code
-    context->llvm_code() << patched_ir;
+    boost::filesystem::ofstream file(
+            context->GenerateLlvmCodeFileName(func_name));
+    file << patched_ir;
 }
 
 auto EmitStructDefinition(Context *const context, const dag::type::Type *key,

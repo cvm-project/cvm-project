@@ -41,7 +41,7 @@ ifeq ($(WITH_LLVM_ASAN), 1)
 endif
 
 # Set inputs
-UDF_SOURCES = llvm_funcs.ll
+UDF_SOURCES = $(wildcard llvm_funcs/*.ll)
 UDF_OBJECTS = $(UDF_SOURCES:.ll=.o)
 
 MAINHEADER = $(SCRIPT_DIR)/operators/AllHeaders.h

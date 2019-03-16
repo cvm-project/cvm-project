@@ -54,7 +54,8 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
             llvm::MemoryBufferRef(llvm::StringRef(ir), llvm::StringRef("id")),
             err_, context_);
     // find out the return type
-    auto func = module_->getFunctionList().begin();
+    const auto func = module_->getFunction(kEntryFunctionName);
+    assert(func != nullptr);
     auto t = func->getReturnType();
     if (t->isAggregateType()) {
         ret_type_ = ReturnType::kStruct;
@@ -97,7 +98,8 @@ auto Function::ComputeOutputPositionsPrimitive(size_t arg_position) const
         -> std::vector<size_t> {
     std::vector<size_t> res;
 
-    auto function = module_->getFunctionList().begin();
+    const auto function = module_->getFunction(kEntryFunctionName);
+    assert(function != nullptr);
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
@@ -117,7 +119,8 @@ auto Function::ComputeOutputPositionsStruct(size_t arg_position) const
         -> std::vector<size_t> {
     std::vector<size_t> res;
 
-    auto function = module_->getFunctionList().begin();
+    const auto function = module_->getFunction(kEntryFunctionName);
+    assert(function != nullptr);
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
@@ -143,7 +146,8 @@ auto Function::ComputeOutputPositionsCallerPtr(size_t arg_position) const
 
     // the first arg is the return pointer
     arg_position++;
-    auto function = module_->getFunctionList().begin();
+    const auto function = module_->getFunction(kEntryFunctionName);
+    assert(function != nullptr);
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
@@ -182,7 +186,8 @@ auto Function::ComputeIsArgumentRead(size_t arg_pos) const -> bool {
     if (ret_type_ == ReturnType::kCallerPtr) {
         arg_pos++;
     }
-    auto function = module_->getFunctionList().begin();
+    const auto function = module_->getFunction(kEntryFunctionName);
+    assert(function != nullptr);
     auto &s = function->arg_begin()[arg_pos];
 
     bool used = false;
@@ -214,13 +219,14 @@ void Function::AdjustFilterSignature(DAGFilter *const pFilter,
     // add the return pointer type to the argument types
     types.insert(types.begin(), llvm::Type::getInt8PtrTy(context_));
 
-    auto old_function = module_->getFunctionList().begin();
+    const auto old_function = module_->getFunction(kEntryFunctionName);
+    assert(old_function != nullptr);
     llvm::FunctionType *const function_type =
             llvm::FunctionType::get(llvm::Type::getVoidTy(context_),
                                     llvm::ArrayRef<llvm::Type *>(types), false);
     llvm::Function *const new_function = llvm::Function::Create(
             function_type, llvm::Function::ExternalLinkage,
-            "cfuncnotuniquename_new", module_.get());
+            kEntryFunctionName + std::string("_new"), module_.get());
 
     new_function->getBasicBlockList().splice(new_function->begin(),
                                              old_function->getBasicBlockList());
@@ -255,17 +261,21 @@ void Function::AdjustFilterSignature(DAGFilter *const pFilter,
     old_arg->replaceAllUsesWith(new_arg);
 
     old_function->eraseFromParent();
-    new_function->setName("cfuncnotuniquename");
+    new_function->setName(kEntryFunctionName);
 }
 
 void Function::AddInlineAttribute() {
-    auto function = module_->getFunctionList().begin();
+    const auto function = module_->getFunction(kEntryFunctionName);
+    assert(function != nullptr);
     function->addFnAttr(llvm::Attribute::AlwaysInline);
 }
 
 void Function::AdjustLinkage() {
     for (auto &function : *module_) {
-        if (function.getName() == "cfuncnotuniquename") continue;
+        if (function.getName() == kEntryFunctionName) continue;
+        // function declarations must be external or extern_weak
+        // https://llvm.org/docs/LangRef.html#linkage-types
+        if (function.isDeclaration()) continue;
         function.setLinkage(llvm::GlobalValue::LinkageTypes::InternalLinkage);
     }
     for (auto &var : module_->getGlobalList()) {

@@ -8,7 +8,8 @@
 
 TEST_CASE("Read false, primitive return type", "") {
     std::string ir =
-            "define i64 @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"(i64 %.1, "
+            "define i64 "
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64 %.1, "
             "i64 %.2) local_unnamed_addr #1 {\n"
             "entry:\n"
             "  ret i64 %.1\n"
@@ -19,7 +20,8 @@ TEST_CASE("Read false, primitive return type", "") {
 
 TEST_CASE("Read true, primitive return type", "") {
     std::string ir =
-            "define i64 @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"(i64 %.1, "
+            "define i64 "
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64 %.1, "
             "i64 %.2) local_unnamed_addr #1 {\n"
             "entry:\n"
             "  %.27.i = mul nsw i64 %.1, 10\n"
@@ -31,7 +33,8 @@ TEST_CASE("Read true, primitive return type", "") {
 
 TEST_CASE("input arg 1 used in output, primitive return type", "") {
     std::string ir =
-            "define i64 @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"(i64 %.1, "
+            "define i64 "
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64 %.1, "
             "i64 %.2) local_unnamed_addr #1 {\n"
             "entry:\n"
             "  ret i64 %.1\n"
@@ -44,7 +47,8 @@ TEST_CASE("input arg 1 used in output, primitive return type", "") {
 
 TEST_CASE("input arg 2 used in output, primitive return type", "") {
     std::string ir =
-            "define i64 @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"(i64 %.1, "
+            "define i64 "
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64 %.1, "
             "i64 %.2) local_unnamed_addr #1 {\n"
             "entry:\n"
             "  ret i64 %.2\n"
@@ -58,7 +62,8 @@ TEST_CASE("input arg 2 used in output, primitive return type", "") {
 TEST_CASE("Read false, struct return type", "") {
     std::string ir =
             "define { i64, i64 } "
-            "@\"cfunc._ZN8__main__8func$242E5TupleIxxE\"(i64 %.1, i64 %.2) {\n"
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64 %.1, "
+            "i64 %.2) {\n"
             "entry:"
             "  %.16.fca.0.insert = insertvalue { i64, i64 } undef, i64 %.1, 0"
             "  %.16.fca.1.insert = insertvalue { i64, i64 } %.16.fca.0.insert, "
@@ -72,7 +77,8 @@ TEST_CASE("Read false, struct return type", "") {
 
 TEST_CASE("Read true, caller pointer return type", "") {
     std::string ir =
-            "define void @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"({ i64, "
+            "define void "
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, "
             "i64, i64 }* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr "
             "#0 {\n"
             "entry:\n"
@@ -96,7 +102,8 @@ TEST_CASE("Read true, caller pointer return type", "") {
 
 TEST_CASE("Read false, caller pointer return type", "") {
     std::string ir =
-            "define void @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"({ i64, "
+            "define void "
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, "
             "i64, i64 }* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr "
             "#0 {\n"
             "entry:\n"
@@ -119,7 +126,8 @@ TEST_CASE("Read false, caller pointer return type", "") {
 
 TEST_CASE("input arg 1 used in output, pointer return type", "") {
     std::string ir =
-            "define void @\"cfunc._ZN8__main__8func$242E5TupleIxxE\"({ i64, "
+            "define void "
+            "@\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, "
             "i64, i64 }* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr "
             "#0 {\n"
             "entry:\n"

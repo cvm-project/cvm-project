@@ -19,6 +19,11 @@ namespace llvm_helpers {
 
 class Function {
 public:
+    static constexpr char *const kNotUniqueName =
+            "notuniquename218303dba31a092a63fd8a50e54f2c15";
+    static constexpr char *const kEntryFunctionName =
+            "cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15";
+
     explicit Function(const std::string &ir);
 
     /**
