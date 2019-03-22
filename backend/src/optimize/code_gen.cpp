@@ -26,7 +26,7 @@ void CodeGen::Run(DAG *const dag, const std::string &config) const {
 
     pipeline_op->tuple = dag->output().op->tuple;
     pipeline_op->library_name = lib_path;
-    pipeline_op->function_name = "execute";
+    pipeline_op->function_name = "execute_pipelines";
     pipeline_op->num_inputs = 0;
 
     // Remember inputs and outputs

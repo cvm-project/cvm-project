@@ -40,7 +40,6 @@ std::string GenerateCode(DAG *const dag, const std::string &config) {
 
     auto const llvm_code_path = temp_dir / "llvm_funcs.ll";
     auto const source_file_path = temp_dir / "execute.cpp";
-    auto const header_file_path = temp_dir / "execute.h";
 
     // Generate C++ code
     {
@@ -77,25 +76,6 @@ std::string GenerateCode(DAG *const dag, const std::string &config) {
 
         source_file << declarations.str();
         source_file << definitions.str();
-
-        // Main executable file: exported execute function
-        source_file
-                << "extern \"C\" { const char* execute("
-                   "        const char *const inputs_str) {"
-                   "    const auto inputs = ConvertFromJsonString(inputs_str);"
-                   "    const auto ret = execute_pipelines(inputs);"
-                   "    const auto ret_str = ConvertToJsonString(ret);"
-                   "    const auto ret_ptr = reinterpret_cast<char *>("
-                   "            malloc(ret_str.size() + 1));"
-                   "    strcpy(ret_ptr, ret_str.c_str());"
-                   "    return ret_ptr;"
-                   "} }";
-
-        // Header file
-        boost::filesystem::ofstream header_file(header_file_path);
-
-        header_file <<  //
-                "const char* execute(const char* inputs_str);";
     }
 
     // Compute hash value of generated code
@@ -106,8 +86,8 @@ std::string GenerateCode(DAG *const dag, const std::string &config) {
     auto const sha256sum = boost::process::search_path("sha256sum");
 
     auto const ret1 = boost::process::system(
-            sha256sum, source_file_path.filename(), header_file_path.filename(),
-            llvm_code_path.filename(), boost::process::std_out > pipe);
+            sha256sum, source_file_path.filename(), llvm_code_path.filename(),
+            boost::process::std_out > pipe);
     assert(ret1 == 0);
 
     auto std_in_pipe = boost::process::std_in < pipe;
@@ -157,22 +137,8 @@ std::string GenerateCode(DAG *const dag, const std::string &config) {
                         .str());
     }
 
-    // Create symlinks for front-end
-    auto const gen_dir = get_lib_path() / "backend/gen";
-    const size_t counter = jconfig.value("/counter", 0);
-
-    auto const lib_path = lib_dir.filename() / "libexecute.so";
-    auto const lib_symlink =
-            gen_dir / ("libexecute" + std::to_string(counter) + ".so");
-    boost::filesystem::remove(lib_symlink);
-    boost::filesystem::create_symlink(lib_path, lib_symlink);
-
-    auto const header_path = lib_dir.filename() / "execute.h";
-    auto const header_symlink = gen_dir / "execute.h";
-    boost::filesystem::remove(header_symlink);
-    boost::filesystem::create_symlink(header_path, header_symlink);
-
-    return lib_path.string();
+    // Return path of produced library
+    return (lib_dir.filename() / "libexecute.so").string();
 }
 
 std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {
@@ -358,7 +324,6 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
 
     // Includes needed for generate_values
     context->includes().emplace("\"Optional.h\"");
-    context->includes().emplace("\"runtime/free.hpp\"");
     context->includes().emplace("\"runtime/values/array.hpp\"");
     context->includes().emplace("\"runtime/values/atomics.hpp\"");
     context->includes().emplace("\"runtime/values/json_parsing.hpp\"");
@@ -503,7 +468,8 @@ std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
     const auto sink_result_name = result_names[dag->output().op];
 
     context->definitions() <<  //
-            format("VectorOfValues %1%(const VectorOfValues &inputs) {"
+            format("extern \"C\" {"
+                   "VectorOfValues %1%(const VectorOfValues &inputs) {"
                    "    VectorOfValues result;\n"
                    "    #pragma omp parallel shared(result)\n"
                    "    #pragma omp single\n"
@@ -513,7 +479,7 @@ std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
                    "        result = %3%;"
                    "    }"
                    "    return std::move(result);"
-                   "}") %
+                   "}}") %
                     func_name % plan_body.str() % sink_result_name;
 
     return func_name;

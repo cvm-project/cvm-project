@@ -15,9 +15,7 @@ JITQ_PATH = get_project_path()
 CPP_DIR = JITQ_PATH + "/backend/"
 GEN_DIR = JITQ_PATH + "/backend/gen/"
 GEN_HEADER_FILE = "generate_executable.h"
-EXECUTOR_HEADER_FILE = "execute.h"
 GENERATE_LIB = "libgenerate"
-EXECUTE_LIB = "libexecute"
 
 
 def load_cffi(header, lib_path, ffi):
@@ -95,31 +93,29 @@ class ExecutorManager:
 
     class __Inner:
         def __init__(self):
-            self.lib_counter = 0
             self.libgenerate = load_cffi(CPP_DIR + "src/" + GEN_HEADER_FILE,
                                          CPP_DIR + "build/" + GENERATE_LIB,
                                          FFI())
 
+        def __del__(self):
+            self.libgenerate.ClearPlans()
+
         def get_executor(self, context, dag_str, conf_str):
             cache_key = dag_str + conf_str
-            executor = context.executor_cache.get(cache_key, None)
-            if not executor:
+            plan_id = context.executor_cache.get(cache_key, None)
+            if not plan_id:
                 ffi = FFI()
                 dag_c = ffi.new('char[]', dag_str.encode('utf-8'))
                 conf_c = ffi.new('char[]', conf_str.encode('utf-8'))
 
                 timer = Timer()
                 timer.start()
-                self.libgenerate.GenerateExecutable(
-                    conf_c, dag_c, self.lib_counter)
+                plan_id = self.libgenerate.GenerateExecutable(
+                    conf_c, dag_c)
                 timer.end()
                 print("time: calling make " + str(timer.diff()))
-                executor = load_cffi(
-                    GEN_DIR + EXECUTOR_HEADER_FILE,
-                    GEN_DIR + EXECUTE_LIB + str(self.lib_counter), ffi)
-                self.lib_counter += 1
-                context.executor_cache[cache_key] = executor
-            return executor
+                context.executor_cache[cache_key] = plan_id
+            return plan_id
 
         def execute(self, context, dag_dict, inputs, output_type):
             ffi = FFI()
@@ -128,11 +124,11 @@ class ExecutorManager:
             dag_str = json.dumps(dag_dict, cls=RDDEncoder)
             conf_str = json.dumps(context.conf)
 
-            executor = self.get_executor(context, dag_str, conf_str)
+            plan_id = self.get_executor(context, dag_str, conf_str)
 
             timer = Timer()
             timer.start()
-            res = executor.execute(args_c)
+            res = self.libgenerate.ExecutePlan(plan_id, args_c)
             # Add a free function to the result object that allows the C++
             # layer to clean up
             res = ffi.gc(res, self.libgenerate.FreeResult)
