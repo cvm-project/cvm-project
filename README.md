@@ -134,6 +134,7 @@ wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz -
     | tar -xz && \
 cd /tmp/boost_1_69_0 && \
 echo "using clang : 7.0 : $(which clang-7.0) ; " > tools/build/src/user-config.jam && \
+PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.' + str(sys.version_info.minor))")" && \
 ./bjam --toolset=clang-7.0 --python=$PYTHONVERSION -j6 --prefix=/opt/boost-1.69.0 && \
 sudo ./bjam install
 ```
