@@ -596,12 +596,12 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
             std::vector<std::string> names;
             std::vector<std::string> types;
             names.emplace_back("data");
+            names.emplace_back(boost::str(format("outer_shape [%s]") %
+                                          field->num_dimensions));
             names.emplace_back(
-                    boost::str(format("outer_shape [%s]") % field->number_dim));
+                    boost::str(format("offsets [%s]") % field->num_dimensions));
             names.emplace_back(
-                    boost::str(format("offsets [%s]") % field->number_dim));
-            names.emplace_back(
-                    boost::str(format("shape [%s]") % field->number_dim));
+                    boost::str(format("shape [%s]") % field->num_dimensions));
             types.emplace_back(boost::str(format("%s*") % item_desc->name));
             types.emplace_back("size_t");
             types.emplace_back("size_t");

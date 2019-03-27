@@ -15,7 +15,7 @@ namespace collection {
 Array::Array(const type::FieldType *field_type_, const size_t &position,
              const nlohmann::json &json)
     : FieldBase(field_type_, position),
-      tuple_(std::make_unique<Tuple>(json.at("output_type"))) {}
+      tuple_(std::make_unique<Tuple>(json.at("tuple_type"))) {}
 
 }  // namespace collection
 }  // namespace dag

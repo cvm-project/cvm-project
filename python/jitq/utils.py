@@ -132,14 +132,12 @@ class RDDEncoder(JSONEncoder):
             return self.default(make_tuple(list(map(lambda v: from_dtype(v[0]),
                                                     fields_sorted))))
         if isinstance(o, nb.types.Array):
-            return [{'type': "array", 'dim': o.ndim, 'layout': o.layout,
-                     "output_type":
-                         self.default(o.dtype)}]
+            return [{'type': 'array', 'num_dimensions': o.ndim,
+                     'layout': o.layout, 'tuple_type': self.default(o.dtype)}]
         if isinstance(o, nb.types.List):
             # treat this as an array of 1 dim
-            return [{'type': "array", 'dim': 1, 'layout': "C",
-                     "output_type":
-                         self.default(o.dtype)}]
+            return [{'type': 'array', 'num_dimensions': 1, 'layout': 'C',
+                     'output_type': self.default(o.dtype)}]
         return JSONEncoder.default(self, o)
 
 

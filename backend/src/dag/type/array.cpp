@@ -22,10 +22,10 @@ namespace type {
 
 const Array *Array::MakeArray(const dag::type::Tuple *type,
                               const ArrayLayout &layout,
-                              const size_t &number_dim) {
+                              const size_t &num_dimensions) {
     std::unique_ptr<Array> ret(new Array(type));
     ret->layout = layout;
-    ret->number_dim = number_dim;
+    ret->num_dimensions = num_dimensions;
 
     const auto str = ret->to_string();
     TypeRegistry::Register(str, std::move(ret));
@@ -35,14 +35,14 @@ const Array *Array::MakeArray(const dag::type::Tuple *type,
 
 string Array::to_string() const {
     return "{" + tuple_type->to_string() + "}" + dag::type::to_string(layout) +
-           std::to_string(number_dim);
+           std::to_string(num_dimensions);
 }
 
 void Array::to_json(nlohmann::json *json) const {
     json->emplace("type", "array");
     json->emplace("layout", layout);
-    json->emplace("dim", number_dim);
-    json->emplace("output_type", make_raw(tuple_type));
+    json->emplace("num_dimensions", num_dimensions);
+    json->emplace("tuple_type", make_raw(tuple_type));
 }
 
 string to_string(const ArrayLayout &layout) {
@@ -66,9 +66,9 @@ string to_string(const ArrayLayout &layout) {
 raw_ptr<const Array> nlohmann::adl_serializer<raw_ptr<const Array>>::from_json(
         const nlohmann::json &json) {
     // tuple
-    raw_ptr<const dag::type::Tuple> tuple = json.at("output_type");
-    return raw_ptr<const Array>(
-            Array::MakeArray(tuple.get(), json.at("layout"), json.at("dim")));
+    raw_ptr<const dag::type::Tuple> tuple = json.at("tuple_type");
+    return raw_ptr<const Array>(Array::MakeArray(tuple.get(), json.at("layout"),
+                                                 json.at("num_dimensions")));
 }
 
 // ArrayLayout

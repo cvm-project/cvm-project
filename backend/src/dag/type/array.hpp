@@ -24,17 +24,17 @@ std::string to_string(const ArrayLayout &layout);
 
 struct Array : public FieldType {
 private:
-    explicit Array(const Tuple *tuple_type) : tuple_type(tuple_type){};
+    explicit Array(const Tuple *tuple_type) : tuple_type(tuple_type) {}
 
 public:
     static const Array *MakeArray(const Tuple *type, const ArrayLayout &layout,
-                                  const size_t &number_dim);
+                                  const size_t &num_dimensions);
 
     std::string to_string() const override;
     void to_json(nlohmann::json *json) const override;
 
     ArrayLayout layout{};
-    size_t number_dim{};
+    size_t num_dimensions{};
     const Tuple *tuple_type;
 };
 

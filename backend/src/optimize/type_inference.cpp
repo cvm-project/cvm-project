@@ -68,7 +68,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
                             "arrays");
                 }
 
-                assert(array_type->number_dim == 1);
+                assert(array_type->num_dimensions == 1);
                 assert(array_type->layout == ArrayLayout::kC);
 
                 auto const field_types = array_type->tuple_type->field_types;
@@ -113,7 +113,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
                                    Atomic::MakeAtomic("long"));
             }
 
-            assert(array_type->number_dim == 1);
+            assert(array_type->num_dimensions == 1);
             assert(array_type->layout == ArrayLayout::kC);
             return Tuple::MakeTuple(field_types);
         }
