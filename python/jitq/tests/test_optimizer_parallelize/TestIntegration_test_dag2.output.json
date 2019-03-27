@@ -23,13 +23,13 @@
                         "op": "materialize_row_vector",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
-                                        "dim": 1,
                                         "layout": "C",
-                                        "output_type": [
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
                                             {
                                                 "type": "long"
                                             }
@@ -60,9 +60,9 @@
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
-                                            "dim": 1,
                                             "layout": "C",
-                                            "output_type": [
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
                                                 {
                                                     "type": "long"
                                                 }
@@ -92,9 +92,9 @@
                                     "op": "parameter_lookup",
                                     "output_type": [
                                         {
-                                            "dim": 1,
                                             "layout": "C",
-                                            "output_type": [
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
                                                 {
                                                     "type": "long"
                                                 }
@@ -115,9 +115,9 @@
                         "op": "parallel_map",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -134,9 +134,9 @@
                         "op": "split_row_data",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -153,9 +153,9 @@
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -177,13 +177,13 @@
             "op": "pipeline",
             "output_type": [
                 {
-                    "dim": 1,
                     "layout": "C",
-                    "output_type": [
+                    "num_dimensions": 1,
+                    "tuple_type": [
                         {
-                            "dim": 1,
                             "layout": "C",
-                            "output_type": [
+                            "num_dimensions": 1,
+                            "tuple_type": [
                                 {
                                     "type": "long"
                                 }
@@ -232,9 +232,9 @@
                         "op": "materialize_row_vector",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     },
@@ -271,9 +271,9 @@
                         "op": "row_scan",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -303,13 +303,13 @@
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
-                                        "dim": 1,
                                         "layout": "C",
-                                        "output_type": [
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
                                             {
                                                 "type": "long"
                                             }
@@ -327,9 +327,9 @@
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -351,9 +351,9 @@
             "op": "pipeline",
             "output_type": [
                 {
-                    "dim": 1,
                     "layout": "C",
-                    "output_type": [
+                    "num_dimensions": 1,
+                    "tuple_type": [
                         {
                             "type": "long"
                         },
@@ -385,9 +385,9 @@
                         "op": "materialize_row_vector",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -418,9 +418,9 @@
                         "op": "row_scan",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -437,13 +437,13 @@
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
-                                        "dim": 1,
                                         "layout": "C",
-                                        "output_type": [
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
                                             {
                                                 "type": "long"
                                             }
@@ -468,9 +468,9 @@
             "op": "pipeline",
             "output_type": [
                 {
-                    "dim": 1,
                     "layout": "C",
-                    "output_type": [
+                    "num_dimensions": 1,
+                    "tuple_type": [
                         {
                             "type": "long"
                         }
@@ -498,13 +498,13 @@
                         "op": "materialize_row_vector",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
-                                        "dim": 1,
                                         "layout": "C",
-                                        "output_type": [
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
                                             {
                                                 "type": "long"
                                             }
@@ -535,9 +535,9 @@
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
-                                            "dim": 1,
                                             "layout": "C",
-                                            "output_type": [
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
                                                 {
                                                     "type": "long"
                                                 }
@@ -580,9 +580,9 @@
                                     "op": "parameter_lookup",
                                     "output_type": [
                                         {
-                                            "dim": 1,
                                             "layout": "C",
-                                            "output_type": [
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
                                                 {
                                                     "type": "long"
                                                 }
@@ -603,9 +603,9 @@
                         "op": "parallel_map",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -622,9 +622,9 @@
                         "op": "split_row_data",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -641,9 +641,9 @@
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     }
@@ -665,13 +665,13 @@
             "op": "pipeline",
             "output_type": [
                 {
-                    "dim": 1,
                     "layout": "C",
-                    "output_type": [
+                    "num_dimensions": 1,
+                    "tuple_type": [
                         {
-                            "dim": 1,
                             "layout": "C",
-                            "output_type": [
+                            "num_dimensions": 1,
+                            "tuple_type": [
                                 {
                                     "type": "long"
                                 }
@@ -691,9 +691,9 @@
             "op": "parameter_lookup",
             "output_type": [
                 {
-                    "dim": 1,
                     "layout": "C",
-                    "output_type": [
+                    "num_dimensions": 1,
+                    "tuple_type": [
                         {
                             "type": "long"
                         }

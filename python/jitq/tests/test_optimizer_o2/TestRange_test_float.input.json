@@ -40,9 +40,9 @@
             "op": "materialize_row_vector",
             "output_type": [
                 {
-                    "dim": 1,
                     "layout": "C",
-                    "output_type": [
+                    "num_dimensions": 1,
+                    "tuple_type": [
                         {
                             "type": "double"
                         }

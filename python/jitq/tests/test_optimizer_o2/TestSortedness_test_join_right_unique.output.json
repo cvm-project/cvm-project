@@ -33,9 +33,9 @@
                         "op": "materialize_row_vector",
                         "output_type": [
                             {
-                                "dim": 1,
                                 "layout": "C",
-                                "output_type": [
+                                "num_dimensions": 1,
+                                "tuple_type": [
                                     {
                                         "type": "long"
                                     },
@@ -217,9 +217,9 @@
             "op": "pipeline",
             "output_type": [
                 {
-                    "dim": 1,
                     "layout": "C",
-                    "output_type": [
+                    "num_dimensions": 1,
+                    "tuple_type": [
                         {
                             "type": "long"
                         },
