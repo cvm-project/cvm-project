@@ -14,6 +14,7 @@
 #include "dag/DAGCompiledPipeline.h"
 #include "optimize/optimizer.hpp"
 #include "runtime/execute_plan.hpp"
+#include "utils/utils.h"
 
 int64_t GenerateExecutable(const std::string &conf, const std::string &dagstr) {
     auto conf_json = nlohmann::json::parse(conf).flatten();

@@ -54,23 +54,16 @@ std::string Tuple::to_string() const {
     return "[" + boost::join(item_strings, ",") + "]";
 }
 
-}  // namespace type
-}  // namespace dag
-
-raw_ptr<const Tuple> nlohmann::adl_serializer<raw_ptr<const Tuple>>::from_json(
-        const nlohmann::json &json) {
-    std::vector<const dag::type::FieldType *> item_types;
+void Tuple::from_json(const nlohmann::json &json) {
+    assert(field_types.empty());
+    assert(json.is_array());
     for (const auto &j : json) {
-        item_types.push_back(
+        field_types.push_back(
                 j.get<raw_ptr<const dag::type::FieldType>>().get());
     }
-    return make_raw(Tuple::MakeTuple(item_types));
 }
 
-void nlohmann::adl_serializer<raw_ptr<const Tuple>>::to_json(
-        nlohmann::json &json, raw_ptr<const Tuple> tuple_type) {
-    for (auto ft : tuple_type->field_types) {
-        nlohmann::json t(make_raw(ft));
-        json.push_back(t);
-    }
-}
+void Tuple::to_json(nlohmann::json *json) const { *json = field_types; }
+
+}  // namespace type
+}  // namespace dag

@@ -5,6 +5,7 @@
 #ifndef CPP_DAG_TYPE_TUPLE_HPP
 #define CPP_DAG_TYPE_TUPLE_HPP
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -17,8 +18,9 @@ namespace dag {
 namespace type {
 
 struct Tuple : public Type {
-private:
+protected:
     Tuple() = default;
+    friend struct nlohmann::adl_serializer<std::unique_ptr<Type>>;
 
 public:
     static const Tuple *MakeTuple(
@@ -28,22 +30,13 @@ public:
     const Tuple *ComputeTailTuple(size_t head_size = 1) const;
 
     std::string to_string() const override;
+    void from_json(const nlohmann::json &json) override;
+    void to_json(nlohmann::json *json) const override;
 
     std::vector<const FieldType *> field_types;
 };
 
 }  // namespace type
 }  // namespace dag
-
-namespace nlohmann {
-
-template <>
-struct adl_serializer<raw_ptr<const dag::type::Tuple>> {
-    static raw_ptr<const dag::type::Tuple> from_json(const json &json);
-    // NOLINTNEXTLINE google-runtime-references
-    static void to_json(json &json, raw_ptr<const dag::type::Tuple> tuple);
-};
-
-}  // namespace nlohmann
 
 #endif  // CPP_DAG_TYPE_TUPLE_HPP

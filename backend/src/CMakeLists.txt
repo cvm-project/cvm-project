@@ -123,8 +123,8 @@ set(GENERATE_SOURCE_FILES
         dag/collection/tuple.cpp
         dag/type/array.cpp
         dag/type/atomic.cpp
-        dag/type/field_type.cpp
         dag/type/tuple.cpp
+        dag/type/type.cpp
         dag/utils/apply_visitor.cpp
         generate_executable.cpp
         llvm_helpers/function.cpp

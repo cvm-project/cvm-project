@@ -7,6 +7,7 @@
 #include "DAGOperators.h"
 #include "all_operator_declarations.hpp"
 #include "type/array.hpp"
+#include "type/tuple.hpp"
 
 using dag::collection::Tuple;
 
@@ -24,8 +25,7 @@ void to_json(nlohmann::json &json, const DAGOperator &op) {
     if (!op.llvm_ir.empty()) {
         json.emplace("func", op.llvm_ir);
     }
-    nlohmann::json tuple_json(make_raw(op.tuple->type));
-    json.emplace("output_type", tuple_json);
+    json.emplace("output_type", op.tuple->type);
     json.emplace("op", op.name());
     op.to_json(&json);
 }

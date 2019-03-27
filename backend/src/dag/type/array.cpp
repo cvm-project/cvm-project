@@ -11,11 +11,12 @@
 
 #include <json.hpp>
 
+#include "tuple.hpp"
 #include "utils/utils.h"
 
 using dag::type::Array;
 using dag::type::ArrayLayout;
-using std::string;
+using dag::type::Tuple;
 
 namespace dag {
 namespace type {
@@ -26,26 +27,30 @@ const Array *Array::MakeArray(const dag::type::Tuple *type,
     std::unique_ptr<Array> ret(new Array(type));
     ret->layout = layout;
     ret->num_dimensions = num_dimensions;
-
-    const auto str = ret->to_string();
-    TypeRegistry::Register(str, std::move(ret));
     return boost::polymorphic_pointer_downcast<const Array>(
-            TypeRegistry::at(str));
+            MakeType(std::move(ret)));
 }
 
-string Array::to_string() const {
+std::string Array::to_string() const {
     return "{" + tuple_type->to_string() + "}" + dag::type::to_string(layout) +
            std::to_string(num_dimensions);
+}
+
+void Array::from_json(const nlohmann::json &json) {
+    assert(json.at("type").get<std::string>() == std::string("array"));
+    layout = json.at("layout");
+    num_dimensions = json.at("num_dimensions");
+    tuple_type = json.at("tuple_type").get<raw_ptr<const Tuple>>().get();
 }
 
 void Array::to_json(nlohmann::json *json) const {
     json->emplace("type", "array");
     json->emplace("layout", layout);
     json->emplace("num_dimensions", num_dimensions);
-    json->emplace("tuple_type", make_raw(tuple_type));
+    json->emplace("tuple_type", tuple_type);
 }
 
-string to_string(const ArrayLayout &layout) {
+std::string to_string(const ArrayLayout &layout) {
     switch (layout) {
         case kC:
             return "C";
@@ -59,30 +64,18 @@ string to_string(const ArrayLayout &layout) {
 }  // namespace type
 }  // namespace dag
 
-// JSON serialization
-
-// Array
-
-raw_ptr<const Array> nlohmann::adl_serializer<raw_ptr<const Array>>::from_json(
-        const nlohmann::json &json) {
-    // tuple
-    raw_ptr<const dag::type::Tuple> tuple = json.at("tuple_type");
-    return raw_ptr<const Array>(Array::MakeArray(tuple.get(), json.at("layout"),
-                                                 json.at("num_dimensions")));
-}
-
-// ArrayLayout
+// JSON serialization ArrayLayout
 ArrayLayout nlohmann::adl_serializer<ArrayLayout>::from_json(
         const nlohmann::json &json) {
-    string layout_ = json;
-    if (layout_ == "C") {
+    std::string layout = json;
+    if (layout == "C") {
         return ArrayLayout::kC;
     }
-    if (layout_ == "F") {
+    if (layout == "F") {
         return ArrayLayout::kF;
     }
     throw std::runtime_error(
-            (boost::format("Unknown array layout %s") % layout_).str());
+            (boost::format("Unknown array layout %s") % layout).str());
 }
 
 void nlohmann::adl_serializer<ArrayLayout>::to_json(nlohmann::json &json,

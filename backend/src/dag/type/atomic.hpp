@@ -5,6 +5,7 @@
 #ifndef DAG_TYPE_ATOMIC_HPP
 #define DAG_TYPE_ATOMIC_HPP
 
+#include <memory>
 #include <string>
 
 #include <json.hpp>
@@ -16,13 +17,15 @@ namespace dag {
 namespace type {
 
 struct Atomic : public FieldType {
-private:
+protected:
     Atomic() = default;
+    friend struct nlohmann::adl_serializer<std::unique_ptr<Type>>;
 
 public:
     static const Atomic *MakeAtomic(const std::string &type);
 
     std::string to_string() const override;
+    void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 
     std::string type = "";
@@ -31,13 +34,4 @@ public:
 }  // namespace type
 }  // namespace dag
 
-namespace nlohmann {
-
-template <>
-struct adl_serializer<raw_ptr<const dag::type::Atomic>> {
-    static raw_ptr<const dag::type::Atomic> from_json(
-            const nlohmann::json &json);
-};
-
-}  // namespace nlohmann
 #endif  // DAG_TYPE_ATOMIC_HPP
