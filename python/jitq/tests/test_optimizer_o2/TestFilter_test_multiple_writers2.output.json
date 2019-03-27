@@ -57,7 +57,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.34.i = add nsw i64 %.2, %.2\n  %.47.i = icmp slt i64 %.34.i, 10\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.47.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.33.i = add nsw i64 %.2, %.2\n  %.46.i = icmp slt i64 %.33.i, 10\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.46.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                         "id": 2,
                         "op": "filter",
                         "output_type": [

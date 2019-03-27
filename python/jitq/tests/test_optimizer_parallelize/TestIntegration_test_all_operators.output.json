@@ -91,7 +91,7 @@
                                     ]
                                 },
                                 {
-                                    "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.15.i = add nsw i64 %.3, %.2\n  store i64 %.15.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                                    "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                                     "id": 1,
                                     "op": "reduce_by_key",
                                     "output_type": [
@@ -691,7 +691,7 @@
                                     ]
                                 },
                                 {
-                                    "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.15.i = add nsw i64 %.3, %.2\n  store i64 %.15.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                                    "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                                     "id": 2,
                                     "op": "reduce_by_key",
                                     "output_type": [
@@ -1785,7 +1785,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.15.i = add nsw i64 %.3, %.2\n  store i64 %.15.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 1,
                         "op": "reduce",
                         "output_type": [
@@ -2119,7 +2119,7 @@
                                     ]
                                 },
                                 {
-                                    "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.43.i = srem i64 %.2, 3\n  %.45.i = icmp slt i64 %.43.i, 0\n  %.54.i = add nsw i64 %.43.i, 3\n  %.35.0.i = select i1 %.45.i, i64 %.54.i, i64 %.43.i\n  %.76.i = icmp eq i64 %.35.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.76.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                                    "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.42.i = srem i64 %.2, 3\n  %.44.i = icmp slt i64 %.42.i, 0\n  %.53.i = add nsw i64 %.42.i, 3\n  %.34.0.i = select i1 %.44.i, i64 %.53.i, i64 %.42.i\n  %.75.i = icmp eq i64 %.34.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.75.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                                     "id": 3,
                                     "op": "filter",
                                     "output_type": [
@@ -2396,7 +2396,7 @@
                                     ]
                                 },
                                 {
-                                    "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.43.i = srem i64 %.2, 3\n  %.45.i = icmp slt i64 %.43.i, 0\n  %.54.i = add nsw i64 %.43.i, 3\n  %.35.0.i = select i1 %.45.i, i64 %.54.i, i64 %.43.i\n  %.76.i = icmp eq i64 %.35.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.76.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                                    "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.42.i = srem i64 %.2, 3\n  %.44.i = icmp slt i64 %.42.i, 0\n  %.53.i = add nsw i64 %.42.i, 3\n  %.34.0.i = select i1 %.44.i, i64 %.53.i, i64 %.42.i\n  %.75.i = icmp eq i64 %.34.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.75.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                                     "id": 2,
                                     "op": "filter",
                                     "output_type": [
@@ -2412,7 +2412,7 @@
                                     ]
                                 },
                                 {
-                                    "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.14.i = shl nsw i64 %.2, 1\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.14.i, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                                    "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.13.i = shl nsw i64 %.2, 1\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.13.i, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                                     "id": 3,
                                     "op": "map",
                                     "output_type": [

@@ -104,7 +104,7 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.35.i = icmp eq i64 %.3, %.4\n  %.20 = bitcast i8* %.1 to i1*\n  store i1 %.35.i, i1* %.20, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.34.i = icmp eq i64 %.3, %.4\n  %.20 = bitcast i8* %.1 to i1*\n  store i1 %.34.i, i1* %.20, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 5,
             "op": "filter",
             "output_type": [

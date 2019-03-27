@@ -31,7 +31,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.15.i = add nsw i64 %.3, %.2\n  store i64 %.15.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 1,
                         "op": "reduce",
                         "output_type": [
@@ -57,7 +57,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.41.i = srem i64 %.2, 2\n  %.43.i = icmp slt i64 %.41.i, 0\n  %.52.i = add nsw i64 %.41.i, 2\n  %.33.0.i = select i1 %.43.i, i64 %.52.i, i64 %.41.i\n  %.74.i = icmp eq i64 %.33.0.i, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.74.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.40.i = srem i64 %.2, 2\n  %.42.i = icmp slt i64 %.40.i, 0\n  %.51.i = add nsw i64 %.40.i, 2\n  %.32.0.i = select i1 %.42.i, i64 %.51.i, i64 %.40.i\n  %.73.i = icmp eq i64 %.32.0.i, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.73.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 3,
                         "op": "filter",
                         "output_type": [

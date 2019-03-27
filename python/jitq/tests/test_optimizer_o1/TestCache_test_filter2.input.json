@@ -38,7 +38,7 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.28.i = srem i64 %.2, 2\n  %.30.i = icmp slt i64 %.28.i, 0\n  %.39.i = add nsw i64 %.28.i, 2\n  %.20.0.i = select i1 %.30.i, i64 %.39.i, i64 %.28.i\n  %.61.i = icmp eq i64 %.20.0.i, 1\n  %.18 = bitcast i8* %.1 to i1*\n  store i1 %.61.i, i1* %.18, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.27.i = srem i64 %.2, 2\n  %.29.i = icmp slt i64 %.27.i, 0\n  %.38.i = add nsw i64 %.27.i, 2\n  %.19.0.i = select i1 %.29.i, i64 %.38.i, i64 %.27.i\n  %.60.i = icmp eq i64 %.19.0.i, 1\n  %.18 = bitcast i8* %.1 to i1*\n  store i1 %.60.i, i1* %.18, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 2,
             "op": "filter",
             "output_type": [

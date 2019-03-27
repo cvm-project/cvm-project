@@ -129,7 +129,7 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.15.i = add nsw i64 %.3, %.2\n  store i64 %.15.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 6,
             "op": "reduce",
             "output_type": [

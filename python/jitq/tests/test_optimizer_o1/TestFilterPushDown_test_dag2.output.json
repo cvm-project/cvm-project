@@ -46,7 +46,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.27.i = icmp eq i64 %.2, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.27.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.26.i = icmp eq i64 %.2, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.26.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 1,
                         "op": "filter",
                         "output_type": [
