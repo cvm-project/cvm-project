@@ -14,8 +14,6 @@ format-python:
   image: ingomuellernet/buildenv-jitq:2019-03-05
   before_script:
     - pip3 install -r requirements.txt
-    - pip3 install -r python/jitq/benchmarks/requirements.txt
-    - pip3 install -r python/jitq/tests/requirements.txt
   script:
     - tools/check_format_python.sh
     - tools/check_pylint.sh
@@ -73,7 +71,6 @@ python-tests:
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev
     - pip3 install -r requirements.txt
-    - pip3 install -r python/jitq/tests/requirements.txt
     - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/code_gen/cpp/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
   script:

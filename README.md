@@ -18,10 +18,21 @@ git submodule update --recursive --init
 
 1. Python requirements
 
+Install necessary system packages.
+
 ```bash
 sudo apt install python3 python3-pip python3-dev
+```
+
+Create a virtualenv and activate it
+```bash
+python3 -m venv <name_of_the_virtual_environment>
+source <name_of_the_virtual_environment>/bin/activate
+```
+
+Install the requirements
+```bash
 pip3 install -r requirements.txt
-pip3 install -r python/jitq/tests/requirements.txt
 ```
 
 2. Dev requirements

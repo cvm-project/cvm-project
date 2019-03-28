@@ -1,0 +1,13 @@
+autopep8
+cffi
+dask
+jsonmerge
+matplotlib
+numpy
+numba==0.42.0
+pandas
+psutil
+pylint
+pyspark
+scipy
+sklearn
