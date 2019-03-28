@@ -14,7 +14,8 @@ from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
 from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.libs.numba.llvm_ir import get_llvm_ir
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
-    make_tuple, item_typeof, numba_type_to_dtype, is_item_type, C_TYPE_MAP
+    make_tuple, item_typeof, numba_type_to_dtype, is_item_type, C_TYPE_MAP, \
+    make_flat_tuple
 
 
 def clean_rdds(rdd):
@@ -101,7 +102,7 @@ class RDD(abc.ABC):
             op_dict['predecessors'] = [
                 op_dicts[str(p)]['id'] for p in operator.parents]
             op_dict['op'] = operator.NAME
-            op_dict['output_type'] = operator.output_type
+            op_dict['output_type'] = make_flat_tuple(operator.output_type)
             op_dicts[str(operator)] = op_dict
 
         visitor = RDD.Visitor(collect_operators)

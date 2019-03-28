@@ -71,6 +71,27 @@ def is_item_type(type_):
     return False
 
 
+def make_flat_tuple(type_):
+    assert is_item_type(type_), "Expected valid nested tuple type."
+    if str(type_) in NUMPY_DTYPE_MAP:
+        return make_tuple([type_])
+    if isinstance(type_, nb.types.Tuple):
+        field_types = [make_flat_tuple(t) for t in flatten(type_.types)]
+        return make_tuple([t.types[0] for t in field_types])
+    if isinstance(type_, nb.types.Array):
+        type_ = type_.copy(dtype=make_flat_tuple(type_.dtype))
+        return make_tuple([replace_unituple(type_)])
+    if isinstance(type_, nb.types.Record):
+        fields = sorted(type_.dtype.fields.values(), key=lambda v: v[1])
+        field_types = [from_dtype(field[0]) for field in fields]
+        return make_flat_tuple(make_tuple(field_types))
+    if isinstance(type_, nb.types.List):
+        type_ = type_.copy(dtype=make_flat_tuple(type_.dtype))
+        return make_tuple([replace_unituple(type_)])
+    assert False, "Any valid nested tuple type should be treated by now."
+    return None
+
+
 def numba_type_to_dtype(type_):
     if str(type_) in NUMPY_DTYPE_MAP:
         return as_dtype(type_)
@@ -120,24 +141,16 @@ class RDDEncoder(JSONEncoder):
     # sabir 14.02.18: JSONEncoder overwrites this method, nothing we can do
     def default(self, o):
         if isinstance(o, (nb.types.Number, nb.types.Boolean, nb.types.Opaque)):
-            # at this point the tuple type should be flat right?
-            return [{'type': numba_to_c_types(o.name)}]
+            return {'type': numba_to_c_types(o.name)}
         if isinstance(o, nb.types.Tuple):
-            return flatten(list((map(self.default, o.types))))
-        if isinstance(o, nb.types.Record):
-            # record has a numpy dtype
-            # same output as for a tuple
-            fields_sorted = sorted(o.dtype.fields.values(),
-                                   key=lambda v: v[1])
-            return self.default(make_tuple(list(map(lambda v: from_dtype(v[0]),
-                                                    fields_sorted))))
+            return list(map(self.default, o.types))
         if isinstance(o, nb.types.Array):
-            return [{'type': 'array', 'num_dimensions': o.ndim,
-                     'layout': o.layout, 'tuple_type': self.default(o.dtype)}]
+            return {'type': 'array', 'num_dimensions': o.ndim,
+                    'layout': o.layout, 'tuple_type': self.default(o.dtype)}
         if isinstance(o, nb.types.List):
             # treat this as an array of 1 dim
-            return [{'type': 'array', 'num_dimensions': 1, 'layout': 'C',
-                     'output_type': self.default(o.dtype)}]
+            return {'type': 'array', 'num_dimensions': 1, 'layout': 'C',
+                    'output_type': self.default(o.dtype)}
         return JSONEncoder.default(self, o)
 
 
