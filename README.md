@@ -135,6 +135,7 @@ wget https://dl.bintray.com/boostorg/release/1.69.0/source/boost_1_69_0.tar.gz -
 cd /tmp/boost_1_69_0 && \
 echo "using clang : 7.0 : $(which clang-7.0) ; " > tools/build/src/user-config.jam && \
 PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.' + str(sys.version_info.minor))")" && \
+./bootstrap.sh && \
 ./bjam --toolset=clang-7.0 --python=$PYTHONVERSION -j6 --prefix=/opt/boost-1.69.0 && \
 sudo ./bjam install
 ```
@@ -153,7 +154,7 @@ CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ -DLLVM_DIR=/opt/clang+llvm-7.0.1
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > .../src/code_gen/cpp/Makefile.local
+echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > ../src/code_gen/cpp/Makefile.local
 ```
 
 1. Build:
