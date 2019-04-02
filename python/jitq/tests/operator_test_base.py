@@ -90,7 +90,7 @@ class TestCollection(TestCaseBase):
         self.assertListEqual(sorted(res.astuples()), list(input_))
 
     def test_pandas_tuple(self):
-        input_ = [(i, 2 * i) for i in range(10)]
+        input_ = [(i, 2.0 * i) for i in range(10)]
         input_df = pd.DataFrame(list(input_), columns=['v0', 'v1'])
         res = self.context.collection(input_df) \
             .map(lambda t: (t.v0, t.v1 + 0)).collect()
