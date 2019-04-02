@@ -60,7 +60,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
 
             for (size_t i = 0; i < input_type->field_types.size(); i++) {
                 auto const array_type =
-                        dynamic_cast<const Array *>(input_type->field_types[0]);
+                        dynamic_cast<const Array *>(input_type->field_types[i]);
 
                 if (array_type == nullptr) {
                     throw std::invalid_argument(
