@@ -58,11 +58,8 @@ const Tuple *ComputeOutputType(const DAG *const dag,
 
             std::vector<const FieldType *> fields;
 
-            // Needed to avoid false positive from clang-tidy
-            // NOLINTNEXTLINE modernize-loop-convert
-            for (size_t i = 0; i < input_type->field_types.size(); i++) {
-                auto const array_type =
-                        dynamic_cast<const Array *>(input_type->field_types[i]);
+            for (const auto field_type : input_type->field_types) {
+                auto const array_type = dynamic_cast<const Array *>(field_type);
 
                 if (array_type == nullptr) {
                     throw std::invalid_argument(
