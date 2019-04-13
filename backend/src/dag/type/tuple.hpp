@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "field_type.hpp"
 #include "utils/utils.h"

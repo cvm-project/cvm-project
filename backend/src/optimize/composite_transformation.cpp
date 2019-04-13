@@ -1,6 +1,6 @@
 #include "composite_transformation.hpp"
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "dag/DAG.h"
 #include "optimize/dag_transformation.hpp"

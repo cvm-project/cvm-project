@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "composite_transformation.hpp"
 #include "dag_transformation.hpp"

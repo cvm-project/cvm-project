@@ -6,7 +6,7 @@
 #define DAG_DAGOPERATOR_H
 
 #include <cstddef>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <set>
 #include <type_traits>
 #include <vector>

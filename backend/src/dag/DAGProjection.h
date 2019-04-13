@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "DAGOperator.h"
 

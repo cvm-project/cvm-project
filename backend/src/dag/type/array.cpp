@@ -9,7 +9,7 @@
 #include <boost/format.hpp>
 #include <boost/polymorphic_pointer_cast.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "tuple.hpp"
 #include "utils/utils.h"

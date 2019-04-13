@@ -1,7 +1,7 @@
 #ifndef DAG_DAGPIPELINE_H
 #define DAG_DAGPIPELINE_H
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "DAGOperator.h"
 

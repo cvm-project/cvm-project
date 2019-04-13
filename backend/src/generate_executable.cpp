@@ -8,7 +8,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/polymorphic_pointer_cast.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "dag/DAG.h"
 #include "dag/DAGCompiledPipeline.h"

@@ -3,7 +3,7 @@
 
 #include <cassert>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "atomics.hpp"
 #include "value.hpp"

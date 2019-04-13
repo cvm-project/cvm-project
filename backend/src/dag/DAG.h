@@ -16,7 +16,7 @@
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "attribute_id.h"
 

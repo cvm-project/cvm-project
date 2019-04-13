@@ -41,7 +41,7 @@ get_filename_component(CATCH_INCLUDE_DIRS "${CATCH_INCLUDE_DIRS}" ABSOLUTE)
 include_directories(SYSTEM ${CATCH_INCLUDE_DIRS})
 
 # Set up JSON library
-set(JSONLIB_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/json/src")
+set(JSONLIB_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/json/include/")
 get_filename_component(JSONLIB_INCLUDE_DIRS "${JSONLIB_INCLUDE_DIRS}" ABSOLUTE)
 include_directories(SYSTEM ${JSONLIB_INCLUDE_DIRS})
 

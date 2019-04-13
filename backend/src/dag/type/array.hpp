@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "field_type.hpp"
 #include "utils/utils.h"

@@ -6,7 +6,7 @@
 
 #include <boost/polymorphic_pointer_cast.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "dag/collection/atomic.hpp"
 #include "utils/utils.h"

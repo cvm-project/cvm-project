@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "dag/type/tuple.hpp"
 #include "field.hpp"

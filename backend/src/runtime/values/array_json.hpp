@@ -1,7 +1,7 @@
 #ifndef RUNTIME_VALUES_ARRAY_JSON_HPP
 #define RUNTIME_VALUES_ARRAY_JSON_HPP
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "array.hpp"
 #include "value.hpp"

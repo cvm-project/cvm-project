@@ -5,7 +5,7 @@
 #ifndef DAG_DAGROWSCAN_H
 #define DAG_DAGROWSCAN_H
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "DAGOperator.h"
 

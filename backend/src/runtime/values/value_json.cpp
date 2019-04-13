@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "value.hpp"
 #include "value_parser.hpp"

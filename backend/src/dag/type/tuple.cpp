@@ -8,7 +8,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/polymorphic_pointer_cast.hpp>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "utils/utils.h"
 

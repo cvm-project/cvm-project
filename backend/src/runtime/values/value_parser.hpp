@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 
 #include "utils/registry.hpp"
 #include "value.hpp"
