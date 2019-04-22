@@ -12,7 +12,8 @@
 namespace code_gen {
 namespace cpp {
 
-std::string GenerateCode(DAG *dag, const std::string &config);
+std::pair<std::string, std::string> GenerateCode(DAG *dag,
+                                                 const std::string &config);
 
 std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name);
 

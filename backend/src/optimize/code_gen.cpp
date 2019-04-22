@@ -18,7 +18,7 @@ void CodeGen::Run(DAG *const dag, const std::string &config) const {
     const nlohmann::json conf = nlohmann::json::parse(config).flatten();
 
     // Generate code and compile
-    auto const lib_path = code_gen::cpp::GenerateCode(dag, config);
+    auto const [lib_path, func_name] = code_gen::cpp::GenerateCode(dag, config);
 
     // Create new DAGCompiledPipeline operator
     std::unique_ptr<DAGCompiledPipeline> pipeline_op_ptr(
@@ -27,7 +27,7 @@ void CodeGen::Run(DAG *const dag, const std::string &config) const {
 
     pipeline_op->tuple = dag->output().op->tuple;
     pipeline_op->library_name = lib_path;
-    pipeline_op->function_name = "execute_pipelines";
+    pipeline_op->function_name = func_name;
     pipeline_op->num_inputs = 0;
 
     // Remember inputs and outputs

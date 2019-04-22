@@ -28,7 +28,8 @@ using boost::algorithm::join;
 namespace code_gen {
 namespace cpp {
 
-std::string GenerateCode(DAG *const dag, const std::string &config) {
+std::pair<std::string, std::string> GenerateCode(DAG *const dag,
+                                                 const std::string &config) {
     auto const jconfig = nlohmann::json::parse(config).flatten();
 
     const boost::filesystem::path temp_path_model =
@@ -40,6 +41,7 @@ std::string GenerateCode(DAG *const dag, const std::string &config) {
 
     auto const llvm_code_path = temp_dir / "llvm_funcs.ll";
     auto const source_file_path = temp_dir / "execute.cpp";
+    std::string function_name;
 
     // Generate C++ code
     {
@@ -56,8 +58,7 @@ std::string GenerateCode(DAG *const dag, const std::string &config) {
         Context context(&declarations, &definitions, &llvm_code,
                         &unique_counters, &includes, &tuple_type_descs);
 
-        auto execute_values = GenerateExecutePipelines(&context, dag);
-        assert(execute_values == "execute_pipelines");
+        function_name = GenerateExecutePipelines(&context, dag);
 
         // Main executable file: declarations
         boost::filesystem::ofstream source_file(source_file_path);
@@ -138,7 +139,7 @@ std::string GenerateCode(DAG *const dag, const std::string &config) {
     }
 
     // Return path of produced library
-    return (lib_dir.filename() / "libexecute.so").string();
+    return {(lib_dir.filename() / "libexecute.so").string(), function_name};
 }
 
 std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {
