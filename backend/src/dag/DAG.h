@@ -73,9 +73,9 @@ public:
     using VertexInnerDag = boost::property<inner_graph_t, std::shared_ptr<DAG>,
                                            VertexOperator>;
     using VertexProperties = VertexInnerDag;
-    // Use listS for vertices because we modify the graph a lot.
     // Use vecS for edges because we want to allow parallel edges.
-    using Graph = boost::adjacency_list<boost::listS, boost::vecS,
+    // Use vecS for vertices because we need internal properties for vertexes.
+    using Graph = boost::adjacency_list<boost::vecS, boost::vecS,
                                         boost::bidirectionalS, VertexProperties,
                                         EdgeProperties>;
     using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
