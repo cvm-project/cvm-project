@@ -1,6 +1,6 @@
 #include "parallelize.hpp"
 
-#include <unordered_set>
+#include <queue>
 
 #include <boost/mpl/list.hpp>
 
@@ -46,7 +46,7 @@ DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
 namespace optimize {
 
 void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
-    std::unordered_set<DAGParallelMap *> parallelize_operators;
+    std::queue<DAGParallelMap *> parallelize_operators;
 
     // Insert (parallelize) --> (sequentialize) operators before all source
     // operators
@@ -88,13 +88,13 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
         dag->AddFlow(split_op, in_flow.source.port, pop);
         dag->AddFlow(pop, next_op, out_flow.target.port);
 
-        parallelize_operators.insert(pop);
+        parallelize_operators.push(pop);
     }
 
     // Extend parallelize operator
     while (!parallelize_operators.empty()) {
-        auto const op = *(parallelize_operators.begin());
-        parallelize_operators.erase(parallelize_operators.begin());
+        DAGParallelMap *const op = parallelize_operators.front();
+        parallelize_operators.pop();
 
         auto const inner_dag = dag->inner_dag(op);
         do {
@@ -212,7 +212,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 next_inner_dag->set_output(red_op);
 
                 // Remember the next parallel map such that it can be extended
-                parallelize_operators.emplace(next_pop);
+                parallelize_operators.push(next_pop);
 
                 break;
             }
@@ -335,7 +335,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 next_inner_dag->set_output(inner_join_op);
 
                 // Remember the next parallel map such that it can be extended
-                parallelize_operators.emplace(next_pop);
+                parallelize_operators.push(next_pop);
 
                 break;
             }
