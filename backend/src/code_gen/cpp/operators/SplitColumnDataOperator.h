@@ -29,8 +29,8 @@ private:
                                      const size_t outer_shape,
                                      const size_t offset, const size_t shape,
                                      std::index_sequence<I...>) {
-        assert((std::get<I>(tuple).shape[0] == std::get<0>(tuple).shape[0]) &&
-               ...);
+        assert(((std::get<I>(tuple).shape[0] == std::get<0>(tuple).shape[0]) &&
+                ...));
         return std::make_tuple(decltype(std::get<I>(tuple)){
                 std::get<I>(tuple).data, outer_shape, offset, shape}...);
     }

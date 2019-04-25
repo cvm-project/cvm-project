@@ -29,9 +29,9 @@ private:
     template <class InputStdTuple, std::size_t... I>
     auto static MakeColumnsImpl(const InputStdTuple &input_tuple,
                                 std::index_sequence<I...>) {
-        assert((std::get<I>(input_tuple).shape[0] ==
-                std::get<0>(input_tuple).shape[0]) &&
-               ...);
+        assert(((std::get<I>(input_tuple).shape[0] ==
+                 std::get<0>(input_tuple).shape[0]) &&
+                ...));
         return std::make_tuple(std::get<I>(input_tuple).data...);
     }
 
