@@ -24,11 +24,8 @@ void Optimizer::Run(DAG *const dag) {
     const bool verbose = config.value("/verbose", false);
 
     // Activate passes according to optimization level
-    if (config.value("/optimization-level", 0) <= 0) {
-        return;
-    }
-
     if (config.value("/optimization-level", 0) >= 1) {
+        config.emplace("/optimizations/code_gen/active", true);
         config.emplace("/optimizations/canonicalize/active", true);
         config.emplace("/optimizations/create-pipelines/active", true);
         config.emplace("/optimizations/materialize-multiple-reads/active",
@@ -118,7 +115,7 @@ void Optimizer::Run(DAG *const dag) {
     }
 
     // Just-in-Time compilation
-    if (config.value("/optimizations/code_gen/active", true)) {
+    if (config.value("/optimizations/code_gen/active", false)) {
         transformations.emplace_back("code_gen");
         transformations.emplace_back("canonicalize");
     }
