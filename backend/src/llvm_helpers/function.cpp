@@ -198,7 +198,7 @@ bool Function::ComputeIsArgumentRead(size_t arg_pos) const {
 
 std::string Function::AdjustFilterSignature(
         DAGFilter *const pFilter, const DAGOperator *const predecessor) {
-    llvm::Module *new_mod = new llvm::Module("filter", context_);
+    auto const new_mod = std::make_unique<llvm::Module>("filter", context_);
 
     std::vector<llvm::Type *> types;
     for (const auto &f : predecessor->tuple->fields) {
@@ -214,7 +214,7 @@ std::string Function::AdjustFilterSignature(
                                     llvm::ArrayRef<llvm::Type *>(types), false);
     llvm::Function *filter_predicate =
             llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
-                                   old_function->getName(), new_mod);
+                                   old_function->getName(), new_mod.get());
 
     filter_predicate->getBasicBlockList().splice(
             filter_predicate->begin(), old_function->getBasicBlockList());
@@ -251,8 +251,6 @@ std::string Function::AdjustFilterSignature(
     llvm::raw_string_ostream OS(ret);
     OS << *new_mod;
     OS.flush();
-    //    new_mod->dump();
-    delete (new_mod);
     return ret;
 }
 
