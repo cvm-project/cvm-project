@@ -61,6 +61,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 
 # Set up Boost
+set(Boost_NO_BOOST_CMAKE ON)
 find_package(Boost 1.64 REQUIRED COMPONENTS
         filesystem
         program_options
