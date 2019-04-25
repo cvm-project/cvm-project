@@ -1,6 +1,7 @@
 #include "create_pipelines.hpp"
 
-#include <unordered_set>
+#include <string>
+#include <vector>
 
 #include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/range/algorithm.hpp>
