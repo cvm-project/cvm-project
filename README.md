@@ -40,6 +40,8 @@ pip3 install -r requirements.txt
 ```bash
 sudo apt install build-essential \
         libtinfo-dev \
+        gcc-7 \
+        g++-7 \
         wget \
         xz-utils
 ```
