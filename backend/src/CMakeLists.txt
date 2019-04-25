@@ -57,7 +57,7 @@ get_filename_component(POLYMORPHIC_VALUE_INCLUDE_DIRS "${POLYMORPHIC_VALUE_INCLU
 include_directories(SYSTEM ${POLYMORPHIC_VALUE_INCLUDE_DIRS})
 
 # Set up compilation options
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
 
 # Set up Boost
