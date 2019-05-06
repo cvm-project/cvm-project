@@ -1,6 +1,7 @@
 #include "DAG.h"
 
 #include <algorithm>
+#include <map>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
@@ -429,7 +430,7 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         const nlohmann::json &json) {
     std::unique_ptr<DAG> dag(new DAG);
 
-    std::unordered_map<size_t, DAGOperator *> operators;
+    std::map<size_t, DAGOperator *> operators;
     std::unordered_map<DAGOperator *, std::vector<size_t>> predecessors;
 
     for (auto &it : json.at("operators")) {
