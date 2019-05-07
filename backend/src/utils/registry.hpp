@@ -52,6 +52,11 @@ auto Registry<Object, Key>::objects() -> ObjectRange {
 }
 
 template <typename Object, typename Key>
+size_t Registry<Object, Key>::num_objects() {
+    return instance()->objects_.size();
+}
+
+template <typename Object, typename Key>
 Registry<Object, Key> *Registry<Object, Key>::instance() {
     static auto registry = std::make_unique<Registry<Object, Key>>();
     return registry.get();
