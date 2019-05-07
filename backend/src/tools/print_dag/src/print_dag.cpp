@@ -26,16 +26,16 @@ std::string node_name(const std::string &graph_name,
             .str();
 }
 
-std::string head_port(const DAG::Flow &flow) {
-    if (flow.target.op->num_in_ports() > 1) {
-        return (boost::format("in%1%:n") % flow.target.port).str();
+std::string head_port(const DAGOperator *const op, const int port) {
+    if (op->num_in_ports() > 1) {
+        return (boost::format("in%1%:n") % port).str();
     }
     return "n";
 }
 
-std::string tail_port(const DAG::Flow &flow) {
-    if (flow.source.op->num_out_ports() > 1) {
-        return (boost::format("out%1%:s") % flow.source.port).str();
+std::string tail_port(const DAGOperator *const op, const int port) {
+    if (op->num_out_ports() > 1) {
+        return (boost::format("out%1%:s") % port).str();
     }
     return "s";
 }
@@ -56,11 +56,11 @@ std::string short_property_label(const dag::collection::FieldProperty prop) {
 }
 
 void buildDOT(const DAG *const dag, Agraph_t *g,
+              PortInfoMap *const input_port_labels_ptr,
+              PortInfoMap *const output_port_labels_ptr,
               const std::string &graph_name = "") {
-    // Store which (GV) node and port label an edge should end at for a given
-    // operator and port
-    PortInfoMap input_port_labels;
-    PortInfoMap output_port_labels;
+    auto &input_port_labels = *input_port_labels_ptr;
+    auto &output_port_labels = *output_port_labels_ptr;
 
     // Compute nodes from operators
     for (const auto &op : dag->operators()) {
@@ -150,13 +150,13 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
             agsafeset(node, "label", to_char_ptr(node_label), "");
 
             // Store node and port info
-            for (const auto f : dag->in_flows(op)) {
+            for (size_t i = 0; i < op->num_in_ports(); i++) {
                 input_port_labels[op].emplace(
-                        f.target.port, std::make_tuple(node, head_port(f)));
+                        i, std::make_tuple(node, head_port(op, i)));
             }
-            for (const auto f : dag->out_flows(op)) {
+            for (size_t i = 0; i < op->num_out_ports(); i++) {
                 output_port_labels[op].emplace(
-                        f.source.port, std::make_tuple(node, tail_port(f)));
+                        i, std::make_tuple(node, tail_port(op, i)));
             }
         } else {
             // Special case: nested operator --> cluster
@@ -177,7 +177,8 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
             assert(dag->inner_dag(op) != nullptr);
             const std::string inner_graph_name =
                     graph_name + std::to_string(op->id) + "_";
-            buildDOT(inner_dag, subg, inner_graph_name);
+            buildDOT(inner_dag, subg, input_port_labels_ptr,
+                     output_port_labels_ptr, inner_graph_name);
 
             // Store port info of input ports
             for (const auto f : dag->in_flows(op)) {
@@ -196,17 +197,13 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
             }
 
             // Store port info of output ports
-            for (const auto f : dag->out_flows(op)) {
-                // Outgoing edges come from the sink
-                assert(f.source.port == 0);
-                auto const node =
-                        agnode(g,
-                               to_char_ptr(node_name(inner_graph_name,
-                                                     inner_dag->output().op)),
-                               0);
-                assert(node != nullptr);
-                output_port_labels[op].emplace(f.source.port,
-                                               std::make_tuple(node, "s"));
+            for (size_t i = 0; i < op->num_out_ports(); i++) {
+                // Take information from the output operator of the inner DAG
+                auto const output_op = inner_dag->output().op;
+                auto const port_info_it =
+                        output_port_labels.at(output_op).find(i);
+                assert(port_info_it != output_port_labels.at(output_op).end());
+                output_port_labels[op].emplace(i, port_info_it->second);
             }
         }
     }
@@ -267,7 +264,12 @@ void ToDotFile(const DAG *dag, FILE *outfile) {
     Agraph_t *const g = agopen("g", Agdirected, &AgDefaultDisc);
     agsafeset(g, "compound", "true", "true");
 
-    buildDOT(dag, g);
+    // Store which (GV) node and port label an edge should end at for a given
+    // operator and port
+    PortInfoMap input_port_labels;
+    PortInfoMap output_port_labels;
+
+    buildDOT(dag, g, &input_port_labels, &output_port_labels);
 
     GVC_t *const gvc = gvContext();
     gvLayout(gvc, g, "dot");
