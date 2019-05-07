@@ -30,6 +30,4 @@ size_t RegisterPlan(const Plan &plan) {
     return impl::plan_registry()->size() - 1;
 }
 
-void ClearPlans() { impl::plan_registry()->clear(); }
-
 }  // namespace runtime

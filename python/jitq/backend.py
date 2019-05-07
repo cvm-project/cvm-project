@@ -9,5 +9,4 @@
 from jitq_backend import \
     GenerateExecutable, \
     ExecutePlan, \
-    FreeResult, \
-    ClearPlans
+    FreeResult

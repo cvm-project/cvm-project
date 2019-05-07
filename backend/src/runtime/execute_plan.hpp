@@ -14,7 +14,6 @@ using Plan = std::function<PlanFunction>;
 
 std::string ExecutePlan(size_t plan_id, const std::string& inputs_str);
 size_t RegisterPlan(const Plan& plan);
-void ClearPlans();
 
 }  // namespace runtime
 

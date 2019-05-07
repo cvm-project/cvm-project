@@ -29,10 +29,6 @@ PYBIND11_MODULE(jitq_backend, m) {
         Free memory of result
     )pbdoc");
 
-    m.def("ClearPlans", &runtime::ClearPlans, R"pbdoc(
-        Clear generated plans
-    )pbdoc");
-
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;
 #else
