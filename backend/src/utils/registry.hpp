@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+#include <boost/lexical_cast.hpp>
 #include <boost/range/iterator_range.hpp>
 
 namespace utils {
@@ -19,28 +20,29 @@ public:
     using ObjectRange =
             boost::iterator_range<typename decltype(objects_)::const_iterator>;
 
-    static bool Register(const std::string &name,
-                         std::unique_ptr<Object> object);
-    static Object *at(const std::string &name);
+    static bool Register(const Key &key, std::unique_ptr<Object> object);
+    static Object *at(const Key &key);
     static ObjectRange objects();
+    static size_t num_objects();
 
 private:
     static Registry *instance();
 };
 
 template <typename Object, typename Key>
-bool Registry<Object, Key>::Register(const std::string &name,
+bool Registry<Object, Key>::Register(const Key &key,
                                      std::unique_ptr<Object> object) {
-    return instance()->objects_.emplace(name, std::move(object)).second;
+    return instance()->objects_.emplace(key, std::move(object)).second;
 }
 
 template <typename Object, typename Key>
-Object *Registry<Object, Key>::at(const std::string &name) {
-    const auto it = instance()->objects_.find(name);
+Object *Registry<Object, Key>::at(const Key &key) {
+    const auto it = instance()->objects_.find(key);
     if (it != instance()->objects_.end()) {
         return it->second.get();
     }
-    throw std::runtime_error("Unknown object " + name);
+    throw std::runtime_error("Unknown object " +
+                             boost::lexical_cast<std::string>(key));
 }
 
 template <typename Object, typename Key>
