@@ -15,6 +15,9 @@
 
 #include "dag/dag.hpp"
 #include "dag/operators/operator.hpp"
+#include "dag/utils/apply_visitor.hpp"
+
+using dag::utils::ApplyInTopologicalOrderRecursively;
 
 using PortInfoMap = std::unordered_map<
         const DAGOperator *,
@@ -58,6 +61,7 @@ std::string short_property_label(const dag::collection::FieldProperty prop) {
 void buildDOT(const DAG *const dag, Agraph_t *g,
               PortInfoMap *const input_port_labels_ptr,
               PortInfoMap *const output_port_labels_ptr,
+              const size_t num_levels, const size_t level = 1,
               const std::string &graph_name = "") {
     auto &input_port_labels = *input_port_labels_ptr;
     auto &output_port_labels = *output_port_labels_ptr;
@@ -171,6 +175,11 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
             Agraph_t *subg = agsubg(g, to_char_ptr(cluster_name), 1);
             agsafeset(subg, "label", to_char_ptr(cluster_label), "");
             agsafeset(subg, "style", "filled", "");
+            const auto cc = 256 - 100 * level / num_levels;
+            const auto color =
+                    (boost::format("#%1$02x%1$02x%1$02x") % cc).str();
+            agsafeset(subg, "fillcolor", to_char_ptr(color), "");
+            agsafeset(subg, "color", "black", "");
 
             // Create inner graph
             const auto inner_dag = dag->inner_dag(op);
@@ -178,7 +187,8 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
             const std::string inner_graph_name =
                     graph_name + std::to_string(op->id) + "_";
             buildDOT(inner_dag, subg, input_port_labels_ptr,
-                     output_port_labels_ptr, inner_graph_name);
+                     output_port_labels_ptr, num_levels, level + 1,
+                     inner_graph_name);
 
             // Store port info of input ports
             for (const auto f : dag->in_flows(op)) {
@@ -261,6 +271,19 @@ std::string ToDotString(const DAG *dag) {
 }
 
 void ToDotFile(const DAG *dag, FILE *outfile) {
+    // Compute maximum depth of DAGs
+    std::set<const DAG *> dag_stack;
+    size_t num_levels = 0;
+    ApplyInTopologicalOrderRecursively(
+            dag,
+            [&](auto /*op*/, auto const dag) {
+                dag_stack.insert(dag);
+                num_levels = std::max(num_levels, dag_stack.size());
+            },
+            [&](auto /*op*/, auto const dag) {  //
+                dag_stack.erase(dag);
+            });
+
     Agraph_t *const g = agopen("g", Agdirected, &AgDefaultDisc);
     agsafeset(g, "compound", "true", "true");
 
@@ -269,7 +292,7 @@ void ToDotFile(const DAG *dag, FILE *outfile) {
     PortInfoMap input_port_labels;
     PortInfoMap output_port_labels;
 
-    buildDOT(dag, g, &input_port_labels, &output_port_labels);
+    buildDOT(dag, g, &input_port_labels, &output_port_labels, num_levels);
 
     GVC_t *const gvc = gvContext();
     gvLayout(gvc, g, "dot");
