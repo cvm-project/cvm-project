@@ -41,8 +41,33 @@ class OptimizerTestCase:
     def run_optimizer(self):
         cmd = [TEST_EXE] + self.config.options + \
             ["-i", self._input_file()]
+
+        # Produce DOT output
+        opt = subprocess.Popen(cmd + ['-fDOT'],
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+        stdout, stderr = opt.communicate()
+        status = opt.wait()
+
+        if status != 0:
+            raise RuntimeError("Error producing dot file:\n" +
+                               stderr.decode('utf-8'))
+
+        # Parse by dot
+        dot = subprocess.Popen('dot', stdin=subprocess.PIPE,
+                               stdout=subprocess.DEVNULL,
+                               stderr=subprocess.PIPE)
+        _, stderr = dot.communicate(stdout)
+        status = dot.wait()
+
+        if status != 0:
+            raise RuntimeError("Error parsing produced dot file:\n" +
+                               stderr.decode('utf-8'))
+
+        # Produce JSON output and return
         output = subprocess.check_output(cmd)
         output = output.decode("utf-8")
+
         return output
 
 
