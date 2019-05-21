@@ -1,6 +1,7 @@
 #include "parallelize.hpp"
 
 #include <queue>
+#include <vector>
 
 #include <boost/mpl/list.hpp>
 
@@ -44,12 +45,28 @@ DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
 
 namespace optimize {
 
+struct CollectSourcesVisitor
+    : public Visitor<CollectSourcesVisitor, DAGOperator,
+                     boost::mpl::list<DAGOperator>> {
+    void operator()(DAGOperator *const op) {
+        if (IsSourceOperator(op)) {
+            sources_.emplace_back(op);
+        }
+    }
+    std::vector<DAGOperator *> sources_;
+};
+
 void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
-    std::queue<DAGParallelMap *> parallelize_operators;
+    // Collect all source operators
+    CollectSourcesVisitor source_collector;
+    for (auto const op : dag->operators()) {
+        source_collector.Visit(op);
+    }
 
     // Insert (parallelize) --> (sequentialize) operators before all source
     // operators
-    for (const auto op : dag->operators()) {
+    std::queue<DAGParallelMap *> parallelize_operators;
+    for (const auto op : source_collector.sources_) {
         if (!IsSourceOperator(op)) continue;
 
         assert(dag->in_degree(op) == 1);
