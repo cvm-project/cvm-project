@@ -20,7 +20,9 @@ Optimizer::Optimizer(std::string config) : config_(std::move(config)) {
 }
 
 void Optimizer::Run(DAG *const dag) {
-    auto config = nlohmann::json::parse(config_).at("optimizer").flatten();
+    auto config = nlohmann::json::parse(config_)
+                          .value("optimizer", nlohmann::json::object())
+                          .flatten();
     const bool verbose = config.value("/verbose", false);
 
     // Activate passes according to optimization level
@@ -129,7 +131,9 @@ void Optimizer::Run(DAG *const dag) {
 
     // Run pipeline
     CompositeTransformation pipeline(transformations);
-    pipeline.Run(dag, config.unflatten().at("optimizations").dump());
+    pipeline.Run(dag, config.unflatten()
+                              .value("optimizations", nlohmann::json::object())
+                              .dump());
 }
 
 }  // namespace optimize
