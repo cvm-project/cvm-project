@@ -83,6 +83,25 @@ class TestCollection(TestCaseBase):
 
         self.assertRaises(NotImplementedError, run)
 
+    def test_array_from_rdd(self):
+        res1 = self.context.range_(0, 10).collect()
+        col = self.context.collection(res1)
+        res2 = col.collect()
+        self.assertListEqual(res1.astuplelist(), res2.astuplelist())
+
+        # Find out data pointer of first result
+        from json import loads
+        res1_ptr = loads(res1.handle.string)[0]['fields'][0]['data']
+
+        # Find out data pointer of `col`
+        from cffi import FFI
+        ffi = FFI()
+        col_ptr = col.data.__array_interface__['data'][0]
+        col_ptr = int(ffi.cast("uintptr_t", ffi.cast("void*", col_ptr)))
+
+        # Assert that we reuse the same memory (no copy involved)
+        self.assertEqual(res1_ptr, col_ptr)
+
     def test_pandas_scalar(self):
         input_ = range(10)
         res = self.context.collection(pd.DataFrame(list(input_))[0]) \
