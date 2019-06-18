@@ -70,6 +70,7 @@ python-tests:
     LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-7.0.1/lib
     PYTHONPATH: $CI_PROJECT_DIR/python:$CI_PROJECT_DIR/backend/build
     OMP_NUM_THREADS: 8
+    SEGFAULT_SIGNALS: "bus abrt"
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev time
     - pip3 install -r requirements.txt
@@ -86,6 +87,7 @@ cpp-test:
   image: ingomuellernet/buildenv-jitq:2019-04-25
   variables:
     GTEST_COLOR: "1"
+    SEGFAULT_SIGNALS: "bus abrt"
   before_script:
     - apt-get update && apt-get install -y time
   script:
