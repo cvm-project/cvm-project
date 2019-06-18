@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import glob
+import json
 import shutil
 import subprocess
 import unittest
@@ -28,7 +29,7 @@ class InliningTestCase:
     def run_optimizer(self):
         cmd = [TEST_EXE] + self.test_class.TEST_OPTIONS + \
             ["-i", self.input_file(), "-f", "BIN"]
-        subprocess.run(cmd)
+        return subprocess.check_output(cmd, universal_newlines=True)
 
 
 class TestInlining(unittest.TestCase):
@@ -57,11 +58,13 @@ def make_test_func(test_name):
         # remove previous compilation results
         shutil.rmtree(LIB_PATH)
         test_case = InliningTestCase(self, test_name)
-        test_case.run_optimizer()
-        files = glob.glob(join(LIB_PATH, "*.so"))
+        output = test_case.run_optimizer()
+        output = json.loads(output)
+        files = [o['library_name'] for o in output['operators']
+                 if 'library_name' in o]
         for file_name in files:
+            file_name = join(LIB_PATH, file_name)
             print("checking inlining in file " + file_name)
-            print("test name: " + test_name)
             result = subprocess.run(
                 ['objdump', '-D', file_name], stdout=subprocess.PIPE)
             file_content = str(result.stdout)

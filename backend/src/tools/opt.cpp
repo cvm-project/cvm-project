@@ -119,14 +119,13 @@ int main(int argc, char* argv[]) {
 
     // Produce output
     switch (output_format) {
-        case OutputFormat::kJson: {
+        case OutputFormat::kJson:
+        case OutputFormat::kBin: {
             nlohmann::json json(dag);
             output << json << std::endl;
         } break;
         case OutputFormat::kDot: {
             ToDotStream(dag.get(), &output);
-        } break;
-        case OutputFormat::kBin: {
         } break;
         default:
             throw std::runtime_error("Invalid output format");
