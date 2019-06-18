@@ -180,6 +180,7 @@ target_link_libraries(jitq_backend PUBLIC
 set(RUNTIME_SOURCE_FILES
         runtime/execute_plan.cpp
         runtime/memory/free.cpp
+        runtime/memory/shared_pointer.cpp
         runtime/values/json_parsing.cpp
         runtime/values/array_json.cpp
         runtime/values/tuple_json.cpp
@@ -245,6 +246,10 @@ endif()
 # Set up google unit test target
 add_executable(gtest_tests
         tests/visitor_test.cpp
+        tests/shared_pointer_test.cpp
     )
-target_link_libraries(gtest_tests "${GTEST_LIBRARIES}")
+target_link_libraries(gtest_tests
+        runtime
+        "${GTEST_LIBRARIES}"
+    )
 gtest_discover_tests(gtest_tests)
