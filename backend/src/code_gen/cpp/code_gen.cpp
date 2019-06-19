@@ -139,7 +139,9 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
     }
 
     // Return path of produced library
-    return {(lib_dir.filename() / "libexecute.so").string(), function_name};
+    auto const lib_name = std::string("libexecute.") +
+                          (do_debug_build ? "dbg" : "opt") + ".so";
+    return {(lib_dir.filename() / lib_name).string(), function_name};
 }
 
 std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {

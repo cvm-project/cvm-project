@@ -41,7 +41,7 @@ GCHEADER = $(SCRIPT_DIR)/operators/Operators.h.gch
 GENHEADER = $(SCRIPT_DIR)/operators/Operators.h.sh
 
 # Rules
-all: libexecute.so
+all: $(LIB)
 
 .PRECIOUS: %.ll
 
@@ -69,10 +69,7 @@ $(MAINHEADER): $(HEADERS)
 libexecute.%.so: $(UDF_OBJECTS) execute.%.o
 	 $(CXX) $^ -o $@ -shared $(LDFLAGS)
 
-libexecute.so: $(LIB)
-	cp $^ $@
-
-execute.s: libexecute.so
+execute.s: $(LIB)
 	objdump -D $^ > $@
 
 clean:
