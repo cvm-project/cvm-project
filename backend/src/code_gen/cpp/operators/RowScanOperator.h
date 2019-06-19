@@ -5,13 +5,19 @@
 #ifndef CPP_ROWSCANOPERATOR_H
 #define CPP_ROWSCANOPERATOR_H
 
-#include <cstring>
+#include <tuple>
 
 #include "Optional.h"
 #include "Utils.h"
 
 template <class Tuple, bool kAddIndex, class Upstream>
 class RowScanOperator {
+    using InputTuple = decltype(std::declval<Upstream>().next().value());
+    using InputDataPtr = typename std::remove_reference<decltype(
+            std::declval<InputTuple>().v0.data)>::type;
+    using InputInnerTuple = typename std::remove_reference<decltype(
+            std::declval<InputDataPtr>()[0])>::type;
+
 public:
     RowScanOperator(Upstream *const upstream) : upstream_(upstream) {}
 
@@ -36,7 +42,7 @@ public:
             values_ = input.data;
         }
 
-        Tuple r = BuildResult();
+        const Tuple r = BuildResultTuple();
         current_index_++;
         return r;
     }
@@ -47,20 +53,19 @@ private:
     Upstream *const upstream_;
     size_t current_index_;
     size_t last_index_;
-    void *values_;
+    InputInnerTuple *values_;
 
-    INLINE Tuple BuildResult() {
-        Tuple res;
-        char *resp = (char *)&res;
-        if (kAddIndex) {
-            size_t tuple_size = sizeof(Tuple) - sizeof(size_t);
-            *((size_t *)resp) = current_index_;
-            memcpy(resp + sizeof(size_t),
-                   (char *)values_ + tuple_size * current_index_, tuple_size);
+    INLINE Tuple BuildResultTuple() {
+        auto const input_tuple = values_[current_index_];
+        if constexpr (kAddIndex) {
+            auto const std_input_tuple = TupleToStdTuple(input_tuple);
+            std::tuple<long> std_index_tuple{current_index_};
+            auto const ret_tuple =
+                    std::tuple_cat(std_index_tuple, std_input_tuple);
+            return StdTupleToTuple(ret_tuple);
         } else {
-            *((Tuple *)resp) = ((Tuple *)values_)[current_index_];
+            return input_tuple;
         }
-        return res;
     }
 };
 
