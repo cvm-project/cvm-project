@@ -68,7 +68,7 @@ python-tests:
   variables:
     JITQPATH: $CI_PROJECT_DIR
     LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-7.0.1/lib
-    PYTHONPATH: $CI_PROJECT_DIR:$CI_PROJECT_DIR/backend/build
+    PYTHONPATH: $CI_PROJECT_DIR/python:$CI_PROJECT_DIR/backend/build
     OMP_NUM_THREADS: 8
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev
