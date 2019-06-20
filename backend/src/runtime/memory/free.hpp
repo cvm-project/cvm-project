@@ -3,10 +3,13 @@
 
 #include <string>
 
+#include "runtime/values/json_parsing.hpp"
+
 namespace runtime {
 namespace memory {
 
-void FreeValues(const std::string &values_str);
+void FreeValues(const std::string &values);
+void FreeValues(const values::VectorOfValues &values);
 
 }  // namespace memory
 }  // namespace runtime

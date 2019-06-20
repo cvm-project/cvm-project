@@ -25,7 +25,10 @@ PYBIND11_MODULE(jitq_backend, m) {
         Execute previously generated plan
     )pbdoc");
 
-    m.def("FreeResult", &runtime::memory::FreeValues, R"pbdoc(
+    m.def("FreeResult",
+          static_cast<void (*)(const std::string&)>(
+                  runtime::memory::FreeValues),
+          R"pbdoc(
         Free memory of result
     )pbdoc");
 
