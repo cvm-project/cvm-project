@@ -88,4 +88,4 @@ cpp-test:
     GTEST_COLOR: "1"
   script:
     - cd backend/build
-    - ctest-3.14 -V
+    - catchsegv ctest-3.14 -V
