@@ -47,7 +47,7 @@ public:
         assert(output.v1.outer_shape[0] == 0 || output.v1.data != nullptr);
 
         for (size_t i = 0; i < result_data.size(); i++) {
-            output.v1.data[i] = std::move(result_data[i]);
+            new (output.v1.data + i) InnerTuple(std::move(result_data[i]));
         }
 
         current_output_it_++;

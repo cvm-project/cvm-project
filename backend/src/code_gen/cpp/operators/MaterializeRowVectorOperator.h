@@ -41,7 +41,7 @@ public:
                     throw std::runtime_error(
                             "Could not materialize: out of memory.");
             }
-            result_ptr[result_size] = tuple.value();
+            new (result_ptr + result_size) InnerTuple(tuple.value());
             result_size++;
         }
 

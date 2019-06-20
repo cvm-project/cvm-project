@@ -48,7 +48,8 @@ public:
                 current_block.shape[0] = 0;
                 current_block.offsets[0] = 0;
             }
-            current_block.data[current_block.outer_shape[0]++] = input_tuple;
+            new (current_block.data + current_block.outer_shape[0]++)
+                    InnerTuple(input_tuple);
         }
 
         for (size_t i = 0; i < current_partition_blocks.size(); i++) {
