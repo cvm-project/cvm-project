@@ -2,7 +2,7 @@
 
 #include "generate_executable.hpp"
 #include "runtime/execute_plan.hpp"
-#include "runtime/free.hpp"
+#include "runtime/memory/free.hpp"
 
 // NOLINTNEXTLINE  This macro expands to things clang-tidy does not like,
 // NOLINTNEXTLINE  but we do not have control over it.
@@ -25,7 +25,7 @@ PYBIND11_MODULE(jitq_backend, m) {
         Execute previously generated plan
     )pbdoc");
 
-    m.def("FreeResult", &runtime::FreeValues, R"pbdoc(
+    m.def("FreeResult", &runtime::memory::FreeValues, R"pbdoc(
         Free memory of result
     )pbdoc");
 

@@ -2,13 +2,14 @@
 
 #include <boost/mpl/list.hpp>
 
+#include "runtime/values/array.hpp"
+#include "runtime/values/json_parsing.hpp"
+#include "runtime/values/tuple.hpp"
+#include "runtime/values/value.hpp"
 #include "utils/visitor.hpp"
-#include "values/array.hpp"
-#include "values/json_parsing.hpp"
-#include "values/tuple.hpp"
-#include "values/value.hpp"
 
 namespace runtime {
+namespace memory {
 
 struct FreeVisitor : public Visitor<FreeVisitor, const values::Value,
                                     boost::mpl::list<             //
@@ -31,4 +32,5 @@ void FreeValues(const std::string& values_str) {
     }
 }
 
+}  // namespace memory
 }  // namespace runtime

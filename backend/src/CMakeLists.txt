@@ -179,7 +179,7 @@ target_link_libraries(jitq_backend PUBLIC
 # Set up runtime library
 set(RUNTIME_SOURCE_FILES
         runtime/execute_plan.cpp
-        runtime/free.cpp
+        runtime/memory/free.cpp
         runtime/values/json_parsing.cpp
         runtime/values/array_json.cpp
         runtime/values/tuple_json.cpp
