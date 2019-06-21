@@ -3,6 +3,7 @@
 #include <cstring>
 #include <vector>
 
+#include "memory/values.hpp"
 #include "utils/registry.hpp"
 #include "values/json_parsing.hpp"
 
@@ -15,6 +16,7 @@ std::string ExecutePlan(const size_t plan_id, const std::string &inputs_str) {
             runtime::values::ConvertFromJsonString(inputs_str.c_str());
     const auto plan = *(PlanRegistry::at(plan_id));
     const auto ret = plan(inputs);
+    runtime::memory::Increment(ret);
     return runtime::values::ConvertToJsonString(ret);
 }
 

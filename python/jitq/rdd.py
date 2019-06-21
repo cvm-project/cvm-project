@@ -10,6 +10,7 @@ from pandas import DataFrame
 from cffi import FFI
 
 from jitq import c_executor
+from jitq.rdd_result import NumpyResult
 from jitq.ast_optimizer import OPT_CONST_PROPAGATE, ast_optimize
 from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.libs.numba.llvm_ir import get_llvm_ir
@@ -591,6 +592,7 @@ class ColumnScan(UnaryRDD):
             column_values.append({
                 'type': 'array',
                 'data': data,
+                'ref_counter': 0,
                 'outer_shape': [num_elements],
                 'offsets': [0],
                 'shape': [num_elements],
@@ -657,10 +659,17 @@ class CollectionSource(UnaryRDD):
         data = values.__array_interface__['data'][0]
         data = int(ffi.cast("uintptr_t", ffi.cast("void*", data)))
         outer_shape = values.shape
+
+        ref_counter = 0
+        if isinstance(values, NumpyResult):
+            jitq_tuple = json.loads(values.handle.string)
+            ref_counter = jitq_tuple[0]['fields'][0]['ref_counter']
+
         input_value = {
             'type': 'tuple',
             'fields': [{'type': 'array',
                         'data': data,
+                        'ref_counter': ref_counter,
                         'outer_shape': outer_shape,
                         'offsets': [0] * len(outer_shape),
                         'shape': outer_shape}],

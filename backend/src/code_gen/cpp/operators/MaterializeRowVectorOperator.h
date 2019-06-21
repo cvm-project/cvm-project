@@ -6,6 +6,8 @@
 
 #include "Optional.h"
 #include "Utils.h"
+#include "runtime/memory/free_ref_counter.hpp"
+#include "runtime/memory/shared_pointer.hpp"
 
 template <typename T, typename U>
 auto constexpr max(T x, U y) ->
@@ -49,7 +51,11 @@ public:
                 result_ptr, sizeof(InnerTuple) * max(size_t(1), result_size)));
 
         upstream_->close();
-        return OuterTuple{result_ptr, result_size, 0, result_size};
+        return OuterTuple{
+                runtime::memory::SharedPointer<InnerTuple>(
+                        new runtime::memory::FreeRefCounter<InnerTuple>(
+                                result_ptr, result_size)),
+                result_size, 0, result_size};
     }
 
     INLINE void close() {}

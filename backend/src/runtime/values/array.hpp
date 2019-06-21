@@ -4,13 +4,14 @@
 #include <cstdint>
 #include <vector>
 
+#include "runtime/memory/shared_pointer.hpp"
 #include "value.hpp"
 
 namespace runtime {
 namespace values {
 
 struct Array : public Value {
-    void *data{};
+    memory::SharedPointer<char> data;
     std::vector<std::size_t> outer_shape;
     std::vector<std::size_t> offsets;
     std::vector<std::size_t> shape;

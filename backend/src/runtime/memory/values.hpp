@@ -8,8 +8,11 @@
 namespace runtime {
 namespace memory {
 
-void FreeValues(const std::string &values);
-void FreeValues(const values::VectorOfValues &values);
+void Decrement(const std::string &values);
+void Decrement(const values::VectorOfValues &values);
+
+void Increment(const std::string &values);
+void Increment(const values::VectorOfValues &values);
 
 }  // namespace memory
 }  // namespace runtime

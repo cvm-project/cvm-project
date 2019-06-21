@@ -73,7 +73,11 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
             source_file << "#include " << incl << std::endl;
         }
 
-        source_file << "using namespace runtime::values;" << std::endl;
+        source_file <<  //
+                "using namespace runtime::values;"
+                "using runtime::memory::RefCounter;"
+                "using runtime::memory::SharedPointer;"
+                    << std::endl;
 
         source_file << declarations.str();
         source_file << definitions.str();
@@ -193,7 +197,7 @@ std::string ComputeStructToValue(std::ostream &output, Context *const context,
         std::string operator()(const dag::type::Array * /*type*/) const {
             const auto temp_var_name = context_->GenerateSymbolName("val");
             output_ << format("std::unique_ptr<Array> %2%(new Array());"
-                              "%2%->data = %1%.data;"
+                              "%2%->data = %1%.data.as<char>();"
                               "%2%->outer_shape = {%1%.outer_shape[0]};"
                               "%2%->offsets = {%1%.offsets[0]};"
                               "%2%->shape = {%1%.shape[0]};") %
@@ -239,7 +243,7 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
             const auto inner_typedef =
                     context_->tuple_type_descs().at(inner_type).get();
 
-            return (format("{reinterpret_cast<%2%*>(%1%->as<Array>()->data),"
+            return (format("{%1%->as<Array>()->data.as<%2%>(),"
                            " %1%->as<Array>()->outer_shape[0],"
                            " %1%->as<Array>()->offsets[0],"
                            " %1%->as<Array>()->shape[0]}") %
@@ -334,6 +338,7 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
 
     // Includes needed for generate_values
     context->includes().emplace("\"Optional.h\"");
+    context->includes().emplace("\"runtime/memory/shared_pointer.hpp\"");
     context->includes().emplace("\"runtime/values/array.hpp\"");
     context->includes().emplace("\"runtime/values/atomics.hpp\"");
     context->includes().emplace("\"runtime/values/json_parsing.hpp\"");
@@ -612,7 +617,8 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
                     boost::str(format("offsets [%s]") % field->num_dimensions));
             names.emplace_back(
                     boost::str(format("shape [%s]") % field->num_dimensions));
-            types.emplace_back(boost::str(format("%s*") % item_desc->name));
+            types.emplace_back(
+                    boost::str(format("SharedPointer<%s>") % item_desc->name));
             types.emplace_back("size_t");
             types.emplace_back("size_t");
             types.emplace_back("size_t");

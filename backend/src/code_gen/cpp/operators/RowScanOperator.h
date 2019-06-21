@@ -9,6 +9,7 @@
 
 #include "Optional.h"
 #include "Utils.h"
+#include "runtime/memory/shared_pointer.hpp"
 
 template <class Tuple, bool kAddIndex, class Upstream>
 class RowScanOperator {
@@ -25,7 +26,7 @@ public:
         upstream_->open();
         current_index_ = 0;
         last_index_ = 0;
-        values_ = nullptr;
+        values_ = InputDataPtr(nullptr);
     }
 
     INLINE Optional<Tuple> next() {
@@ -33,9 +34,6 @@ public:
             const auto ret = upstream_->next();
             if (!ret) return {};
 
-            // XXX: This is currently a memory leak! We need a clear way to
-            //      manage memory that releases allocated memory as soon as it
-            //      is not used
             const auto input = ret.value().v0;
             current_index_ = input.offsets[0];
             last_index_ = current_index_ + input.shape[0];
@@ -53,7 +51,7 @@ private:
     Upstream *const upstream_;
     size_t current_index_;
     size_t last_index_;
-    InputInnerTuple *values_;
+    InputDataPtr values_;
 
     INLINE Tuple BuildResultTuple() {
         auto const input_tuple = values_[current_index_];

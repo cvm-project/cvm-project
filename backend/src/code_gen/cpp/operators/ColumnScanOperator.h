@@ -8,11 +8,12 @@
 
 #include "Optional.h"
 #include "Utils.h"
+#include "runtime/memory/shared_pointer.hpp"
 
 template <class Tuple, bool kAddIndex, class Upstream, class... InputTypes>
 class ColumnScanOperator {
 public:
-    using Columns = std::tuple<const InputTypes *...>;
+    using Columns = std::tuple<runtime::memory::SharedPointer<InputTypes>...>;
     using UnindexedOutputStdTuple =
             std::tuple<decltype(std::declval<InputTypes>().v0)...>;
     using IndexSequence =
@@ -76,9 +77,6 @@ public:
             const auto ret = upstream_->next();
             if (!ret) return {};
 
-            // XXX: This is currently a memory leak! We need a clear way to
-            //      manage memory that releases allocated memory as soon as it
-            //      is not used
             auto const input_tuple = TupleToStdTuple(ret.value());
 
             const auto num_elements = std::get<0>(input_tuple).shape[0];

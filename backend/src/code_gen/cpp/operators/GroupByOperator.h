@@ -6,6 +6,8 @@
 
 #include "Optional.h"
 #include "Utils.h"
+#include "runtime/memory/free_ref_counter.hpp"
+#include "runtime/memory/shared_pointer.hpp"
 
 template <class Upstream, class Tuple>
 class GroupByOperator {
@@ -42,12 +44,16 @@ public:
         output.v1.offsets[0] = 0;
         output.v1.outer_shape[0] = result_data.size();
         output.v1.shape[0] = output.v1.outer_shape[0];
-        output.v1.data = reinterpret_cast<InnerTuple *>(
-                malloc(sizeof(InnerTuple) * output.v1.outer_shape[0]));
-        assert(output.v1.outer_shape[0] == 0 || output.v1.data != nullptr);
+        output.v1.data = runtime::memory::SharedPointer<InnerTuple>(
+                new runtime::memory::FreeRefCounter<InnerTuple>(
+                        malloc(sizeof(InnerTuple) * output.v1.outer_shape[0]),
+                        output.v1.outer_shape[0]));
+        assert(output.v1.outer_shape[0] == 0 ||
+               output.v1.data.get() != nullptr);
 
         for (size_t i = 0; i < result_data.size(); i++) {
-            new (output.v1.data + i) InnerTuple(std::move(result_data[i]));
+            new (output.v1.data.get() + i)
+                    InnerTuple(std::move(result_data[i]));
         }
 
         current_output_it_++;
