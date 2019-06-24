@@ -12,19 +12,14 @@
 template <class Tuple, bool kAddIndex, class Upstream, class... InputTypes>
 class ColumnScanOperator {
 public:
-    typedef std::tuple<const InputTypes *...> Columns;
-    typedef std::tuple<decltype(std::declval<InputTypes>().v0)...>
-            UnindexedOutputStdTuple;
-    typedef std::make_index_sequence<std::tuple_size<Columns>::value>
-            IndexSequence;
+    using Columns = std::tuple<const InputTypes *...>;
+    using UnindexedOutputStdTuple =
+            std::tuple<decltype(std::declval<InputTypes>().v0)...>;
+    using IndexSequence =
+            std::make_index_sequence<std::tuple_size<Columns>::value>;
 
 private:
-    template <std::size_t... I>
-    void ResetColumnsImpl(std::index_sequence<I...>) {
-        ((std::get<I>(columns_) = nullptr), ...);
-    }
-
-    void ResetColumns() { ResetColumnsImpl(IndexSequence()); }
+    void ResetColumns() { columns_ = decltype(columns_)(); }
 
     template <class InputStdTuple, std::size_t... I>
     auto static MakeColumnsImpl(const InputStdTuple &input_tuple,
