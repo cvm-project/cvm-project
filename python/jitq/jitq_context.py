@@ -6,7 +6,7 @@ import jsonmerge
 from pandas import DataFrame
 
 from jitq.rdd import RowScan, GeneratorSource, Range, \
-    ColumnScan
+    ColumnScan, ParquetScan, ExpandPattern
 from jitq.utils import get_project_path
 
 
@@ -46,3 +46,15 @@ class JitqContext:
 
     def generator(self, func):
         return GeneratorSource(self, func)
+
+    def read_parquet(self, filename_or_pattern, columns, pattern_range=(0, 1)):
+        return ColumnScan(
+            self,
+            ParquetScan(
+                self,
+                ExpandPattern(self, filename_or_pattern, pattern_range),
+                columns=columns,
+                filesystem='file',
+            ),
+            False
+        )

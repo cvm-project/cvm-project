@@ -757,3 +757,45 @@ class GeneratorSource(SourceRDD):
 
     def self_write_dag(self, dic):
         dic['func'] = self.llvm_ir
+
+
+class ExpandPattern(BinaryRDD):
+    NAME = 'expand_pattern'
+
+    def __init__(self, context, filename_or_pattern, pattern_range):
+        input_value = {
+            'type': 'tuple',
+            'fields': [{'type': 'std::string', 'value': filename_or_pattern}],
+        }
+        parent1 = ParameterLookup(context, types.string, input_value)
+        parent2 = Range(context, pattern_range[0], pattern_range[1], 1)
+        super(ExpandPattern, self).__init__(context, [parent1, parent2])
+        self.output_type = types.string
+
+    def self_write_dag(self, dic):
+        dic["output_type"] = self.output_type
+
+
+class ParquetScan(UnaryRDD):
+    NAME = 'parquet_scan'
+
+    def __init__(self, context, parent, columns, filesystem):
+        super(ParquetScan, self).__init__(context, parent)
+        self.columns = []
+        column_types = []
+        for col in columns:
+            ranges = []
+            if len(col) == 3:
+                ranges = [{'lo': str(lo), 'hi': str(hi)} for lo, hi in col[2]]
+            self.columns.append({'idx': col[0], 'ranges': ranges})
+            column_types.append(types.Array(col[1], 1, "C"))
+        self.output_type = make_tuple(column_types)
+        self.filesystem = filesystem
+
+    def self_hash(self):
+        hash_values = [str(self.columns), self.filesystem]
+        return hash("#".join(hash_values))
+
+    def self_write_dag(self, dic):
+        dic['columns'] = self.columns
+        dic['filesystem'] = self.filesystem

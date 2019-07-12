@@ -12,6 +12,7 @@ class DAGCartesian;
 class DAGColumnScan;
 class DAGConstantTuple;
 class DAGEnsureSingleTuple;
+class DAGExpandPattern;
 class DAGFilter;
 class DAGGroupBy;
 class DAGJoin;
@@ -19,6 +20,7 @@ class DAGMap;
 class DAGMaterializeRowVector;
 class DAGParallelMap;
 class DAGParameterLookup;
+class DAGParquetScan;
 class DAGPartition;
 class DAGPipeline;
 class DAGProjection;
@@ -39,6 +41,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGColumnScan,                      //
         DAGConstantTuple,                   //
         DAGEnsureSingleTuple,               //
+        DAGExpandPattern,                   //
         DAGFilter,                          //
         DAGGroupBy,                         //
         DAGJoin,                            //
@@ -46,6 +49,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGMaterializeRowVector,            //
         DAGParallelMap,                     //
         DAGParameterLookup,                 //
+        DAGParquetScan,                     //
         DAGPartition,                       //
         DAGPipeline,                        //
         DAGProjection,                      //

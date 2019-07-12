@@ -145,6 +145,44 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return dag_->predecessor(op)->tuple->type;
         }
 
+        const Tuple *operator()(const DAGExpandPattern *const op) const {
+            auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
+            auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
+
+            if (left_input_type->field_types.size() != 1) {
+                throw std::invalid_argument(
+                        "Left ExpandPattern input must have one field");
+            }
+
+            if (right_input_type->field_types.size() != 1) {
+                throw std::invalid_argument(
+                        "Right ExpandPattern input must have one field");
+            }
+
+            auto const left_field_type =
+                    dynamic_cast<const dag::type::Atomic *>(
+                            left_input_type->field_types[0]);
+            auto const right_field_type =
+                    dynamic_cast<const dag::type::Atomic *>(
+                            right_input_type->field_types[0]);
+
+            if (left_field_type == nullptr ||
+                left_field_type->type != "std::string") {
+                throw std::invalid_argument(
+                        "Pattern input (left) of ExpandPattern must be a "
+                        "string");
+            }
+
+            if (right_field_type == nullptr ||
+                right_field_type->type != "long") {
+                throw std::invalid_argument(
+                        "Parameter input (right) of ExpandPattern must be a "
+                        "long");
+            }
+
+            return Tuple::MakeTuple({Atomic::MakeAtomic("std::string")});
+        }
+
         const Tuple *operator()(const DAGJoin *const op) const {
             auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
             auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
@@ -200,6 +238,10 @@ const Tuple *ComputeOutputType(const DAG *const dag,
         }
 
         const Tuple *operator()(const DAGParameterLookup *const op) const {
+            return op->tuple->type;
+        }
+
+        const Tuple *operator()(const DAGParquetScan *const op) const {
             return op->tuple->type;
         }
 

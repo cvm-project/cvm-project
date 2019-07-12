@@ -40,8 +40,11 @@ pip3 install -r requirements.txt
 ```bash
 sudo apt install build-essential \
         libtinfo-dev \
+        bison \
+        flex \
         gcc-7 \
         g++-7 \
+        pkg-config \
         wget \
         xz-utils
 ```
@@ -153,6 +156,64 @@ PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.'
 sudo ./bjam install
 ```
 
+9. Apache Arrow
+
+(Note: The patch fixes a problem mentioned [here](https://issues.apache.org/jira/browse/ARROW-5960). Maybe it will be addressed in a future verison.)
+
+```bash
+mkdir -p /tmp/arrow && \
+cd /tmp/arrow && \
+wget https://github.com/apache/arrow/archive/apache-arrow-0.14.0.tar.gz -O - \
+    | tar -xz --strip-components=1 && \
+{ patch -p1  <<\ENDOFMESSAGE
+    diff -pur a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
+    --- a/cpp/CMakeLists.txt   2019-06-29 00:26:37.000000000 +0200
+    +++ b/cpp/CMakeLists.txt    2019-07-16 16:36:03.980153919 +0200
+    @@ -642,8 +642,8 @@ if(ARROW_STATIC_LINK_LIBS)
+       add_dependencies(arrow_dependencies ${ARROW_STATIC_LINK_LIBS})
+     endif()
+    
+    -set(ARROW_SHARED_PRIVATE_LINK_LIBS ${ARROW_STATIC_LINK_LIBS} ${BOOST_SYSTEM_LIBRARY}
+    -                                   ${BOOST_FILESYSTEM_LIBRARY} ${BOOST_REGEX_LIBRARY})
+    +set(ARROW_SHARED_PRIVATE_LINK_LIBS ${ARROW_STATIC_LINK_LIBS} ${BOOST_FILESYSTEM_LIBRARY}
+    +                                   ${BOOST_SYSTEM_LIBRARY} ${BOOST_REGEX_LIBRARY})
+    
+     list(APPEND ARROW_STATIC_LINK_LIBS ${BOOST_SYSTEM_LIBRARY} ${BOOST_FILESYSTEM_LIBRARY}
+                 ${BOOST_REGEX_LIBRARY})
+ENDOFMESSAGE
+} && \
+pip3 install -r /tmp/arrow/python/requirements-build.txt && \
+mkdir -p /tmp/arrow/cpp/build && \
+cd /tmp/arrow/cpp/build && \
+CXX=clang++-7.0 CC=clang-7.0 \
+    cmake \
+        -DCMAKE_CXX_STANDARD=17 \
+        -DCMAKE_INSTALL_PREFIX=/tmp/arrow/dist \
+        -DCMAKE_INSTALL_LIBDIR=lib \
+        -DARROW_WITH_RAPIDJSON=ON \
+        -DARROW_PARQUET=ON \
+        -DARROW_PYTHON=ON \
+        -DARROW_FLIGHT=OFF \
+        -DARROW_GANDIVA=OFF \
+        -DARROW_BUILD_UTILITIES=OFF \
+        -DARROW_CUDA=OFF \
+        -DARROW_ORC=OFF \
+        -DARROW_JNI=OFF \
+        -DARROW_TENSORFLOW=OFF \
+        -DARROW_HDFS=OFF \
+        -DARROW_BUILD_TESTS=OFF \
+        -DARROW_RPATH_ORIGIN=ON \
+        .. && \
+make install && \
+cd /tmp/arrow/python && \
+PYARROW_WITH_PARQUET=1 ARROW_HOME=/tmp/arrow/dist \
+    python3 setup.py build_ext --bundle-arrow-cpp bdist_wheel && \
+sudo mkdir -p /opt/arrow-0.14/share && \
+sudo cp /tmp/arrow/python/dist/*.whl /opt/arrow-*/share &&\
+sudo cp -r /tmp/arrow/dist/* /opt/arrow-*/ && \
+pip3 install /opt/arrow-*/share/*.whl
+```
+
 ## Development
 
 0. Setup build:
@@ -161,7 +222,7 @@ Configure CMake:
 
 ```bash
 cd jitq/backend/build
-CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm -DBOOSTROOT=/opt/boost-1.69.0
+CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm -DBOOSTROOT=/opt/boost-1.69.0 -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
 ```
 
 Configure JIT compilation:

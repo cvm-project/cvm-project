@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
 
+import os.path
 import unittest
 from itertools import groupby
+from io import StringIO
 from functools import reduce
 from operator import itemgetter
-from numpy.testing import assert_array_equal
+
 import numpy as np
+from numpy.testing import assert_array_equal
+import numba
 import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 from jitq.jitq_context import JitqContext
+from jitq.utils import get_project_path
 
 
 class TestCaseBase(unittest.TestCase):
@@ -221,6 +228,86 @@ class TestRange(TestCaseBase):
             .cartesian(self.context.range_(0, 10)) \
             .count()
         self.assertEqual(res, 100)
+
+
+class TestParquet(TestCaseBase):
+    DATA = """
+        a;b;i32;i64;f;d
+        1;1;1;1;1;1
+        1;2;2;2;2;2
+        1;3;3;3;3;3
+        2;1;4;4;4;4
+        2;2;5;5;5;5
+        2;3;6;6;6;6
+        """
+    TMPDIR = os.path.join(get_project_path(), 'tmp')
+
+    def setUp(self):
+        super(TestParquet, self).setUp()
+        data = StringIO(self.DATA)
+        df = pd.read_csv(data, sep=';',
+                         index_col=False,
+                         skipinitialspace=True,
+                         dtype={'i32': 'int32',
+                                'f': 'float32',
+                                'd': 'float64'})
+        table = pa.Table.from_pandas(df)
+
+        os.makedirs(self.TMPDIR, exist_ok=True)
+        for i in range(3):
+            file_path = os.path.join(self.TMPDIR,
+                                     'test-{:05d}.parquet'.format(i))
+            pq.write_table(table, file_path, row_group_size=2)
+
+    def tearDown(self):
+        for i in range(3):
+            file_path = os.path.join(self.TMPDIR,
+                                     'test-{:05d}.parquet'.format(i))
+            os.remove(file_path)
+
+    def test_single_file(self):
+        file_path = os.path.join(self.TMPDIR, 'test-00000.parquet')
+        cols = [(0, numba.int64), (1, numba.int64)]
+
+        res = self.context \
+                  .read_parquet(file_path, cols) \
+                  .collect()
+        truth = [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3)]
+        self.assertListEqual(list(res.astuples()), truth)
+
+    def test_multiple_files(self):
+        file_pattern = os.path.join(self.TMPDIR, 'test-%1$05d.parquet')
+        cols = [(0, numba.int64), (1, numba.int64)]
+
+        res = self.context \
+                  .read_parquet(file_pattern, cols, (0, 3)) \
+                  .count()
+        self.assertEqual(res, 18)
+
+    def test_filter(self):
+        file_path = os.path.join(self.TMPDIR, 'test-00000.parquet')
+        cols = [(0, numba.int64, [(1, 1)]),
+                (4, numba.float32, [(3.0, 6.0)])]
+
+        res = self.context \
+                  .read_parquet(file_path, cols) \
+                  .collect()
+        truth = [(1, 3.0), (2, 4.0)]
+        self.assertListEqual(list(res.astuples()), truth)
+
+    def test_types(self):
+        file_pattern = os.path.join(self.TMPDIR, 'test-%1$05d.parquet')
+        cols = [
+            (2, numba.int32),
+            (3, numba.int64),
+            (4, numba.float32),
+            (5, numba.float64),
+        ]
+
+        res = self.context \
+                  .read_parquet(file_pattern, cols) \
+                  .count()
+        self.assertEqual(res, 6)
 
 
 class TestJoin(TestCaseBase):

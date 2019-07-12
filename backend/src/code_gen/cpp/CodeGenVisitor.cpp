@@ -8,6 +8,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/format.hpp>
 #include <boost/mpl/list.hpp>
+#include <boost/range/adaptor/transformed.hpp>
 
 #include "code_gen.hpp"
 #include "dag/DAGOperators.h"
@@ -162,6 +163,13 @@ void CodeGenVisitor::operator()(DAGEnsureSingleTuple *op) {
     emitOperatorMake(var_name, "EnsureSingleTupleOperator", op, {}, {});
 };
 
+void CodeGenVisitor::operator()(DAGExpandPattern *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ExpandPatternOperator");
+
+    emitOperatorMake(var_name, "ExpandPatternOperator", op, {}, {});
+}
+
 void CodeGenVisitor::operator()(DAGFilter *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "FilterOperator");
@@ -218,6 +226,58 @@ void CodeGenVisitor::operator()(DAGParallelMap *op) {
 
     emitOperatorMake(var_name, "ParallelMapOperator", op, {},
                      {inner_plan.name});
+}
+
+void CodeGenVisitor::operator()(DAGParquetScan *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ParquetScanOperator");
+
+    GenerateValueToTuple(context_, op->tuple->type);
+
+    const auto &column_types = op->tuple->type->field_types;
+    const auto &range_filters = op->column_range_filters;
+    assert(range_filters.size() == column_types.size());
+    assert(range_filters.size() == op->column_indexes.size());
+
+    std::vector<std::string> predicates;
+    std::vector<std::string> column_type_names;
+    std::vector<std::string> column_ids;
+
+    for (size_t i = 0; i < range_filters.size(); i++) {
+        auto const &ranges = range_filters[i];
+        auto const column_type =
+                dynamic_cast<const dag::type::Array *>(column_types[i]);
+        assert(column_type != nullptr);
+        auto const item_type = dynamic_cast<const dag::type::Atomic *>(
+                column_type->tuple_type->field_types.at(0));
+        assert(item_type != nullptr);
+        std::vector<std::string> column_predicates;
+        column_predicates.reserve(ranges.size());
+        for (auto const &r : ranges) {
+            column_predicates.push_back(
+                    (format("runtime::operators::MakeRangePredicate("
+                            "       static_cast<%1%>(%2%),"
+                            "       static_cast<%1%>(%3%))") %
+                     item_type->type % r.first % r.second)
+                            .str());
+        }
+        predicates.push_back(
+                (format("{%1%}") % join(column_predicates, ",")).str());
+        column_type_names.push_back("\"" + item_type->type + "\"");
+        column_ids.push_back(std::to_string(op->column_indexes[i]));
+    }
+
+    auto const predicates_expression =
+            (format("{%1%}") % join(predicates, ",")).str();
+    auto const column_types_expression =
+            (format("{%1%}") % join(column_type_names, ",")).str();
+    auto const column_ids_expression =
+            (format("{%1%}") % join(column_ids, ",")).str();
+    auto const filesystem = (format("\"%1%\"") % op->filesystem).str();
+
+    emitOperatorMake(var_name, "ParquetScanOperator", op, {},
+                     {predicates_expression, column_types_expression,
+                      column_ids_expression, filesystem});
 }
 
 void CodeGenVisitor::operator()(DAGSplitColumnData *const op) {

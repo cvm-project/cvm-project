@@ -116,6 +116,12 @@ set(GTEST_LIBRARIES
 
 include(GoogleTest)
 
+# Set up arrow
+find_package(arrow REQUIRED CONFIG)
+message(STATUS "Found arrow ${arrow_VERSION}")
+set(arrow_LIBRARY arrow_shared)
+set(parquet_LIBRARY parquet_shared)
+
 # Set up generate library
 set(GENERATE_SOURCE_FILES
         code_gen/cpp/code_gen.cpp
@@ -128,6 +134,7 @@ set(GENERATE_SOURCE_FILES
         dag/DAGCompiledPipeline.cpp
         dag/DAGOperator.cpp
         dag/DAGPipeline.cpp
+        dag/DAGParquetScan.cpp
         dag/DAGProjection.cpp
         dag/DAGRowScan.cpp
         dag/collection/field.cpp
@@ -179,8 +186,12 @@ target_link_libraries(jitq_backend PUBLIC
 # Set up runtime library
 set(RUNTIME_SOURCE_FILES
         runtime/execute_plan.cpp
+        runtime/filesystem/file.cpp
+        runtime/filesystem/filesystem.cpp
         runtime/memory/shared_pointer.cpp
         runtime/memory/values.cpp
+        runtime/operators/parquet_scan_impl.cpp
+        runtime/operators/expand_pattern.cpp
         runtime/values/json_parsing.cpp
         runtime/values/array_json.cpp
         runtime/values/tuple_json.cpp
@@ -188,6 +199,10 @@ set(RUNTIME_SOURCE_FILES
         runtime/values/value_parser.cpp
     )
 add_library(runtime SHARED ${RUNTIME_SOURCE_FILES} )
+target_link_libraries(runtime PUBLIC
+        ${arrow_LIBRARY}
+        ${parquet_LIBRARY}
+    )
 
 # Set up dummy dlclose library
 add_library(dlclose_noop SHARED tools/dlclose_noop.c)
