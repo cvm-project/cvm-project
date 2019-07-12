@@ -7,6 +7,8 @@ from io import StringIO
 from functools import reduce
 from operator import itemgetter
 
+import boto3
+import botocore
 import numpy as np
 from numpy.testing import assert_array_equal
 import numba
@@ -241,9 +243,11 @@ class TestParquet(TestCaseBase):
         2;3;6;6;6;6
         """
     TMPDIR = os.path.join(get_project_path(), 'tmp')
+    DATADIR = os.path.join(get_project_path(), 'tmp')
 
     def setUp(self):
         super(TestParquet, self).setUp()
+
         data = StringIO(self.DATA)
         df = pd.read_csv(data, sep=';',
                          index_col=False,
@@ -266,7 +270,7 @@ class TestParquet(TestCaseBase):
             os.remove(file_path)
 
     def test_single_file(self):
-        file_path = os.path.join(self.TMPDIR, 'test-00000.parquet')
+        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
         cols = [(0, numba.int64), (1, numba.int64)]
 
         res = self.context \
@@ -276,7 +280,7 @@ class TestParquet(TestCaseBase):
         self.assertListEqual(list(res.astuples()), truth)
 
     def test_multiple_files(self):
-        file_pattern = os.path.join(self.TMPDIR, 'test-%1$05d.parquet')
+        file_pattern = os.path.join(self.DATADIR, 'test-%1$05d.parquet')
         cols = [(0, numba.int64), (1, numba.int64)]
 
         res = self.context \
@@ -285,7 +289,7 @@ class TestParquet(TestCaseBase):
         self.assertEqual(res, 18)
 
     def test_filter(self):
-        file_path = os.path.join(self.TMPDIR, 'test-00000.parquet')
+        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
         cols = [(0, numba.int64, [(1, 1)]),
                 (4, numba.float32, [(3.0, 6.0)])]
 
@@ -296,7 +300,7 @@ class TestParquet(TestCaseBase):
         self.assertListEqual(list(res.astuples()), truth)
 
     def test_types(self):
-        file_pattern = os.path.join(self.TMPDIR, 'test-%1$05d.parquet')
+        file_pattern = os.path.join(self.DATADIR, 'test-%1$05d.parquet')
         cols = [
             (2, numba.int32),
             (3, numba.int64),
@@ -308,6 +312,53 @@ class TestParquet(TestCaseBase):
                   .read_parquet(file_pattern, cols) \
                   .count()
         self.assertEqual(res, 6)
+
+
+class TestParquetS3(TestParquet):
+    DATADIR = 's3://mybucket/'
+
+    def __init__(self, *args, **kwargs):
+        super(TestParquetS3, self).__init__(*args, **kwargs)
+
+        self.s3_bucket = 'mybucket'
+
+        s3_config = {
+            'use_ssl': False,
+            'verify': False,
+        }
+        if 'AWS_S3_ENDPOINT' in os.environ:
+            s3_config['endpoint_url'] = os.environ['AWS_S3_ENDPOINT']
+
+        self.s3_client = boto3.client('s3', **s3_config)
+
+    def setUp(self):
+        super(TestParquetS3, self).setUp()
+
+        try:
+            self.s3_client.create_bucket(
+                Bucket=self.s3_bucket,
+            )
+        except botocore.exceptions.ClientError as ex:
+            if ex.response['Error']['Code'] != 'BucketAlreadyOwnedByYou':
+                raise ex
+
+        for i in range(3):
+            file_name = 'test-{:05d}.parquet'.format(i)
+            self.s3_client.upload_file(
+                Filename=os.path.join(self.TMPDIR, file_name),
+                Bucket=self.s3_bucket,
+                Key=file_name,
+            )
+
+    def tearDown(self):
+        super(TestParquetS3, self).tearDown()
+
+        for i in range(3):
+            file_name = 'test-{:05d}.parquet'.format(i)
+            self.s3_client.delete_objects(
+                Bucket=self.s3_bucket,
+                Delete={'Objects': [{'Key': file_name}]},
+            )
 
 
 class TestJoin(TestCaseBase):

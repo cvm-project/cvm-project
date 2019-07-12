@@ -82,6 +82,32 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 add_compile_definitions("BOOST_MPL_LIMIT_LIST_SIZE=30")
 add_compile_definitions("BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS")
 
+# Set up skyr URL library
+ExternalProject_Add(Skyr
+        URL             "https://github.com/cpp-netlib/url/archive/v1.1.tar.gz"
+        PREFIX          "${CMAKE_BINARY_DIR}/skyr-url"
+        TEST_COMMAND    ""
+        CMAKE_ARGS      "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER};"
+                        "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER};"
+                        "-DCMAKE_CXX_FLAGS=-fPIC;"
+                        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/skyr-url;"
+                        "-DSkyr_BUILD_TESTS=OFF;"
+                        "-DSkyr_DISABLE_LIBCXX=ON;"
+                        "-DSkyr_BUILD_FILESYSTEM_PATH_FUNCTIONS=OFF"
+    )
+ExternalProject_Get_Property(Skyr INSTALL_DIR)
+set(Skyr_INSTALL_DIR ${INSTALL_DIR})
+
+set(Skyr_INCLUDE_DIR "${Skyr_INSTALL_DIR}/include")
+include_directories(SYSTEM ${Skyr_INCLUDE_DIR})
+
+set(Skyr_LIBRARY skyr-url)
+set(Skyr_LIBRARY_PATH "${Skyr_INSTALL_DIR}/lib/libskyr-url.a")
+add_library(${Skyr_LIBRARY} UNKNOWN IMPORTED)
+set_property(TARGET ${Skyr_LIBRARY} PROPERTY IMPORTED_LOCATION
+    ${Skyr_LIBRARY_PATH} )
+add_dependencies(${Skyr_LIBRARY} Skyr)
+
 # Set up google unit test framework
 ExternalProject_Add(googletest
         SOURCE_DIR      "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/googletest"
@@ -121,6 +147,11 @@ find_package(arrow REQUIRED CONFIG)
 message(STATUS "Found arrow ${arrow_VERSION}")
 set(arrow_LIBRARY arrow_shared)
 set(parquet_LIBRARY parquet_shared)
+
+# Set up AWS SDK
+find_package(AWSSDK CONFIG COMPONENTS
+        s3
+    )
 
 # Set up generate library
 set(GENERATE_SOURCE_FILES
@@ -198,8 +229,17 @@ set(RUNTIME_SOURCE_FILES
         runtime/values/value_json.cpp
         runtime/values/value_parser.cpp
     )
+if(AWSSDK_FOUND)
+    set(RUNTIME_SOURCE_FILES ${RUNTIME_SOURCE_FILES}
+            runtime/aws/aws.cpp
+            runtime/aws/s3.cpp
+            runtime/filesystem/s3.cpp
+        )
+endif()
 add_library(runtime SHARED ${RUNTIME_SOURCE_FILES} )
 target_link_libraries(runtime PUBLIC
+        ${Skyr_LIBRARY}
+        ${AWSSDK_LINK_LIBRARIES}
         ${arrow_LIBRARY}
         ${parquet_LIBRARY}
     )

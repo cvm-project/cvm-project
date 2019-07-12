@@ -1,5 +1,13 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  MINIO_ACCESS_KEY: 'xxx'
+  MINIO_SECRET_KEY: 'xxxxxxxx'
+  MINIO_HTTP_TRACE: '/dev/stdout'
+
+services:
+  - name: minio/minio:RELEASE.2019-06-01T03-46-14Z
+    command: ["server", "/data"]
+    alias: s3server
 
 format-cpp:
   stage: build
@@ -11,6 +19,12 @@ format-cpp:
         cmake ../src
         -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
         -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
+        -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
+        -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
+        -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
+        -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
+        -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
+        -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
     - make check-format
 
 format-python:
@@ -34,6 +48,12 @@ rel-build:
         cmake ../src
         -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
         -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
+        -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
+        -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
+        -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
+        -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
+        -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
+        -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
     - make
   artifacts:
     paths:
@@ -54,6 +74,12 @@ dbg-build:
         -DLLVM_ASAN=ON
         -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
         -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
+        -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
+        -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
+        -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
+        -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
+        -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
+        -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
     - make
   artifacts:
     paths:
@@ -99,6 +125,9 @@ python-tests-parallel:
     - pip3 install -r requirements.txt
     - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/code_gen/cpp/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
+    - export AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY
+    - export AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
+    - export AWS_S3_ENDPOINT=http://s3server:9000
   script:
     - /usr/bin/time -v catchsegv tools/run_with_asan.sh python3 -u python/jitq/tests/test_cpp_backend_parallel.py -v
 
@@ -123,6 +152,9 @@ python-tests-asan:
     - pip3 install -r requirements.txt
     - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/code_gen/cpp/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
+    - export AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY
+    - export AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
+    - export AWS_S3_ENDPOINT=http://s3server:9000
   script:
     - cd python
     - /usr/bin/time -v catchsegv ../tools/run_with_asan.sh python3 -u -m unittest discover -v -s jitq/tests

@@ -1,4 +1,6 @@
 autopep8
+boto3
+botocore
 cffi
 dask
 jsonmerge

@@ -214,6 +214,45 @@ sudo cp -r /tmp/arrow/dist/* /opt/arrow-*/ && \
 pip3 install /opt/arrow-*/share/*.whl
 ```
 
+### AWS SDK (optional)
+
+```bash
+mkdir -p /tmp/aws-sdk-cpp && \
+cd /tmp/aws-sdk-cpp && \
+wget https://github.com/aws/aws-sdk-cpp/archive/1.7.138.tar.gz -O - \
+    | tar -xz --strip-components=1 && \
+mkdir -p /tmp/aws-sdk-cpp/build && \
+cd /tmp/aws-sdk-cpp/build && \
+CXX=clang++-7.0 CC=clang-7.0 \
+    sudo cmake \
+        -DBUILD_ONLY="dynamodb;lambda;s3;sqs" \
+        -DCMAKE_BUILD_TYPE=Debug \
+        -DCPP_STANDARD=17 \
+        -DENABLE_TESTING=OFF \
+        -DCUSTOM_MEMORY_MANAGEMENT=OFF \
+        -DCMAKE_INSTALL_PREFIX=/opt/aws-sdk-cpp-1.7/ \
+        -DAWS_DEPS_INSTALL_DIR:STRING=/opt/aws-sdk-cpp-1.7/ \
+        .. && \
+sudo make install && \
+rm -rf /tmp/aws-sdk-cpp
+```
+
+Save the following variable for configuring JITQ's cmake below.
+
+```bash
+read -r -d '' CMAKE_ARGS_AWSSDK <<- EOM
+    -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
+    -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
+    -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
+    -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
+    -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
+    -Daws-cpp-sdk-dynamodb_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-dynamodb
+    -Daws-cpp-sdk-lambda_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-lambda
+    -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
+    -Daws-cpp-sdk-sqs_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-sqs
+EOM
+```
+
 ## Development
 
 0. Setup build:
@@ -222,7 +261,11 @@ Configure CMake:
 
 ```bash
 cd jitq/backend/build
-CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm -DBOOSTROOT=/opt/boost-1.69.0 -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
+CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ \
+    -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm \
+    -DBOOSTROOT=/opt/boost-1.69.0 \
+    -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow \
+    ${CMAKE_ARGS_AWSSDK}
 ```
 
 Configure JIT compilation:
@@ -253,6 +296,30 @@ python3 -m unittest discover -v -s python/jitq/tests
 cd backend/build
 make test
 (cd ../../python/jitq/tests/ && python3 -m unittest discover -v)
+```
+
+4. Run unittest that need AWS infrastructure (optional):
+
+Install [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/).
+In a new terminal, run:
+
+```bash
+cd $JITQPATH/tools/aws
+docker-compose up
+```
+
+In your usual terminal, set up the credentials of the test infrastructure:
+
+```bash
+export AWS_ACCESS_KEY_ID=xxx
+export AWS_SECRET_ACCESS_KEY=xxxxxxxx
+export AWS_S3_ENDPOINT=http://localhost:9000
+```
+
+Run the tests that need AWS, for example:
+
+```bash
+$JITQPATH/python/jitq/tests/test_cpp_backend.py -v TestParquetS3
 ```
 
 ## Compile and run with sanitizers

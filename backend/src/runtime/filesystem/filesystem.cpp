@@ -5,6 +5,10 @@
 #include "file.hpp"
 #include "utils/registry.hpp"
 
+#ifdef AWS_SDK_VERSION_MAJOR
+#include "s3.hpp"
+#endif
+
 namespace runtime {
 namespace filesystem {
 
@@ -36,6 +40,9 @@ void LoadFilesystemFactories() {
     if (has_loaded) return;
 
     DefaultRegister<LocalFileSystem>::Register("file");
+#ifdef AWS_SDK_VERSION_MAJOR
+    DefaultRegister<S3FileSystem>::Register("s3");
+#endif
 
     has_loaded = true;
 }

@@ -1,5 +1,6 @@
 import json
 import os
+from urllib.parse import urlparse
 
 import jsonmerge
 
@@ -48,13 +49,20 @@ class JitqContext:
         return GeneratorSource(self, func)
 
     def read_parquet(self, filename_or_pattern, columns, pattern_range=(0, 1)):
+        filesystem = 'file'
+        try:
+            url = urlparse(filename_or_pattern)
+            if url.scheme == 's3':
+                filesystem = 's3'
+        except BaseException:
+            pass
         return ColumnScan(
             self,
             ParquetScan(
                 self,
                 ExpandPattern(self, filename_or_pattern, pattern_range),
                 columns=columns,
-                filesystem='file',
+                filesystem=filesystem,
             ),
             False
         )
