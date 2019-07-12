@@ -5,7 +5,7 @@ import jsonmerge
 
 from pandas import DataFrame
 
-from jitq.rdd import CollectionSource, GeneratorSource, Range, \
+from jitq.rdd import RowScan, GeneratorSource, Range, \
     ColumnScan
 from jitq.utils import get_project_path
 
@@ -35,8 +35,11 @@ class JitqContext:
 
     def collection(self, values, add_index=False):
         if isinstance(values, DataFrame):
-            return ColumnScan(self, values, add_index)
-        return CollectionSource(self, values, add_index)
+            parent, field_names = \
+                ColumnScan.make_parent_from_values(self, values)
+            return ColumnScan(self, parent, add_index, field_names)
+        parent = RowScan.make_parent_from_values(self, values)
+        return RowScan(self, parent, add_index)
 
     def range_(self, from_, to, step=1):
         return Range(self, from_, to, step)

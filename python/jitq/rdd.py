@@ -522,11 +522,12 @@ class ConstantTuple(SourceRDD):
 class ParameterLookup(SourceRDD):
     NAME = 'parameter_lookup'
 
-    def __init__(self, context, output_type, value):
+    def __init__(self, context, output_type, value, data=None):
         super(ParameterLookup, self).__init__(context)
 
         self.output_type = output_type
         self.input_value = value
+        self.data = data  # Handle to prevent GC if needed
 
     def self_hash(self):
         hash_objects = [str(self.output_type)]
@@ -575,12 +576,20 @@ class ColumnScan(UnaryRDD):
     NAME = 'column_scan'
 
     @staticmethod
-    def _make_parent(context, values):
+    def make_parent_from_values(context, values):
+        # pylint: disable=len-as-condition
+        # values could also be a numpy array
+        assert len(values) > 0, "Empty collection not allowed"
+        assert isinstance(values, DataFrame), \
+            "ColumnScan only supports DataFrames currently."
+
         # Construct output type
-        fields = []
+        field_types = []
+        field_names = []
         for name, dtype in values.dtypes.iteritems():
-            fields.append(types.Array(numba.from_dtype(dtype), 1, "C"))
-        output_type = make_tuple(fields)
+            field_types.append(types.Array(numba.from_dtype(dtype), 1, "C"))
+            field_names.append(name)
+        output_type = make_tuple(field_types)
 
         # Construct input parameter
         column_values = []
@@ -602,26 +611,30 @@ class ColumnScan(UnaryRDD):
             'fields': column_values,
         }
 
-        return ParameterLookup(context, output_type, input_value)
+        parent = ParameterLookup(context, output_type, input_value, values)
 
-    def __init__(self, context, values, add_index):
-        # pylint: disable=len-as-condition
-        # values could also be a numpy array
-        assert len(values) > 0, "Empty collection not allowed"
-        assert isinstance(values, DataFrame), \
-            "ColumnScan only supports DataFrames currently."
+        return (parent, field_names)
 
-        # Construct parameter lookup as parent
-        super(ColumnScan, self).__init__(
-            context, self._make_parent(context, values))
+    def __init__(self, context, parent, add_index, column_names=None):
+        super(ColumnScan, self).__init__(context, parent)
 
-        # Store data frame to prevent GC
-        self.data = values
-
-        # Store operator info
-        fields = [(name, dtype) for name, dtype in values.dtypes.iteritems()]
-        self.output_type = numba.from_dtype(np.dtype(fields))
         self.add_index = add_index
+
+        field_types = []
+        for field_type in parent.output_type.types:
+            assert isinstance(field_type, types.Array)
+            field_types.append(field_type.dtype)
+
+        # Add names if provided
+        if column_names:
+            assert len(field_types) == len(column_names)
+            field_dtypes = [numba_type_to_dtype(t) for t in field_types]
+            fields = list(zip(column_names, field_dtypes))
+            self.output_type = numba.from_dtype(np.dtype(fields))
+        else:
+            self.output_type = make_tuple(field_types)
+
+        self.output_type = replace_unituple(self.output_type)
 
         # Update output type with field for index, if added
         if add_index:
@@ -635,26 +648,35 @@ class ColumnScan(UnaryRDD):
         dic['add_index'] = self.add_index
 
 
-class CollectionSource(UnaryRDD):
-    """
-    accepts any python collections, numpy arrays or pandas dataframes
-
-    passed python collection will be copied into a numpy array
-    a reference to the array is stored in this instance
-    to prevent freeing the input memory before the end of computation
-    """
-
+class RowScan(UnaryRDD):
     NAME = 'row_scan'
 
     @staticmethod
-    def _make_parent(context, values):
+    def make_parent_from_values(context, values):
+        # pylint: disable=len-as-condition
+        # values could also be a numpy array
+        assert len(values) > 0, "Empty collection not allowed"
+
+        # Convert values to Numpy array
+        item_type = None
+        if not isinstance(values, np.ndarray):
+            # Special treatment of general iterables: Save the item type
+            # here, as a conversion to dtype and back turns Python tuples
+            # into Numpy records, which we don't want.
+            item_type = item_typeof(values[0])
+            values = np.array(values, dtype=numba_type_to_dtype(item_type))
+
+        if values.dtype.isalignedstruct:
+            raise NotImplementedError
+
         assert isinstance(values, np.ndarray)
 
         # Determine parameter output type
-        item_type = item_typeof(values[0])
-        output_type = types.Array(item_type, 1, "C")
+        if item_type is None:
+            item_type = item_typeof(values[0])
+        output_type = replace_unituple(types.Array(item_type, 1, "C"))
 
-        # Construct input parameter
+        # Construct input value
         ffi = FFI()
         data = values.__array_interface__['data'][0]
         data = int(ffi.cast("uintptr_t", ffi.cast("void*", data)))
@@ -675,36 +697,16 @@ class CollectionSource(UnaryRDD):
                         'shape': outer_shape}],
         }
 
-        return ParameterLookup(context, output_type, input_value)
+        parent = ParameterLookup(context, output_type, input_value, values)
 
-    def __init__(self, context, values, add_index):
-        # pylint: disable=len-as-condition
-        # values could also be a numpy array
-        assert len(values) > 0, "Empty collection not allowed"
+        return parent
 
-        # Convert values to Numpy array
-        output_type = None
-        if not isinstance(values, np.ndarray):
-            # Special treatment of general iterables: safe output type
-            # here, as a conversion to dtype and back turns Python tuples
-            # into Numpy records, which we don't want.
-            output_type = item_typeof(values[0])
-            values = np.array(values, dtype=numba_type_to_dtype(output_type))
-
-        if values.dtype.isalignedstruct:
-            raise NotImplementedError
-
+    def __init__(self, context, parent, add_index):
         # Construct parameter lookup as parent
-        super(CollectionSource, self).__init__(
-            context, self._make_parent(context, values))
+        super(RowScan, self).__init__(context, parent)
 
-        # Store data frame to prevent GC
-        self.data = values
-
-        # Store operator info
-        self.output_type = output_type
-        if self.output_type is None:
-            self.output_type = _compute_item_type(self.parents[0].output_type)
+        assert isinstance(parent.output_type, types.Array)
+        self.output_type = parent.output_type.dtype
         self.add_index = add_index
 
         # Update output type with field for index, if added

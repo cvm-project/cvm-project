@@ -96,7 +96,7 @@ class TestCollection(TestCaseBase):
         # Find out data pointer of `col`
         from cffi import FFI
         ffi = FFI()
-        col_ptr = col.data.__array_interface__['data'][0]
+        col_ptr = col.parents[0].data.__array_interface__['data'][0]
         col_ptr = int(ffi.cast("uintptr_t", ffi.cast("void*", col_ptr)))
 
         # Assert that we reuse the same memory (no copy involved)
