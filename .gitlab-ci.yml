@@ -3,15 +3,15 @@ variables:
 
 format-cpp:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   script:
     - cd backend/build
-    - CC=clang-7.0 CXX=clang++-7.0 cmake-3.14 ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
+    - CC=clang-7.0 CXX=clang++-7.0 cmake ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
     - make check-format
 
 format-python:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   variables:
     PYTHONPATH: $CI_PROJECT_DIR:$CI_PROJECT_DIR/backend/build
   before_script:
@@ -22,10 +22,10 @@ format-python:
 
 rel-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   script:
     - cd backend/build
-    - CC=clang-7.0 CXX=clang++-7.0 cmake-3.14 ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
+    - CC=clang-7.0 CXX=clang++-7.0 cmake ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
     - make
   artifacts:
     paths:
@@ -33,12 +33,12 @@ rel-build:
 
 dbg-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   variables:
     ASAN_OPTIONS: detect_leaks=0
   script:
     - cd backend/build
-    - CC=clang-7.0 CXX=clang++-7.0 cmake-3.14 ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLLVM_ASAN=ON
+    - CC=clang-7.0 CXX=clang++-7.0 cmake ../src -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/ -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DLLVM_ASAN=ON
     - make
   artifacts:
     paths:
@@ -48,7 +48,7 @@ clang-tidy:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   script:
     - cd backend/build
     - make -k check-tidy
@@ -57,7 +57,7 @@ cppcheck:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   script:
     - cd backend/build
     - make cppcheck
@@ -66,7 +66,7 @@ python-tests-parallel:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   tags:
     - ptrace
   variables:
@@ -91,7 +91,7 @@ python-tests-asan:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   tags:
     - ptrace
   variables:
@@ -116,7 +116,7 @@ cpp-test:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-04-25
+  image: ingomuellernet/buildenv-jitq:2019-07-14
   tags:
     - ptrace
   variables:
@@ -126,4 +126,4 @@ cpp-test:
     - apt-get update && apt-get install -y time
   script:
     - cd backend/build
-    - /usr/bin/time -v catchsegv ../../tools/run_with_asan.sh ctest-3.14 -V
+    - /usr/bin/time -v catchsegv ../../tools/run_with_asan.sh ctest -V
