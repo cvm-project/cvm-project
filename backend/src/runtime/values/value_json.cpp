@@ -10,7 +10,7 @@
 namespace runtime {
 namespace values {
 
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const Value *const val) {
     LoadValueParsers();  // TODO(ingo): load in a central place
     for (const auto &it : ValueParserRegistry::objects()) {

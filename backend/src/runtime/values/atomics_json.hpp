@@ -17,7 +17,7 @@ void from_json(const nlohmann::json &json, Atomic<InnerType> *const val) {
 }
 
 template <typename InnerType>
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const Atomic<InnerType> *const val) {
     json.emplace("value", val->value);
 }

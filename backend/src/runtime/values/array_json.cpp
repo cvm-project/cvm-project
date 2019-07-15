@@ -25,7 +25,7 @@ void from_json(const nlohmann::json &json, Array *const val) {
     val->shape = json.at("shape").get<std::vector<size_t>>();
 }
 
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const Array *const val) {
     json.emplace("data", reinterpret_cast<size_t>(val->data.get()));
     json.emplace("ref_counter",

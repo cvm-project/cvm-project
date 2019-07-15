@@ -14,10 +14,10 @@ namespace code_gen {
 namespace cpp {
 
 StructDef::StructDef(
-        const std::string &name,  // NOLINT modernize-pass-by-value
-                                  // NOLINTNEXTLINE modernize-pass-by-value
+        const std::string &name,  // NOLINT(modernize-pass-by-value)
+                                  // NOLINTNEXTLINE(modernize-pass-by-value)
         const std::vector<std::string> &types,
-        // NOLINTNEXTLINE modernize-pass-by-value
+        // NOLINTNEXTLINE(modernize-pass-by-value)
         const std::vector<std::string> &names)
     : name(name), types(types), names(names) {
     assert(types.size() == names.size());

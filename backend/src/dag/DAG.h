@@ -303,15 +303,15 @@ namespace nlohmann {
 template <>
 struct adl_serializer<std::unique_ptr<DAG>> {
     static std::unique_ptr<DAG> from_json(const nlohmann::json &json);
-    // NOLINTNEXTLINE google-runtime-references
+    // NOLINTNEXTLINE(google-runtime-references)
     static void to_json(nlohmann::json &json, const std::unique_ptr<DAG> &dag);
 };
 
 }  // namespace nlohmann
 
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, DAG *dag);
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const DAG *dag);
 
 DAG *ParseDag(std::istream *istream);

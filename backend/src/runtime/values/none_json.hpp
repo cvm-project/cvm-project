@@ -10,7 +10,7 @@ namespace runtime {
 namespace values {
 
 inline void from_json(const nlohmann::json& /*json*/, None* /*val*/) {}
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 inline void to_json(nlohmann::json& /*json*/, const None* /*val*/) {}
 
 }  // namespace values

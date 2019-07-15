@@ -10,7 +10,7 @@
 #include "dag/DAG.h"
 #include "dag/DAGOperator.h"
 
-// NOLINTNEXTLINE google-build-using-namespace
+// NOLINTNEXTLINE(google-build-using-namespace)
 using namespace std::placeholders;
 
 namespace dag {

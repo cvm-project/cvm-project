@@ -13,7 +13,7 @@ void from_json(const nlohmann::json &json, Tuple *const val) {
     val->fields = json.at("fields").get<std::vector<std::unique_ptr<Value>>>();
 }
 
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const Tuple *const val) {
     json.emplace("fields", val->fields);
 }

@@ -67,7 +67,7 @@ struct adl_serializer<raw_ptr<const DagType>> {
     }
 };
 
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const dag::type::Type *type);
 
 }  // namespace nlohmann

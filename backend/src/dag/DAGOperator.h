@@ -47,7 +47,7 @@ public:
 public:                                                                 \
     constexpr static const char *kName = OPERATOR_NAME;                 \
     static DAGOperator *MakeDagOperator() { return new CLASS_NAME(); }  \
-    /* NOLINTNEXTLINE bugprone-macro-parentheses,-warnings-as-errors */ \
+    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                    \
     virtual CLASS_NAME *Clone() const override {                        \
         static_assert(std::is_base_of<DAGOperator, CLASS_NAME>::value,  \
                       #CLASS_NAME " must be derived from DAGOperator"); \
@@ -55,13 +55,13 @@ public:                                                                 \
     }                                                                   \
     std::string name() const override { return kName; }
 
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void from_json(const nlohmann::json &json, DAGOperator &op);
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const DAGOperator &op);
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const DAGOperator *op);
-// NOLINTNEXTLINE google-runtime-references
+// NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op);
 
 using make_dag_function = DAGOperator *(*)();  // function pointer type

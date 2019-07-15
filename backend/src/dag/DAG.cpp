@@ -149,7 +149,7 @@ bool DAG::IsTree() const {
     using ColorMap = std::unordered_map<Vertex, boost::default_color_type>;
     ColorMap bfs_colors;
     TreeDetectionVisitor vis(&is_tree);
-    // NOLINTNEXTLINE clang-analyzer-core.StackAddressEscape
+    // NOLINTNEXTLINE(clang-analyzer-core.StackAddressEscape)
     boost::breadth_first_search(
             graph(), to_vertex(root),
             boost::visitor(vis).color_map(

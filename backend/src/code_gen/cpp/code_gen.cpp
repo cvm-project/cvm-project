@@ -177,7 +177,7 @@ void GenerateTupleToValue(Context *const context,
                                  >::type,
                          std::string> {
         TupleToValueVisitor(std::ostream &output, Context *const context,
-                            // NOLINTNEXTLINE modernize-pass-by-value
+                            // NOLINTNEXTLINE(modernize-pass-by-value)
                             const std::string &input_var_name)
             : input_var_name_(input_var_name),
               output_(output),
@@ -249,7 +249,7 @@ void GenerateValueToTuple(Context *const context,
                                  >::type,
                          std::string> {
         ValueToTupleVisitor(
-                // NOLINTNEXTLINE modernize-pass-by-value
+                // NOLINTNEXTLINE(modernize-pass-by-value)
                 const std::string &input_var_name, Context *const context)
             : input_var_name_(input_var_name), context_(context) {}
 
@@ -535,7 +535,7 @@ std::string GenerateLlvmFunctor(
         // Each collection of all input tuples is one argument to the function
         // --> construct values for the call
         for (auto const &field : input_type->names) {
-            // NOLINTNEXTLINE performance-inefficient-string-concatenation
+            // NOLINTNEXTLINE(performance-inefficient-string-concatenation)
             call_args.emplace_back(input_var_name + "." + field);
         }
 

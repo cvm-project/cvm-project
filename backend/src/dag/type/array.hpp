@@ -50,7 +50,7 @@ namespace nlohmann {
 template <>
 struct adl_serializer<dag::type::ArrayLayout> {
     static dag::type::ArrayLayout from_json(const nlohmann::json &json);
-    // NOLINTNEXTLINE google-runtime-references
+    // NOLINTNEXTLINE(google-runtime-references)
     static void to_json(nlohmann::json &json, dag::type::ArrayLayout layout);
 };
 

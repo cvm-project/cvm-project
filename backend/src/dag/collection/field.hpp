@@ -30,7 +30,7 @@ class Field {
     friend AttributeId;
 
 public:
-    // NOLINTNEXTLINE modernize-pass-by-value
+    // NOLINTNEXTLINE(modernize-pass-by-value)
     explicit Field(const type::FieldType *field_type, const size_t &position)
         : field_type_(field_type), position_(position) {}
 
