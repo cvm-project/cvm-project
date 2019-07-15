@@ -11,7 +11,7 @@ namespace runtime {
 namespace values {
 
 // NOLINTNEXTLINE(google-runtime-references)
-void to_json(nlohmann::json &json, const Value *const val);
+void to_json(nlohmann::json &json, const Value *val);
 
 }  // namespace values
 }  // namespace runtime
