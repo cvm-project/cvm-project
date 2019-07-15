@@ -4,10 +4,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Optional.h"
 #include "Utils.h"
 #include "runtime/memory/free_ref_counter.hpp"
 #include "runtime/memory/shared_pointer.hpp"
+#include "runtime/operators/optional.hpp"
 
 template <class Upstream, class Tuple>
 class GroupByOperator {

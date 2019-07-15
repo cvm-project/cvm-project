@@ -9,8 +9,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Optional.h"
 #include "Utils.h"
+#include "runtime/operators/optional.hpp"
 
 /**
  * For input tuples (K, V) and (K, W) returns (K, V, W)

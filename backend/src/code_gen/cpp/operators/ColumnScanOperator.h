@@ -6,9 +6,9 @@
 #include <type_traits>
 #include <utility>
 
-#include "Optional.h"
 #include "Utils.h"
 #include "runtime/memory/shared_pointer.hpp"
+#include "runtime/operators/optional.hpp"
 
 template <class Tuple, bool kAddIndex, class Upstream, class... InputTypes>
 class ColumnScanOperator {

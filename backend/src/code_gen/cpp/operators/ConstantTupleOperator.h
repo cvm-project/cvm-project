@@ -1,8 +1,8 @@
 #ifndef CPP_CONSTANTTUPLEOPERATOR_H
 #define CPP_CONSTANTTUPLEOPERATOR_H
 
-#include "Optional.h"
 #include "Utils.h"
+#include "runtime/operators/optional.hpp"
 
 template <class Tuple>
 class ConstantTupleOperator {

@@ -7,8 +7,8 @@
 
 #include <vector>
 
-#include "Optional.h"
 #include "Utils.h"
+#include "runtime/operators/optional.hpp"
 
 /**
  * Assumes the left operator is the smaller relation

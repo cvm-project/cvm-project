@@ -8,8 +8,8 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "Optional.h"
 #include "Utils.h"
+#include "runtime/operators/optional.hpp"
 
 template <class Upstream, class Tuple, class Function>
 class ReduceOperator {

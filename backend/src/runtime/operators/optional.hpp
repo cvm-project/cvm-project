@@ -1,9 +1,5 @@
-//
-// Created by sabir on 18.07.17.
-//
-
-#ifndef CPP_OPTIONAL_H
-#define CPP_OPTIONAL_H
+#ifndef RUNTIME_OPERATORS_OPTIONAL_HPP
+#define RUNTIME_OPERATORS_OPTIONAL_HPP
 
 #include <cassert>
 
@@ -27,4 +23,4 @@ private:
     bool initialized_;
 };
 
-#endif  // CPP_OPTIONAL_H
+#endif  // RUNTIME_OPERATORS_OPTIONAL_HPP

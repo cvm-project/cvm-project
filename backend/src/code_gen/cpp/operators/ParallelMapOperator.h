@@ -7,8 +7,8 @@
 
 #include <omp.h>
 
-#include "Optional.h"
 #include "Utils.h"
+#include "runtime/operators/optional.hpp"
 
 template <class OutputTuple, class InnerPlanFunctor, class Upstream>
 class ParallelMapOperator {

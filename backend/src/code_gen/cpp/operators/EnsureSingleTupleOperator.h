@@ -1,8 +1,8 @@
 #ifndef CPP_ENSURESINGLETUPLE_OPERATOR_H
 #define CPP_ENSURESINGLETUPLE_OPERATOR_H
 
-#include "Optional.h"
 #include "Utils.h"
+#include "runtime/operators/optional.hpp"
 
 #include <stdexcept>
 
