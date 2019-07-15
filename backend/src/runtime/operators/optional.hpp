@@ -6,21 +6,24 @@
 template <typename T>
 class Optional {
 public:
-    Optional() : initialized_(false) {}
-    Optional(T value) : value_(value), initialized_(true) {}
+    Optional() = default;
+    // cppcheck-suppress noExplicitConstructor
+    // NOLINTNEXTLINE
+    Optional(const T &value) : value_(value), initialized_(true) {}
 
     explicit operator bool() const { return initialized_; }
 
+    // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
     operator T() const { return value(); }
 
-    T value() const {
+    const T &value() const {
         assert(initialized_);
         return value_;
     }
 
 private:
-    T value_;
-    bool initialized_;
+    T value_{};
+    bool initialized_{false};
 };
 
 #endif  // RUNTIME_OPERATORS_OPTIONAL_HPP
