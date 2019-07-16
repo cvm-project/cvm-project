@@ -10,3 +10,6 @@ leak:/site-packages/
 
 # I suspect that this is from Numba/llvmlite
 leak:std::string::_Rep::_S_create
+
+# Arrow has a small number of leaks
+leak:libarrow.so
