@@ -28,13 +28,9 @@ std::pair<std::string, std::string> GenerateCode(DAG *dag,
 
 std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name);
 
-std::string ComputeStructToValue(std::ostream &output, Context *context,
-                                 const std::string &input_var_name,
-                                 const dag::type::Tuple *tuple_type);
+void GenerateTupleToValue(Context *context, const dag::type::Tuple *tuple_type);
 
-std::string ComputeValueToStruct(const std::string &input_var_name,
-                                 const dag::type::Tuple *tuple_type,
-                                 Context *context);
+void GenerateValueToTuple(Context *context, const dag::type::Tuple *tuple_type);
 
 FunctionDef GenerateExecuteTuples(DAG *dag, Context *context);
 

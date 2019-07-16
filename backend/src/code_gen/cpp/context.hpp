@@ -19,9 +19,12 @@ struct StructDef {
                        const std::vector<std::string> &types,
                        const std::vector<std::string> &names);
     std::string ComputeDefinition() const;
-    std::string name;
-    std::vector<std::string> types;
-    std::vector<std::string> names;
+
+    const std::string name;
+    const std::vector<std::string> types;
+    const std::vector<std::string> names;
+    bool has_struct_to_value{};
+    bool has_value_to_struct{};
 };
 
 struct FunctionDef {
@@ -31,9 +34,8 @@ struct FunctionDef {
 
 class Context {
 public:
-    using TupleTypeRegistry =
-            std::unordered_map<const dag::type::Type *,
-                               std::unique_ptr<const StructDef>>;
+    using TupleTypeRegistry = std::unordered_map<const dag::type::Type *,
+                                                 std::unique_ptr<StructDef>>;
 
     Context(std::ostream *const declarations, std::ostream *const definitions,
             std::ostream *const llvm_code,

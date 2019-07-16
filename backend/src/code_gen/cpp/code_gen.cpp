@@ -167,19 +167,18 @@ std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {
     return type_map.at(type_name);
 }
 
-std::string ComputeStructToValue(std::ostream &output, Context *const context,
-                                 const std::string &input_var_name,
-                                 const dag::type::Tuple *const tuple_type) {
-    struct StructToValueVisitor
-        : public Visitor<StructToValueVisitor, const dag::type::FieldType,
+void GenerateTupleToValue(Context *const context,
+                          const dag::type::Tuple *const tuple_type) {
+    struct TupleToValueVisitor
+        : public Visitor<TupleToValueVisitor, const dag::type::FieldType,
                          boost::mpl::list<                //
                                  const dag::type::Array,  //
                                  const dag::type::Atomic  //
                                  >::type,
                          std::string> {
-        StructToValueVisitor(std::ostream &output, Context *const context,
-                             // NOLINTNEXTLINE modernize-pass-by-value
-                             const std::string &input_var_name)
+        TupleToValueVisitor(std::ostream &output, Context *const context,
+                            // NOLINTNEXTLINE modernize-pass-by-value
+                            const std::string &input_var_name)
             : input_var_name_(input_var_name),
               output_(output),
               context_(context) {}
@@ -211,29 +210,45 @@ std::string ComputeStructToValue(std::ostream &output, Context *const context,
         const std::string input_var_name_;
     };
 
-    output << "VectorOfValues v;"
-              "v.emplace_back(new Tuple);";
+    auto const tuple_type_desc =
+            context->tuple_type_descs().at(tuple_type).get();
+
+    if (tuple_type_desc->has_struct_to_value) return;
+    tuple_type_desc->has_struct_to_value = true;
+
+    std::stringstream function_body;
     for (size_t i = 0; i < tuple_type->field_types.size(); i++) {
         const auto &type = tuple_type->field_types[i];
-        const auto field_var_name = input_var_name + ".v" + std::to_string(i);
-        StructToValueVisitor visitor(output, context, field_var_name);
-        output << format("v[0]->as<Tuple>()->fields.emplace_back(%1%);") %
-                          visitor.Visit(type);
+        const auto field_var_name = "t.value().v" + std::to_string(i);
+        TupleToValueVisitor visitor(function_body, context, field_var_name);
+        function_body << format("ret->fields.emplace_back(%1%);") %
+                                 visitor.Visit(type);
     }
-    return "v";
+
+    context->definitions() <<  //
+            format("template <>"
+                   "std::shared_ptr<Value> TupleToValue("
+                   "        const Optional<%1%>& t) {"
+                   "    if (!t) {"
+                   "        return std::make_shared<None>();"
+                   "    }"
+                   "    auto ret = std::make_shared<Tuple>();"
+                   "    %2%"
+                   "    return ret;"
+                   "}") %
+                    tuple_type_desc->name % function_body.str();
 }
 
-std::string ComputeValueToStruct(const std::string &input_var_name,
-                                 const dag::type::Tuple *tuple_type,
-                                 Context *context) {
-    struct ValueToStructVisitor
-        : public Visitor<ValueToStructVisitor, const dag::type::FieldType,
+void GenerateValueToTuple(Context *const context,
+                          const dag::type::Tuple *const tuple_type) {
+    struct ValueToTupleVisitor
+        : public Visitor<ValueToTupleVisitor, const dag::type::FieldType,
                          boost::mpl::list<                //
                                  const dag::type::Array,  //
                                  const dag::type::Atomic  //
                                  >::type,
                          std::string> {
-        ValueToStructVisitor(
+        ValueToTupleVisitor(
                 // NOLINTNEXTLINE modernize-pass-by-value
                 const std::string &input_var_name, Context *const context)
             : input_var_name_(input_var_name), context_(context) {}
@@ -266,18 +281,31 @@ std::string ComputeValueToStruct(const std::string &input_var_name,
         Context *const context_;
     };
 
-    ValueToStructVisitor visitor("", context);
+    auto const tuple_type_desc =
+            context->tuple_type_descs().at(tuple_type).get();
+
+    if (tuple_type_desc->has_value_to_struct) return;
+    tuple_type_desc->has_value_to_struct = true;
+
+    ValueToTupleVisitor visitor("", context);
     std::vector<std::string> field_values;
     for (size_t i = 0; i < tuple_type->field_types.size(); i++) {
         auto const &type = tuple_type->field_types[i];
-        visitor.input_var_name_ = input_var_name + "->as<Tuple>()->fields[" +
-                                  std::to_string(i) + "]";
+        visitor.input_var_name_ =
+                "v->as<Tuple>()->fields[" + std::to_string(i) + "]";
         field_values.emplace_back(visitor.Visit(type));
     }
 
-    const auto tuple_typedef = context->tuple_type_descs().at(tuple_type).get();
-    return (format("%1%{%2%}") % tuple_typedef->name % join(field_values, ", "))
-            .str();
+    context->definitions() <<  //
+            format("template <>"
+                   "Optional<%1%> ValueToTuple("
+                   "        const std::shared_ptr<Value> &v) {"
+                   "    if (dynamic_cast<None*>(v.get()) != nullptr) {"
+                   "        return {};"
+                   "    }"
+                   "    return %1%{%2%};"
+                   "}") %
+                    tuple_type_desc->name % join(field_values, ", ");
 }
 
 FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
@@ -355,47 +383,28 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
         auto const op = input.second.op;
         auto const dag_port = input.first;
 
-        // Expression that gets the input Value
-        const auto input_value = (format("inputs[%1%]") % dag_port).str();
+        GenerateValueToTuple(context, op->tuple->type);
 
-        // Expression that computes the input tuple
-        const auto tuple_type = op->tuple->type;
-        const auto input_tuple =
-                ComputeValueToStruct(input_value, tuple_type, context);
+        auto const tuple_type_desc =
+                context->tuple_type_descs().at(op->tuple->type).get();
 
-        // Expression that computes the Optional<T>, depending on whether the
-        // input value is None
-        const auto tuple_typedef =
-                context->tuple_type_descs().at(tuple_type).get();
-        const auto input_arg =
-                (format("(dynamic_cast<None *>(%1%.get()) != nullptr ?"
-                        " Optional<%2%>() : Optional<%2%>(%3%))") %
-                 input_value % tuple_typedef->name % input_tuple)
-                        .str();
-
-        pack_input_args.emplace_back(input_arg);
+        pack_input_args.emplace_back((format("ValueToTuple<%1%>(inputs[%2%])") %
+                                      tuple_type_desc->name % dag_port)
+                                             .str());
     }
 
     // Main executable file: plan function on runtime values
     auto const return_type = dag->output().op->tuple->type;
     const auto func_name = context->GenerateSymbolName("execute_values", true);
-    std::stringstream temp_statements;
-    const auto return_val = ComputeStructToValue(temp_statements, context,
-                                                 "ret.value()", return_type);
+    GenerateTupleToValue(context, return_type);
+
     context->definitions() <<  //
-            format("VectorOfValues %3%(const VectorOfValues &inputs)"
+            format("VectorOfValues %2%(const VectorOfValues &inputs)"
                    "{"
-                   "    const auto ret = %4%(%1%);"
-                   "    if (ret) {"
-                   "        %2%"
-                   "        return %5%;"
-                   "    }"
-                   "    VectorOfValues v;"
-                   "    v.emplace_back(std::make_unique<None>());"
-                   "    return v;"
+                   "    return {TupleToValue(%3%(%1%))};"
                    "}") %
-                    join(pack_input_args, ", ") % temp_statements.str() %
-                    func_name % execute_tuples.name % return_val;
+                    join(pack_input_args, ", ") % func_name %
+                    execute_tuples.name;
 
     return func_name;
 }
