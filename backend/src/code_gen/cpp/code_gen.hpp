@@ -5,12 +5,23 @@
 #include <utility>
 #include <vector>
 
-#include "context.hpp"
-#include "dag/DAG.h"
-#include "dag/type/tuple.hpp"
+class DAG;
+
+namespace dag {
+namespace type {
+
+class Tuple;
+class Type;
+
+}  // namespace type
+}  // namespace dag
 
 namespace code_gen {
 namespace cpp {
+
+class Context;
+class StructDef;
+class FunctionDef;
 
 std::pair<std::string, std::string> GenerateCode(DAG *dag,
                                                  const std::string &config);
