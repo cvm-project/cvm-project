@@ -3,7 +3,7 @@ variables:
 
 format-cpp:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   script:
     - cd backend/build
     - >-
@@ -15,7 +15,7 @@ format-cpp:
 
 format-python:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   variables:
     PYTHONPATH: $CI_PROJECT_DIR:$CI_PROJECT_DIR/backend/build
   before_script:
@@ -26,7 +26,7 @@ format-python:
 
 rel-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   script:
     - cd backend/build
     - >-
@@ -41,7 +41,7 @@ rel-build:
 
 dbg-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   variables:
     ASAN_OPTIONS: detect_leaks=0
   script:
@@ -63,7 +63,7 @@ clang-tidy:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   script:
     - cd backend/build
     - make -k check-tidy
@@ -72,7 +72,7 @@ cppcheck:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   script:
     - cd backend/build
     - make cppcheck
@@ -81,7 +81,7 @@ python-tests-parallel:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   tags:
     - ptrace
   variables:
@@ -106,7 +106,7 @@ python-tests-asan:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   tags:
     - ptrace
   variables:
@@ -131,7 +131,7 @@ cpp-test:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-14
+  image: ingomuellernet/buildenv-jitq:2019-07-21
   tags:
     - ptrace
   variables:
