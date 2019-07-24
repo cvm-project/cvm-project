@@ -1,0 +1,161 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 1,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "id": 3,
+            "op": "expand_pattern",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": [
+                0,
+                2
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "idx": 0,
+                    "ranges": [
+                        {
+                            "hi": "1",
+                            "lo": "1"
+                        }
+                    ]
+                },
+                {
+                    "idx": 4,
+                    "ranges": [
+                        {
+                            "hi": "6.0",
+                            "lo": "3.0"
+                        }
+                    ]
+                }
+            ],
+            "filesystem": "s3",
+            "id": 4,
+            "op": "parquet_scan",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "float"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                3
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 5,
+            "op": "column_scan",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "float"
+                }
+            ],
+            "predecessors": [
+                4
+            ]
+        },
+        {
+            "id": 6,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "float"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                5
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 6,
+            "port": 0
+        }
+    ]
+}

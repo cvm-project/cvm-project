@@ -1,0 +1,167 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 1,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "id": 3,
+            "op": "expand_pattern",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": [
+                0,
+                2
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "idx": 0,
+                    "ranges": []
+                },
+                {
+                    "idx": 1,
+                    "ranges": []
+                }
+            ],
+            "filesystem": "s3",
+            "id": 4,
+            "op": "parquet_scan",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                3
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 5,
+            "op": "column_scan",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                4
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  store i64 1, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 6,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                5
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 7,
+            "op": "reduce",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                6
+            ]
+        },
+        {
+            "id": 8,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                7
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 8,
+            "port": 0
+        }
+    ]
+}

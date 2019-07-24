@@ -1,0 +1,708 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 3,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 4,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 3,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "float"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 1,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "float"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "float"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            3
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "layout": "C",
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
+                                            {
+                                                "type": "long"
+                                            },
+                                            {
+                                                "type": "float"
+                                            }
+                                        ],
+                                        "type": "array"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "num_inputs": 1,
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "float"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "id": 1,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 7,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 8,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "layout": "C",
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
+                                            {
+                                                "type": "long"
+                                            },
+                                            {
+                                                "type": "float"
+                                            }
+                                        ],
+                                        "type": "array"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "inner_dag": {
+                            "inputs": [
+                                {
+                                    "dag_port": 0,
+                                    "op": 2,
+                                    "op_port": 0
+                                }
+                            ],
+                            "operators": [
+                                {
+                                    "id": 0,
+                                    "op": "materialize_row_vector",
+                                    "output_type": [
+                                        {
+                                            "layout": "C",
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
+                                                {
+                                                    "type": "long"
+                                                },
+                                                {
+                                                    "type": "float"
+                                                }
+                                            ],
+                                            "type": "array"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        1
+                                    ]
+                                },
+                                {
+                                    "add_index": false,
+                                    "id": 1,
+                                    "op": "column_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "float"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        2
+                                    ]
+                                },
+                                {
+                                    "id": 2,
+                                    "op": "parameter_lookup",
+                                    "output_type": [
+                                        {
+                                            "layout": "C",
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
+                                                {
+                                                    "type": "long"
+                                                }
+                                            ],
+                                            "type": "array"
+                                        },
+                                        {
+                                            "layout": "C",
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
+                                                {
+                                                    "type": "float"
+                                                }
+                                            ],
+                                            "type": "array"
+                                        }
+                                    ],
+                                    "predecessors": []
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "op": 0,
+                                    "port": 0
+                                }
+                            ]
+                        },
+                        "op": "parallel_map",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "float"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "op": "split_column_data",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "float"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            3
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "idx": 0,
+                                "ranges": [
+                                    {
+                                        "hi": "1",
+                                        "lo": "1"
+                                    }
+                                ]
+                            },
+                            {
+                                "idx": 4,
+                                "ranges": [
+                                    {
+                                        "hi": "6.0",
+                                        "lo": "3.0"
+                                    }
+                                ]
+                            }
+                        ],
+                        "filesystem": "s3",
+                        "id": 3,
+                        "op": "parquet_scan",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "float"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            4
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "expand_pattern",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": [
+                            7,
+                            5
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 5,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            6
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 6,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            8
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 8,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "layout": "C",
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
+                                            {
+                                                "type": "long"
+                                            }
+                                        ],
+                                        "type": "array"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "num_inputs": 2,
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "layout": "C",
+                            "num_dimensions": 1,
+                            "tuple_type": [
+                                {
+                                    "type": "long"
+                                },
+                                {
+                                    "type": "float"
+                                }
+                            ],
+                            "type": "array"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                3,
+                2
+            ]
+        },
+        {
+            "id": 2,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 3,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "layout": "C",
+                                        "num_dimensions": 1,
+                                        "tuple_type": [
+                                            {
+                                                "type": "long"
+                                            }
+                                        ],
+                                        "type": "array"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            1
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "inner_dag": {
+                            "inputs": [
+                                {
+                                    "dag_port": 0,
+                                    "op": 2,
+                                    "op_port": 0
+                                }
+                            ],
+                            "operators": [
+                                {
+                                    "id": 0,
+                                    "op": "materialize_row_vector",
+                                    "output_type": [
+                                        {
+                                            "layout": "C",
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
+                                                {
+                                                    "type": "long"
+                                                }
+                                            ],
+                                            "type": "array"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        1
+                                    ]
+                                },
+                                {
+                                    "id": 1,
+                                    "op": "range_source",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        2
+                                    ]
+                                },
+                                {
+                                    "id": 2,
+                                    "op": "parameter_lookup",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": []
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "op": 0,
+                                    "port": 0
+                                }
+                            ]
+                        },
+                        "op": "parallel_map",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            2
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "op": "split_range",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            3
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 0,
+                        "port": 0
+                    }
+                ]
+            },
+            "num_inputs": 1,
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "layout": "C",
+                            "num_dimensions": 1,
+                            "tuple_type": [
+                                {
+                                    "type": "long"
+                                }
+                            ],
+                            "type": "array"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                4
+            ]
+        },
+        {
+            "id": 3,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 4,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        }
+    ],
+    "outputs": [
+        {
+            "op": 0,
+            "port": 0
+        }
+    ]
+}
