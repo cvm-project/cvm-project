@@ -18,6 +18,7 @@ class DAGGroupBy;
 class DAGJoin;
 class DAGMap;
 class DAGMaterializeColumnChunks;
+class DAGMaterializeParquet;
 class DAGMaterializeRowVector;
 class DAGParallelMap;
 class DAGParameterLookup;
@@ -48,6 +49,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGJoin,                            //
         DAGMap,                             //
         DAGMaterializeColumnChunks,         //
+        DAGMaterializeParquet,              //
         DAGMaterializeRowVector,            //
         DAGParallelMap,                     //
         DAGParameterLookup,                 //

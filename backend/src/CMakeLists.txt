@@ -163,6 +163,7 @@ set(GENERATE_SOURCE_FILES
         dag/DAGColumnScan.cpp
         dag/DAGConstantTuple.cpp
         dag/DAGCompiledPipeline.cpp
+        dag/DAGMaterializeParquet.cpp
         dag/DAGOperator.cpp
         dag/DAGPipeline.cpp
         dag/DAGParquetScan.cpp
@@ -221,8 +222,11 @@ set(RUNTIME_SOURCE_FILES
         runtime/filesystem/filesystem.cpp
         runtime/memory/shared_pointer.cpp
         runtime/memory/values.cpp
-        runtime/operators/parquet_scan_impl.cpp
+        runtime/operators/arrow_helpers.cpp
         runtime/operators/expand_pattern.cpp
+        runtime/operators/materialize_parquet_impl.cpp
+        runtime/operators/parquet_scan_impl.cpp
+        runtime/operators/value_to_record_batch.cpp
         runtime/values/json_parsing.cpp
         runtime/values/array_json.cpp
         runtime/values/tuple_json.cpp

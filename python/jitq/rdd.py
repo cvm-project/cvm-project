@@ -217,6 +217,25 @@ class RDD(abc.ABC):
     def collect(self):
         return MaterializeRowVector(self.context, self).execute_dag()
 
+    def to_parquet(self, filename, column_names, conf=None):
+        conf = conf or {}
+        conf['filename'] = filename
+        conf['filesystem'] = 'file'
+        conf_value = {
+            'type': 'tuple',
+            'fields': [{'type': 'std::string', 'value': json.dumps(conf)}],
+        }
+        parents = [MaterializeColumnVector(self.context, self),
+                   ParameterLookup(self.context,
+                                   make_tuple([types.unicode_type]),
+                                   conf_value)]
+        return \
+            EnsureSingleTuple(
+                self.context,
+                MaterializeParquetFile(
+                    self.context, parents, column_names)) \
+            .execute_dag()
+
     def count(self):
         ret = self.map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
         return ret if ret is not None else 0
@@ -338,6 +357,24 @@ class MaterializeColumnVector(UnaryRDD):
 
     def self_write_dag(self, dic):
         pass
+
+
+class MaterializeParquetFile(BinaryRDD):
+    NAME = 'materialize_parquet_file'
+
+    def __init__(self, context, parents, column_names):
+        super(MaterializeParquetFile, self).__init__(context, parents)
+        self.column_names = column_names
+        self.output_type = types.unicode_type
+
+    def self_write_dag(self, dic):
+        dic['column_names'] = self.column_names
+
+    def self_hash(self):
+        hash_objects = [
+            '##'.join(self.column_names),
+        ]
+        return hash("#".join(hash_objects))
 
 
 class Filter(PipeRDD):

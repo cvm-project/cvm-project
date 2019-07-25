@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=too-many-lines
 
 import os.path
 import unittest
@@ -313,7 +314,52 @@ class TestParquet(TestCaseBase):
                   .count()
         self.assertEqual(res, 6)
 
+    def test_write_file(self):
+        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
+        data = list(enumerate(range(10)))
+        column_names = ['a', 'b']
 
+        # Note: the effect of this configuration is not tested automatically,
+        # but can be verified with parquet-tools or similar.
+        conf = {
+            'writer_properties': {
+                'compression': 'SNAPPY',
+                'path_properties': {
+                    'a': {
+                        'compression': 'GZIP',
+                        'enable_dictionary': False,
+                        'encoding': 'PLAIN',
+                    },
+                },
+            },
+            "target_num_rows_per_row_group": 3,
+        }
+
+        ret = self.context.collection(data) \
+            .to_parquet(file_path, column_names, conf)
+        self.assertEqual(ret, file_path)
+
+        table = pq.read_table(file_path)
+        self.assertListEqual(column_names, [c.name for c in table.columns])
+        res = zip(*[c.to_pylist() for c in table.columns])
+        self.assertListEqual(data, sorted(res))
+
+    def test_write_empty_file(self):
+        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
+        column_names = ['a', 'b']
+
+        ret = self.context.range_(0, 0) \
+            .map(lambda x: (x, x)) \
+            .to_parquet(file_path, column_names)
+        self.assertEqual(ret, file_path)
+
+        table = pq.read_table(file_path)
+        self.assertListEqual(column_names, [c.name for c in table.columns])
+        res = zip(*[c.to_pylist() for c in table.columns])
+        self.assertListEqual([], sorted(res))
+
+
+@unittest.skip("writing not implemented -- skipping whole class temporarily")
 class TestParquetS3(TestParquet):
     DATADIR = 's3://mybucket/'
 

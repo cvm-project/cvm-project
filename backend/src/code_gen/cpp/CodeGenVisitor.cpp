@@ -88,6 +88,22 @@ void CodeGenVisitor::operator()(DAGMaterializeColumnChunks *op) {
     emitOperatorMake(var_name, "MaterializeColumnChunksOperator", op, {}, {});
 }
 
+void CodeGenVisitor::operator()(DAGMaterializeParquet *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "MaterializeParquetOperator");
+
+    std::vector<std::string> column_names;
+    for (auto const &n : op->column_names) {
+        column_names.emplace_back((format("\"%1%\"") % n).str());
+    }
+
+    const std::string column_names_expression =
+            (format("{%1%}") % join(column_names, ",")).str();
+
+    emitOperatorMake(var_name, "MaterializeParquetOperator", op, {},
+                     {column_names_expression});
+}
+
 void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");

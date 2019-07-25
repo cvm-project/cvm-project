@@ -237,6 +237,52 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(column_types);
         }
 
+        const Tuple *operator()(const DAGMaterializeParquet *const op) const {
+            auto const conf_input_type = dag_->predecessor(op, 1)->tuple->type;
+            auto const conf_type = dynamic_cast<const dag::type::Atomic *>(
+                    conf_input_type->field_types.at(0));
+            if (conf_type == nullptr || conf_type->type != "std::string") {
+                throw std::invalid_argument(
+                        "Configuration of MaterializeParquet must be string, "
+                        "found: " +
+                        conf_input_type->to_string());
+            }
+
+            auto const main_input_type = dag_->predecessor(op, 0)->tuple->type;
+
+            for (auto const &field_type : main_input_type->field_types) {
+                auto const array_type =
+                        dynamic_cast<const dag::type::Array *>(field_type);
+                if (array_type == nullptr) {
+                    throw std::invalid_argument(
+                            "Input of MaterializeParquet must be tuple of "
+                            "Arrays, found: " +
+                            main_input_type->to_string());
+                }
+
+                auto const inner_field_types =
+                        array_type->tuple_type->field_types;
+                if (inner_field_types.size() != 1) {
+                    throw std::invalid_argument(
+                            "Input of MaterializeParquet must be tuple of "
+                            "Arrays of Atomics, found: " +
+                            main_input_type->to_string());
+                }
+
+                auto const atomic_type =
+                        dynamic_cast<const dag::type::Atomic *>(
+                                inner_field_types.at(0));
+                if (atomic_type == nullptr) {
+                    throw std::invalid_argument(
+                            "Input of MaterializeParquet must be tuple of "
+                            "Arrays of Atomics, found: " +
+                            main_input_type->to_string());
+                }
+            }
+
+            return Tuple::MakeTuple({Atomic::MakeAtomic("std::string")});
+        }
+
         const Tuple *operator()(const DAGMaterializeRowVector *const op) const {
             auto const element_type = dag_->predecessor(op)->tuple->type;
 
