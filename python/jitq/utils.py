@@ -67,9 +67,6 @@ NUMPY_DTYPE_MAP = {
     'unicode_type': 'strings unsupported by numpy',
 }
 
-ALLOWED_ROW_TYPES = [nb.types.Tuple, nb.types.Array, nb.types.Record,
-                     nb.types.List]
-
 
 def is_item_type(type_):
     if str(type_) in NUMPY_DTYPE_MAP:
