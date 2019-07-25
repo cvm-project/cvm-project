@@ -48,7 +48,8 @@ def wrap_result(res, type_):
     if isinstance(type_, types.Tuple):
         return tuple((field['value'] for field in result))
 
-    if isinstance(type_, (types.Integer, types.Float, types.Boolean)):
+    if isinstance(type_, (types.Integer, types.Float, types.Boolean,
+                          types.misc.UnicodeType)):
         assert len(result) == 1
         return result[0]['value']
 
