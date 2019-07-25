@@ -18,5 +18,17 @@ std::shared_ptr<::arrow::io::RandomAccessFile> LocalFileSystem::OpenForRead(
     return handle;
 }
 
+std::shared_ptr<::arrow::io::OutputStream> LocalFileSystem::OpenForWrite(
+        const std::string &path) {
+    std::shared_ptr<::arrow::io::FileOutputStream> handle;
+    const auto status =
+            ::arrow::io::FileOutputStream::Open(path, false, &handle);
+    if (!status.ok()) {
+        throw std::runtime_error("File error " + status.CodeAsString() + ": " +
+                                 status.message());
+    }
+    return handle;
+}
+
 }  // namespace filesystem
 }  // namespace runtime

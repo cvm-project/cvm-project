@@ -1,5 +1,6 @@
 #include "s3.hpp"
 
+#include <stdexcept>
 #include <string>
 
 #include <arrow/buffer.h>
@@ -189,6 +190,11 @@ std::shared_ptr<::arrow::io::RandomAccessFile> S3FileSystem::OpenForRead(
 
     return std::shared_ptr<arrow::io::RandomAccessFile>(
             new S3ReadableFile(s3_client_, bucket, key));
+}
+
+std::shared_ptr<::arrow::io::OutputStream> S3FileSystem::OpenForWrite(
+        const std::string& /*path*/) {
+    throw std::runtime_error("Not implemented.");
 }
 
 }  // namespace filesystem
