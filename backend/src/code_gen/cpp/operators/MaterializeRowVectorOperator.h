@@ -15,8 +15,11 @@ auto constexpr max(T x, U y) ->
     return x > y ? x : y;
 }
 
-template <class OuterTuple, class InnerTuple, class Upstream>
+template <class OuterTuple, class Upstream>
 class MaterializeRowVectorOperator {
+    using InnerTuple = std::remove_reference_t<decltype(
+            std::declval<OuterTuple>().v0.data[0])>;
+
 public:
     MaterializeRowVectorOperator(Upstream *const upstream)
         : upstream_(upstream), has_returned_(false) {}
@@ -65,11 +68,10 @@ private:
     bool has_returned_;
 };
 
-template <class OuterTuple, class InnerTuple, class Upstream>
-MaterializeRowVectorOperator<OuterTuple, InnerTuple, Upstream>
-makeMaterializeRowVectorOperator(Upstream *upstream) {
-    return MaterializeRowVectorOperator<OuterTuple, InnerTuple, Upstream>(
-            upstream);
+template <class OuterTuple, class Upstream>
+MaterializeRowVectorOperator<OuterTuple, Upstream>
+makeMaterializeRowVectorOperator(Upstream *const upstream) {
+    return MaterializeRowVectorOperator<OuterTuple, Upstream>(upstream);
 };
 
 #endif  // CPP_MATERIALIZEROWVECTOROPERATOR_H

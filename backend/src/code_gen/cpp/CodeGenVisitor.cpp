@@ -83,9 +83,7 @@ void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
-    emitOperatorMake(var_name, "MaterializeRowVectorOperator", op,
-                     {input_type->name}, {});
+    emitOperatorMake(var_name, "MaterializeRowVectorOperator", op, {}, {});
 }
 
 void CodeGenVisitor::operator()(DAGPipeline * /*op*/) {
