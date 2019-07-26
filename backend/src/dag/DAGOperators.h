@@ -11,6 +11,7 @@
 #include "DAGGroupBy.h"
 #include "DAGJoin.h"
 #include "DAGMap.h"
+#include "DAGMaterializeColumnChunks.h"
 #include "DAGMaterializeRowVector.h"
 #include "DAGParallelMap.h"
 #include "DAGParameterLookup.h"

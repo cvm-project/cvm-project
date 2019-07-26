@@ -322,6 +322,24 @@ class MaterializeRowVector(UnaryRDD):
             self.output_type = replace_unituple(types.Array(dtype, 1, "C"))
 
 
+class MaterializeColumnVector(UnaryRDD):
+    NAME = 'materialize_column_chunks'
+
+    def __init__(self, context, parent):
+        super(MaterializeColumnVector, self).__init__(context, parent)
+
+        input_type = self.parents[0].output_type
+
+        # Construct output type
+        column_types = []
+        for type_ in input_type.types:
+            column_types.append(types.Array(type_, 1, "C"))
+        self.output_type = make_tuple(column_types)
+
+    def self_write_dag(self, dic):
+        pass
+
+
 class Filter(PipeRDD):
     NAME = 'filter'
 

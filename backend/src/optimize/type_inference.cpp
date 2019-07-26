@@ -224,6 +224,19 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return op->tuple->type;
         }
 
+        const Tuple *operator()(
+                const DAGMaterializeColumnChunks *const op) const {
+            auto const input_type = dag_->predecessor(op)->tuple->type;
+
+            std::vector<const FieldType *> column_types;
+            for (auto const &type : input_type->field_types) {
+                column_types.emplace_back(Array::MakeArray(
+                        Tuple::MakeTuple({type}), ArrayLayout::kC, 1));
+            }
+
+            return Tuple::MakeTuple(column_types);
+        }
+
         const Tuple *operator()(const DAGMaterializeRowVector *const op) const {
             auto const element_type = dag_->predecessor(op)->tuple->type;
 

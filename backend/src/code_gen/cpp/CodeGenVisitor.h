@@ -42,6 +42,7 @@ public:
     void operator()(DAGColumnScan *op);
     void operator()(DAGGroupBy *op);
     void operator()(DAGMap *op);
+    void operator()(DAGMaterializeColumnChunks *op);
     void operator()(DAGMaterializeRowVector *op);
     void operator()(DAGParallelMap *op);
     void operator()(DAGParameterLookup *op);

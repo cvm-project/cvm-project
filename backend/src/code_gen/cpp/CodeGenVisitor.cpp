@@ -79,6 +79,15 @@ void CodeGenVisitor::operator()(DAGMap *op) {
     emitOperatorMake(var_name, "MapOperator", op, {}, {functor_class + "()"});
 }
 
+void CodeGenVisitor::operator()(DAGMaterializeColumnChunks *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "MaterializeColumnChunksOperator");
+
+    GenerateTupleToValue(context_, op->tuple->type);
+
+    emitOperatorMake(var_name, "MaterializeColumnChunksOperator", op, {}, {});
+}
+
 void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeRowVectorOperator");
