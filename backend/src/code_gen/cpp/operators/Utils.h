@@ -20,4 +20,10 @@ std::shared_ptr<runtime::values::Value> TupleToValue(const Optional<Tuple> &t);
 template <class Tuple>
 Optional<Tuple> ValueToTuple(const std::shared_ptr<runtime::values::Value> &v);
 
+template <typename T, typename U>
+auto constexpr max(T x, U y) ->
+        typename std::remove_reference<decltype(x > y ? x : y)>::type {
+    return x > y ? x : y;
+}
+
 #endif  // CPP_UTILS_H

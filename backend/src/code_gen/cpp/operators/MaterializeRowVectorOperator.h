@@ -9,12 +9,6 @@
 #include "runtime/memory/shared_pointer.hpp"
 #include "runtime/operators/optional.hpp"
 
-template <typename T, typename U>
-auto constexpr max(T x, U y) ->
-        typename std::remove_reference<decltype(x > y ? x : y)>::type {
-    return x > y ? x : y;
-}
-
 template <class OuterTuple, class Upstream>
 class MaterializeRowVectorOperator {
     using InnerTuple = std::remove_reference_t<decltype(
