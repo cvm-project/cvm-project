@@ -3,30 +3,24 @@
 #include <arrow/buffer.h>
 #include <arrow/io/file.h>
 
+#include "runtime/operators/arrow_helpers.hpp"
+
 namespace runtime {
 namespace filesystem {
 
 std::shared_ptr<::arrow::io::RandomAccessFile> LocalFileSystem::OpenForRead(
         const std::string &path) {
     std::shared_ptr<::arrow::io::ReadableFile> handle;
-    const auto status = ::arrow::io::ReadableFile::Open(
-            path, arrow::default_memory_pool(), &handle);
-    if (!status.ok()) {
-        throw std::runtime_error("File error " + status.CodeAsString() + ": " +
-                                 status.message());
-    }
+    ARROW_TRHOW_NOT_OK(::arrow::io::ReadableFile::Open(
+            path, arrow::default_memory_pool(), &handle));
     return handle;
 }
 
 std::shared_ptr<::arrow::io::OutputStream> LocalFileSystem::OpenForWrite(
         const std::string &path) {
     std::shared_ptr<::arrow::io::FileOutputStream> handle;
-    const auto status =
-            ::arrow::io::FileOutputStream::Open(path, false, &handle);
-    if (!status.ok()) {
-        throw std::runtime_error("File error " + status.CodeAsString() + ": " +
-                                 status.message());
-    }
+    ARROW_TRHOW_NOT_OK(
+            ::arrow::io::FileOutputStream::Open(path, false, &handle));
     return handle;
 }
 

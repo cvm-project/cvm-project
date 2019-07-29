@@ -112,20 +112,15 @@ public:
                          std::shared_ptr<arrow::Buffer>* const out) override {
         std::shared_ptr<arrow::ResizableBuffer> buffer;
 
-        {
-            const auto status = AllocateResizableBuffer(pool_, nbytes, &buffer);
-            if (!status.ok()) return status;
-        }
+        ARROW_RETURN_NOT_OK(AllocateResizableBuffer(pool_, nbytes, &buffer));
 
         int64_t bytes_read = 0;
-        const auto read_status =
-                ReadAt(position, nbytes, &bytes_read, buffer->mutable_data());
-
-        if (!read_status.ok()) return read_status;
+        ARROW_RETURN_NOT_OK(
+                ReadAt(position, nbytes, &bytes_read, buffer->mutable_data()));
 
         assert(bytes_read == nbytes);
         *out = buffer;
-        return read_status;
+        return arrow::Status::OK();
     }
 
     /*
