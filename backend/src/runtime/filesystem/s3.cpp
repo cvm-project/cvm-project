@@ -1,5 +1,6 @@
 #include "s3.hpp"
 
+#include <sstream>
 #include <stdexcept>
 #include <string>
 
@@ -10,6 +11,7 @@
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/GetObjectRequest.h>
 #include <aws/s3/model/HeadObjectRequest.h>
+#include <aws/s3/model/PutObjectRequest.h>
 
 #include <boost/format.hpp>
 
@@ -166,6 +168,77 @@ private:
     arrow::MemoryPool* const pool_;
 };
 
+class S3OutputStream : public ::arrow::io::OutputStream {
+public:
+    // cppcheck-suppress passedByValue
+    S3OutputStream(std::shared_ptr<Aws::S3::S3Client> s3_client,
+                   // cppcheck-suppress passedByValue
+                   std::string bucket, std::string key)
+        : bucket_(std::move(bucket)),
+          key_(std::move(key)),
+          s3_client_(std::move(s3_client)) {
+        if (bucket_.empty()) {
+            throw std::runtime_error("Path has empty bucket.");
+        }
+        if (key_.empty()) {
+            throw std::runtime_error("Path has empty key.");
+        }
+    }
+
+    ~S3OutputStream() override = default;
+
+    /*
+     * Implement FileInterface
+     */
+
+    arrow::Status Close() override {
+        Aws::S3::Model::PutObjectRequest object_request;
+        object_request.SetBucket(bucket_);
+        object_request.SetKey(key_);
+
+        const std::shared_ptr<Aws::IOStream> input_data(new std::stringstream(
+                data_, std::ios_base::in | std::ios_base::binary));
+        object_request.SetBody(input_data);
+
+        auto const outcome = s3_client_->PutObject(object_request);
+        if (!outcome.IsSuccess()) {
+            auto const& error = outcome.GetError();
+            return arrow::Status::IOError(
+                    (format("Error %1% (%2%) when closing file: %3%") %
+                     static_cast<int>(error.GetErrorType()) %
+                     aws::s3::LookupErrorString(error.GetErrorType()) %
+                     error.GetMessage())
+                            .str());
+        }
+        return arrow::Status::OK();
+    }
+
+    arrow::Status Tell(int64_t* const position) const override {
+        *position = data_.size();
+        return arrow::Status::OK();
+    }
+
+    bool closed() const override { return false; }
+
+    /*
+     * Implement Writable
+     */
+
+    arrow::Status Write(const void* const data, const int64_t nbytes) override {
+        auto const ptr = reinterpret_cast<const uint8_t*>(data);
+        data_.insert(data_.end(), ptr, ptr + nbytes);
+        return arrow::Status::OK();
+    }
+
+    arrow::Status Flush() override { return arrow::Status::OK(); }
+
+private:
+    const std::string bucket_;
+    const std::string key_;
+    std::shared_ptr<Aws::S3::S3Client> s3_client_;
+    std::string data_;
+};
+
 S3FileSystem::S3FileSystem() {
     aws::EnsureApiInitialized();
     s3_client_.reset(aws::s3::MakeClient());
@@ -188,8 +261,19 @@ std::shared_ptr<::arrow::io::RandomAccessFile> S3FileSystem::OpenForRead(
 }
 
 std::shared_ptr<::arrow::io::OutputStream> S3FileSystem::OpenForWrite(
-        const std::string& /*path*/) {
-    throw std::runtime_error("Not implemented.");
+        const std::string& path) {
+    auto const url = skyr::make_url(path);
+    if (!url) {
+        std::cerr << "Parsing failed: " << url.error().message() << std::endl;
+        assert(url);
+    }
+
+    assert(url->protocol() == "s3:");
+    auto const bucket = url->hostname();
+    auto const key = url->pathname();
+
+    return std::shared_ptr<arrow::io::OutputStream>(
+            new S3OutputStream(s3_client_, bucket, key));
 }
 
 }  // namespace filesystem

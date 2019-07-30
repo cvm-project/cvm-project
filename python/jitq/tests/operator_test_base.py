@@ -372,7 +372,6 @@ class TestParquet(TestCaseBase):
         self.assertListEqual([], sorted(res))
 
 
-@unittest.skip("writing not implemented -- skipping whole class temporarily")
 class TestParquetS3(TestParquet):
     REMOTEDIR = 's3://mybucket/'
 

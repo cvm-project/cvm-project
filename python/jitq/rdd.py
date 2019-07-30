@@ -1,13 +1,14 @@
 import abc
 import dis
-import json
-
 import io
+import json
+from urllib.parse import urlparse
+
+from cffi import FFI
 import numba
 from numba import typeof, types
 import numpy as np
 from pandas import DataFrame
-from cffi import FFI
 
 from jitq import c_executor
 from jitq.rdd_result import NumpyResult
@@ -221,6 +222,12 @@ class RDD(abc.ABC):
         conf = conf or {}
         conf['filename'] = filename
         conf['filesystem'] = 'file'
+        try:
+            url = urlparse(filename)
+            if url.scheme == 's3':
+                conf['filesystem'] = 's3'
+        except BaseException:
+            pass
         conf_value = {
             'type': 'tuple',
             'fields': [{'type': 'std::string', 'value': json.dumps(conf)}],
@@ -364,6 +371,7 @@ class MaterializeParquetFile(BinaryRDD):
 
     def __init__(self, context, parents, column_names):
         super(MaterializeParquetFile, self).__init__(context, parents)
+
         self.column_names = column_names
         self.output_type = types.unicode_type
 
