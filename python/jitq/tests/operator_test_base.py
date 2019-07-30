@@ -243,8 +243,20 @@ class TestParquet(TestCaseBase):
         2;2;5;5;5;5
         2;3;6;6;6;6
         """
-    TMPDIR = os.path.join(get_project_path(), 'tmp')
-    DATADIR = os.path.join(get_project_path(), 'tmp')
+    LOCALDIR = os.path.join(get_project_path(), 'tmp')
+    REMOTEDIR = LOCALDIR
+
+    def _copy_local_to_copy_remote(self):
+        pass
+
+    def _copy_remote_to_copy_local(self):
+        pass
+
+    def _local(self, filename):
+        return os.path.join(self.LOCALDIR, filename)
+
+    def _remote(self, filename):
+        return os.path.join(self.REMOTEDIR, filename)
 
     def setUp(self):
         super(TestParquet, self).setUp()
@@ -258,50 +270,49 @@ class TestParquet(TestCaseBase):
                                 'd': 'float64'})
         table = pa.Table.from_pandas(df)
 
-        os.makedirs(self.TMPDIR, exist_ok=True)
+        os.makedirs(self.LOCALDIR, exist_ok=True)
         for i in range(3):
-            file_path = os.path.join(self.TMPDIR,
-                                     'test-{:05d}.parquet'.format(i))
-            pq.write_table(table, file_path, row_group_size=2)
+            filename = 'test-{:05d}.parquet'.format(i)
+            pq.write_table(table, self._local(filename), row_group_size=2)
+        self._copy_local_to_copy_remote()
 
     def tearDown(self):
         for i in range(3):
-            file_path = os.path.join(self.TMPDIR,
-                                     'test-{:05d}.parquet'.format(i))
-            os.remove(file_path)
+            filename = 'test-{:05d}.parquet'.format(i)
+            os.remove(self._local(filename))
 
     def test_single_file(self):
-        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
+        filename = 'test-00000.parquet'
         cols = [(0, numba.int64), (1, numba.int64)]
 
         res = self.context \
-                  .read_parquet(file_path, cols) \
+                  .read_parquet(self._remote(filename), cols) \
                   .collect()
         truth = [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3)]
         self.assertListEqual(list(res.astuples()), truth)
 
     def test_multiple_files(self):
-        file_pattern = os.path.join(self.DATADIR, 'test-%1$05d.parquet')
+        file_pattern = 'test-%1$05d.parquet'
         cols = [(0, numba.int64), (1, numba.int64)]
 
         res = self.context \
-                  .read_parquet(file_pattern, cols, (0, 3)) \
+                  .read_parquet(self._remote(file_pattern), cols, (0, 3)) \
                   .count()
         self.assertEqual(res, 18)
 
     def test_filter(self):
-        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
+        filename = 'test-00000.parquet'
         cols = [(0, numba.int64, [(1, 1)]),
                 (4, numba.float32, [(3.0, 6.0)])]
 
         res = self.context \
-                  .read_parquet(file_path, cols) \
+                  .read_parquet(self._remote(filename), cols) \
                   .collect()
         truth = [(1, 3.0), (2, 4.0)]
         self.assertListEqual(list(res.astuples()), truth)
 
     def test_types(self):
-        file_pattern = os.path.join(self.DATADIR, 'test-%1$05d.parquet')
+        file_pattern = 'test-%1$05d.parquet'
         cols = [
             (2, numba.int32),
             (3, numba.int64),
@@ -310,12 +321,12 @@ class TestParquet(TestCaseBase):
         ]
 
         res = self.context \
-                  .read_parquet(file_pattern, cols) \
+                  .read_parquet(self._remote(file_pattern), cols) \
                   .count()
         self.assertEqual(res, 6)
 
     def test_write_file(self):
-        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
+        filename = 'test-00000.parquet'
         data = list(enumerate(range(10)))
         column_names = ['a', 'b']
 
@@ -336,24 +347,26 @@ class TestParquet(TestCaseBase):
         }
 
         ret = self.context.collection(data) \
-            .to_parquet(file_path, column_names, conf)
-        self.assertEqual(ret, file_path)
+            .to_parquet(self._remote(filename), column_names, conf)
+        self.assertEqual(ret, self._remote(filename))
 
-        table = pq.read_table(file_path)
+        self._copy_remote_to_copy_local()
+        table = pq.read_table(self._local(filename))
         self.assertListEqual(column_names, [c.name for c in table.columns])
         res = zip(*[c.to_pylist() for c in table.columns])
         self.assertListEqual(data, sorted(res))
 
     def test_write_empty_file(self):
-        file_path = os.path.join(self.DATADIR, 'test-00000.parquet')
+        filename = 'test-00000.parquet'
         column_names = ['a', 'b']
 
         ret = self.context.range_(0, 0) \
             .map(lambda x: (x, x)) \
-            .to_parquet(file_path, column_names)
-        self.assertEqual(ret, file_path)
+            .to_parquet(self._remote(filename), column_names)
+        self.assertEqual(ret, self._remote(filename))
 
-        table = pq.read_table(file_path)
+        self._copy_remote_to_copy_local()
+        table = pq.read_table(self._local(filename))
         self.assertListEqual(column_names, [c.name for c in table.columns])
         res = zip(*[c.to_pylist() for c in table.columns])
         self.assertListEqual([], sorted(res))
@@ -361,7 +374,7 @@ class TestParquet(TestCaseBase):
 
 @unittest.skip("writing not implemented -- skipping whole class temporarily")
 class TestParquetS3(TestParquet):
-    DATADIR = 's3://mybucket/'
+    REMOTEDIR = 's3://mybucket/'
 
     def __init__(self, *args, **kwargs):
         super(TestParquetS3, self).__init__(*args, **kwargs)
@@ -377,9 +390,25 @@ class TestParquetS3(TestParquet):
 
         self.s3_client = boto3.client('s3', **s3_config)
 
-    def setUp(self):
-        super(TestParquetS3, self).setUp()
+    def _copy_local_to_copy_remote(self):
+        for i in range(3):
+            filename = 'test-{:05d}.parquet'.format(i)
+            self.s3_client.upload_file(
+                Filename=self._local(filename),
+                Bucket=self.s3_bucket,
+                Key=filename,
+            )
 
+    def _copy_remote_to_copy_local(self):
+        for i in range(3):
+            filename = 'test-{:05d}.parquet'.format(i)
+            self.s3_client.download_file(
+                Filename=self._local(filename),
+                Bucket=self.s3_bucket,
+                Key=filename,
+            )
+
+    def setUp(self):
         try:
             self.s3_client.create_bucket(
                 Bucket=self.s3_bucket,
@@ -387,23 +416,16 @@ class TestParquetS3(TestParquet):
         except botocore.exceptions.ClientError as ex:
             if ex.response['Error']['Code'] != 'BucketAlreadyOwnedByYou':
                 raise ex
-
-        for i in range(3):
-            file_name = 'test-{:05d}.parquet'.format(i)
-            self.s3_client.upload_file(
-                Filename=os.path.join(self.TMPDIR, file_name),
-                Bucket=self.s3_bucket,
-                Key=file_name,
-            )
+        super(TestParquetS3, self).setUp()
 
     def tearDown(self):
         super(TestParquetS3, self).tearDown()
 
         for i in range(3):
-            file_name = 'test-{:05d}.parquet'.format(i)
+            filename = 'test-{:05d}.parquet'.format(i)
             self.s3_client.delete_objects(
                 Bucket=self.s3_bucket,
-                Delete={'Objects': [{'Key': file_name}]},
+                Delete={'Objects': [{'Key': filename}]},
             )
 
 
