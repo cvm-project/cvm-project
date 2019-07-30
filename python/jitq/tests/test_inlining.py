@@ -2,11 +2,12 @@
 
 import glob
 import json
-import subprocess
-import unittest
-
 import re
+import subprocess
+import sys
 from os.path import join, realpath, dirname, basename
+
+import pytest
 
 from jitq.utils import get_project_path
 
@@ -31,7 +32,7 @@ class InliningTestCase:
         return subprocess.check_output(cmd, universal_newlines=True)
 
 
-class TestInlining(unittest.TestCase):
+class TestInlining:
     TEST_DIR = join(TEST_BASE_DIR, "test_dag_parser")
     TEST_OPTIONS = ["-O2", "-tadd-always-inline"]
 
@@ -67,14 +68,12 @@ def make_test_func(test_name):
             file_content = str(result.stdout)
             pattern = re.compile(".*call.*_llvm_.*")
             for line in file_content.split("\\n"):
-                if pattern.match(line):
-                    raise self.failureException(
-                        "Call to UDF function has not been inlined, "
-                        "line " + line)
+                assert not pattern.match(line), \
+                    "Call to UDF function has not been inlined, line " + line
 
     return test_func
 
 
 TestInlining.attach_test_cases()
 if __name__ == '__main__':
-    unittest.main()
+    pytest.main(sys.argv)

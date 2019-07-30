@@ -11,5 +11,6 @@ pandas
 psutil
 pylint
 pyspark
+pytest
 scipy
 sklearn

@@ -3,6 +3,7 @@ variables:
   MINIO_ACCESS_KEY: 'xxx'
   MINIO_SECRET_KEY: 'xxxxxxxx'
   MINIO_HTTP_TRACE: '/dev/stdout'
+  PYTEST_ADDOPTS: '--color=yes -vs'
 
 services:
   - name: minio/minio:RELEASE.2019-06-01T03-46-14Z
@@ -129,7 +130,9 @@ python-tests-parallel:
     - export AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
     - export AWS_S3_ENDPOINT=http://s3server:9000
   script:
-    - /usr/bin/time -v catchsegv tools/run_with_asan.sh python3 -u python/jitq/tests/test_cpp_backend_parallel.py -v
+    - cd python/jitq/tests
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_parallel_enironment.py --parallelize true
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_operators.py --parallelize true
 
 python-tests-asan:
   stage: test
@@ -156,8 +159,8 @@ python-tests-asan:
     - export AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
     - export AWS_S3_ENDPOINT=http://s3server:9000
   script:
-    - cd python
-    - /usr/bin/time -v catchsegv ../tools/run_with_asan.sh python3 -u -m unittest discover -v -s jitq/tests
+    - cd python/jitq/tests
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest
 
 cpp-test:
   stage: test
