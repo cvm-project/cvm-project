@@ -20,27 +20,27 @@ class OptimizerTestCase:
         self.name = name
         self.config = config
 
-    def input_file(self):
+    def _input_file(self):
         return join(self.config.directory, self.name + ".input.json")
 
-    def output_file(self):
+    def _output_file(self):
         return join(self.config.directory, self.name + ".output.json")
 
     def read_input(self):
-        with open(self.input_file()) as file_:
+        with open(self._input_file()) as file_:
             return file_.read()
 
     def read_output(self):
-        with open(self.output_file()) as file_:
+        with open(self._output_file()) as file_:
             return file_.read()
 
     def write_output(self, output):
-        with open(self.output_file(), 'w') as file_:
+        with open(self._output_file(), 'w') as file_:
             return file_.write(output)
 
     def run_optimizer(self):
         cmd = [TEST_EXE] + self.config.options + \
-            ["-i", self.input_file()]
+            ["-i", self._input_file()]
         output = subprocess.check_output(cmd)
         output = output.decode("utf-8")
         return output
