@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-public-methods
 
 import os.path
 import unittest
@@ -26,7 +27,6 @@ class TestCaseBase(unittest.TestCase):
         self.context = JitqContext()
 
 
-# pragma pylint: disable=too-many-public-methods
 class TestCollection(TestCaseBase):
 
     def test_scalar(self):
