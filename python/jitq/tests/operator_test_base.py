@@ -2,12 +2,12 @@
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-public-methods
 
-import os.path
-import unittest
+from functools import reduce
 from itertools import groupby
 from io import StringIO
-from functools import reduce
 from operator import itemgetter
+import os.path
+import unittest
 
 import boto3
 import botocore
