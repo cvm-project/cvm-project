@@ -31,6 +31,10 @@ class JitqContext:
         self.serialization_cache = {}
         self.executor_cache = {}
 
+    def clear_caches(self):
+        self.serialization_cache.clear()
+        self.executor_cache.clear()
+
     def read_csv(self, path, dtype=None):
         raise NotImplementedError
 

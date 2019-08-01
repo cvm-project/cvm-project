@@ -776,9 +776,10 @@ class TestCartesian(TestCaseBase):
 class TestCache(TestCaseBase):
 
     def test_map1(self):
+        jitq_context = JitqContext()
         for _ in range(2):
-            context = JitqContext()
-            res = context.collection(range(0, 10)) \
+            jitq_context.clear_caches()
+            res = jitq_context.collection(range(0, 10)) \
                 .map(lambda t: t + 1) \
                 .collect()
             self.assertListEqual(sorted(res.astuples()), list(range(1, 11)))
@@ -791,9 +792,10 @@ class TestCache(TestCaseBase):
         self.assertListEqual(sorted(res.astuples()), list(range(2, 12)))
 
     def test_filter1(self):
+        jitq_context = JitqContext()
         for _ in range(2):
-            context = JitqContext()
-            res = context.collection(range(0, 10)) \
+            jitq_context.clear_caches()
+            res = jitq_context.collection(range(0, 10)) \
                 .filter(lambda t: t % 2 == 0) \
                 .collect()
             self.assertListEqual(sorted(res.astuples()), list(range(0, 10, 2)))
