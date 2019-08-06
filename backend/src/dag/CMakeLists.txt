@@ -1,0 +1,36 @@
+add_library(dag SHARED
+        src/dag.cpp
+        src/collection/attribute_id.cpp
+        src/collection/field.cpp
+        src/collection/array.cpp
+        src/collection/tuple.cpp
+        src/operators/column_scan.cpp
+        src/operators/constant_tuple.cpp
+        src/operators/compiled_pipeline.cpp
+        src/operators/materialize_parquet.cpp
+        src/operators/operator.cpp
+        src/operators/pipeline.cpp
+        src/operators/parquet_scan.cpp
+        src/operators/projection.cpp
+        src/operators/row_scan.cpp
+        src/type/array.cpp
+        src/type/atomic.cpp
+        src/type/tuple.cpp
+        src/type/type.cpp
+        src/utils/apply_visitor.cpp
+    )
+
+target_include_directories(dag
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+
+target_link_libraries(dag
+    PUBLIC
+        Boost::boost
+        polymorphic_value::polymorphic_value
+        nlohmann_json::nlohmann_json
+    )

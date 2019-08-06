@@ -155,30 +155,16 @@ find_package(AWSSDK CONFIG COMPONENTS
         s3
     )
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+add_subdirectory(dag)
+
 # Set up generate library
 set(GENERATE_SOURCE_FILES
         code_gen/cpp/code_gen.cpp
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/context.cpp
-        dag/dag.cpp
-        dag/collection/attribute_id.cpp
-        dag/collection/field.cpp
-        dag/collection/array.cpp
-        dag/collection/tuple.cpp
-        dag/operators/column_scan.cpp
-        dag/operators/constant_tuple.cpp
-        dag/operators/compiled_pipeline.cpp
-        dag/operators/materialize_parquet.cpp
-        dag/operators/operator.cpp
-        dag/operators/pipeline.cpp
-        dag/operators/parquet_scan.cpp
-        dag/operators/projection.cpp
-        dag/operators/row_scan.cpp
-        dag/type/array.cpp
-        dag/type/atomic.cpp
-        dag/type/tuple.cpp
-        dag/type/type.cpp
-        dag/utils/apply_visitor.cpp
         generate_executable.cpp
         llvm_helpers/function.cpp
         optimize/add_always_inline.cpp
@@ -207,6 +193,7 @@ target_link_libraries(generate PUBLIC
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         ${LLVM_LIBS}
+        dag
         runtime
     )
 
