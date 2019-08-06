@@ -4,6 +4,7 @@
 #include "assert_correct_open_next_close.hpp"
 #include "cartesian.hpp"
 #include "column_scan.hpp"
+#include "compiled_pipeline.hpp"
 #include "constant_tuple.hpp"
 #include "ensure_single_tuple.hpp"
 #include "expand_pattern.hpp"

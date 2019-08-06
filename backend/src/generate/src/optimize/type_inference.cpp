@@ -88,6 +88,10 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(fields);
         }
 
+        const Tuple *operator()(const DAGCompiledPipeline *const op) const {
+            return op->tuple->type;
+        }
+
         const Tuple *operator()(const DAGRowScan *const op) const {
             auto const input_type = dag_->predecessor(op)->tuple->type;
 

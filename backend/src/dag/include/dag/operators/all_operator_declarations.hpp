@@ -10,6 +10,7 @@
 class DAGAssertCorrectOpenNextClose;
 class DAGCartesian;
 class DAGColumnScan;
+class DAGCompiledPipeline;
 class DAGConstantTuple;
 class DAGEnsureSingleTuple;
 class DAGExpandPattern;
@@ -41,6 +42,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGAssertCorrectOpenNextClose,      //
         DAGCartesian,                       //
         DAGColumnScan,                      //
+        DAGCompiledPipeline,                //
         DAGConstantTuple,                   //
         DAGEnsureSingleTuple,               //
         DAGExpandPattern,                   //
