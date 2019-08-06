@@ -1,4 +1,5 @@
 add_subdirectory(opt)
 add_subdirectory(print_dag)
+add_subdirectory(runner)
 add_subdirectory(sanitizers)
 add_subdirectory(trace_exceptions)
