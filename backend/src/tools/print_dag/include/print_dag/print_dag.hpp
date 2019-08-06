@@ -1,5 +1,5 @@
-#ifndef UTILS_PRINTDAG_H
-#define UTILS_PRINTDAG_H
+#ifndef PRINT_DAG_PRINT_DAG_HPP
+#define PRINT_DAG_PRINT_DAG_HPP
 
 #include <cstdio>
 
@@ -13,4 +13,4 @@ const char *ToDotCharPtr(const DAG *dag);
 void ToDotFile(const DAG *dag, FILE *outfile);
 void ToDotStream(const DAG *dag, std::ostream *outstream);
 
-#endif  // UTILS_PRINTDAG_H
+#endif  // PRINT_DAG_PRINT_DAG_HPP

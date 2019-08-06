@@ -35,7 +35,6 @@ llvm_map_components_to_libnames(LLVM_LIBS support core irreader)
 
 # Set up GraphViz
 find_package(GraphViz REQUIRED)
-include_directories(SYSTEM ${GRAPHVIZ_INCLUDE_DIRS})
 
 # Set up Catch (for unit tests)
 set(CATCH_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/catch/single_include")
@@ -159,6 +158,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(dag)
+add_subdirectory(tools)
 
 # Set up generate library
 set(GENERATE_SOURCE_FILES
@@ -260,15 +260,13 @@ add_test(llvm_helpers llvm_helpers_tests)
 # Set up optimizer command line tool
 add_executable(opt-cli
         tools/opt.cpp
-        utils/printDAG.cpp
     )
 set_target_properties(opt-cli PROPERTIES
         OUTPUT_NAME "opt"
     )
 target_link_libraries(opt-cli PUBLIC
-        ${GRAPHVIZ_CGRAPH_LIBRARY}
-        ${GRAPHVIZ_GVC_LIBRARY}
         ${Boost_LIBRARIES}
+        print_dag
         generate
     )
 

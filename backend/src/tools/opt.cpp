@@ -7,7 +7,7 @@
 
 #include "dag/dag.hpp"
 #include "optimize/optimizer.hpp"
-#include "utils/printDAG.h"
+#include "print_dag/print_dag.hpp"
 
 namespace po = boost::program_options;
 

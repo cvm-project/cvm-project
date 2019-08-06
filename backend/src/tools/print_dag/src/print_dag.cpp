@@ -1,8 +1,4 @@
-//
-// Created by sabir on 27.08.17.
-//
-
-#include "printDAG.h"
+#include "print_dag/print_dag.hpp"
 
 #include <cstdio>
 
