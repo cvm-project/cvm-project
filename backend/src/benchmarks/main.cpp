@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "utils/timing.h"
+#include "timing.h"
 
 #define MAX (1ul << 29u)
 
