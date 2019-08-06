@@ -43,9 +43,11 @@ get_filename_component(CATCH_INCLUDE_DIRS "${CATCH_INCLUDE_DIRS}" ABSOLUTE)
 include_directories(SYSTEM ${CATCH_INCLUDE_DIRS})
 
 # Set up JSON library
-set(JSONLIB_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/json/include/")
-get_filename_component(JSONLIB_INCLUDE_DIRS "${JSONLIB_INCLUDE_DIRS}" ABSOLUTE)
-include_directories(SYSTEM ${JSONLIB_INCLUDE_DIRS})
+set(JSON_ROOT_DIRECTORY "${PROJECT_SOURCE_DIR}/../../3rdparty/json/")
+get_filename_component(JSON_ROOT_DIRECTORY "${JSON_ROOT_DIRECTORY}" ABSOLUTE)
+set(JSON_BuildTests OFF CACHE BOOL
+    "Build the unit tests when BUILD_TESTING is enabled.")
+add_subdirectory("${JSON_ROOT_DIRECTORY}" nlohmann_json)
 
 # Set up pybind11
 add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/pybind11" pybind11)
@@ -200,6 +202,7 @@ set(GENERATE_SOURCE_FILES
     )
 add_library(generate SHARED ${GENERATE_SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
+        nlohmann_json::nlohmann_json
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         ${LLVM_LIBS}
@@ -242,6 +245,7 @@ if(AWSSDK_FOUND)
 endif()
 add_library(runtime SHARED ${RUNTIME_SOURCE_FILES} )
 target_link_libraries(runtime PUBLIC
+        nlohmann_json::nlohmann_json
         ${Skyr_LIBRARY}
         ${AWSSDK_LINK_LIBRARIES}
         ${arrow_LIBRARY}
@@ -295,7 +299,7 @@ if(cppcheck_FOUND)
             "--suppress='*:${CATCH_INCLUDE_DIRS}/*'"
             "--suppress='*:${GRAPHVIZ_INCLUDE_DIRS}/*'"
             "--suppress='*:${GTEST_INCLUDE_DIRS}/*'"
-            "--suppress='*:${JSONLIB_INCLUDE_DIRS}/*'"
+            "--suppress='*:${JSON_ROOT_DIRECTORY}/*'"
             "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
             "--suppress='*:${POLYMORPHIC_VALUE_INCLUDE_DIRS}/*'"
             "--suppress='*:${PYBIND11_INCLUDE_DIRS}/*'"
