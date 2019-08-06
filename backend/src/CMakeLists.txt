@@ -158,20 +158,20 @@ set(GENERATE_SOURCE_FILES
         code_gen/cpp/code_gen.cpp
         code_gen/cpp/CodeGenVisitor.cpp
         code_gen/cpp/context.cpp
-        dag/attribute_id.cpp
-        dag/DAG.cpp
-        dag/DAGColumnScan.cpp
-        dag/DAGConstantTuple.cpp
-        dag/DAGCompiledPipeline.cpp
-        dag/DAGMaterializeParquet.cpp
-        dag/DAGOperator.cpp
-        dag/DAGPipeline.cpp
-        dag/DAGParquetScan.cpp
-        dag/DAGProjection.cpp
-        dag/DAGRowScan.cpp
+        dag/dag.cpp
+        dag/collection/attribute_id.cpp
         dag/collection/field.cpp
         dag/collection/array.cpp
         dag/collection/tuple.cpp
+        dag/operators/column_scan.cpp
+        dag/operators/constant_tuple.cpp
+        dag/operators/compiled_pipeline.cpp
+        dag/operators/materialize_parquet.cpp
+        dag/operators/operator.cpp
+        dag/operators/pipeline.cpp
+        dag/operators/parquet_scan.cpp
+        dag/operators/projection.cpp
+        dag/operators/row_scan.cpp
         dag/type/array.cpp
         dag/type/atomic.cpp
         dag/type/tuple.cpp

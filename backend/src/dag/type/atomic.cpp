@@ -1,7 +1,3 @@
-//
-// Created by sabir on 16.05.18.
-//
-
 #include "atomic.hpp"
 
 #include <boost/polymorphic_pointer_cast.hpp>

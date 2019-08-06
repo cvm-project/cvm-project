@@ -4,9 +4,9 @@
 
 #include <boost/range/algorithm.hpp>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperators.h"
-#include "dag/all_operator_declarations.hpp"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_declarations.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "utils/visitor.hpp"
 
 class CollectMultipleReadsVisitor

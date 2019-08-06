@@ -1,8 +1,4 @@
-//
-// Created by sabir on 24.05.18.
-//
-
-#include "dag/attribute_id.h"
+#include "attribute_id.hpp"
 
 namespace dag {
 namespace collection {

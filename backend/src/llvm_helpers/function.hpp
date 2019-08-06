@@ -13,7 +13,7 @@
 #include <llvm/IRReader/IRReader.h>
 #include <llvm/Support/SourceMgr.h>
 
-#include "dag/DAGFilter.h"
+#include "dag/operators/filter.hpp"
 
 namespace llvm_helpers {
 

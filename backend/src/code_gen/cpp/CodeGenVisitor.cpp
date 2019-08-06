@@ -11,9 +11,9 @@
 #include <boost/range/adaptor/transformed.hpp>
 
 #include "code_gen.hpp"
-#include "dag/DAGOperators.h"
 #include "dag/collection/array.hpp"
 #include "dag/collection/atomic.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "dag/type/array.hpp"
 #include "utils/utils.h"
 #include "utils/visitor.hpp"

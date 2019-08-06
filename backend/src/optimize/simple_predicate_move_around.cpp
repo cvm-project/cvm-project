@@ -12,8 +12,8 @@
 
 #include <jbcoe/polymorphic_value.h>
 
-#include "dag/DAG.h"
-#include "dag/DAGFilter.h"
+#include "dag/dag.hpp"
+#include "dag/operators/filter.hpp"
 #include "llvm_helpers/function.hpp"
 #include "utils/visitor.hpp"
 

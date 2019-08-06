@@ -1,6 +1,6 @@
 #include "add_always_inline.hpp"
 
-#include "dag/DAGOperator.h"
+#include "dag/operators/operator.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "llvm_helpers/function.hpp"
 

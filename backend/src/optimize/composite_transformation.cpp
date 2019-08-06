@@ -2,7 +2,7 @@
 
 #include <nlohmann/json.hpp>
 
-#include "dag/DAG.h"
+#include "dag/dag.hpp"
 #include "optimize/dag_transformation.hpp"
 
 namespace optimize {

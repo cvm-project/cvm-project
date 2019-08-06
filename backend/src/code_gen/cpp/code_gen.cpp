@@ -17,7 +17,7 @@
 #include <boost/process.hpp>
 
 #include "CodeGenVisitor.h"
-#include "dag/DAGOperators.h"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "dag/type/array.hpp"
 #include "dag/type/atomic.hpp"
 #include "dag/utils/apply_visitor.hpp"

@@ -8,8 +8,8 @@
 #include <nlohmann/json.hpp>
 
 #include "code_gen/cpp/code_gen.hpp"
-#include "dag/DAG.h"
-#include "dag/DAGCompiledPipeline.h"
+#include "dag/dag.hpp"
+#include "dag/operators/compiled_pipeline.hpp"
 #include "optimize/optimizer.hpp"
 
 namespace optimize {

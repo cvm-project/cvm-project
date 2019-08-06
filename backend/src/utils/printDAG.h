@@ -6,7 +6,7 @@
 #include <ostream>
 #include <string>
 
-#include "dag/DAG.h"
+#include "dag/dag.hpp"
 
 std::string ToDotString(const DAG *dag);
 const char *ToDotCharPtr(const DAG *dag);

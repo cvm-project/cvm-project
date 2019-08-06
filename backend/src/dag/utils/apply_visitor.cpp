@@ -7,8 +7,8 @@
 #include <boost/graph/topological_sort.hpp>
 #include <boost/range/algorithm/reverse.hpp>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperator.h"
+#include "dag/dag.hpp"
+#include "dag/operators/operator.hpp"
 
 // NOLINTNEXTLINE(google-build-using-namespace)
 using namespace std::placeholders;

@@ -1,8 +1,8 @@
 #include "determine_sortedness.hpp"
 
-#include "dag/DAG.h"
-#include "dag/DAGOperators.h"
-#include "dag/all_operator_declarations.hpp"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_declarations.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "utils/visitor.hpp"
 

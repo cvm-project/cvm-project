@@ -6,9 +6,9 @@
 
 #include <jbcoe/polymorphic_value.h>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperators.h"
-#include "dag/all_operator_declarations.hpp"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_declarations.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "dag/type/array.hpp"
 #include "dag/type/atomic.hpp"
 #include "dag/type/field_type.hpp"

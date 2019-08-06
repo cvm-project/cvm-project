@@ -4,8 +4,8 @@
 
 #include <boost/mpl/list.hpp>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperators.h"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "dag/utils/type_traits.hpp"
 #include "utils/visitor.hpp"
 

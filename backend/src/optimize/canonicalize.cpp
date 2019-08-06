@@ -10,8 +10,8 @@
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/algorithm/sort.hpp>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperator.h"
+#include "dag/dag.hpp"
+#include "dag/operators/operator.hpp"
 #include "dag/utils/apply_visitor.hpp"
 
 using VertexLabelMap = std::unordered_map<const DAGOperator *, std::string>;

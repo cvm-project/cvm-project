@@ -11,9 +11,9 @@
 #include <vector>
 
 #include "context.hpp"
-#include "dag/DAG.h"
-#include "dag/all_operator_declarations.hpp"
 #include "dag/collection/tuple.hpp"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_declarations.hpp"
 #include "utils/visitor.hpp"
 
 namespace code_gen {

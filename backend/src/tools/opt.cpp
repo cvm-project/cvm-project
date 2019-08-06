@@ -5,7 +5,7 @@
 
 #include <boost/program_options.hpp>
 
-#include "dag/DAG.h"
+#include "dag/dag.hpp"
 #include "optimize/optimizer.hpp"
 #include "utils/printDAG.h"
 

@@ -1,7 +1,3 @@
-//
-// Created by sabir on 26.08.17.
-//
-
 #ifndef DAG_TUPLEFIELD_H
 #define DAG_TUPLEFIELD_H
 

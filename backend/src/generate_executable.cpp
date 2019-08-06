@@ -10,8 +10,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include "dag/DAG.h"
-#include "dag/DAGCompiledPipeline.h"
+#include "dag/dag.hpp"
+#include "dag/operators/compiled_pipeline.hpp"
 #include "optimize/optimizer.hpp"
 #include "runtime/execute_plan.hpp"
 #include "utils/utils.h"

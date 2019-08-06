@@ -6,8 +6,8 @@
 #include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/range/algorithm.hpp>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperators.h"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
 

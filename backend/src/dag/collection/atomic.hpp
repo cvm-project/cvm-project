@@ -1,7 +1,3 @@
-//
-// Created by sabir on 22.05.18.
-//
-
 #ifndef CPP_ATOMIC_HPP
 #define CPP_ATOMIC_HPP
 

@@ -2,10 +2,10 @@
 
 #include <unordered_set>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperator.h"
-#include "dag/DAGOperators.h"
-#include "dag/all_operator_declarations.hpp"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_declarations.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
+#include "dag/operators/operator.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "llvm_helpers/function.hpp"
 #include "utils/visitor.hpp"

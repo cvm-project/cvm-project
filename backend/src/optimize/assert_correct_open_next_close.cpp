@@ -5,10 +5,10 @@
 #include <boost/mpl/list.hpp>
 #include <boost/range/algorithm/copy.hpp>
 
-#include "dag/DAG.h"
-#include "dag/DAGAssertCorrectOpenNextClose.h"
-#include "dag/DAGOperator.h"
-#include "dag/DAGPipeline.h"
+#include "dag/dag.hpp"
+#include "dag/operators/assert_correct_open_next_close.hpp"
+#include "dag/operators/operator.hpp"
+#include "dag/operators/pipeline.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "utils/visitor.hpp"
 

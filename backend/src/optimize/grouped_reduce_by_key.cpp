@@ -4,8 +4,8 @@
 
 #include <jbcoe/polymorphic_value.h>
 
-#include "dag/DAG.h"
-#include "dag/DAGOperators.h"
+#include "dag/dag.hpp"
+#include "dag/operators/all_operator_definitions.hpp"
 #include "utils/visitor.hpp"
 
 struct CollectReduceByKeyVisitor
