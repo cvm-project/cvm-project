@@ -5,17 +5,8 @@
 #ifndef UTILS_UTILS_H
 #define UTILS_UTILS_H
 
-#include <string>
-#include <vector>
-
 #include <boost/filesystem/path.hpp>
 
-std::string snake_to_camel_string(const std::string &str);
-
-std::string string_replace(const std::string &str, const std::string &from,
-                           const std::string &to);
-std::vector<std::string> split_string(const std::string &str,
-                                      const std::string &delimiter);
 boost::filesystem::path get_lib_path();
 
 template <typename Pointee>
