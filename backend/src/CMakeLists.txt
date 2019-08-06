@@ -159,6 +159,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(dag)
 add_subdirectory(tools)
+add_subdirectory(utils)
 
 # Set up generate library
 set(GENERATE_SOURCE_FILES
@@ -183,7 +184,6 @@ set(GENERATE_SOURCE_FILES
         optimize/type_inference.cpp
         optimize/grouped_reduce_by_key.cpp
         optimize/simple_predicate_move_around.cpp
-        utils/lib_path.cpp
     )
 add_library(generate SHARED ${GENERATE_SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
@@ -194,6 +194,7 @@ target_link_libraries(generate PUBLIC
         ${LLVM_LIBS}
         dag
         runtime
+        utils
     )
 
 # Set up Python module
@@ -237,6 +238,7 @@ target_link_libraries(runtime PUBLIC
         ${AWSSDK_LINK_LIBRARIES}
         ${arrow_LIBRARY}
         ${parquet_LIBRARY}
+        utils
     )
 
 # Set up dummy dlclose library
@@ -280,7 +282,6 @@ endif()
 
 # Set up google unit test target
 add_executable(gtest_tests
-        tests/visitor_test.cpp
         tests/shared_pointer_test.cpp
     )
 target_link_libraries(gtest_tests

@@ -1,5 +1,5 @@
-#ifndef UTILS_RAW_PTR_H
-#define UTILS_RAW_PTR_H
+#ifndef UTILS_RAW_PTR_HPP
+#define UTILS_RAW_PTR_HPP
 
 template <typename Pointee>
 class raw_ptr {
@@ -26,4 +26,4 @@ static raw_ptr<Pointee> make_raw(Pointee *ptr) {
     return raw_ptr<Pointee>(ptr);
 }
 
-#endif  // UTILS_RAW_PTR_H
+#endif  // UTILS_RAW_PTR_HPP

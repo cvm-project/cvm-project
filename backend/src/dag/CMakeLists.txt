@@ -33,4 +33,5 @@ target_link_libraries(dag
         Boost::boost
         polymorphic_value::polymorphic_value
         nlohmann_json::nlohmann_json
+        utils
     )
