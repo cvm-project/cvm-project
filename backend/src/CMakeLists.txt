@@ -257,19 +257,6 @@ target_link_libraries(llvm_helpers_tests PUBLIC
     )
 add_test(llvm_helpers llvm_helpers_tests)
 
-# Set up optimizer command line tool
-add_executable(opt-cli
-        tools/opt.cpp
-    )
-set_target_properties(opt-cli PROPERTIES
-        OUTPUT_NAME "opt"
-    )
-target_link_libraries(opt-cli PUBLIC
-        ${Boost_LIBRARIES}
-        print_dag
-        generate
-    )
-
 # Setup cppcheck
 find_package(cppcheck 1.81 EXACT)
 if(cppcheck_FOUND)
