@@ -7,6 +7,7 @@
 # pylint: disable=unused-import
 #         The imported symbols are used by other modules
 from jitq_backend import \
-    GenerateExecutable, \
+    DumpDag, \
     ExecutePlan, \
-    FreeResult
+    FreeResult, \
+    GenerateExecutable

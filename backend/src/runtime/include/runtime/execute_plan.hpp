@@ -1,19 +1,19 @@
 #ifndef RUNTIME_EXECUTE_PLAN_HPP
 #define RUNTIME_EXECUTE_PLAN_HPP
 
-#include <functional>
+#include <memory>
 #include <string>
 
-#include "runtime/jit/values/json_parsing.hpp"
+#include "dag/dag.hpp"
 
 namespace runtime {
 
-using PlanFunction =
-        runtime::values::VectorOfValues(runtime::values::VectorOfValues);
-using Plan = std::function<PlanFunction>;
+auto RegisterPlan(std::unique_ptr<const DAG> dag) -> size_t;
 
+auto DumpDag(size_t plan_id) -> std::string;
+
+auto ExecutePlan(const DAG* dag, const std::string& inputs_str) -> std::string;
 auto ExecutePlan(size_t plan_id, const std::string& inputs_str) -> std::string;
-auto RegisterPlan(const Plan& plan) -> size_t;
 
 }  // namespace runtime
 

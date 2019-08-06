@@ -21,8 +21,16 @@ PYBIND11_MODULE(jitq_backend, m) {
         Generate executable plan
     )pbdoc");
 
-    m.def("ExecutePlan", &runtime::ExecutePlan, R"pbdoc(
+    m.def("ExecutePlan",
+          static_cast<std::string (*)(size_t, const std::string&)>(
+                  runtime::ExecutePlan),
+          R"pbdoc(
         Execute previously generated plan
+    )pbdoc");
+
+    m.def("DumpDag", runtime::DumpDag,
+          R"pbdoc(
+        Dump previously generated plan as JSON string
     )pbdoc");
 
     m.def("FreeResult",

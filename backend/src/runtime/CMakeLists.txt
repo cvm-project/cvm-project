@@ -42,6 +42,7 @@ target_link_libraries(runtime
         ${AWSSDK_LINK_LIBRARIES}
         ${arrow_LIBRARY}
         ${parquet_LIBRARY}
+        dag
         utils
     PRIVATE
         Boost::boost
