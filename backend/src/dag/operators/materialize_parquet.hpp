@@ -1,6 +1,11 @@
 #ifndef DAG_OPERATORS_MATERIALIZE_PARQUET_HPP
 #define DAG_OPERATORS_MATERIALIZE_PARQUET_HPP
 
+#include <string>
+#include <vector>
+
+#include <nlohmann/json.hpp>
+
 #include "operator.hpp"
 
 class DAGMaterializeParquet : public DAGOperator {

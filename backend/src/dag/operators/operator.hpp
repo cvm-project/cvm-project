@@ -1,16 +1,17 @@
 #ifndef DAG_OPERATORS_OPERATOR_HPP
 #define DAG_OPERATORS_OPERATOR_HPP
 
-#include <cstddef>
-#include <nlohmann/json.hpp>
 #include <set>
+#include <string>
 #include <type_traits>
 #include <vector>
 
+#include <cstddef>
+
 #include <jbcoe/polymorphic_value.h>
+#include <nlohmann/json.hpp>
 
 #include "dag/collection/attribute_id.hpp"
-#include "dag/collection/field.hpp"
 #include "dag/collection/tuple.hpp"
 #include "utils/registry.hpp"
 

@@ -3,7 +3,8 @@
 
 #include <string>
 
-#include "dag/dag.hpp"
+#include <nlohmann/json.hpp>
+
 #include "operator.hpp"
 
 class DAGCompiledPipeline : public DAGOperator {
