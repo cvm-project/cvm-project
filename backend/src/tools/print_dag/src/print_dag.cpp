@@ -15,7 +15,6 @@
 
 #include "dag/dag.hpp"
 #include "dag/operators/operator.hpp"
-#include "utils/utils.h"
 
 using PortInfoMap = std::unordered_map<
         const DAGOperator *,

@@ -2,7 +2,6 @@
 #define DAG_TYPE_FIELD_TYPE_HPP
 
 #include "type.hpp"
-#include "utils/utils.h"
 
 namespace dag {
 namespace type {

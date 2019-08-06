@@ -7,7 +7,6 @@
 #include "dag/type/array.hpp"
 #include "dag/type/atomic.hpp"
 #include "dag/type/tuple.hpp"
-#include "utils/utils.h"
 
 using dag::type::Type;
 using dag::type::TypeRegistry;

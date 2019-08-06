@@ -21,6 +21,7 @@
 #include "dag/type/array.hpp"
 #include "dag/type/atomic.hpp"
 #include "dag/utils/apply_visitor.hpp"
+#include "utils/lib_path.hpp"
 
 using boost::format;
 using boost::algorithm::join;

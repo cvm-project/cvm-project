@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 
 #include "dag/type/tuple.hpp"
-#include "utils/utils.h"
+#include "utils/raw_ptr.hpp"
 
 using dag::type::Array;
 using dag::type::ArrayLayout;

@@ -7,7 +7,7 @@
 #include "dag/collection/array.hpp"
 #include "dag/collection/atomic.hpp"
 #include "dag/collection/attribute_id.hpp"
-#include "utils/utils.h"
+#include "utils/raw_ptr.hpp"
 
 namespace dag {
 namespace collection {

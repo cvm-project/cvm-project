@@ -8,8 +8,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include "utils/raw_ptr.hpp"
 #include "utils/registry.hpp"
-#include "utils/utils.h"
 
 namespace dag {
 namespace type {

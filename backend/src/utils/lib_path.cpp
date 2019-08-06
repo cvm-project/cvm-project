@@ -1,8 +1,4 @@
-//
-// Created by sabir on 23.07.17.
-//
-
-#include "utils.h"
+#include "utils/lib_path.hpp"
 
 #include <boost/filesystem/path.hpp>
 

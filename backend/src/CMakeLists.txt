@@ -184,7 +184,7 @@ set(GENERATE_SOURCE_FILES
         optimize/grouped_reduce_by_key.cpp
         optimize/simple_predicate_move_around.cpp
         utils/c_type_to_llvm.cpp
-        utils/utils.cpp
+        utils/lib_path.cpp
     )
 add_library(generate SHARED ${GENERATE_SOURCE_FILES} )
 target_link_libraries(generate PUBLIC

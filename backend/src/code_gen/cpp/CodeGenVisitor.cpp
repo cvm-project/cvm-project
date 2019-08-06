@@ -15,7 +15,6 @@
 #include "dag/collection/atomic.hpp"
 #include "dag/operators/all_operator_definitions.hpp"
 #include "dag/type/array.hpp"
-#include "utils/utils.h"
 #include "utils/visitor.hpp"
 
 using boost::format;

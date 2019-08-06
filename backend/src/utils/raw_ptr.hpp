@@ -1,13 +1,5 @@
-//
-// Created by sabir on 23.07.17.
-//
-
-#ifndef UTILS_UTILS_H
-#define UTILS_UTILS_H
-
-#include <boost/filesystem/path.hpp>
-
-boost::filesystem::path get_lib_path();
+#ifndef UTILS_RAW_PTR_H
+#define UTILS_RAW_PTR_H
 
 template <typename Pointee>
 class raw_ptr {
@@ -34,4 +26,4 @@ static raw_ptr<Pointee> make_raw(Pointee *ptr) {
     return raw_ptr<Pointee>(ptr);
 }
 
-#endif  // UTILS_UTILS_H
+#endif  // UTILS_RAW_PTR_H

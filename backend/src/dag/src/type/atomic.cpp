@@ -4,8 +4,6 @@
 
 #include <nlohmann/json.hpp>
 
-#include "utils/utils.h"
-
 using dag::type::Atomic;
 
 namespace dag {
