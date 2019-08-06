@@ -1,7 +1,3 @@
-//
-// Created by sabir on 18.07.17.
-//
-
 #include "function.hpp"
 
 #include <algorithm>
@@ -9,14 +5,27 @@
 
 #include <boost/mpl/list.hpp>
 
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Type.h>
 #include <llvm/Transforms/Utils/Cloning.h>
 
 #include "dag/collection/atomic.hpp"
 #include "dag/collection/field.hpp"
-#include "utils/c_type_to_llvm.h"
 #include "utils/visitor.hpp"
 
 namespace llvm_helpers {
+
+llvm::Type *c_type_to_llvm(const std::string &type_,
+                           llvm::LLVMContext *context) {
+    assert(context != nullptr);
+    if (type_ == "long") return llvm::Type::getInt64Ty(*context);
+    if (type_ == "int") return llvm::Type::getInt32Ty(*context);
+    if (type_ == "bool") return llvm::Type::getInt1Ty(*context);
+    if (type_ == "float") return llvm::Type::getFloatTy(*context);
+    if (type_ == "double") return llvm::Type::getDoubleTy(*context);
+    return llvm::Type::getDoubleTy(*context);
+}
 
 llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
                             dag::collection::Field *const field) {
