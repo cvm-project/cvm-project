@@ -24,7 +24,7 @@ add_executable(utils_tests
         tests/visitor_test.cpp
     )
 target_link_libraries(utils_tests
+        googletest::gtest_main
         utils
-        "${GTEST_LIBRARIES}"
     )
 gtest_discover_tests(utils_tests)

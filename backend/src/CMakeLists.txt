@@ -96,36 +96,11 @@ set(Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS OFF CACHE BOOL "")
 add_subdirectory("${Skyr_ROOT_DIR}" skyr-url)
 
 # Set up google unit test framework
-ExternalProject_Add(googletest
-        SOURCE_DIR      "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/googletest"
-        PREFIX          "${CMAKE_BINARY_DIR}/googletest"
-        TEST_COMMAND    ""
-        CMAKE_ARGS      "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER};-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER};-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/googletest"
-    )
-
-set(GTEST_INCLUDE_DIRS "${CMAKE_BINARY_DIR}/googletest/include")
-include_directories(SYSTEM ${GTEST_INCLUDE_DIRS})
-
-ExternalProject_Get_Property(googletest INSTALL_DIR)
-set(GTEST_INSTALL_DIR ${INSTALL_DIR})
-
-set(GTEST_LIBRARY_GTEST gtest)
-set(GTEST_LIBRARY_GTESTMAIN gtest_main)
-set(GTEST_LIBRARY_GTEST_PATH "${GTEST_INSTALL_DIR}/lib/libgtest.a")
-set(GTEST_LIBRARY_GTESTMAIN_PATH "${GTEST_INSTALL_DIR}/lib/libgtest_main.a")
-add_library(${GTEST_LIBRARY_GTEST} UNKNOWN IMPORTED)
-add_library(${GTEST_LIBRARY_GTESTMAIN} UNKNOWN IMPORTED)
-set_property(TARGET ${GTEST_LIBRARY_GTEST} PROPERTY IMPORTED_LOCATION
-    ${GTEST_LIBRARY_GTEST_PATH} )
-set_property(TARGET ${GTEST_LIBRARY_GTESTMAIN} PROPERTY IMPORTED_LOCATION
-    ${GTEST_LIBRARY_GTESTMAIN_PATH} )
-add_dependencies(${GTEST_LIBRARY_GTEST} googletest)
-add_dependencies(${GTEST_LIBRARY_GTESTMAIN} googletest)
-set(GTEST_LIBRARIES
-        ${GTEST_LIBRARY_GTEST}
-        ${GTEST_LIBRARY_GTESTMAIN}
-        pthread
-)
+set(GTEST_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/googletest)
+get_filename_component(GTEST_ROOT_DIR "${GTEST_ROOT_DIR}" ABSOLUTE)
+add_subdirectory(${GTEST_ROOT_DIR} googletest)
+add_library(googletest::gtest ALIAS gtest)
+add_library(googletest::gtest_main ALIAS gtest_main)
 
 include(GoogleTest)
 
@@ -166,7 +141,7 @@ if(cppcheck_FOUND)
             "--suppress='*:/usr/*'"
             "--suppress='*:${CATCH_ROOT_DIR}/*'"
             "--suppress='*:${GRAPHVIZ_INCLUDE_DIRS}/*'"
-            "--suppress='*:${GTEST_INCLUDE_DIRS}/*'"
+            "--suppress='*:${GTEST_ROOT_DIR}/*'"
             "--suppress='*:${JSON_ROOT_DIRECTORY}/*'"
             "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
             "--suppress='*:${POLYMORPHIC_ROOT_DIR}/*'"

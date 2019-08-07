@@ -48,7 +48,7 @@ add_executable(runtime_tests
         tests/shared_pointer_test.cpp
     )
 target_link_libraries(runtime_tests
+        googletest::gtest_main
         runtime
-        "${GTEST_LIBRARIES}"
     )
 gtest_discover_tests(runtime_tests)
