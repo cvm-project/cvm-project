@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
 
-SCRIPTPATH=$(cd $(dirname $0) ; pwd -P)
-
 HEADER=$1
+shift 2
 
 (
-    echo "#ifndef OPERATORS_OPERATORS_H_"
-    echo "#define OPERATORS_OPERATORS_H_"
+    echo "#ifndef CODE_GEN_CPP_OPERATORS_OPERATORS_H"
+    echo "#define CODE_GEN_CPP_OPERATORS_OPERATORS_H"
     echo ""
-    for file in "$SCRIPTPATH"/*.h
+    for file in "$@"
     do
-        if [ ${file} == ${HEADER} ]; then continue; fi
         echo "#include \"$file\""
     done
     echo ""

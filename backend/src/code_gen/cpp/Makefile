@@ -70,7 +70,7 @@ $(GCHEADER): $(MAINHEADER)
 	$(CXX) $(CXXFLAGS) $(INC) -x c++-header $< -o $@
 
 $(MAINHEADER): $(HEADERS)
-	$(GENHEADER) $@
+	$(GENHEADER) $@ $^
 
 libexecute.%.so: $(UDF_OBJECTS) execute.%.o
 	 $(CXX) $^ -o $@ -shared $(LDFLAGS)
