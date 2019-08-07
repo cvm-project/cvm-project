@@ -79,9 +79,13 @@ find_package(Boost 1.64 REQUIRED COMPONENTS
         program_options
         system
     )
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
-add_compile_definitions("BOOST_MPL_LIMIT_LIST_SIZE=30")
-add_compile_definitions("BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS")
+set(_BOOST_COMPILE_DEFINITIONS
+        "BOOST_MPL_LIMIT_LIST_SIZE=30"
+        "BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS"
+    )
+set_target_properties(Boost::boost PROPERTIES
+    INTERFACE_COMPILE_DEFINITIONS "${_BOOST_COMPILE_DEFINITIONS}"
+    )
 
 # Set up skyr URL library
 ExternalProject_Add(Skyr
