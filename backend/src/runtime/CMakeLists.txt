@@ -37,7 +37,7 @@ target_include_directories(runtime
 target_link_libraries(runtime
     PUBLIC
         nlohmann_json::nlohmann_json
-        ${Skyr_LIBRARY}
+        Skyr::skyr-url
         ${AWSSDK_LINK_LIBRARIES}
         ${arrow_LIBRARY}
         ${parquet_LIBRARY}

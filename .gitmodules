@@ -13,6 +13,9 @@
 [submodule "3rdparty/pybind11"]
 	path = 3rdparty/pybind11
 	url = https://github.com/pybind/pybind11.git
+[submodule "3rdparty/skyr-url"]
+	path = 3rdparty/skyr-url
+	url = https://github.com/cpp-netlib/url
 [submodule "3rdparty/polymorphic_value"]
 	path = 3rdparty/polymorphic_value
 	url = https://github.com/jbcoe/polymorphic_value

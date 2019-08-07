@@ -88,30 +88,12 @@ set_target_properties(Boost::boost PROPERTIES
     )
 
 # Set up skyr URL library
-ExternalProject_Add(Skyr
-        URL             "https://github.com/cpp-netlib/url/archive/v1.1.tar.gz"
-        PREFIX          "${CMAKE_BINARY_DIR}/skyr-url"
-        TEST_COMMAND    ""
-        CMAKE_ARGS      "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER};"
-                        "-DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER};"
-                        "-DCMAKE_CXX_FLAGS=-fPIC;"
-                        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/skyr-url;"
-                        "-DSkyr_BUILD_TESTS=OFF;"
-                        "-DSkyr_DISABLE_LIBCXX=ON;"
-                        "-DSkyr_BUILD_FILESYSTEM_PATH_FUNCTIONS=OFF"
-    )
-ExternalProject_Get_Property(Skyr INSTALL_DIR)
-set(Skyr_INSTALL_DIR ${INSTALL_DIR})
-
-set(Skyr_INCLUDE_DIR "${Skyr_INSTALL_DIR}/include")
-include_directories(SYSTEM ${Skyr_INCLUDE_DIR})
-
-set(Skyr_LIBRARY skyr-url)
-set(Skyr_LIBRARY_PATH "${Skyr_INSTALL_DIR}/lib/libskyr-url.a")
-add_library(${Skyr_LIBRARY} UNKNOWN IMPORTED)
-set_property(TARGET ${Skyr_LIBRARY} PROPERTY IMPORTED_LOCATION
-    ${Skyr_LIBRARY_PATH} )
-add_dependencies(${Skyr_LIBRARY} Skyr)
+set(Skyr_ROOT_DIR "${PROJECT_SOURCE_DIR}/../../3rdparty/skyr-url")
+get_filename_component(Skyr_ROOT_DIR "${Skyr_ROOT_DIR}" ABSOLUTE)
+set(Skyr_BUILD_TESTS OFF CACHE BOOL "")
+set(Skyr_DISABLE_LIBCXX ON CACHE BOOL "")
+set(Skyr_BUILD_FILESYSTEM_PATH_FUNCTIONS OFF CACHE BOOL "")
+add_subdirectory("${Skyr_ROOT_DIR}" skyr-url)
 
 # Set up google unit test framework
 ExternalProject_Add(googletest
@@ -188,5 +170,6 @@ if(cppcheck_FOUND)
             "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
             "--suppress='*:${POLYMORPHIC_ROOT_DIR}/*'"
             "--suppress='*:${PYBIND11_ROOT_DIR}/*'"
+            "--suppress='*:${Skyr_ROOT_DIR}/*'"
         )
 endif()
