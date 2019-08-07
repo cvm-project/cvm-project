@@ -67,6 +67,8 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
         source_file << "/**\n"
                        " * Auto-generated execution plan\n"
                        " */\n";
+        // Include AllHeaders first such that header precompilation works
+        source_file << "#include \"AllHeaders.h\"" << std::endl;
 
         includes.emplace("<cstring>");
 
