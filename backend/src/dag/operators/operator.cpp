@@ -2,7 +2,7 @@
 
 #include <boost/mpl/for_each.hpp>
 
-#include <jbcoe/polymorphic_value.h>
+#include <polymorphic_value.h>
 
 #include "all_operator_declarations.hpp"
 #include "all_operator_definitions.hpp"

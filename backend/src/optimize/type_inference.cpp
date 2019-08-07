@@ -4,7 +4,7 @@
 
 #include <boost/format.hpp>
 
-#include <jbcoe/polymorphic_value.h>
+#include <polymorphic_value.h>
 
 #include "dag/dag.hpp"
 #include "dag/operators/all_operator_declarations.hpp"

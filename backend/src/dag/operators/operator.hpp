@@ -8,8 +8,9 @@
 
 #include <cstddef>
 
-#include <jbcoe/polymorphic_value.h>
 #include <nlohmann/json.hpp>
+
+#include <polymorphic_value.h>
 
 #include "dag/collection/attribute_id.hpp"
 #include "dag/collection/tuple.hpp"

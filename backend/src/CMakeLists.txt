@@ -56,9 +56,9 @@ get_filename_component(PYBIND11_INCLUDE_DIRS "${PYBIND11_INCLUDE_DIRS}" ABSOLUTE
 include_directories(SYSTEM "{$PYBIND11_INCLUDE_DIRS}")
 
 # Set up polymorphic_value
-set(POLYMORPHIC_VALUE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/jbcoe")
-get_filename_component(POLYMORPHIC_VALUE_INCLUDE_DIRS "${POLYMORPHIC_VALUE_INCLUDE_DIRS}" ABSOLUTE)
-include_directories(SYSTEM ${POLYMORPHIC_VALUE_INCLUDE_DIRS})
+set(POLYMORPHIC_ROOT_DIR "${PROJECT_SOURCE_DIR}/../../3rdparty/polymorphic_value")
+get_filename_component(POLYMORPHIC_ROOT_DIR "${POLYMORPHIC_ROOT_DIR}" ABSOLUTE)
+add_subdirectory("${POLYMORPHIC_ROOT_DIR}" polymorphic_value)
 
 # Set up compilation options
 set(CMAKE_CXX_STANDARD 17)
@@ -203,6 +203,7 @@ set(GENERATE_SOURCE_FILES
 add_library(generate SHARED ${GENERATE_SOURCE_FILES} )
 target_link_libraries(generate PUBLIC
         nlohmann_json::nlohmann_json
+        polymorphic_value::polymorphic_value
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         ${LLVM_LIBS}
@@ -301,7 +302,7 @@ if(cppcheck_FOUND)
             "--suppress='*:${GTEST_INCLUDE_DIRS}/*'"
             "--suppress='*:${JSON_ROOT_DIRECTORY}/*'"
             "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
-            "--suppress='*:${POLYMORPHIC_VALUE_INCLUDE_DIRS}/*'"
+            "--suppress='*:${POLYMORPHIC_ROOT_DIR}/*'"
             "--suppress='*:${PYBIND11_INCLUDE_DIRS}/*'"
         )
 endif()

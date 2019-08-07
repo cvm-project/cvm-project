@@ -10,7 +10,7 @@
 
 #include <boost/mpl/list.hpp>
 
-#include <jbcoe/polymorphic_value.h>
+#include <polymorphic_value.h>
 
 #include "dag/dag.hpp"
 #include "dag/operators/filter.hpp"
