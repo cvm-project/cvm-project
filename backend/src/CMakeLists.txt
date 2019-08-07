@@ -50,10 +50,9 @@ set(JSON_BuildTests OFF CACHE BOOL
 add_subdirectory("${JSON_ROOT_DIRECTORY}" nlohmann_json)
 
 # Set up pybind11
-add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/pybind11" pybind11)
-set(PYBIND11_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/pybind11/include")
-get_filename_component(PYBIND11_INCLUDE_DIRS "${PYBIND11_INCLUDE_DIRS}" ABSOLUTE)
-include_directories(SYSTEM "{$PYBIND11_INCLUDE_DIRS}")
+set(PYBIND11_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/pybind11")
+get_filename_component(PYBIND11_ROOT_DIR "${PYBIND11_ROOT_DIR}" ABSOLUTE)
+add_subdirectory("${PYBIND11_ROOT_DIR}" pybind11)
 
 # Set up polymorphic_value
 set(POLYMORPHIC_ROOT_DIR "${PROJECT_SOURCE_DIR}/../../3rdparty/polymorphic_value")
@@ -184,6 +183,6 @@ if(cppcheck_FOUND)
             "--suppress='*:${JSON_ROOT_DIRECTORY}/*'"
             "--suppress='*:${LLVM_INCLUDE_DIRS}/*'"
             "--suppress='*:${POLYMORPHIC_ROOT_DIR}/*'"
-            "--suppress='*:${PYBIND11_INCLUDE_DIRS}/*'"
+            "--suppress='*:${PYBIND11_ROOT_DIR}/*'"
         )
 endif()
