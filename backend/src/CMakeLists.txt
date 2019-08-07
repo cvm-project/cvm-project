@@ -161,18 +161,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_subdirectory(benchmarks)
 add_subdirectory(dag)
 add_subdirectory(generate)
+add_subdirectory(python_module)
 add_subdirectory(runtime)
 add_subdirectory(tools)
 add_subdirectory(utils)
-
-# Set up Python module
-pybind11_add_module(jitq_backend
-        python_module.cpp
-    )
-target_link_libraries(jitq_backend PUBLIC
-        generate
-        runtime
-    )
 
 # Set up dummy dlclose library
 add_library(dlclose_noop SHARED tools/dlclose_noop.c)
