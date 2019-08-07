@@ -53,6 +53,7 @@ add_executable(llvm_helpers_tests
 target_link_libraries(llvm_helpers_tests
     PRIVATE
         generate
+        Catch2::Catch2
     )
 
 add_test(NAME llvm_helpers

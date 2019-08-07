@@ -38,9 +38,9 @@ endforeach()
 find_package(GraphViz REQUIRED)
 
 # Set up Catch (for unit tests)
-set(CATCH_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/../../3rdparty/catch/single_include")
-get_filename_component(CATCH_INCLUDE_DIRS "${CATCH_INCLUDE_DIRS}" ABSOLUTE)
-include_directories(SYSTEM ${CATCH_INCLUDE_DIRS})
+set(CATCH_ROOT_DIR "${PROJECT_SOURCE_DIR}/../../3rdparty/catch")
+get_filename_component(CATCH_ROOT_DIR "${CATCH_ROOT_DIR}" ABSOLUTE)
+add_subdirectory("${CATCH_ROOT_DIR}" catch2)
 
 # Set up JSON library
 set(JSON_ROOT_DIRECTORY "${PROJECT_SOURCE_DIR}/../../3rdparty/json/")
@@ -177,7 +177,7 @@ if(cppcheck_FOUND)
             "--error-exitcode=1"
             "--inline-suppr"
             "--suppress='*:/usr/*'"
-            "--suppress='*:${CATCH_INCLUDE_DIRS}/*'"
+            "--suppress='*:${CATCH_ROOT_DIR}/*'"
             "--suppress='*:${GRAPHVIZ_INCLUDE_DIRS}/*'"
             "--suppress='*:${GTEST_INCLUDE_DIRS}/*'"
             "--suppress='*:${JSON_ROOT_DIRECTORY}/*'"
