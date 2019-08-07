@@ -1,7 +1,7 @@
 // Use gcc -lrt flag
 
-#ifndef UTILS_TIMING_H
-#define UTILS_TIMING_H
+#ifndef TIMING_H
+#define TIMING_H
 
 #include <chrono>
 

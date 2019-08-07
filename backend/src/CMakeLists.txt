@@ -158,6 +158,7 @@ find_package(AWSSDK CONFIG COMPONENTS
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
+add_subdirectory(benchmarks)
 add_subdirectory(dag)
 add_subdirectory(generate)
 add_subdirectory(tools)
@@ -209,11 +210,6 @@ target_link_libraries(runtime PUBLIC
 
 # Set up dummy dlclose library
 add_library(dlclose_noop SHARED tools/dlclose_noop.c)
-
-# Set up benchmark utils
-add_executable(benchmark benchmarks/main.cpp)
-
-add_executable(max_memory benchmarks/max_memory.c)
 
 # Setup cppcheck
 find_package(cppcheck 1.81 EXACT)
