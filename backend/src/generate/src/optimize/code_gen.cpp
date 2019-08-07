@@ -1,4 +1,4 @@
-#include "code_gen.hpp"
+#include "optimize/code_gen.hpp"
 
 #include <memory>
 #include <string>
@@ -7,7 +7,7 @@
 
 #include <nlohmann/json.hpp>
 
-#include "code_gen/cpp/code_gen.hpp"
+#include "code_gen/code_gen.hpp"
 #include "dag/dag.hpp"
 #include "dag/operators/compiled_pipeline.hpp"
 #include "optimize/optimizer.hpp"

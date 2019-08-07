@@ -2,8 +2,8 @@
 // Created by sabir on 21.07.17.
 //
 
-#ifndef CODE_GEN_CPP_CODEGENVISITOR_H
-#define CODE_GEN_CPP_CODEGENVISITOR_H
+#ifndef CODE_GEN_CODE_GEN_VISITOR_HPP
+#define CODE_GEN_CODE_GEN_VISITOR_HPP
 
 #include <cstdlib>
 #include <iostream>
@@ -90,4 +90,4 @@ private:
 }  // namespace cpp
 }  // namespace code_gen
 
-#endif  // CODE_GEN_CPP_CODEGENVISITOR_H
+#endif  // CODE_GEN_CODE_GEN_VISITOR_HPP

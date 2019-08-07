@@ -1,5 +1,5 @@
-#ifndef CODE_GEN_CPP_CONTEXT_HPP
-#define CODE_GEN_CPP_CONTEXT_HPP
+#ifndef CODE_GEN_CONTEXT_HPP
+#define CODE_GEN_CONTEXT_HPP
 
 #include <memory>
 #include <ostream>
@@ -71,4 +71,4 @@ private:
 }  // namespace cpp
 }  // namespace code_gen
 
-#endif  // CODE_GEN_CPP_CONTEXT_HPP
+#endif  // CODE_GEN_CONTEXT_HPP

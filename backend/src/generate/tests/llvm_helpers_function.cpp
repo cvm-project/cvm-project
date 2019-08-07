@@ -1,6 +1,3 @@
-//
-// Created by sabir on 28.08.17.
-//
 #define CATCH_CONFIG_MAIN
 
 #include <string>

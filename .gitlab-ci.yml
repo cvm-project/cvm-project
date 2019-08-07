@@ -124,7 +124,7 @@ python-tests-parallel:
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev time
     - pip3 install -r requirements.txt
-    - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/code_gen/cpp/Makefile.local
+    - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
     - export AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY
     - export AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY
@@ -153,7 +153,7 @@ python-tests-asan:
   before_script:
     - apt-get update && apt-get install -y python3-pip libgraphviz-dev time
     - pip3 install -r requirements.txt
-    - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/code_gen/cpp/Makefile.local
+    - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
     - export AWS_ACCESS_KEY_ID=$MINIO_ACCESS_KEY
     - export AWS_SECRET_ACCESS_KEY=$MINIO_SECRET_KEY

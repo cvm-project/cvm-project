@@ -1,5 +1,5 @@
-#ifndef OPTIMIZER_CODE_GEN_HPP
-#define OPTIMIZER_CODE_GEN_HPP
+#ifndef OPTIMIZE_CODE_GEN_HPP
+#define OPTIMIZE_CODE_GEN_HPP
 
 #include <string>
 
@@ -15,4 +15,4 @@ public:
 
 }  // namespace optimize
 
-#endif  // OPTIMIZER_CODE_GEN_HPP
+#endif  // OPTIMIZE_CODE_GEN_HPP

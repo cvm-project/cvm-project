@@ -1,4 +1,4 @@
-#include "code_gen.hpp"
+#include "code_gen/code_gen.hpp"
 
 #include <map>
 #include <ostream>
@@ -16,7 +16,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/process.hpp>
 
-#include "CodeGenVisitor.h"
+#include "code_gen_visitor.hpp"
 #include "dag/operators/all_operator_definitions.hpp"
 #include "dag/type/array.hpp"
 #include "dag/type/atomic.hpp"
@@ -121,7 +121,7 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
     boost::filesystem::current_path(lib_dir);
 
     auto const makefile_path =
-            get_lib_path() / "backend/src/code_gen/cpp/Makefile";
+            get_lib_path() / "backend/src/generate/src/code_gen/Makefile";
     auto const make = boost::process::search_path("make");
     const bool do_debug_build = jconfig.value("/debug", false);
     auto const debug_flag =

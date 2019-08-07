@@ -1,5 +1,5 @@
-#ifndef CODE_GEN_CPP_CODE_GEN_HPP
-#define CODE_GEN_CPP_CODE_GEN_HPP
+#ifndef CODE_GEN_CODE_GEN_HPP
+#define CODE_GEN_CODE_GEN_HPP
 
 #include <string>
 #include <utility>
@@ -58,4 +58,4 @@ const StructDef *EmitTupleStructDefinition(Context *context,
 }  // namespace cpp
 }  // namespace code_gen
 
-#endif  // CODE_GEN_CPP_CODE_GEN_HPP
+#endif  // CODE_GEN_CODE_GEN_HPP

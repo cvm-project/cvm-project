@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 
-#include "generate_executable.hpp"
+#include "generate/generate_executable.hpp"
 #include "runtime/execute_plan.hpp"
 #include "runtime/memory/values.hpp"
 

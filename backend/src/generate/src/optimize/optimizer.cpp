@@ -1,16 +1,12 @@
-//
-// Created by sabir on 29.08.17.
-//
-
-#include "optimizer.hpp"
+#include "optimize/optimizer.hpp"
 
 #include <string>
 #include <vector>
 
 #include <nlohmann/json.hpp>
 
-#include "composite_transformation.hpp"
-#include "dag_transformation.hpp"
+#include "optimize/composite_transformation.hpp"
+#include "optimize/dag_transformation.hpp"
 
 namespace optimize {
 

@@ -1,4 +1,4 @@
-#include "CodeGenVisitor.h"
+#include "code_gen_visitor.hpp"
 
 #include <stdexcept>
 #include <string>

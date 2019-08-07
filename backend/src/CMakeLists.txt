@@ -29,9 +29,10 @@ find_package(LLVM REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
-add_definitions(${LLVM_DEFINITIONS})
-include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
-llvm_map_components_to_libnames(LLVM_LIBS support core irreader)
+set(_LLVM_LIBS "LLVMCore;LLVMIRReader;LLVMSupport")
+foreach(lib ${_LLVM_LIBS})
+    target_include_directories(${lib} INTERFACE ${LLVM_INCLUDE_DIRS})
+endforeach()
 
 # Set up GraphViz
 find_package(GraphViz REQUIRED)
@@ -158,44 +159,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(dag)
+add_subdirectory(generate)
 add_subdirectory(tools)
 add_subdirectory(utils)
-
-# Set up generate library
-set(GENERATE_SOURCE_FILES
-        code_gen/cpp/code_gen.cpp
-        code_gen/cpp/CodeGenVisitor.cpp
-        code_gen/cpp/context.cpp
-        generate_executable.cpp
-        llvm_helpers/function.cpp
-        optimize/add_always_inline.cpp
-        optimize/code_gen.cpp
-        optimize/assert_correct_open_next_close.cpp
-        optimize/attribute_id_tracking.cpp
-        optimize/canonicalize.cpp
-        optimize/composite_transformation.cpp
-        optimize/create_pipelines.cpp
-        optimize/dag_transformation.cpp
-        optimize/determine_sortedness.cpp
-        optimize/grouped_reduce_by_key.cpp
-        optimize/materialize_multiple_reads.cpp
-        optimize/optimizer.cpp
-        optimize/parallelize.cpp
-        optimize/type_inference.cpp
-        optimize/grouped_reduce_by_key.cpp
-        optimize/simple_predicate_move_around.cpp
-    )
-add_library(generate SHARED ${GENERATE_SOURCE_FILES} )
-target_link_libraries(generate PUBLIC
-        nlohmann_json::nlohmann_json
-        polymorphic_value::polymorphic_value
-        ${Boost_FILESYSTEM_LIBRARY}
-        ${Boost_SYSTEM_LIBRARY}
-        ${LLVM_LIBS}
-        dag
-        runtime
-        utils
-    )
 
 # Set up Python module
 pybind11_add_module(jitq_backend
@@ -248,15 +214,6 @@ add_library(dlclose_noop SHARED tools/dlclose_noop.c)
 add_executable(benchmark benchmarks/main.cpp)
 
 add_executable(max_memory benchmarks/max_memory.c)
-
-# Set up llvm_function unit tests
-add_executable(llvm_helpers_tests
-        tests/llvm_helpers_function.cpp
-    )
-target_link_libraries(llvm_helpers_tests PUBLIC
-        generate
-    )
-add_test(llvm_helpers llvm_helpers_tests)
 
 # Setup cppcheck
 find_package(cppcheck 1.81 EXACT)

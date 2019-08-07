@@ -10,7 +10,7 @@ ifeq ($(origin CXX),default)
     CXX = clang++
 endif
 
-BACKEND_DIR = $(SCRIPT_DIR)/../../../
+BACKEND_DIR = $(SCRIPT_DIR)/../../../../
 
 # Set flags
 INC = -I$(SCRIPT_DIR)/operators -I$(BACKEND_DIR)/src

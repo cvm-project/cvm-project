@@ -1,5 +1,5 @@
-#ifndef OPTIMIZE_GROUPEDREDUCEBYKEY_HPP
-#define OPTIMIZE_GROUPEDREDUCEBYKEY_HPP
+#ifndef OPTIMIZE_GROUPED_REDUCE_BY_KEY_HPP
+#define OPTIMIZE_GROUPED_REDUCE_BY_KEY_HPP
 
 #include "dag_transformation.hpp"
 
@@ -13,4 +13,4 @@ public:
 
 }  // namespace optimize
 
-#endif  // OPTIMIZE_GROUPEDREDUCEBYKEY_HPP
+#endif  // OPTIMIZE_GROUPED_REDUCE_BY_KEY_HPP
