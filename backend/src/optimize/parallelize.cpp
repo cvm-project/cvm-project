@@ -173,6 +173,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
 
                 auto const proj_op = new DAGProjection();
                 dag->AddOperator(proj_op);
+                // cppcheck-suppress constStatement
                 proj_op->positions = {1};
 
                 // Next parallel map (for post reduction)
@@ -294,10 +295,12 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
 
                 auto const left_proj_op = new DAGProjection();
                 next_inner_dag->AddOperator(left_proj_op);
+                // cppcheck-suppress constStatement
                 left_proj_op->positions = {0};
 
                 auto const right_proj_op = new DAGProjection();
                 next_inner_dag->AddOperator(right_proj_op);
+                // cppcheck-suppress constStatement
                 right_proj_op->positions = {1};
 
                 // Scan operators for (1) partitioning and (2) groupby
