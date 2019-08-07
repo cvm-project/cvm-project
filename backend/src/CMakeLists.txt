@@ -166,9 +166,6 @@ add_subdirectory(runtime)
 add_subdirectory(tools)
 add_subdirectory(utils)
 
-# Set up dummy dlclose library
-add_library(dlclose_noop SHARED tools/dlclose_noop.c)
-
 # Setup cppcheck
 find_package(cppcheck 1.81 EXACT)
 if(cppcheck_FOUND)
