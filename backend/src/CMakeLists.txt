@@ -6,8 +6,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/cmake/")
 
 set(LLVM_ASAN OFF CACHE BOOL "Enable compilation with LLVM address, undefined, and leak sanitizer.")
 
-include_directories("${PROJECT_SOURCE_DIR}")
-
 include (ReleaseAsDefault)
 include (ExternalProject)
 
