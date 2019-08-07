@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "runtime/operators/value_operator.hpp"
-#include "runtime/values/value.hpp"
+#include "runtime/jit/operators/value_operator.hpp"
+#include "runtime/jit/values/value.hpp"
 
 template <class Upstream>
 struct TupleToValueOperator : runtime::operators::ValueOperator {

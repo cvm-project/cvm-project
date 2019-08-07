@@ -2,8 +2,8 @@
 #define CODE_GEN_CPP_OPERATORS_EXPANDPATTERNOPERATOR_H
 
 #include "Utils.h"
-#include "runtime/operators/expand_pattern.hpp"
-#include "runtime/operators/optional.hpp"
+#include "runtime/jit/operators/expand_pattern.hpp"
+#include "runtime/jit/operators/optional.hpp"
 
 template <class Tuple, class PatternUpstream, class ParameterUpstream>
 class ExpandPatternOperator {

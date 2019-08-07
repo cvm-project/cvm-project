@@ -7,9 +7,9 @@
 
 #include "TupleToValueOperator.h"
 #include "Utils.h"
-#include "runtime/operators/materialize_parquet.hpp"
-#include "runtime/operators/optional.hpp"
-#include "runtime/operators/type_traits.hpp"
+#include "runtime/jit/operators/materialize_parquet.hpp"
+#include "runtime/jit/operators/optional.hpp"
+#include "runtime/jit/operators/type_traits.hpp"
 
 template <class OutputTuple>
 class MaterializeParquetOperator {

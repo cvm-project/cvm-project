@@ -161,6 +161,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 add_subdirectory(benchmarks)
 add_subdirectory(dag)
 add_subdirectory(generate)
+add_subdirectory(runtime)
 add_subdirectory(tools)
 add_subdirectory(utils)
 
@@ -171,41 +172,6 @@ pybind11_add_module(jitq_backend
 target_link_libraries(jitq_backend PUBLIC
         generate
         runtime
-    )
-
-# Set up runtime library
-set(RUNTIME_SOURCE_FILES
-        runtime/execute_plan.cpp
-        runtime/filesystem/file.cpp
-        runtime/filesystem/filesystem.cpp
-        runtime/memory/shared_pointer.cpp
-        runtime/memory/values.cpp
-        runtime/operators/arrow_helpers.cpp
-        runtime/operators/expand_pattern.cpp
-        runtime/operators/materialize_parquet_impl.cpp
-        runtime/operators/parquet_scan_impl.cpp
-        runtime/operators/value_to_record_batch.cpp
-        runtime/values/json_parsing.cpp
-        runtime/values/array_json.cpp
-        runtime/values/tuple_json.cpp
-        runtime/values/value_json.cpp
-        runtime/values/value_parser.cpp
-    )
-if(AWSSDK_FOUND)
-    set(RUNTIME_SOURCE_FILES ${RUNTIME_SOURCE_FILES}
-            runtime/aws/aws.cpp
-            runtime/aws/s3.cpp
-            runtime/filesystem/s3.cpp
-        )
-endif()
-add_library(runtime SHARED ${RUNTIME_SOURCE_FILES} )
-target_link_libraries(runtime PUBLIC
-        nlohmann_json::nlohmann_json
-        ${Skyr_LIBRARY}
-        ${AWSSDK_LINK_LIBRARIES}
-        ${arrow_LIBRARY}
-        ${parquet_LIBRARY}
-        utils
     )
 
 # Set up dummy dlclose library
@@ -232,13 +198,3 @@ if(cppcheck_FOUND)
             "--suppress='*:${PYBIND11_INCLUDE_DIRS}/*'"
         )
 endif()
-
-# Set up google unit test target
-add_executable(gtest_tests
-        tests/shared_pointer_test.cpp
-    )
-target_link_libraries(gtest_tests
-        runtime
-        "${GTEST_LIBRARIES}"
-    )
-gtest_discover_tests(gtest_tests)

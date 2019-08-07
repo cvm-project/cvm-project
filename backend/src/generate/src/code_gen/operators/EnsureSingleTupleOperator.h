@@ -2,7 +2,7 @@
 #define CPP_ENSURESINGLETUPLE_OPERATOR_H
 
 #include "Utils.h"
-#include "runtime/operators/optional.hpp"
+#include "runtime/jit/operators/optional.hpp"
 
 #include <stdexcept>
 

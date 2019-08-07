@@ -2,7 +2,7 @@
 #define CPP_SPLITROWDATAOPERATOR_H
 
 #include "Utils.h"
-#include "runtime/operators/optional.hpp"
+#include "runtime/jit/operators/optional.hpp"
 
 template <class Upstream, class Tuple>
 class SplitRowDataOperator {

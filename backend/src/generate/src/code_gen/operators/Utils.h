@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "runtime/operators/optional.hpp"
-#include "runtime/values/value.hpp"
+#include "runtime/jit/operators/optional.hpp"
+#include "runtime/jit/values/value.hpp"
 
 #define INLINE __attribute__((always_inline))
 

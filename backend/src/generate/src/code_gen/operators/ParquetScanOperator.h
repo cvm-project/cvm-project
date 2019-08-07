@@ -6,9 +6,9 @@
 #include <cstdlib>
 
 #include "Utils.h"
-#include "runtime/operators/optional.hpp"
-#include "runtime/operators/parquet_scan.hpp"
-#include "runtime/values/array.hpp"
+#include "runtime/jit/operators/optional.hpp"
+#include "runtime/jit/operators/parquet_scan.hpp"
+#include "runtime/jit/values/array.hpp"
 
 template <class OutputTuple, class Upstream, class... OutputTypes>
 class ParquetScanOperator {

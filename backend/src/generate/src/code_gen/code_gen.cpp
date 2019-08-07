@@ -367,14 +367,14 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     auto execute_tuples = GenerateExecuteTuples(dag, context);
 
     // Includes needed for generate_values
-    context->includes().emplace("\"runtime/memory/shared_pointer.hpp\"");
-    context->includes().emplace("\"runtime/values/array.hpp\"");
-    context->includes().emplace("\"runtime/values/atomics.hpp\"");
-    context->includes().emplace("\"runtime/values/json_parsing.hpp\"");
-    context->includes().emplace("\"runtime/values/none.hpp\"");
-    context->includes().emplace("\"runtime/values/tuple.hpp\"");
-    context->includes().emplace("\"runtime/values/value.hpp\"");
-    context->includes().emplace("\"runtime/operators/optional.hpp\"");
+    context->includes().emplace("\"runtime/jit/memory/shared_pointer.hpp\"");
+    context->includes().emplace("\"runtime/jit/values/array.hpp\"");
+    context->includes().emplace("\"runtime/jit/values/atomics.hpp\"");
+    context->includes().emplace("\"runtime/jit/values/json_parsing.hpp\"");
+    context->includes().emplace("\"runtime/jit/values/none.hpp\"");
+    context->includes().emplace("\"runtime/jit/values/tuple.hpp\"");
+    context->includes().emplace("\"runtime/jit/values/value.hpp\"");
+    context->includes().emplace("\"runtime/jit/operators/optional.hpp\"");
     context->includes().emplace("<omp.h>");
 
     context->declarations() << "using namespace runtime::values;" << std::endl;

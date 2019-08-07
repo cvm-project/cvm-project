@@ -2,9 +2,9 @@
 #define CODE_GEN_CPP_OPERATORS_MATERIALIZECOLUMNCHUNKSOPERATOR_H
 
 #include "Utils.h"
-#include "runtime/memory/default_ref_counter.hpp"
-#include "runtime/memory/shared_pointer.hpp"
-#include "runtime/operators/optional.hpp"
+#include "runtime/jit/memory/default_ref_counter.hpp"
+#include "runtime/jit/memory/shared_pointer.hpp"
+#include "runtime/jit/operators/optional.hpp"
 
 template <class OutputTuple, class Upstream, class... InputTypes>
 class MaterializeColumnChunksOperator {

@@ -5,9 +5,9 @@
 #include <type_traits>
 
 #include "Utils.h"
-#include "runtime/memory/free_ref_counter.hpp"
-#include "runtime/memory/shared_pointer.hpp"
-#include "runtime/operators/optional.hpp"
+#include "runtime/jit/memory/free_ref_counter.hpp"
+#include "runtime/jit/memory/shared_pointer.hpp"
+#include "runtime/jit/operators/optional.hpp"
 
 template <class OuterTuple, class Upstream>
 class MaterializeRowVectorOperator {

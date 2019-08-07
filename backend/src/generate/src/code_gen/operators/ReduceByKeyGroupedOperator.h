@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 #include "Utils.h"
-#include "runtime/operators/optional.hpp"
+#include "runtime/jit/operators/optional.hpp"
 
 /**
  * Groups up the input tuples by key and reduces the values
