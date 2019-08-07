@@ -10,7 +10,7 @@ ifeq ($(origin CXX),default)
     CXX = clang++
 endif
 
-BACKEND_DIR = $(SCRIPT_DIR)/../../../../
+BACKEND_DIR = $(realpath $(SCRIPT_DIR)/../../../../)
 
 # Set flags
 INC = -I$(SCRIPT_DIR)/operators -I$(BACKEND_DIR)/src/runtime/include
@@ -41,10 +41,12 @@ endif
 UDF_SOURCES = llvm_funcs.ll
 UDF_OBJECTS = $(UDF_SOURCES:.ll=.o)
 
-MAINHEADER = $(SCRIPT_DIR)/operators/Operators.h
-HEADERS = $(filter-out $(MAINHEADER),$(wildcard $(SCRIPT_DIR)/operators/*.h))
-GCHEADER = $(SCRIPT_DIR)/operators/Operators.h.gch
-GENHEADER = $(SCRIPT_DIR)/operators/Operators.h.sh
+MAINHEADER = $(SCRIPT_DIR)/operators/AllHeaders.h
+OPERATOR_HEADERS = $(filter-out $(MAINHEADER),$(wildcard $(SCRIPT_DIR)/operators/*.h))
+RUNTIME_HEADERS = $(shell find $(BACKEND_DIR)/src/runtime/include/runtime/jit -name "*.hpp")
+HEADERS = $(OPERATOR_HEADERS) $(RUNTIME_HEADERS)
+GCHEADER = $(SCRIPT_DIR)/operators/AllHeaders.h.gch
+GENHEADER = $(SCRIPT_DIR)/operators/AllHeaders.h.sh
 
 # Rules
 all: $(LIB)
