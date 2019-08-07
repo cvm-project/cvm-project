@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 #include "llvm_helpers/function.hpp"
 
@@ -136,6 +136,7 @@ TEST_CASE("input arg 1 used in output, pointer return type", "") {
     llvm_helpers::Function parser(ir);
     size_t pos = parser.ComputeOutputPositions(0)[0] +
                  parser.ComputeOutputPositions(0)[1];
+    // NOLINTNEXTLINE(clang-analyzer-core.uninitialized.UndefReturn)
     REQUIRE(pos == 1);
     REQUIRE(parser.ComputeOutputPositions(0).size() == 2);
     REQUIRE(parser.ComputeOutputPositions(1).size() == 1);
