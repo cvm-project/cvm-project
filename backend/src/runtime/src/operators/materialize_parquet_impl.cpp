@@ -210,9 +210,7 @@ Optional<std::string> MaterializeParquetOperatorImpl::next() {
 std::unique_ptr<MaterializeParquetOperator> MakeMaterializeParquetOperator(
         std::unique_ptr<ValueOperator> main_upstream,
         std::unique_ptr<ValueOperator> conf_upstream,
-        // cppcheck-suppress passedByValue
         std::vector<std::string> column_types,
-        // cppcheck-suppress passedByValue
         std::vector<std::string> column_names) {
     auto const schema =
             MakeArrowSchema(std::move(column_types), std::move(column_names));

@@ -10,7 +10,6 @@
 
 namespace optimize {
 
-// cppcheck-suppress passedByValue
 Optimizer::Optimizer(std::string config) : config_(std::move(config)) {
     LoadDagTransformations();
 }

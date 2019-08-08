@@ -101,7 +101,6 @@ private:
                 concrete_visitor, visitable, &has_called, &return_value};
         boost::mpl::for_each<VisitablePointerTypeList>(visitor_functor);
 
-        // cppcheck-suppress knownConditionTrueFalse
         if (!has_called) {
             using HasCatchAll =
                     decltype(impl::HasCallOperator<QualifiedConcreteVisitor,

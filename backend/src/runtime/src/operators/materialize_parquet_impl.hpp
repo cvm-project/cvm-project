@@ -69,11 +69,8 @@ namespace operators {
 
 struct MaterializeParquetOperatorImpl : public MaterializeParquetOperator {
     MaterializeParquetOperatorImpl(
-            // cppcheck-suppress passedByValue
             std::unique_ptr<ValueToRecordBatchOperator> main_upstream,
-            // cppcheck-suppress passedByValue
             std::unique_ptr<ValueOperator> conf_upstream,
-            // cppcheck-suppress passedByValue
             std::shared_ptr<arrow::Schema> schema)
         : main_upstream_(std::move(main_upstream)),
           conf_upstream_(std::move(conf_upstream)),

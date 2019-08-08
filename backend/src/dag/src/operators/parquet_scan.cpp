@@ -16,10 +16,8 @@ void DAGParquetScan::to_json(nlohmann::json *json) const {
     assert(column_indexes.size() == column_range_filters.size());
     auto columns = nlohmann::json::array();
     for (size_t i = 0; i < column_indexes.size(); i++) {
-        nlohmann::json col = {
-                // cppcheck-suppress constStatement
-                {"idx", column_indexes[i]},  // cppcheck-suppress constStatement
-                {"ranges", nlohmann::json::array()}};
+        nlohmann::json col = {{"idx", column_indexes[i]},
+                              {"ranges", nlohmann::json::array()}};
         for (const auto &r : column_range_filters[i]) {
             col["ranges"].push_back({{"lo", r.first}, {"hi", r.second}});
         }

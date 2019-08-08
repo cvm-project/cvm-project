@@ -161,12 +161,11 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
 
 std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {
     static const std::unordered_map<std::string, std::string> type_map = {
-            // cppcheck-suppress constStatement
-            {"float", "Float"},        // cppcheck-suppress constStatement
-            {"double", "Double"},      // cppcheck-suppress constStatement
-            {"int", "Int32"},          // cppcheck-suppress constStatement
-            {"long", "Int64"},         // cppcheck-suppress constStatement
-            {"bool", "Bool"},          // cppcheck-suppress constStatement
+            {"float", "Float"},        //
+            {"double", "Double"},      //
+            {"int", "Int32"},          //
+            {"long", "Int64"},         //
+            {"bool", "Bool"},          //
             {"std::string", "String"}  //
     };
     return type_map.at(type_name);

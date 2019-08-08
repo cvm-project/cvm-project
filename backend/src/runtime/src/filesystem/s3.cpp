@@ -29,9 +29,7 @@ static const char* const kS3FileSystemAllocationTag = "S3FileSystemAllocation";
 
 class S3ReadableFile : public ::arrow::io::RandomAccessFile {
 public:
-    // cppcheck-suppress passedByValue
     S3ReadableFile(std::shared_ptr<Aws::S3::S3Client> s3_client,
-                   // cppcheck-suppress passedByValue
                    std::string bucket, std::string key)
         : bucket_(std::move(bucket)),
           key_(std::move(key)),
@@ -170,9 +168,7 @@ private:
 
 class S3OutputStream : public ::arrow::io::OutputStream {
 public:
-    // cppcheck-suppress passedByValue
     S3OutputStream(std::shared_ptr<Aws::S3::S3Client> s3_client,
-                   // cppcheck-suppress passedByValue
                    std::string bucket, std::string key)
         : bucket_(std::move(bucket)),
           key_(std::move(key)),

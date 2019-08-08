@@ -25,7 +25,6 @@ struct BufferDeleter {
 
 struct ValueToRecordBatchOperator {
     ValueToRecordBatchOperator(std::unique_ptr<ValueOperator> upstream,
-                               // cppcheck-suppress passedByValue
                                std::shared_ptr<arrow::Schema> schema)
         : upstream_(std::move(upstream)), schema_(std::move(schema)) {}
 
