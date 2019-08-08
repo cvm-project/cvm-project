@@ -26,10 +26,12 @@ struct TestRefCounter : public RefCounter {  // NOLINT
     }
 };
 
+// cppcheck-suppress missingOverride
 TEST(SharedPointerTest, NullConstruct) {  // NOLINT
     SharedPointer<int> ptr(nullptr);
 }
 
+// cppcheck-suppress missingOverride
 TEST(SharedPointerTest, ConstAccess) {  // NOLINT
     struct S {
         int val;
@@ -42,6 +44,8 @@ TEST(SharedPointerTest, ConstAccess) {  // NOLINT
     // Special members
     SharedPointer<S> ptr2 = ptr1.as<S>();
     SharedPointer<S> ptr3(ptr1.as<S>());
+    EXPECT_EQ(ptr2.get(), ptr1.get());
+    EXPECT_EQ(ptr3.get(), ptr1.get());
 
     // Pointer access
     EXPECT_EQ((*ptr1).val, 42);
@@ -50,6 +54,7 @@ TEST(SharedPointerTest, ConstAccess) {  // NOLINT
     EXPECT_EQ((ptr1.get())->val, 42);
 }
 
+// cppcheck-suppress missingOverride
 TEST(SharedPointerTest, SimpleDelete) {  // NOLINT
     int* const int_ptr = new int(42);
 
@@ -68,6 +73,7 @@ TEST(SharedPointerTest, SimpleDelete) {  // NOLINT
     EXPECT_EQ(pointers.size(), 0);
 }
 
+// cppcheck-suppress missingOverride
 TEST(SharedPointerTest, PointerAccess) {  // NOLINT
     int* const int_ptr = new int(42);
 
@@ -90,6 +96,7 @@ TEST(SharedPointerTest, PointerAccess) {  // NOLINT
     EXPECT_EQ(ptr2.get(), struct_ptr);
 }
 
+// cppcheck-suppress missingOverride
 TEST(SharedPointerTest, Copy) {  // NOLINT
     int* const int_ptr1 = new int(1);
     int* const int_ptr2 = new int(2);
@@ -209,6 +216,7 @@ TEST(SharedPointerTest, Copy) {  // NOLINT
     EXPECT_EQ(pointers.size(), 0);
 }
 
+// cppcheck-suppress missingOverride
 TEST(SharedPointerTest, Move) {  // NOLINT
     int* const int_ptr1 = new int(1);
     int* const int_ptr2 = new int(2);
@@ -322,6 +330,7 @@ TEST(SharedPointerTest, Move) {  // NOLINT
     EXPECT_EQ(pointers.size(), 0);
 }
 
+// cppcheck-suppress missingOverride
 TEST(SharedPointerTest, ThreadedMove) {  // NOLINT
     int* const int_ptr = new int(42);
     // NOLINTNEXTLINE clang-analyzer-core.CallAndMessage

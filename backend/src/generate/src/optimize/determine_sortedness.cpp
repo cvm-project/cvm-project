@@ -63,21 +63,21 @@ public:
 
         if (is_left_unique && is_right_unique) {
             for (size_t i = 0; i < left_fields.size(); i++) {
-                auto &field = op->tuple->fields[i];
                 if (left_fields[i]->properties().count(FL_UNIQUE) > 0) {
+                    auto &field = op->tuple->fields[i];
                     field->AddProperty(FL_UNIQUE);
                 }
             }
             for (size_t i = 1; i < right_fields.size(); i++) {
-                auto &field = op->tuple->fields[i + left_fields.size() - 1];
                 if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
+                    auto &field = op->tuple->fields[i + left_fields.size() - 1];
                     field->AddProperty(FL_UNIQUE);
                 }
             }
         } else if (is_right_unique) {
             for (size_t i = 1; i < right_fields.size(); i++) {
-                auto &field = op->tuple->fields[i + left_fields.size() - 1];
                 if (right_fields[i]->properties().count(FL_UNIQUE) > 0) {
+                    auto &field = op->tuple->fields[i + left_fields.size() - 1];
                     field->AddProperty(FL_GROUPED);
                 }
             }

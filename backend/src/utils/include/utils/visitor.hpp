@@ -97,9 +97,9 @@ private:
 
         bool has_called = false;
         ReturnValueType return_value{};
-        Functor<QualifiedConcreteVisitor> functor{concrete_visitor, visitable,
-                                                  &has_called, &return_value};
-        boost::mpl::for_each<VisitablePointerTypeList>(functor);
+        Functor<QualifiedConcreteVisitor> visitor_functor{
+                concrete_visitor, visitable, &has_called, &return_value};
+        boost::mpl::for_each<VisitablePointerTypeList>(visitor_functor);
 
         // cppcheck-suppress knownConditionTrueFalse
         if (!has_called) {
@@ -107,7 +107,7 @@ private:
                     decltype(impl::HasCallOperator<QualifiedConcreteVisitor,
                                                    const VisitableBase *>(0));
 
-            VisitCatchAll(&functor, visitable, HasCatchAll());
+            VisitCatchAll(&visitor_functor, visitable, HasCatchAll());
         }
 
         // This cast either casts 'void*' to 'void' or some type to itself

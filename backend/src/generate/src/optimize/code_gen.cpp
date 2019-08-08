@@ -15,8 +15,6 @@
 namespace optimize {
 
 void CodeGen::Run(DAG *const dag, const std::string &config) const {
-    const nlohmann::json conf = nlohmann::json::parse(config).flatten();
-
     // Generate code and compile
     auto const [lib_path, func_name] = code_gen::cpp::GenerateCode(dag, config);
 

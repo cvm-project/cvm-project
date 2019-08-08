@@ -42,7 +42,7 @@ auto DAG::AddOperator(DAGOperator *const op, const size_t id,
                       DAG *const inner_dag) -> Vertex {
     std::shared_ptr<DAGOperator> op_ptr(op);
     std::shared_ptr<DAG> inner_dag_ptr(inner_dag);
-    return AddOperator(op, id,
+    return AddOperator(op_ptr.get(), id,
                        VertexInnerDag(inner_dag_ptr, VertexOperator(op_ptr)));
 }
 

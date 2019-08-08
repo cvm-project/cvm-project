@@ -25,6 +25,7 @@ struct RangePredicate : public Predicate {
 
 template <typename T>
 std::shared_ptr<Predicate> MakeRangePredicate(const T& lo, const T& hi) {
+    // cppcheck-suppress internalAstError
     return std::shared_ptr<Predicate>(new RangePredicate<T>(lo, hi));
 }
 

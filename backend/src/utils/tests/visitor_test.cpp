@@ -128,6 +128,7 @@ struct NoCatchAllVisitor
     void operator()(C *t) { count(t); }
 };
 
+// cppcheck-suppress missingOverride
 TEST(VisitorTest, NonConstVisitableVoidReturning) {  // NOLINT
     NonConstVisitableVoidReturningVisitor v;
     std::unique_ptr<Visitable> visitable_ptr;
@@ -163,6 +164,7 @@ TEST(VisitorTest, NonConstVisitableVoidReturning) {  // NOLINT
     EXPECT_EQ(count_non_const, 1);
 }
 
+// cppcheck-suppress missingOverride
 TEST(VisitorTest, NonConstVisitorConstVisitableVoidReturning) {  // NOLINT
     ConstVisitableVoidReturningVisitor v;
     std::unique_ptr<const Visitable> visitable_ptr;
@@ -198,6 +200,7 @@ TEST(VisitorTest, NonConstVisitorConstVisitableVoidReturning) {  // NOLINT
     EXPECT_EQ(count_non_const, 1);
 }
 
+// cppcheck-suppress missingOverride
 TEST(VisitorTest, ConstVisitorConstVisitableVoidReturning) {  // NOLINT
     const ConstVisitableVoidReturningVisitor v;
     std::unique_ptr<const Visitable> visitable_ptr;
@@ -233,6 +236,7 @@ TEST(VisitorTest, ConstVisitorConstVisitableVoidReturning) {  // NOLINT
     EXPECT_EQ(count_non_const, 0);
 }
 
+// cppcheck-suppress missingOverride
 TEST(VisitorTest, NonConstVisitableIntReturning) {  // NOLINT
     NonConstVisitableIntReturningVisitor v;
     std::unique_ptr<Visitable> visitable_ptr;
@@ -272,6 +276,7 @@ TEST(VisitorTest, NonConstVisitableIntReturning) {  // NOLINT
     EXPECT_EQ(i, 3);
 }
 
+// cppcheck-suppress missingOverride
 TEST(VisitorTest, ConstVisitableIntReturning) {  // NOLINT
     ConstVisitableIntReturningVisitor v;
     std::unique_ptr<const Visitable> visitable_ptr;
@@ -311,6 +316,7 @@ TEST(VisitorTest, ConstVisitableIntReturning) {  // NOLINT
     EXPECT_EQ(i, 3);
 }
 
+// cppcheck-suppress missingOverride
 TEST(VisitorTest, NoCatchAll) {  // NOLINT
     NoCatchAllVisitor v;
     std::unique_ptr<Visitable> visitable_ptr;

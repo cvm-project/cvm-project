@@ -112,7 +112,7 @@ double filter_sum3(const double *const array) {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    auto *result =
+    auto *result =  // cppcheck-suppress constArgument
             reinterpret_cast<double *>(malloc(sizeof(double) * allocatedSize));
 
     for (size_t i = 0; i < MAX; i++) {

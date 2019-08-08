@@ -11,10 +11,7 @@ Field::~Field() {
 
 size_t Field::position() const { return position_; }
 
-void Field::set_position(size_t position) {
-    assert(position >= 0);
-    position_ = position;
-}
+void Field::set_position(size_t position) { position_ = position; }
 
 const dag::type::FieldType *Field::field_type() const { return field_type_; }
 

@@ -162,6 +162,7 @@ if(cppcheck_FOUND)
             "--enable=warning,performance,style"
             "--error-exitcode=1"
             "--inline-suppr"
+            "--suppress=useStlAlgorithm"
             "--suppress='*:/usr/*'"
             "--suppress='*:${CATCH_ROOT_DIR}/*'"
             "--suppress='*:${GRAPHVIZ_INCLUDE_DIRS}/*'"

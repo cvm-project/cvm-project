@@ -104,6 +104,7 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
                                    boost::process::std_out > sha256sum_std_out);
     assert(ret2 == 0);
 
+    // cppcheck-suppress unreadVariable
     auto const hash =
             boost::lexical_cast<std::string>(sha256sum_std_out.rdbuf())
                     .substr(0, 32);

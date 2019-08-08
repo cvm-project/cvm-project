@@ -97,28 +97,28 @@ void from_json(const nlohmann::json& j,
     }
 
     // Per-path properties (via ParquetProperties)
-    const auto path_properties =
+    const auto jpath_properties =
             j.value("path_properties", nlohmann::json::object());
-    for (auto const& it : path_properties.items()) {
-        auto const properties =
+    for (auto const& it : jpath_properties.items()) {
+        auto const path_properties =
                 it.value().get<runtime::operators::ParquetProperties>();
         const std::string& path = it.key();
-        if (properties.encoding.has_value()) {
-            properties_builder.encoding(path, properties.encoding.value());
+        if (path_properties.encoding.has_value()) {
+            properties_builder.encoding(path, path_properties.encoding.value());
         }
-        if (properties.compression.has_value()) {
+        if (path_properties.compression.has_value()) {
             properties_builder.compression(path,
-                                           properties.compression.value());
+                                           path_properties.compression.value());
         }
-        if (properties.enable_dictionary.has_value()) {
-            if (properties.enable_dictionary.value()) {
+        if (path_properties.enable_dictionary.has_value()) {
+            if (path_properties.enable_dictionary.value()) {
                 properties_builder.enable_dictionary(path);
             } else {
                 properties_builder.disable_dictionary(path);
             }
         }
-        if (properties.enable_statistics.has_value()) {
-            if (properties.enable_statistics.value()) {
+        if (path_properties.enable_statistics.has_value()) {
+            if (path_properties.enable_statistics.value()) {
                 properties_builder.enable_statistics(path);
             } else {
                 properties_builder.disable_statistics(path);
