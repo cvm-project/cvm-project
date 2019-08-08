@@ -152,7 +152,7 @@ add_subdirectory(tools)
 add_subdirectory(utils)
 
 # Setup cppcheck
-find_package(cppcheck 1.81 EXACT)
+find_package(cppcheck 1.88 EXACT)
 if(cppcheck_FOUND)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     add_custom_target(
