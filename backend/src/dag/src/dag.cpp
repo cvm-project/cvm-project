@@ -15,6 +15,7 @@
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
 #include <boost/range/adaptor/uniqued.hpp>
+#include <boost/range/algorithm_ext/push_back.hpp>
 
 #include "dag/operators/operator.hpp"
 
@@ -73,17 +74,13 @@ void DAG::Clear() {
     reset_outputs();
 
     std::vector<Flow> temp_flows;
-    for (auto const &f : flows()) {
-        temp_flows.emplace_back(f);
-    }
+    boost::push_back(temp_flows, flows());
     for (auto const &f : temp_flows) {
         RemoveFlow(f);
     }
 
     std::vector<DAGOperator *> temp_operators;
-    for (auto const &f : operators()) {
-        temp_operators.emplace_back(f);
-    }
+    boost::push_back(temp_operators, operators());
     for (auto const &f : temp_operators) {
         RemoveOperator(f);
     }
@@ -449,12 +446,8 @@ std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
             dag->set_inner_dag(op, inner_dag.release());
         }
 
-        std::vector<size_t> preds;
-        auto preds_json = it.at("predecessors");
-        for (auto &it_preds : preds_json) {
-            preds.push_back(static_cast<size_t>(it_preds));
-        }
-        predecessors.emplace(op, preds);
+        predecessors.emplace(op,
+                             it.at("predecessors").get<std::vector<size_t>>());
     }
 
     for (const auto &op_val : operators) {

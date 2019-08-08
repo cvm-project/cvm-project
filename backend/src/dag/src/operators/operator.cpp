@@ -1,5 +1,6 @@
 #include "dag/operators/operator.hpp"
 
+#include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/mpl/for_each.hpp>
 
 #include <polymorphic_value.h>
@@ -39,24 +40,19 @@ void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op) {
 }
 
 bool DAGOperator::HasInOutput(const dag::AttributeId *const attribute) const {
-    for (auto const &f : tuple->fields) {
-        if (*(f->attribute_id()) == *attribute) return true;
-    }
-    return false;
+    return boost::algorithm::any_of(tuple->fields, [&](auto const &f) {
+        return *(f->attribute_id()) == *attribute;
+    });
 }
 
 bool DAGOperator::Reads(const dag::AttributeId *attribute) const {
-    for (auto const &col : read_set) {
-        if (*col == *attribute) return true;
-    }
-    return false;
+    return boost::algorithm::any_of(
+            read_set, [&](auto const &col) { return *col == *attribute; });
 }
 
 bool DAGOperator::Writes(const dag::AttributeId *attribute) const {
-    for (auto const &col : write_set) {
-        if (*col == *attribute) return true;
-    }
-    return false;
+    return boost::algorithm::any_of(
+            write_set, [&](auto const &col) { return *col == *attribute; });
 }
 
 struct LoadOperatorFunctor {
