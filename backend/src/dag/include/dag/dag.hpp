@@ -309,6 +309,8 @@ struct adl_serializer<std::unique_ptr<DAG>> {
 void to_json(nlohmann::json &json, DAG *dag);
 // NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const DAG *dag);
+// NOLINTNEXTLINE(google-runtime-references)
+void to_json(nlohmann::json &json, const std::unique_ptr<const DAG> &dag);
 
 DAG *ParseDag(std::istream *istream);
 DAG *ParseDag(const std::string &dagstr);

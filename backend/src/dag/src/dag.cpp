@@ -517,6 +517,10 @@ void to_json(nlohmann::json &json, const DAG *const dag) {
     }
 }
 
+void to_json(nlohmann::json &json, const std::unique_ptr<const DAG> &dag) {
+    to_json(json, dag.get());
+}
+
 void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(
         nlohmann::json &json, const std::unique_ptr<DAG> &dag) {
     ::to_json(json, dag.get());
