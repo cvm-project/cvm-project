@@ -89,11 +89,10 @@ int main(int argc, char* argv[]) {
 
     // Open input and output files
     std::ifstream input_file(input_file_name);
-    std::ifstream output_file(output_file_name);
+    std::ofstream output_file(output_file_name);
 
     std::istream& input = vm.count("input") > 0 ? input_file : std::cin;
-    std::ostream output(vm.count("output") > 0 ? output_file.rdbuf()
-                                               : std::cout.rdbuf());
+    std::ostream& output = vm.count("output") > 0 ? output_file : std::cout;
 
     // Parse DAG
     const std::string dagstr(std::istreambuf_iterator<char>(input), {});
