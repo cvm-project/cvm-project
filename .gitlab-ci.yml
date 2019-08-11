@@ -24,24 +24,15 @@ services:
 
 format-cpp:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   script:
     - cd backend/build
-    - >-
-        cmake ../src
-        -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
-        -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
-        -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
-        -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
-        -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
-        -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
-        -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
-        -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
+    - cmake ../src
     - make check-format
 
 format-python:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   before_script:
     - pip3 install -r requirements.txt
   script:
@@ -50,19 +41,10 @@ format-python:
 
 rel-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   script:
     - cd backend/build
-    - >-
-        cmake ../src
-        -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
-        -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
-        -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
-        -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
-        -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
-        -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
-        -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
-        -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
+    - cmake ../src
     - make
   artifacts:
     paths:
@@ -70,7 +52,7 @@ rel-build:
 
 dbg-build:
   stage: build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   variables:
     ASAN_OPTIONS: detect_leaks=0
   script:
@@ -80,14 +62,6 @@ dbg-build:
         -DCMAKE_BUILD_TYPE=Debug
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         -DLLVM_ASAN=ON
-        -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm/
-        -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow
-        -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
-        -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
-        -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
-        -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
-        -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
-        -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
     - make
   artifacts:
     paths:
@@ -97,7 +71,7 @@ clang-tidy:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   script:
     - cd backend/build
     - make -k check-tidy
@@ -106,7 +80,7 @@ cppcheck:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   script:
     - cd backend/build
     - make cppcheck
@@ -115,7 +89,7 @@ python-tests-parallel:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   tags:
     - ptrace
   variables:
@@ -136,7 +110,7 @@ python-tests-asan:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   tags:
     - ptrace
   variables:
@@ -155,7 +129,7 @@ cpp-test:
   stage: test
   dependencies:
     - dbg-build
-  image: ingomuellernet/buildenv-jitq:2019-07-21
+  image: ingomuellernet/buildenv-jitq:2019-08-12
   tags:
     - ptrace
   before_script:
