@@ -271,7 +271,7 @@ CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ \
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > ../src/code_gen/cpp/Makefile.local
+echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > ../src/generate/src/code_gen/Makefile.local
 ```
 
 1. Build:
