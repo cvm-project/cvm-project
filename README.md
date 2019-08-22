@@ -62,7 +62,7 @@ do \
 done
 ```
 
-4. Clang
+4. Clang + LLVM
 
 Download and add links:
 
@@ -75,6 +75,13 @@ for file in bin/*; \
 do \
     sudo ln -s $PWD/$file /usr/bin/$(basename $file)-7.0; \
 done
+```
+
+Make the following command executed in the shells you use for development,
+for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
+
+```bash
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-7.0.1
 ```
 
 5. Gold linker
@@ -156,6 +163,13 @@ PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.'
 sudo ./bjam install
 ```
 
+Make the following command executed in the shells you use for development,
+for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
+
+```bash
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.69.0
+```
+
 9. Apache Arrow
 
 (Note: The patch fixes a problem mentioned [here](https://issues.apache.org/jira/browse/ARROW-5960). Maybe it will be addressed in a future verison.)
@@ -214,6 +228,13 @@ sudo cp -r /tmp/arrow/dist/* /opt/arrow-*/ && \
 pip3 install /opt/arrow-*/share/*.whl
 ```
 
+Make the following command executed in the shells you use for development,
+for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
+
+```bash
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/arrow-0.14
+```
+
 ### AWS SDK (optional)
 
 ```bash
@@ -237,20 +258,11 @@ sudo make install && \
 rm -rf /tmp/aws-sdk-cpp
 ```
 
-Save the following variable for configuring JITQ's cmake below.
+Make the following command executed in the shells you use for development,
+for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
-read -r -d '' CMAKE_ARGS_AWSSDK <<- EOM
-    -DAWSSDK_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/AWSSDK
-    -Daws-c-event-stream_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-event-stream/cmake/
-    -Daws-c-common_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-c-common/cmake/
-    -Daws-checksums_DIR=/opt/aws-sdk-cpp-1.7/lib/aws-checksums/cmake/
-    -Daws-cpp-sdk-core_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-core
-    -Daws-cpp-sdk-dynamodb_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-dynamodb
-    -Daws-cpp-sdk-lambda_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-lambda
-    -Daws-cpp-sdk-s3_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-s3
-    -Daws-cpp-sdk-sqs_DIR=/opt/aws-sdk-cpp-1.7/lib/cmake/aws-cpp-sdk-sqs
-EOM
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/aws-sdk-cpp-1.7
 ```
 
 ## Development
@@ -261,11 +273,7 @@ Configure CMake:
 
 ```bash
 cd jitq/backend/build
-CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/ \
-    -DLLVM_DIR=/opt/clang+llvm-7.0.1/lib/cmake/llvm \
-    -DBOOSTROOT=/opt/boost-1.69.0 \
-    -Darrow_DIR=/opt/arrow-0.14/lib/cmake/arrow \
-    ${CMAKE_ARGS_AWSSDK}
+CXX=clang++-7.0 CC=clang-7.0 cmake-3.13 ../src/
 ```
 
 Configure JIT compilation:
