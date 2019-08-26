@@ -33,7 +33,7 @@ class InliningTestCase:
 
 
 class TestInlining:
-    TEST_DIR = join(TEST_BASE_DIR, "test_dag_parser")
+    TEST_DIR = join(TEST_BASE_DIR, "test_optimizer_o2")
     TEST_OPTIONS = ["-O2", "-tadd-always-inline"]
 
     @classmethod
