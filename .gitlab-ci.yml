@@ -6,7 +6,10 @@ variables:
   AWS_ACCESS_KEY_ID: 'xxx'
   AWS_SECRET_ACCESS_KEY: 'xxxxxxxx'
   AWS_S3_ENDPOINT: 'http://s3server:9000'
-  PYTEST_ADDOPTS: '--color=yes -vs'
+  PYTEST_ADDOPTS: >-
+      --color=yes -vs
+      --log-cli-level INFO
+      --log-format="%(asctime)s.%(msecs)03d  %(levelname)-8s %(module)s:%(funcName)s:%(lineno)-5d   %(message)s"
   GTEST_COLOR: "1"
   PYTHONPATH: $CI_PROJECT_DIR:$CI_PROJECT_DIR/backend/build
   JITQPATH: $CI_PROJECT_DIR
