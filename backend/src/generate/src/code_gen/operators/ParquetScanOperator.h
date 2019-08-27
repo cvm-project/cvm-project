@@ -58,7 +58,7 @@ public:
     INLINE void close() { upstream_->close(); }
 
 private:
-    std::unique_ptr<runtime::operators::ParquetScanOperator> upstream_;
+    std::unique_ptr<runtime::operators::ValueOperator> upstream_;
 };
 
 template <class OutputTuple, class Upstream, class... OutputTypes>

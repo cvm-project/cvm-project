@@ -24,7 +24,7 @@
 namespace runtime {
 namespace operators {
 
-class ParquetScanOperatorImpl : public ParquetScanOperator {
+class ParquetScanOperatorImpl : public ValueOperator {
 public:
     using TypeTag = std::variant<int32_t, int64_t, float, double>;
 
