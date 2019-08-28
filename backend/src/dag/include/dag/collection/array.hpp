@@ -3,8 +3,6 @@
 
 #include <memory>
 
-#include <nlohmann/json.hpp>
-
 #include "dag/type/array.hpp"
 #include "field.hpp"
 
@@ -14,8 +12,7 @@ namespace collection {
 struct Tuple;
 class Array : public FieldBase<Array, type::Array> {
 public:
-    explicit Array(const type::FieldType *field_type_, const size_t &position,
-                   const nlohmann::json &json);
+    Array(const type::Array *array_type, const size_t &position);
 
     Tuple *tuple() { return tuple_.get(); }
 

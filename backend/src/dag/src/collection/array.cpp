@@ -2,17 +2,14 @@
 
 #include <memory>
 
-#include <nlohmann/json.hpp>
-
 #include "dag/collection/tuple.hpp"
 
 namespace dag {
 namespace collection {
 
-Array::Array(const type::FieldType *field_type_, const size_t &position,
-             const nlohmann::json &json)
-    : FieldBase(field_type_, position),
-      tuple_(std::make_unique<Tuple>(json.at("tuple_type"))) {}
+Array::Array(const type::Array *const array_type, const size_t &position)
+    : FieldBase(array_type, position),
+      tuple_(std::make_unique<Tuple>(array_type->tuple_type)) {}
 
 }  // namespace collection
 }  // namespace dag

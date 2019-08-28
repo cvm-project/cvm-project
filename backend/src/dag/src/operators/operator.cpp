@@ -9,6 +9,7 @@
 #include "dag/operators/all_operator_definitions.hpp"
 #include "dag/type/array.hpp"
 #include "dag/type/tuple.hpp"
+#include "utils/raw_ptr.hpp"
 
 using dag::collection::Tuple;
 
@@ -17,7 +18,9 @@ void from_json(const nlohmann::json &json, DAGOperator &op) {
     if (json.count("func") > 0) {
         op.llvm_ir = json["func"];
     }
-    op.tuple = jbcoe::make_polymorphic_value<Tuple>(json.at("output_type"));
+    auto const type =
+            json.at("output_type").get<raw_ptr<const dag::type::Tuple>>();
+    op.tuple = jbcoe::make_polymorphic_value<Tuple>(type.get());
     op.from_json(json);
 }
 
