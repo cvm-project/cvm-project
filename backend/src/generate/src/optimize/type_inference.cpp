@@ -403,15 +403,15 @@ const Tuple *ComputeOutputType(const DAG *const dag,
         }
 
         const Tuple *operator()(const DAGSplitColumnData *const op) const {
-            return dag_->predecessor(op)->tuple->type;
+            return dag_->predecessor(op, 0)->tuple->type;
         }
 
         const Tuple *operator()(const DAGSplitRowData *const op) const {
-            return dag_->predecessor(op)->tuple->type;
+            return dag_->predecessor(op, 0)->tuple->type;
         }
 
         const Tuple *operator()(const DAGSplitRange *const op) const {
-            return dag_->predecessor(op)->tuple->type;
+            return dag_->predecessor(op, 0)->tuple->type;
         }
 
         const Tuple *operator()(const DAGOperator *const op) const {

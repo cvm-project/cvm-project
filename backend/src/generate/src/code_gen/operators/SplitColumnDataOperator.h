@@ -6,10 +6,10 @@
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
 
-template <class Upstream, class Tuple>
+template <class OutputTuple, class MainUpstream, class DopUpstream>
 class SplitColumnDataOperator {
 public:
-    typedef decltype(Tuple().v0) ValueType;
+    typedef decltype(OutputTuple().v0) ValueType;
 
 private:
     static constexpr size_t ComputeFirstIndex(const size_t size,
@@ -45,17 +45,23 @@ private:
     }
 
 public:
-    SplitColumnDataOperator(Upstream *const upstream, const size_t num_slices)
-        : upstream_(upstream), num_slices_(num_slices) {}
+    SplitColumnDataOperator(MainUpstream *const main_upstream,
+                            DopUpstream *const dop_upstream)
+        : main_upstream_(main_upstream), dop_upstream_(dop_upstream) {}
 
     void open() {
-        upstream_->open();
+        dop_upstream_->open();
+        num_slices_ = dop_upstream_->next().value().v0;
+        assert(!dop_upstream_->next());
+        dop_upstream_->close();
+
+        main_upstream_->open();
         current_slice_num_ = num_slices_;
     }
 
-    INLINE Optional<Tuple> next() {
+    INLINE Optional<OutputTuple> next() {
         if (current_slice_num_ == num_slices_) {
-            const auto ret = upstream_->next();
+            const auto ret = main_upstream_->next();
             if (!ret) return {};
 
             current_tuple_ = ret.value();
@@ -85,19 +91,21 @@ public:
         return StdTupleToTuple(ret);
     }
 
-    void close() { upstream_->close(); }
+    void close() { main_upstream_->close(); }
 
 private:
-    Upstream *const upstream_;
-    const size_t num_slices_;
-    Tuple current_tuple_{};
+    MainUpstream *const main_upstream_;
+    DopUpstream *const dop_upstream_;
+    size_t num_slices_;
+    OutputTuple current_tuple_{};
     size_t current_slice_num_{};
 };
 
-template <class Tuple, class Upstream>
-SplitColumnDataOperator<Upstream, Tuple> makeSplitColumnDataOperator(
-        Upstream *const upstream, const size_t num_slices) {
-    return SplitColumnDataOperator<Upstream, Tuple>(upstream, num_slices);
+template <class OutputTuple, class MainUpstream, class DopUpstream>
+auto makeSplitColumnDataOperator(MainUpstream *const main_upstream,
+                                 DopUpstream *const dop_upstream) {
+    return SplitColumnDataOperator<OutputTuple, MainUpstream, DopUpstream>(
+            main_upstream, dop_upstream);
 };
 
 #endif  // CPP_SPLITCOLUMNDATAOPERATOR_H

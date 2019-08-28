@@ -306,24 +306,21 @@ void CodeGenVisitor::operator()(DAGSplitColumnData *const op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "SplitColumnDataOperator");
 
-    emitOperatorMake(var_name, "SplitColumnDataOperator", op, {},
-                     {"omp_get_num_threads()"});
+    emitOperatorMake(var_name, "SplitColumnDataOperator", op, {}, {});
 }
 
 void CodeGenVisitor::operator()(DAGSplitRowData *const op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "SplitRowDataOperator");
 
-    emitOperatorMake(var_name, "SplitRowDataOperator", op, {},
-                     {"omp_get_num_threads()"});
+    emitOperatorMake(var_name, "SplitRowDataOperator", op, {}, {});
 }
 
 void CodeGenVisitor::operator()(DAGSplitRange *const op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "SplitRangeOperator");
 
-    emitOperatorMake(var_name, "SplitRangeOperator", op, {},
-                     {"omp_get_num_threads()"});
+    emitOperatorMake(var_name, "SplitRangeOperator", op, {}, {});
 }
 
 void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,

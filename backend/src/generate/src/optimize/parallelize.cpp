@@ -4,8 +4,11 @@
 
 #include <boost/mpl/list.hpp>
 
+#include "dag/collection/tuple.hpp"
 #include "dag/dag.hpp"
 #include "dag/operators/all_operator_definitions.hpp"
+#include "dag/type/atomic.hpp"
+#include "dag/type/tuple.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
 #include "utils/visitor.hpp"
@@ -63,6 +66,14 @@ DAGParallelMap *StartParallelMap(DAG *const dag, DAGOperator *const source_op) {
     auto const split_op = MakeSplitOperator(source_op);
     dag->AddOperator(split_op);
 
+    // Create degree-of-parallelism operator
+    auto const dop_op = new DAGConstantTuple();
+    dag->AddOperator(dop_op);
+    dop_op->values.emplace_back("omp_get_num_threads()");
+    dop_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+            dag::type::Tuple::MakeTuple(
+                    {dag::type::Atomic::MakeAtomic("long")}));
+
     // Create parallelize operator
     auto const pop = new DAGParallelMap();
     dag->AddOperator(pop);
@@ -82,7 +93,8 @@ DAGParallelMap *StartParallelMap(DAG *const dag, DAGOperator *const source_op) {
     inner_dag->set_output(source_op);
 
     // Connect parallelize operator with old successor and predecessor
-    dag->AddFlow(pred_op, split_op);
+    dag->AddFlow(pred_op, split_op, 0);
+    dag->AddFlow(dop_op, split_op, 1);
     dag->AddFlow(split_op, in_flow.source.port, pop);
     dag->AddFlow(pop, next_op, out_flow.target.port);
 
