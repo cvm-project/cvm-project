@@ -8,7 +8,8 @@ import pytest
 from jitq.jitq_context import JitqContext
 from jitq.tests.filesystem import FILESYSTEMS, filesystem_instance
 from jitq.tests.helpers import str2bool
-from jitq.tests.aws_helpers import create_s3_bucket
+from jitq.tests.aws_helpers import create_s3_bucket, jitq_aws_stack, \
+    jitq_aws_stack_name, serverless_stack_type
 
 
 def pytest_addoption(parser):
@@ -46,6 +47,9 @@ def pytest_addoption(parser):
         '--write_outputs', action='store_true',
         help='Rewrite reference output files of optimizer test '
              'based on current test results.')
+    parser.addoption(
+        '--serverless_stack_type', action='store', default='process',
+        help='Select filesystem on which file-based test should run.')
 
 
 def pytest_generate_tests(metafunc):
@@ -164,7 +168,7 @@ def generate_testcases(generate_testcases_enabled, request):
 
 
 @pytest.fixture
-def jitq_context(target, generate_testcases, monkeypatch):
+def jitq_context(target, generate_testcases, monkeypatch, request):
     # pylint: disable=unused-argument  # needed as fixture
     if target == 'process':
         monkeypatch.setenv("JITQ_PROCESS_NUM_WORKERS", "2")
@@ -173,6 +177,9 @@ def jitq_context(target, generate_testcases, monkeypatch):
             monkeypatch.setenv('JITQ_EXCHANGE_S3_BUCKET_NAME',
                                s3_bucket_name)
             create_s3_bucket(s3_bucket_name, 'jitq/')
+    elif target == 'lambda':
+        # Make sure test stack is set up
+        request.getfixturevalue('jitq_aws_stack')
 
     return JitqContext(conf={
         'optimizer': {

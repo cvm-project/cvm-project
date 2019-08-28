@@ -1,19 +1,9 @@
 import logging
 import os
-import urllib
 
 import boto3
 
-
-def compute_config_from_endpoint(endpoint):
-    if not endpoint:
-        return {}
-    res = {'endpoint_url': endpoint}
-    url = urllib.parse.urlparse(endpoint)
-    if url.scheme == 'http':
-        res['use_ssl'] = False
-        res['verify'] = False
-    return res
+from jitq.serverless.aws_lambda.utils import compute_config_from_endpoint
 
 
 def make_boto3_client(service_name, **kwargs):

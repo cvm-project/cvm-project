@@ -9,8 +9,8 @@
 *.h5
 
 # generated dag file
-/python/dag.json
 /dag.json
+/plan.tar.xz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

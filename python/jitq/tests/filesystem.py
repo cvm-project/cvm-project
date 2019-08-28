@@ -66,6 +66,9 @@ FILESYSTEMS = {
 
 
 @pytest.fixture
-def filesystem_instance(filesystem, tmpdir, request):
+def filesystem_instance(filesystem, tmpdir, request, target):
+    if target == 'lambda':
+        if filesystem != 's3':
+            pytest.skip("unsupported configuration")
     bucket = request.config.getoption('--s3_bucket_name')
     return FILESYSTEMS[filesystem](str(tmpdir), s3_bucket_name=bucket)

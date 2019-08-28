@@ -1,0 +1,7 @@
+{
+    "JitqLambdaRunnerFunction": {
+        "JITQ_LAMBDA_RUNNER_RESULT_QUEUE_NAME": "JitqLambdaRunnerResultQueue",
+        "JITQ_LAMBDA_RUNNER_BUCKET_NAME": "jitqlambdarunnerbucket",
+        "JITQ_LAMBDA_FUNCTION_NAME": "JitqLambdaRunnerFunction"
+    }
+}

@@ -10,3 +10,8 @@ services:
       MINIO_SECRET_KEY: 'xxxxxxxx'
       MINIO_HTTP_TRACE: '/dev/stdout'
       MINIO_REGION: 'minio-test-region'
+  sqs:
+    image: softwaremill/elasticmq:0.14.10
+    ports:
+      - 9324:9324
+    command: ["-Dorg.slf4j.simpleLogger.logFile=System.out"]

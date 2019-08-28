@@ -384,6 +384,111 @@ cd $JITQPATH/python
 ../tools/run_with_asan.sh python3 -u -m unittest discover -v -s jitq/tests
 ```
 
+## Use serverless runners
+
+You can run the serverless runners in three different modes:
+
+* 'process': Runs each worker in a local Python process (default)
+* 'sam': Runs each worker in a local Docker container using the official runtime
+* 'aws': Runs the workers in the AWS cloud
+
+### Using new local Python processes instead of lambdas
+
+#### Prerequisites
+
+Start local endpoints:
+
+```bash
+cd $JITQPATH/tools/aws
+docker-compose up
+```
+
+#### Development cycle
+
+In every console you want to run tests, set up the correct environment variables. For example:
+
+```bash
+source $JITQPATH/tools/aws/set-env.sh
+cd $JITQPATH/python/jitq/
+pytest --serverless_stack_type process  # or select a specific test
+```
+
+### AWS SAM (local)
+
+#### Prerequesites
+
+Make sure you have Python 3.7.
+
+Install SAM:
+
+```bash
+pip install -r $JITQPATH:/tools/aws/requirements.txt
+```
+
+Set up work-around to include `*.so` in SAM packages (assuming you are running in a venv), see [this issue](https://github.com/awslabs/aws-lambda-builders/issues/115):
+
+```bash
+cp $JITQPATH/tools/aws/_patch_aws_lambda_builders.* $(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
+```
+
+This only works if `python -c "import site; print(site.ENABLE_USER_SITE)"` returns `True` in your venv. If it doesn't, [do this](https://stackoverflow.com/a/40972692/651937).
+
+Start the local endpoints like above.
+
+#### Development cycle
+
+Build JITQ using the official Docker image as compilation environment:
+
+```bash
+cd $JITQPATH/python/jitq/serverless
+make
+```
+
+Configure the environment variables as above. Then build the SAM package and spawn the local lambda endpoint:
+
+```bash
+source $JITQPATH/tools/aws/set-env.sh
+cd $JITQPATH/python/jitq/serverless
+sam build
+sam local start-lambda --env-vars $JITQPATH/tools/aws/test_environment.json --host $(hostname --fqdn)
+```
+
+Run tests against the local endpoint:
+
+```bash
+source $JITQPATH/tools/aws/set-env.sh
+cd $JITQPATH/python/jitq/
+pytest --serverless_stack_type sam  # or select a specific test
+```
+
+### AWS Lambda (cloud)
+
+Build the package as above, then deploy like this:
+
+```bash
+source $JITQPATH/tools/aws/unset-env.sh
+cd $JITQPATH/python/jitq/serverless
+sam build
+sam deploy \
+    --s3-bucket <EXISTING_BUCKET> \
+    --stack-name <YOUR_STACK_NAME> \
+    --capabilities CAPABILITY_IAM
+```
+
+And run like this:
+
+```bash
+source $JITQPATH/tools/aws/unset-env.sh
+cd $JITQPATH/python/jitq/
+pytest --serverless_stack_type aws --s3_bucket_name <BUCKET_FOR_TESTDATA> # or select a specific test
+```
+
+Before the serverless runners can access data from a bucket on S3, you need to give them access to that bucket.
+This is in particular true for the bucket you specify via `--s3_bucket_name` for the unit tests.
+The most fine-granular way to do this is via [this guide](https://aws.amazon.com/premiumsupport/knowledge-center/lambda-execution-role-s3-bucket/)
+(except you should use the existing role of the lambda function,
+which is part of the [stack](console.aws.amazon.com/cloudformation/) that is created during deployment, instead of creating one).
+
 ## Common Issues
 
 1. `libruntime.so` cannot be found by python cffi.

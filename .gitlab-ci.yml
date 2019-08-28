@@ -7,7 +7,9 @@ variables:
   AWS_ACCESS_KEY_ID: 'xxx'
   AWS_SECRET_ACCESS_KEY: 'xxxxxxxx'
   AWS_DEFAULT_REGION: 'minio-test-region'
+  AWS_LAMBDA_ENDPOINT: 'http://doesnotwork.local:1234'  # Not used in CI tests but must exist
   AWS_S3_ENDPOINT: 'http://s3server.local:9000'
+  AWS_SQS_ENDPOINT: 'http://sqsserver.local:9324'
   PYTEST_ADDOPTS: >-
       --color=yes -vs
       --log-cli-level INFO
@@ -27,6 +29,9 @@ services:
   - name: minio/minio:RELEASE.2019-06-01T03-46-14Z
     command: ["server", "/data"]
     alias: s3server.local
+  - name: softwaremill/elasticmq:0.14.10
+    command: ["-Dorg.slf4j.simpleLogger.logFile=System.out"]
+    alias: sqsserver.local
 
 default:
   image: ingomuellernet/buildenv-jitq:2020-10-24
@@ -146,6 +151,7 @@ python-tests-asan:
   script:
     - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_cli_runner.py
+    - $PYTEST_ASAN_CMD test_lambda_runner.py --target singlecore
 
 operator-tests-asan:
   extends: .tests-asan

@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  JITQ Lambda Runner
+
+Globals:
+  Function:
+    Timeout: 100
+
+Resources:
+  JitqLambdaRunnerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: aws_lambda
+      Handler: handler.run
+      Layers:
+        - !Ref JitqLambdaRunnerDepLayer
+      Runtime: python3.7
+      MemorySize: 2048
+      Environment:
+        Variables:
+          JITQ_LAMBDA_FUNCTION_NAME: ''
+          JITQ_LAMBDA_RUNNER_RESULT_QUEUE_URL:
+            !Ref JitqLambdaRunnerResultQueue
+          JITQ_LAMBDA_RUNNER_RESULT_QUEUE_NAME:
+            !GetAtt JitqLambdaRunnerResultQueue.QueueName
+          JITQ_LAMBDA_RUNNER_BUCKET_NAME:
+            !Ref JitqLambdaRunnerBucket
+          AWS_LAMBDA_ENDPOINT: ''
+          AWS_S3_ENDPOINT: ''
+          AWS_SQS_ENDPOINT: ''
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt JitqLambdaRunnerDeadLetterQueue.Arn
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName:
+              !GetAtt JitqLambdaRunnerResultQueue.QueueName
+        - S3CrudPolicy:
+            BucketName: !Ref JitqLambdaRunnerBucket
+        - LambdaInvokePolicy:
+            FunctionName:
+              !Sub "${AWS::StackName}-JitqLambdaRunnerFunction-"
+
+  JitqLambdaRunnerDepLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Dependencies for sam app [jitq-lambda-runner]
+      ContentUri: dependencies/
+      CompatibleRuntimes:
+        - python3.7
+      RetentionPolicy: Retain
+
+  JitqLambdaRunnerResultQueue:
+    Type: AWS::SQS::Queue
+  JitqLambdaRunnerDeadLetterQueue:
+    Type: AWS::SQS::Queue
+  JitqLambdaRunnerBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireAfterTwoDays
+            Status: Enabled
+            ExpirationInDays: 2
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+Outputs:
+  JitqLambdaRunnerFunction:
+    Description: "JITQ Lambda Runner Function ARN"
+    Value: !GetAtt JitqLambdaRunnerFunction.Arn
+  JitqLambdaRunnerFunctionIamRole:
+    Description: "Implicit IAM Role created for JITQ Lambda Runner"
+    Value: !GetAtt JitqLambdaRunnerFunctionRole.Arn
+  JitqLambdaRunnerDeadLetterQueue:
+    Description: "Dead letter queue of the Lambda Runners"
+    Value: !GetAtt JitqLambdaRunnerDeadLetterQueue.QueueName
+  JitqLambdaRunnerResultQueue:
+    Description: "Result queue of the Lambda Runners"
+    Value: !GetAtt JitqLambdaRunnerResultQueue.QueueName
+  JitqLambdaRunnerBucket:
+    Description: "S3 Bucket of the Lambda Runners"
+    Value: !Ref JitqLambdaRunnerBucket
