@@ -455,7 +455,8 @@
                             }
                         ],
                         "predecessors": [
-                            5
+                            5,
+                            6
                         ]
                     },
                     {
@@ -483,6 +484,19 @@
                             }
                         ],
                         "predecessors": []
+                    },
+                    {
+                        "id": 6,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "omp_get_num_threads()"
+                        ]
                     }
                 ],
                 "outputs": [

@@ -2046,7 +2046,8 @@
                             }
                         ],
                         "predecessors": [
-                            3
+                            3,
+                            4
                         ]
                     },
                     {
@@ -2064,6 +2065,19 @@
                             }
                         ],
                         "predecessors": []
+                    },
+                    {
+                        "id": 4,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "omp_get_num_threads()"
+                        ]
                     }
                 ],
                 "outputs": [
@@ -2298,7 +2312,8 @@
                             }
                         ],
                         "predecessors": [
-                            3
+                            3,
+                            4
                         ]
                     },
                     {
@@ -2316,6 +2331,19 @@
                             }
                         ],
                         "predecessors": []
+                    },
+                    {
+                        "id": 4,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "omp_get_num_threads()"
+                        ]
                     }
                 ],
                 "outputs": [
