@@ -13,3 +13,8 @@ leak:std::string::_Rep::_S_create
 
 # Arrow has a small number of leaks
 leak:libarrow.so
+
+# GraphViz and friends are full of leaks
+leak:libfontconfig.so
+leak:libgvc.so
+leak:libcdt.so
