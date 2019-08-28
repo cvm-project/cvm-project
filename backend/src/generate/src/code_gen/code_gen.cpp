@@ -145,11 +145,11 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
 
     if (exit_code != 0) {
         throw std::runtime_error(
-                (boost::format(
-                         "Error while generating library (exit code %1%).\n\n"
-                         "--- stdout: ---------------------------\n%2%"
-                         "--- stderr: ---------------------------\n%3%") %
-                 exit_code % make_std_out.rdbuf() % make_std_err.rdbuf())
+                (boost::format("Error while generating library lib-%4% (exit "
+                               "code %1%).\n\n"
+                               "--- stdout: ---------------------------\n%2%"
+                               "--- stderr: ---------------------------\n%3%") %
+                 exit_code % make_std_out.rdbuf() % make_std_err.rdbuf() % hash)
                         .str());
     }
 
