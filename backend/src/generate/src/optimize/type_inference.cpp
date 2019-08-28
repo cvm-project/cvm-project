@@ -179,6 +179,13 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             return inner_dag->output().op->tuple->type;
         }
 
+        auto operator()(const DAGConcurrentExecuteLambda *const op) const
+                -> const Tuple * {
+            assert(dag_->has_inner_dag(op));
+            auto const inner_dag = dag_->inner_dag(op);
+            return inner_dag->output().op->tuple->type;
+        }
+
         auto operator()(const DAGConcurrentExecuteProcess *const op) const
                 -> const Tuple * {
             auto const input_type = dag_->predecessor(op, 0)->tuple->type;

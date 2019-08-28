@@ -90,6 +90,31 @@ void CodeGenVisitor::operator()(DAGRowScan *op) {
                      {op->add_index ? "true" : "false"}, {});
 }
 
+void CodeGenVisitor::operator()(DAGConcurrentExecuteLambda *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ConcurrentExecuteLambdaOperator");
+
+    GenerateTupleToValue(context_, dag_->predecessor(op)->tuple->type);
+    GenerateValueToTuple(context_, op->tuple->type);
+
+    // Call nested code gen
+    const nlohmann::json dag_json = dag_->inner_dag(op);
+    const auto compiled_plan = dag_json.dump();
+
+    std::string escape_sequence = "JITQPLAN";
+    size_t last_pos = 0;
+    while ((last_pos = compiled_plan.find(escape_sequence, last_pos)) <
+           compiled_plan.size()) {
+        escape_sequence += "_";
+    }
+    const auto compiled_plan_literal =
+            (format("R\"%1%(%2%)%1%\"") % escape_sequence % compiled_plan)
+                    .str();
+
+    emitOperatorMake(var_name, "ConcurrentExecuteLambdaOperator", op, {},
+                     {compiled_plan_literal});
+}
+
 void CodeGenVisitor::operator()(DAGConcurrentExecuteProcess *op) {
     const std::string var_name = CodeGenVisitor::visit_common(
             op, "ConcurrentExecuteProcessOperator");

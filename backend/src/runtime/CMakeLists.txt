@@ -7,6 +7,7 @@ set(RUNTIME_SOURCE_FILES
         src/operators/arrow_helpers.cpp
         src/operators/exchange_s3.cpp
         src/operators/expand_pattern.cpp
+        src/operators/concurrent_execute_lambda.cpp
         src/operators/concurrent_execute_process.cpp
         src/operators/materialize_parquet_impl.cpp
         src/operators/murmur_hash2.cpp
@@ -50,6 +51,7 @@ target_link_libraries(runtime
         utils
     PRIVATE
         Boost::boost
+        pybind11::embed
     )
 
 add_executable(runtime_tests

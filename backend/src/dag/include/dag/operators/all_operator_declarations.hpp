@@ -15,6 +15,7 @@ class DAGCartesian;
 class DAGColumnScan;
 class DAGCompiledPipeline;
 class DAGConcurrentExecute;
+class DAGConcurrentExecuteLambda;
 class DAGConcurrentExecuteProcess;
 class DAGConstantTuple;
 class DAGEnsureSingleTuple;
@@ -61,6 +62,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGColumnScan,                      //
         DAGCompiledPipeline,                //
         DAGConcurrentExecute,               //
+        DAGConcurrentExecuteLambda,         //
         DAGConcurrentExecuteProcess,        //
         DAGConstantTuple,                   //
         DAGEnsureSingleTuple,               //
