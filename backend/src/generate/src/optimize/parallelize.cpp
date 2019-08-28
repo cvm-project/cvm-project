@@ -125,9 +125,13 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 inner_dag->AddOperator(pre_reduction_op);
                 pre_reduction_op->llvm_ir = red_op->llvm_ir;
 
+                auto const ensure_single_tuple_op = new DAGEnsureSingleTuple();
+                inner_dag->AddOperator(ensure_single_tuple_op);
+
                 // Flows
                 inner_dag->AddFlow(inner_dag->output().op, pre_reduction_op);
-                inner_dag->set_output(pre_reduction_op);
+                inner_dag->AddFlow(pre_reduction_op, ensure_single_tuple_op);
+                inner_dag->set_output(ensure_single_tuple_op);
 
                 break;
             }
