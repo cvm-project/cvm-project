@@ -26,7 +26,10 @@ public:
         upstream_->open();
 
         auto ret = upstream_->next();
-        if (!ret) return {};
+        if (!ret) {
+            upstream_->close();
+            return {};
+        }
 
         Tuple acc = ret;
         while (auto ret = upstream_->next()) {
