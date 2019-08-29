@@ -205,6 +205,12 @@ public:
                  int target_port = 0);
     Edge AddFlow(const DAGOperator *source, int source_port,
                  const DAGOperator *target, int target_port = 0);
+    Edge AddFlow(const DAGOperator *source, const FlowTip &target);
+    Edge AddFlow(const DAGOperator *source, int source_port,
+                 const FlowTip &target);
+    Edge AddFlow(const FlowTip &source, const DAGOperator *target,
+                 int target_port = 0);
+    Edge AddFlow(const FlowTip &source, const FlowTip &target);
     void RemoveFlow(const Flow &f) { RemoveFlow(f.e); }
     void RemoveFlow(const Edge &e);
 

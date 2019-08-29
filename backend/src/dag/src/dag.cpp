@@ -79,6 +79,25 @@ auto DAG::AddFlow(const DAGOperator *const source, const int source_port,
     return ret.first;
 }
 
+auto DAG::AddFlow(const DAGOperator *const source, const FlowTip &target)
+        -> Edge {
+    return AddFlow(source, target.op, target.port);
+}
+
+auto DAG::AddFlow(const DAGOperator *const source, int source_port,
+                  const FlowTip &target) -> Edge {
+    return AddFlow(source, source_port, target.op, target.port);
+}
+
+auto DAG::AddFlow(const FlowTip &source, const DAGOperator *const target,
+                  const int target_port) -> Edge {
+    return AddFlow(source.op, source.port, target, target_port);
+}
+
+auto DAG::AddFlow(const FlowTip &source, const FlowTip &target) -> Edge {
+    return AddFlow(source.op, source.port, target.op, target.port);
+}
+
 void DAG::RemoveFlow(const Edge &e) { boost::remove_edge(e, graph_); }
 
 void DAG::Clear() {
