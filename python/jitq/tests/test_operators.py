@@ -271,6 +271,16 @@ class TestParquet:
             .count()
         assert res == 18
 
+    def test_empty_range(self, jitq_context, parquet_files):
+        file_pattern = 'test-%1$05d.parquet'
+        cols = [(0, numba.int64), (1, numba.int64)]
+
+        res = jitq_context \
+            .read_parquet(parquet_files.to_remote(file_pattern),
+                          cols, (0, 0)) \
+            .count()
+        assert res == 0
+
     def test_filter(self, jitq_context, parquet_files):
         filename = 'test-00000.parquet'
         cols = [(0, numba.int64, [(1, 1)]),
