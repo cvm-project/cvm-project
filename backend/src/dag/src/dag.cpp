@@ -69,6 +69,18 @@ auto DAG::AddFlow(const DAGOperator *const source,
     return AddFlow(source, 0, target, target_port);
 }
 
+auto DAG::AddFlow(const DAGOperator *const source, const int source_port,
+                  const DAGOperator *const target, const int target_port)
+        -> Edge {
+    const auto ep = EdgeTargetPort(target_port, EdgeSourcePort(source_port));
+    auto ret = add_edge(to_vertex(source), to_vertex(target), ep, graph_);
+    assert(ret.second);
+    assert(!HasCycle());
+    return ret.first;
+}
+
+void DAG::RemoveFlow(const Edge &e) { boost::remove_edge(e, graph_); }
+
 void DAG::Clear() {
     reset_inputs();
     reset_outputs();
@@ -85,18 +97,6 @@ void DAG::Clear() {
         RemoveOperator(f);
     }
 }
-
-auto DAG::AddFlow(const DAGOperator *const source, const int source_port,
-                  const DAGOperator *const target, const int target_port)
-        -> Edge {
-    const auto ep = EdgeTargetPort(target_port, EdgeSourcePort(source_port));
-    auto ret = add_edge(to_vertex(source), to_vertex(target), ep, graph_);
-    assert(ret.second);
-    assert(!HasCycle());
-    return ret.first;
-}
-
-void DAG::RemoveFlow(const Edge &e) { boost::remove_edge(e, graph_); }
 
 struct CycleDetectionVisitor : public boost::default_dfs_visitor {
     explicit CycleDetectionVisitor(bool *const result) : result_(result) {
