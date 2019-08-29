@@ -34,6 +34,16 @@ public:
                     range_predicates,
             std::vector<std::string>&& column_types, std::vector<int>&& col_ids,
             std::unique_ptr<filesystem::FileSystem>&& fs);
+    ParquetScanOperatorImpl(const ParquetScanOperatorImpl& other) = delete;
+    ParquetScanOperatorImpl(ParquetScanOperatorImpl&& other) = delete;
+    ParquetScanOperatorImpl& operator=(const ParquetScanOperatorImpl& other) =
+            delete;
+    ParquetScanOperatorImpl& operator=(ParquetScanOperatorImpl&& other) =
+            delete;
+
+    ~ParquetScanOperatorImpl() override {
+        assert(!metadata_fetcher_.joinable());
+    }
 
     static const std::map<std::string, ParquetScanOperatorImpl::TypeTag>&
     type_tags();
