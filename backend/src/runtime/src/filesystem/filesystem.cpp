@@ -39,6 +39,13 @@ void LoadFilesystemFactories() {
     static bool has_loaded = false;
     if (has_loaded) return;
 
+    static std::mutex mutex;
+    std::lock_guard guard(mutex);
+
+    // cppcheck-suppress identicalConditionAfterEarlyExit
+    // cppcheck doesn't seem to know about other threads updating has_loaded.
+    if (has_loaded) return;
+
     DefaultRegister<LocalFileSystem>::Register("file");
 #ifdef AWS_SDK_VERSION_MAJOR
     DefaultRegister<S3FileSystem>::Register("s3");
