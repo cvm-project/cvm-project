@@ -8,6 +8,7 @@
 
 #include <cassert>
 
+#include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/depth_first_search.hpp>
@@ -185,6 +186,10 @@ auto DAG::operators() const -> OperatorRange {
 auto DAG::flows() const -> FlowRange {
     return boost::make_iterator_range(boost::edges(graph_)) |
            boost::adaptors::transformed(EdgeToFlowFunc(this));
+}
+
+bool DAG::contains(const DAGOperator *op) const {
+    return boost::algorithm::any_of_equal(operators(), op);
 }
 
 DAGOperator *DAG::to_operator(const Vertex &v) const {

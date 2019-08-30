@@ -227,6 +227,8 @@ public:
     OperatorRange operators() const;
     FlowRange flows() const;
 
+    bool contains(const DAGOperator *op) const;
+
     DAGOperator *to_operator(const Vertex &v) const;
     Flow to_flow(const Edge &e) const;
     Vertex to_vertex(const DAGOperator *op) const;
