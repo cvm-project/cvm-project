@@ -19,8 +19,7 @@ void CodeGen::Run(DAG *const dag, const std::string &config) const {
     auto const [lib_path, func_name] = code_gen::cpp::GenerateCode(dag, config);
 
     // Create new DAGCompiledPipeline operator
-    std::unique_ptr<DAGCompiledPipeline> pipeline_op_ptr(
-            new DAGCompiledPipeline());
+    auto pipeline_op_ptr = std::make_unique<DAGCompiledPipeline>();
     auto const pipeline_op = pipeline_op_ptr.get();
 
     pipeline_op->tuple = dag->output().op->tuple;
@@ -45,14 +44,12 @@ void CodeGen::Run(DAG *const dag, const std::string &config) const {
     // Add new operator and set inputs and outputs
     dag->AddOperator(pipeline_op_ptr.release());
 
-    size_t next_input_port = 0;
-    for (auto const &input : inputs) {
-        dag->add_input(input.first, pipeline_op, next_input_port++);
+    for (size_t i = 0; i < inputs.size(); i++) {
+        dag->add_input(inputs[i].first, pipeline_op, i);
     }
 
-    size_t next_output_port = 0;
-    for (auto const &output : outputs) {
-        dag->set_output(output.first, pipeline_op, next_output_port++);
+    for (size_t i = 0; i < outputs.size(); i++) {
+        dag->set_output(outputs[i].first, pipeline_op, i);
     }
 }
 
