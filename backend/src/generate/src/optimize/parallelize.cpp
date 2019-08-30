@@ -1,12 +1,12 @@
 #include "parallelize.hpp"
 
 #include <queue>
-#include <vector>
 
 #include <boost/mpl/list.hpp>
 
 #include "dag/dag.hpp"
 #include "dag/operators/all_operator_definitions.hpp"
+#include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
 #include "utils/visitor.hpp"
 
@@ -53,62 +53,74 @@ struct CollectSourcesVisitor
             sources_.emplace_back(op);
         }
     }
-    std::vector<DAGOperator *> sources_;
+    std::deque<DAGOperator *> sources_;
 };
+
+DAGParallelMap *StartParallelMap(DAG *const dag, DAGOperator *const source_op) {
+    assert(dag->in_degree(source_op) == 1);
+    assert(dag->out_degree(source_op) == 1);
+
+    auto const pred_op = dag->predecessor(source_op);
+    auto const next_op = dag->successor(source_op);
+    auto const in_flow = dag->in_flow(source_op);
+    auto const out_flow = dag->out_flow(source_op);
+
+    // Create split operator
+    auto const split_op = MakeSplitOperator(source_op);
+    dag->AddOperator(split_op);
+
+    // Create parallelize operator
+    auto const pop = new DAGParallelMap();
+    dag->AddOperator(pop);
+    dag->set_inner_dag(pop, new DAG());
+    auto const inner_dag = dag->inner_dag(pop);
+
+    // Fill the parallelize operator with a parameter lookup
+    auto const param_op = new DAGParameterLookup();
+    inner_dag->AddOperator(param_op);
+    inner_dag->set_input(param_op);
+
+    // Move source operator into parallelize operator
+    dag->RemoveFlow(in_flow);
+    dag->RemoveFlow(out_flow);
+    dag->MoveOperator(inner_dag, source_op);
+    inner_dag->AddFlow(param_op, source_op);
+    inner_dag->set_output(source_op);
+
+    // Connect parallelize operator with old successor and predecessor
+    dag->AddFlow(pred_op, split_op);
+    dag->AddFlow(split_op, in_flow.source.port, pop);
+    dag->AddFlow(pop, next_op, out_flow.target.port);
+
+    return pop;
+}
 
 void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
     // Collect all source operators
     CollectSourcesVisitor source_collector;
-    for (auto const op : dag->operators()) {
-        source_collector.Visit(op);
-    }
+    dag::utils::ApplyInReverseTopologicalOrder(dag, source_collector.functor());
+    auto &source_operators = source_collector.sources_;
 
-    // Insert (parallelize) --> (sequentialize) operators before all source
-    // operators
+    // Extend parallelize operators
     std::queue<DAGParallelMap *> parallelize_operators;
-    for (const auto op : source_collector.sources_) {
-        if (!IsSourceOperator(op)) continue;
+    while (true) {
+        // If we don't have parallel subplans left to extend...
+        if (parallelize_operators.empty()) {
+            // ...look for source operator to start a new one
+            while (!source_operators.empty()) {
+                const auto source_op = source_operators.front();
+                source_operators.pop_front();
+                if (dag->contains(source_op)) {
+                    parallelize_operators.push(
+                            StartParallelMap(dag, source_op));
+                    break;
+                }
+            }
+        }
+        if (parallelize_operators.empty()) {
+            break;
+        }
 
-        assert(dag->in_degree(op) == 1);
-        assert(dag->out_degree(op) == 1);
-
-        auto const pred_op = dag->predecessor(op);
-        auto const next_op = dag->successor(op);
-        auto const in_flow = dag->in_flow(op);
-        auto const out_flow = dag->out_flow(op);
-
-        // Create split operator
-        auto const split_op = MakeSplitOperator(op);
-        dag->AddOperator(split_op);
-
-        // Create parallelize operator
-        auto const pop = new DAGParallelMap();
-        dag->AddOperator(pop);
-        dag->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag->inner_dag(pop);
-
-        // Fill the parallelize operator with a parameter lookup
-        auto const param_op = new DAGParameterLookup();
-        inner_dag->AddOperator(param_op);
-        inner_dag->set_input(param_op);
-
-        // Move source operator into parallelize operator
-        dag->RemoveFlow(in_flow);
-        dag->RemoveFlow(out_flow);
-        dag->MoveOperator(inner_dag, op);
-        inner_dag->AddFlow(param_op, op);
-        inner_dag->set_output(op);
-
-        // Connect parallelize operator with old successor and predecessor
-        dag->AddFlow(pred_op, split_op);
-        dag->AddFlow(split_op, in_flow.source.port, pop);
-        dag->AddFlow(pop, next_op, out_flow.target.port);
-
-        parallelize_operators.push(pop);
-    }
-
-    // Extend parallelize operator
-    while (!parallelize_operators.empty()) {
         DAGParallelMap *const op = parallelize_operators.front();
         parallelize_operators.pop();
 
