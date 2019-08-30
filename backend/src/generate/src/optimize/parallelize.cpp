@@ -127,8 +127,11 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
         auto const inner_dag = dag->inner_dag(op);
         do {
             if (dag->out_degree(op) != 1) break;
-            if (IsInstanceOf<DAGFilter, DAGMap, DAGPartition>(
-                        dag->successor(op))) {
+            if (IsInstanceOf<DAGFilter,       //
+                             DAGMap,          //
+                             DAGPartition,    //
+                             DAGParquetScan,  //
+                             DAGColumnScan>(dag->successor(op))) {
                 const auto other_op = dag->successor(op);
                 const auto next_op = dag->successor(other_op);
 
@@ -247,6 +250,72 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 parallelize_operators.push(next_pop);
 
                 break;
+            }
+            if (IsInstanceOf<DAGExpandPattern>(dag->successor(op))) {
+                const auto pattern_op = dag->successor(op);
+
+                const auto parallel_in_flow = dag->in_flow(op);
+                const auto pattern_in_flow = dag->out_flow(op);
+                assert(pattern_in_flow.target.port == 1);
+                const auto parameter_in_flow = dag->in_flow(pattern_op, 0);
+                const auto out_flow = dag->out_flow(pattern_op);
+
+                // New outer operators
+                const auto cartesian_op = new DAGCartesian();
+                dag->AddOperator(cartesian_op);
+
+                // Outer flows
+                dag->RemoveFlow(parallel_in_flow);
+                dag->RemoveFlow(pattern_in_flow);
+                dag->RemoveFlow(parameter_in_flow);
+                dag->RemoveFlow(out_flow);
+                dag->AddFlow(parameter_in_flow.source, cartesian_op, 0);
+                dag->AddFlow(parallel_in_flow.source, cartesian_op, 1);
+                dag->AddFlow(cartesian_op, parallel_in_flow.target);
+                dag->AddFlow(op, out_flow.target);
+
+                // Remember existing inputs of inner DAG
+                std::multimap<int, DAG::FlowTip> existing_inputs;
+                for (const auto &input : inner_dag->inputs()) {
+                    existing_inputs.insert(input);
+                }
+
+                // Move pattern into parallel operator and connect
+                dag->MoveOperator(inner_dag, pattern_op);
+
+                const auto left_param_op = new DAGParameterLookup();
+                inner_dag->AddOperator(left_param_op);
+
+                const auto left_proj_op = new DAGProjection();
+                inner_dag->AddOperator(left_proj_op);
+                left_proj_op->positions = {0};
+
+                inner_dag->AddFlow(left_param_op, left_proj_op);
+                inner_dag->AddFlow(left_proj_op, pattern_op, 0);
+                inner_dag->AddFlow(inner_dag->output(), pattern_op, 1);
+
+                inner_dag->set_input(0, left_param_op);
+                inner_dag->set_output(pattern_op);
+
+                // Connect existing inputs again
+                for (const auto &input : existing_inputs) {
+                    assert(input.first == 0);
+
+                    const auto right_param_op = input.second.op;
+                    const auto right_successor =
+                            inner_dag->successor(right_param_op);
+
+                    const auto right_proj_op = new DAGProjection();
+                    inner_dag->AddOperator(right_proj_op);
+                    right_proj_op->positions = {1, 2, 3};  // XXX
+
+                    inner_dag->RemoveFlow(inner_dag->out_flow(right_param_op));
+                    inner_dag->AddFlow(right_param_op, right_proj_op);
+                    inner_dag->AddFlow(right_proj_op, right_successor);
+                    inner_dag->add_input(0, right_param_op);
+                }
+
+                continue;
             }
             if (IsInstanceOf<DAGJoin>(dag->successor(op))) {
                 auto const join_op = dag->successor(op);
@@ -379,7 +448,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                     DAGMaterializeRowVector,  //
                     DAGEnsureSingleTuple      //
                     >(inner_dag->output().op)) {
-            return;
+            continue;
         }
 
         // Add materialize operator at end of inner plan of parallel map
