@@ -11,7 +11,6 @@
 
 using dag::utils::IsInstanceOf;
 
-// XXX: Support parallelization of ColumnScan operator
 bool IsSourceOperator(DAGOperator *const op) {
     return IsInstanceOf<    //
             DAGColumnScan,  //
