@@ -114,6 +114,7 @@ void Optimizer::Run(DAG *const dag) {
     // Just-in-Time compilation
     if (config.value("/optimizations/code_gen/active", false)) {
         transformations.emplace_back("code_gen");
+        transformations.emplace_back("type_inference");
         transformations.emplace_back("canonicalize");
     }
 

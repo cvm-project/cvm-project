@@ -2,28 +2,52 @@
     "inputs": [
         {
             "dag_port": 0,
-            "op": 0,
+            "op": 1,
             "op_port": 0
         },
         {
             "dag_port": 1,
-            "op": 0,
+            "op": 2,
             "op_port": 1
-        },
-        {
-            "dag_port": 2,
-            "op": 0,
-            "op_port": 2
         }
     ],
     "operators": [
         {
             "function_name": "execute_pipelines",
             "id": 0,
-            "library_name": "lib-8ffe999a92959953af9fa3fd809f91a3/libexecute.opt.so",
-            "num_inputs": 0,
+            "library_name": "lib-0971002becf4ec3f64c1e390159d87e4/libexecute.opt.so",
+            "num_inputs": 2,
             "op": "compiled_pipeline",
             "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1,
+                2
+            ]
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
                 {
                     "type": "long"
                 }
