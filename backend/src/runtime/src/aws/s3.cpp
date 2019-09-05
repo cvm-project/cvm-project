@@ -85,7 +85,9 @@ std::string LookupErrorString(const Aws::S3::S3Errors& code) {
             {S3Errors::INVALID_ACCESS_KEY_ID, "INVALID_ACCESS_KEY_ID"},
             {S3Errors::REQUEST_TIMEOUT, "REQUEST_TIMEOUT"},
             {S3Errors::NETWORK_CONNECTION, "NETWORK_CONNECTION"}};
-    return strings.at(code);
+    auto const it = strings.find(code);
+    if (it == strings.end()) return "unknown error";
+    return it->second;
 }
 
 }  // namespace s3
