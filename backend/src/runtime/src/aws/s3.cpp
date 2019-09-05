@@ -25,6 +25,11 @@ Aws::S3::S3Client* MakeClient() {
         cfg.endpointOverride = endpoint_override;
     }
 
+    const auto region = std::getenv("AWS_DEFAULT_REGION");
+    if (region != nullptr) {
+        cfg.region = region;
+    }
+
     const auto url = std::getenv("HTTP_PROXY");
     if (url != nullptr) {
         std::set<std::string> exceptions;
