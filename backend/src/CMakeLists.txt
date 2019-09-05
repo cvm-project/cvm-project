@@ -59,7 +59,7 @@ add_subdirectory("${POLYMORPHIC_ROOT_DIR}" polymorphic_value)
 
 # Set up compilation options
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -ffast-math -D_GLIBCXX_USE_CXX11_ABI")
 
 # Set up sanitizers
 if(${LLVM_ASAN} AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
