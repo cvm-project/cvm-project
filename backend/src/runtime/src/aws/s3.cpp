@@ -15,14 +15,17 @@ namespace s3 {
 
 Aws::S3::S3Client* MakeClient() {
     Aws::Client::ClientConfiguration cfg;
-    cfg.scheme = Aws::Http::Scheme::HTTP;
-    cfg.verifySSL = false;
     cfg.connectTimeoutMs = 3000;
     cfg.requestTimeoutMs = 3000;
 
     const auto endpoint_override = std::getenv("AWS_S3_ENDPOINT");
     if (endpoint_override != nullptr) {
         cfg.endpointOverride = endpoint_override;
+    }
+    const auto endpoint_url = skyr::make_url(cfg.endpointOverride);
+    if (endpoint_url && endpoint_url->protocol() != "https:") {
+        cfg.scheme = Aws::Http::Scheme::HTTP;
+        cfg.verifySSL = false;
     }
 
     const auto region = std::getenv("AWS_DEFAULT_REGION");
@@ -35,12 +38,9 @@ Aws::S3::S3Client* MakeClient() {
         std::set<std::string> exceptions;
         const auto no_proxy = std::getenv("NO_PROXY");
         bool is_exception = false;
-        if (no_proxy != nullptr && endpoint_override != nullptr) {
+        if (no_proxy != nullptr && endpoint_url) {
             boost::split(exceptions, no_proxy, boost::is_any_of(","));
-            const auto endpoint_url = skyr::make_url(endpoint_override);
-            if (endpoint_url) {
-                is_exception = exceptions.count(endpoint_url->hostname()) > 0;
-            }
+            is_exception = exceptions.count(endpoint_url->hostname()) > 0;
         }
 
         const auto proxy_url = skyr::make_url(url);
