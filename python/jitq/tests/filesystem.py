@@ -45,6 +45,9 @@ class S3Filesystem(Filesystem):
         try:
             self._s3_client.create_bucket(
                 Bucket=self._s3_bucket,
+                CreateBucketConfiguration={
+                    'LocationConstraint': boto3.session.Session().region_name,
+                },
             )
         except botocore.exceptions.ClientError as ex:
             if ex.response['Error']['Code'] != 'BucketAlreadyOwnedByYou':
