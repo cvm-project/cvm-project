@@ -61,10 +61,16 @@ public:
             const auto outcome = s3_client_->HeadObject(request);
             if (!outcome.IsSuccess()) {
                 auto const& error = outcome.GetError();
+                auto const error_name =
+                        error.GetExceptionName().empty()
+                                ? ""
+                                : error.GetExceptionName() + " - ";
+
                 return arrow::Status::IOError(
-                        (format("Error %1% (%2%) when fetching file metadata: "
-                                "%3%") %
+                        (format("Error %1% (%2%%3%) when fetching file "
+                                "metadata: %4%") %
                          static_cast<int>(error.GetErrorType()) %
+                         error.GetExceptionName() %
                          aws::s3::LookupErrorString(error.GetErrorType()) %
                          error.GetMessage())
                                 .str());
