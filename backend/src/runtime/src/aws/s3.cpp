@@ -84,7 +84,17 @@ std::string LookupErrorString(const Aws::S3::S3Errors& code) {
             {S3Errors::SIGNATURE_DOES_NOT_MATCH, "SIGNATURE_DOES_NOT_MATCH"},
             {S3Errors::INVALID_ACCESS_KEY_ID, "INVALID_ACCESS_KEY_ID"},
             {S3Errors::REQUEST_TIMEOUT, "REQUEST_TIMEOUT"},
-            {S3Errors::NETWORK_CONNECTION, "NETWORK_CONNECTION"}};
+            {S3Errors::NETWORK_CONNECTION, "NETWORK_CONNECTION"},
+            {S3Errors::UNKNOWN, "UNKNOWN"},
+            {S3Errors::BUCKET_ALREADY_EXISTS, "BUCKET_ALREADY_EXISTS"},
+            {S3Errors::BUCKET_ALREADY_OWNED_BY_YOU,
+             "BUCKET_ALREADY_OWNED_BY_YOU"},
+            {S3Errors::NO_SUCH_BUCKET, "NO_SUCH_BUCKET"},
+            {S3Errors::NO_SUCH_KEY, "NO_SUCH_KEY"},
+            {S3Errors::NO_SUCH_UPLOAD, "NO_SUCH_UPLOAD"},
+            {S3Errors::OBJECT_ALREADY_IN_ACTIVE_TIER,
+             "OBJECT_ALREADY_IN_ACTIVE_TIER"},
+            {S3Errors::OBJECT_NOT_IN_ACTIVE_TIER, "OBJECT_NOT_IN_ACTIVE_TIER"}};
     auto const it = strings.find(code);
     if (it == strings.end()) return "unknown error";
     return it->second;
