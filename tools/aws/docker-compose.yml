@@ -9,3 +9,4 @@ services:
       MINIO_ACCESS_KEY: 'xxx'
       MINIO_SECRET_KEY: 'xxxxxxxx'
       MINIO_HTTP_TRACE: '/dev/stdout'
+      MINIO_REGION: 'minio-test-region'

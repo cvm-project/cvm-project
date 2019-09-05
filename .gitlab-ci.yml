@@ -3,8 +3,10 @@ variables:
   MINIO_ACCESS_KEY: 'xxx'
   MINIO_SECRET_KEY: 'xxxxxxxx'
   MINIO_HTTP_TRACE: '/dev/stdout'
+  MINIO_REGION: 'minio-test-region'
   AWS_ACCESS_KEY_ID: 'xxx'
   AWS_SECRET_ACCESS_KEY: 'xxxxxxxx'
+  AWS_DEFAULT_REGION: 'minio-test-region'
   AWS_S3_ENDPOINT: 'http://s3server:9000'
   PYTEST_ADDOPTS: >-
       --color=yes -vs
