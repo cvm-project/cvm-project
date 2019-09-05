@@ -1,5 +1,7 @@
 #include "aws.hpp"
 
+#include <mutex>
+
 #include <aws/core/Aws.h>
 #include <aws/core/utils/logging/AWSLogging.h>
 #include <aws/core/utils/logging/ConsoleLogSystem.h>
@@ -26,7 +28,14 @@ private:
 void EnsureApiInitialized() {
     static bool is_initialized = false;
     if (is_initialized) return;
-    is_initialized = true;
+
+    static std::mutex mutex;
+    std::lock_guard guard(mutex);
+
+    // cppcheck-suppress identicalConditionAfterEarlyExit
+    // cppcheck doesn't seem to know about other threads updating
+    // is_initialized.
+    if (is_initialized) return;
 
     Aws::SDKOptions options;
     options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Warn;
@@ -37,6 +46,8 @@ void EnsureApiInitialized() {
     };
 
     static AwsApiHandle handle(std::move(options));
+
+    is_initialized = true;
 }
 
 }  // namespace aws
