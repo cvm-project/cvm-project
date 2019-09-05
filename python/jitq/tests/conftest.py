@@ -18,6 +18,9 @@ def pytest_addoption(parser):
         '-F', '--filesystem', action='append', default=[],
         help='Select filesystem on which file-based test should run.')
     parser.addoption(
+        '--s3_bucket_name', action='store', default='test-bucket',
+        help='Bucket name on S3 that should be used for input/output data.')
+    parser.addoption(
         '-G', '--generate_testcases', action='store_true',
         help='Generate test input files for the optimizer and parser.')
     parser.addoption(

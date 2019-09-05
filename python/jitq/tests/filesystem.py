@@ -6,7 +6,8 @@ import pytest
 
 
 class Filesystem:
-    def __init__(self, localdir):
+    def __init__(self, localdir, *args, **kwargs):
+        # pylint: disable=unused-argument
         self.localdir = localdir
         self.remotedir = localdir
 
@@ -27,11 +28,11 @@ class Filesystem:
 
 
 class S3Filesystem(Filesystem):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, s3_bucket_name, **kwargs):
         super(S3Filesystem, self).__init__(*args, **kwargs)
 
-        self._s3_bucket = 'mybucket'
-        self.remotedir = 's3://mybucket/'
+        self._s3_bucket = s3_bucket_name
+        self.remotedir = 's3://' + s3_bucket_name + '/'
 
         s3_config = {
             'use_ssl': False,
@@ -81,5 +82,6 @@ FILESYSTEMS = {
 
 
 @pytest.fixture
-def filesystem_instance(filesystem, tmpdir):
-    return FILESYSTEMS[filesystem](str(tmpdir))
+def filesystem_instance(filesystem, tmpdir, request):
+    bucket = request.config.getoption('--s3_bucket_name')
+    return FILESYSTEMS[filesystem](str(tmpdir), s3_bucket_name=bucket)
