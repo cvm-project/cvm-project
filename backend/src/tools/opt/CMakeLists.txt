@@ -12,4 +12,5 @@ target_link_libraries(opt-cli
         dag
         generate
         print_dag
+        trace_exceptions
     )

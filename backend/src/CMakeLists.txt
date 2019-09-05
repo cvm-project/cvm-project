@@ -75,6 +75,7 @@ set(Boost_NO_BOOST_CMAKE ON)
 find_package(Boost 1.64 REQUIRED COMPONENTS
         filesystem
         program_options
+        stacktrace_basic
         system
     )
 set(_BOOST_COMPILE_DEFINITIONS

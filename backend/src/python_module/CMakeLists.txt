@@ -8,6 +8,5 @@ target_link_libraries(jitq_backend
     PRIVATE
         generate
         runtime
+        trace_exceptions
     )
-
-
