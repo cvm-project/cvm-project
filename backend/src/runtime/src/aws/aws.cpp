@@ -4,7 +4,8 @@
 
 #include <aws/core/Aws.h>
 #include <aws/core/utils/logging/AWSLogging.h>
-#include <aws/core/utils/logging/ConsoleLogSystem.h>
+
+#include "aws/stderr_log_system.hpp"
 
 namespace runtime::aws {
 
@@ -40,8 +41,7 @@ void EnsureApiInitialized() {
     options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Warn;
     options.loggingOptions.logger_create_fn = [=]() {
         return std::shared_ptr<Aws::Utils::Logging::LogSystemInterface>(
-                new Aws::Utils::Logging::ConsoleLogSystem(
-                        options.loggingOptions.logLevel));
+                new StderrLogSystem(options.loggingOptions.logLevel));
     };
 
     static AwsApiHandle handle(std::move(options));
