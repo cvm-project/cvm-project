@@ -14,6 +14,7 @@
 #include "grouped_reduce_by_key.hpp"
 #include "materialize_multiple_reads.hpp"
 #include "parallelize.hpp"
+#include "parallelize_omp.hpp"
 #include "simple_predicate_move_around.hpp"
 #include "type_inference.hpp"
 
@@ -37,6 +38,7 @@ void LoadDagTransformations() {
     RegisterDefault(std::make_unique<GroupedReduceByKey>());
     RegisterDefault(std::make_unique<MaterializeMultipleReads>());
     RegisterDefault(std::make_unique<Parallelize>());
+    RegisterDefault(std::make_unique<ParallelizeOmp>());
     RegisterDefault(std::make_unique<SimplePredicateMoveAround>());
     RegisterDefault(std::make_unique<TypeInference>());
     RegisterDefault(std::make_unique<AddAlwaysInline>());

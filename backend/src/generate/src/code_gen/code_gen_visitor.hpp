@@ -45,7 +45,7 @@ public:
     void operator()(DAGMaterializeColumnChunks *op);
     void operator()(DAGMaterializeParquet *op);
     void operator()(DAGMaterializeRowVector *op);
-    void operator()(DAGParallelMap *op);
+    void operator()(DAGParallelMapOmp *op);
     void operator()(DAGParameterLookup *op);
     void operator()(DAGParquetScan *op);
     void operator()(DAGPartition *op);

@@ -66,6 +66,7 @@ void Optimizer::Run(DAG *const dag) {
     // Parallelize
     if (config.value("/optimizations/parallelize/active", false)) {
         transformations.emplace_back("parallelize");
+        transformations.emplace_back("parallelize_omp");
         transformations.emplace_back("type_inference");
     }
 

@@ -69,7 +69,7 @@ DAGParallelMap *StartParallelMap(DAG *const dag, DAGOperator *const source_op) {
     // Create degree-of-parallelism operator
     auto const dop_op = new DAGConstantTuple();
     dag->AddOperator(dop_op);
-    dop_op->values.emplace_back("omp_get_num_threads()");
+    dop_op->values.emplace_back("$DOP");
     dop_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
             dag::type::Tuple::MakeTuple(
                     {dag::type::Atomic::MakeAtomic("long")}));

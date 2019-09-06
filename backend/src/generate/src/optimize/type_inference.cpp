@@ -300,6 +300,12 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return inner_dag->output().op->tuple->type;
         }
 
+        const Tuple *operator()(const DAGParallelMapOmp *const op) const {
+            assert(dag_->has_inner_dag(op));
+            auto const inner_dag = dag_->inner_dag(op);
+            return inner_dag->output().op->tuple->type;
+        }
+
         const Tuple *operator()(const DAGParameterLookup *const op) const {
             return op->tuple->type;
         }

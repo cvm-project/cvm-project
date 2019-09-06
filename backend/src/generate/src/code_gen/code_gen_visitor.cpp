@@ -238,15 +238,15 @@ void CodeGenVisitor::operator()(DAGCartesian *op) {
     emitOperatorMake(var_name, "CartesianOperator", op, template_args);
 };
 
-void CodeGenVisitor::operator()(DAGParallelMap *op) {
+void CodeGenVisitor::operator()(DAGParallelMapOmp *op) {
     const std::string var_name =
-            CodeGenVisitor::visit_common(op, "ParallelMapOperator");
+            CodeGenVisitor::visit_common(op, "ParallelMapOmpOperator");
 
     // Call nested code gen
     const auto inner_plan =
             GenerateExecuteTuples(dag_->inner_dag(op), context_);
 
-    emitOperatorMake(var_name, "ParallelMapOperator", op, {},
+    emitOperatorMake(var_name, "ParallelMapOmpOperator", op, {},
                      {inner_plan.name});
 }
 

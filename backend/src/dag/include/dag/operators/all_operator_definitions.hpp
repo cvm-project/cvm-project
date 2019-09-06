@@ -16,6 +16,7 @@
 #include "materialize_parquet.hpp"
 #include "materialize_row_vector.hpp"
 #include "parallel_map.hpp"
+#include "parallel_map_omp.hpp"
 #include "parameter_lookup.hpp"
 #include "parquet_scan.hpp"
 #include "partition.hpp"

@@ -11,10 +11,10 @@
 #include "runtime/jit/operators/optional.hpp"
 
 template <class OutputTuple, class InnerPlanFunctor, class Upstream>
-class ParallelMapOperator {
+class ParallelMapOmpOperator {
 public:
-    ParallelMapOperator(Upstream *const upstream,
-                        const InnerPlanFunctor &inner_plan)
+    ParallelMapOmpOperator(Upstream *const upstream,
+                           const InnerPlanFunctor &inner_plan)
         : upstream_(upstream), inner_plan_(inner_plan) {}
 
     INLINE void open() { result_it_ = results_.begin(); }
@@ -66,10 +66,10 @@ private:
 };
 
 template <class OutputTuple, class InnerPlanFunctor, class Upstream>
-ParallelMapOperator<OutputTuple, InnerPlanFunctor, Upstream>
-makeParallelMapOperator(Upstream *const upstream,
-                        const InnerPlanFunctor &inner_plan) {
-    return ParallelMapOperator<OutputTuple, InnerPlanFunctor, Upstream>(
+ParallelMapOmpOperator<OutputTuple, InnerPlanFunctor, Upstream>
+makeParallelMapOmpOperator(Upstream *const upstream,
+                           const InnerPlanFunctor &inner_plan) {
+    return ParallelMapOmpOperator<OutputTuple, InnerPlanFunctor, Upstream>(
             upstream, inner_plan);
 };
 

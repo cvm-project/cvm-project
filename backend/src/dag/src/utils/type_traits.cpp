@@ -10,7 +10,8 @@ bool IsPipelineDriver(DAGOperator *const op) {
             DAGMaterializeRowVector,  //
             DAGEnsureSingleTuple,     //
             DAGGroupBy,               //
-            DAGParallelMap            //
+            DAGParallelMap,           //
+            DAGParallelMapOmp         //
             >(op);
 }
 
