@@ -18,6 +18,7 @@ add_library(dag SHARED
         src/type/tuple.cpp
         src/type/type.cpp
         src/utils/apply_visitor.cpp
+        src/utils/type_traits.cpp
     )
 
 target_include_directories(dag

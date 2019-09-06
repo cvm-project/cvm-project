@@ -48,6 +48,11 @@ public:
 
 }  // namespace impl
 
+bool IsPipelineDriver(DAGOperator *op);
+bool IsPipelinePredecessor(DAGOperator *op);
+bool IsSingleTupleProducer(DAGOperator *op);
+bool IsSourceOperator(DAGOperator *op);
+
 }  // namespace utils
 }  // namespace dag
 

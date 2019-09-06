@@ -11,31 +11,9 @@
 #include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
 
-using dag::utils::IsInstanceOf;
-
-bool IsPipelineDriver(DAGOperator *const op) {
-    return IsInstanceOf<              //
-            DAGMaterializeRowVector,  //
-            DAGEnsureSingleTuple,     //
-            DAGGroupBy,               //
-            DAGParallelMap            //
-            >(op);
-}
-
-bool IsSingleTupleProducer(DAGOperator *const op) {
-    return IsInstanceOf<              //
-            DAGMaterializeRowVector,  //
-            DAGEnsureSingleTuple,     //
-            DAGReduce                 //
-            >(op);
-}
-
-bool IsPipelinePredecessor(DAGOperator *const op) {
-    return IsInstanceOf<         //
-            DAGParameterLookup,  //
-            DAGPipeline          //
-            >(op);
-}
+using dag::utils::IsPipelineDriver;
+using dag::utils::IsPipelinePredecessor;
+using dag::utils::IsSingleTupleProducer;
 
 namespace optimize {
 

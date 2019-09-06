@@ -11,14 +11,8 @@
 #include "utils/visitor.hpp"
 
 using dag::utils::IsInstanceOf;
-
-bool IsSourceOperator(DAGOperator *const op) {
-    return IsInstanceOf<    //
-            DAGColumnScan,  //
-            DAGRowScan,     //
-            DAGRange        //
-            >(op);
-}
+using dag::utils::IsSingleTupleProducer;
+using dag::utils::IsSourceOperator;
 
 DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
     class MakeSplitOperatorVisitor
@@ -443,11 +437,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
             break;
         } while (true);
 
-        if (IsInstanceOf<                     //
-                    DAGReduce,                //
-                    DAGMaterializeRowVector,  //
-                    DAGEnsureSingleTuple      //
-                    >(inner_dag->output().op)) {
+        if (IsSingleTupleProducer(inner_dag->output().op)) {
             continue;
         }
 
