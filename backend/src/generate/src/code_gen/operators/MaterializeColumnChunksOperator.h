@@ -16,7 +16,7 @@ class MaterializeColumnChunksOperator {
 
 public:
     MaterializeColumnChunksOperator(Upstream *const upstream)
-        : upstream_(upstream), max_column_size_(100) {}
+        : upstream_(upstream), max_column_size_(1ul << 16u) {}
 
     INLINE void open() { upstream_->open(); }
 
