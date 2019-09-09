@@ -163,7 +163,7 @@ private:
             pending_column_readers_;
 
     // Operator configuration
-    const int64_t batch_size_ = 100;
+    const int64_t batch_size_ = 1ul << 15u;
     const std::unique_ptr<ParquetRowGroupOperator> upstream_;
 };
 
