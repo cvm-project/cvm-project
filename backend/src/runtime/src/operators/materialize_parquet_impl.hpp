@@ -13,6 +13,7 @@
 #include "operators/value_to_record_batch.hpp"
 #include "runtime/jit/operators/materialize_parquet.hpp"
 #include "runtime/jit/operators/optional.hpp"
+#include "runtime/jit/operators/value_operator.hpp"
 
 namespace runtime {
 namespace operators {

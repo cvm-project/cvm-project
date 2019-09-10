@@ -7,8 +7,6 @@
 #include <arrow/record_batch.h>
 #include <arrow/type.h>
 
-#include <nlohmann/json.hpp>
-
 #include "runtime/jit/memory/shared_pointer.hpp"
 #include "runtime/jit/operators/optional.hpp"
 #include "runtime/jit/operators/value_operator.hpp"
