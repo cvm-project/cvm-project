@@ -107,8 +107,7 @@ void ParquetFileOperator::WaitForFileHandles() {
 
 void ParquetRowGroupOperator::open() { upstream_->open(); }
 
-std::optional<std::shared_ptr<parquet::RowGroupReader>>
-ParquetRowGroupOperator::next() {
+auto ParquetRowGroupOperator::next() -> std::optional<OutputType> {
     // Fetch new file if no row groups left
     while (row_group_index_ >= interesting_row_groups_.size()) {
         auto res = upstream_->next();
@@ -127,7 +126,8 @@ ParquetRowGroupOperator::next() {
 
     auto const current_row_group =
             interesting_row_groups_.at(row_group_index_++);
-    return parquet_reader_->RowGroup(current_row_group);
+    return OutputType{parquet_reader_->RowGroup(current_row_group),
+                      parquet_reader_};
 }
 
 void ParquetRowGroupOperator::close() { upstream_->close(); }
@@ -264,26 +264,53 @@ bool ParquetRowGroupOperator::EvaluateRangePredicates(
 void ParquetScanOperatorImpl::open() { upstream_->open(); }
 
 std::shared_ptr<runtime::values::Value> ParquetScanOperatorImpl::next() {
-    // Fetch new row group if no batches left in row group
-    while (batch_index_ >= num_batches_) {
-        auto res = upstream_->next();
+    // Start reading next row group if no batches left in current one
+    if (batch_index_ >= num_batches_) {
+        while (auto res = upstream_->next()) {
+            auto const [row_group_reader, file_reader] = res.value();
+            auto const num_rows = row_group_reader->metadata()->num_rows();
 
-        // Return None if no row group left
-        if (!res.has_value()) {
+            // Skip over row group if it is empty
+            if (num_rows == 0) {
+                continue;
+            }
+
+            // Start reading row group data into main-memory
+            pending_column_readers_.emplace_front(
+                    num_rows, file_reader,
+                    std::async(
+                            std::launch::async,
+                            [this](auto const row_group_reader,
+                                   auto const file_reader) {
+                                ColumnReaders col_readers;
+                                for (const auto& column_info : column_infos_) {
+                                    auto const col_id = column_info.col_id;
+                                    col_readers.push_back(
+                                            row_group_reader->Column(col_id));
+                                }
+                                return col_readers;
+                            },
+                            row_group_reader, file_reader));
+
+            if (pending_column_readers_.size() >= max_pending_column_readers_) {
+                break;
+            }
+        }
+
+        // Signal end of stream if no pending row group left
+        if (pending_column_readers_.empty()) {
             return std::make_shared<runtime::values::None>();
         }
 
-        auto const row_group_reader = res.value();
+        // Return new row group as soon as it is available
+        auto [num_rows, file_reader, col_readers] =
+                std::move(pending_column_readers_.back());
+        col_readers_ = col_readers.get();
+        file_reader_ = std::move(file_reader);
+        pending_column_readers_.pop_back();
 
-        auto const num_rows = row_group_reader->metadata()->num_rows();
         num_batches_ = (num_rows + batch_size_ - 1) / batch_size_;
         batch_index_ = 0;
-
-        col_readers_.clear();
-        for (auto& column_info : column_infos_) {
-            auto const col_id = column_info.col_id;
-            col_readers_.push_back(row_group_reader->Column(col_id));
-        }
     }
 
     assert(batch_index_ < num_batches_);

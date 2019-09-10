@@ -1,6 +1,8 @@
 #ifndef OPERATORS_PARQUET_SCAN_IMPL_HPP
 #define OPERATORS_PARQUET_SCAN_IMPL_HPP
 
+#include <deque>
+#include <future>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -29,7 +31,7 @@ class ParquetFileOperator {
 public:
     struct ParquetFileHandle {
         std::string file_path;
-        std::unique_ptr<parquet::ParquetFileReader> reader;
+        std::shared_ptr<parquet::ParquetFileReader> reader;
         std::shared_ptr<parquet::FileMetaData> metadata;
     };
 
@@ -70,6 +72,12 @@ class ParquetRowGroupOperator {
 public:
     using TypeTag = std::variant<int32_t, int64_t, float, double>;
 
+    // Return FileReader along with RowGroupReader, as the latter is only valid
+    // while the former is alive
+    using RowGroupReader = std::shared_ptr<parquet::RowGroupReader>;
+    using FileReader = std::shared_ptr<parquet::ParquetFileReader>;
+    using OutputType = std::pair<RowGroupReader, FileReader>;
+
     ParquetRowGroupOperator(std::unique_ptr<ParquetFileOperator> upstream,
                             std::vector<std::vector<std::shared_ptr<Predicate>>>
                                     range_predicates,
@@ -81,7 +89,7 @@ public:
                                         std::move(col_ids))) {}
 
     void open();
-    std::optional<std::shared_ptr<parquet::RowGroupReader>> next();
+    std::optional<OutputType> next();
     void close();
 
     static const std::map<std::string, TypeTag>& type_tags();
@@ -108,7 +116,7 @@ private:
 
     const std::vector<ColumnInfo> column_infos_;
     const std::unique_ptr<ParquetFileOperator> upstream_;
-    std::unique_ptr<parquet::ParquetFileReader> parquet_reader_;
+    FileReader parquet_reader_;
     std::vector<int> interesting_row_groups_;
     int64_t row_group_index_ = 0;
 };
@@ -129,6 +137,10 @@ public:
     void close() override;
 
 private:
+    using ColumnReader = std::shared_ptr<parquet::ColumnReader>;
+    using FileReader = std::shared_ptr<parquet::ParquetFileReader>;
+    using ColumnReaders = std::vector<ColumnReader>;
+
     struct ColumnInfo {
         int col_id;
         TypeTag type_tag;
@@ -144,7 +156,11 @@ private:
     size_t num_batches_ = 0;
     size_t batch_index_ = 0;
     const std::vector<ColumnInfo> column_infos_;
-    std::vector<std::shared_ptr<parquet::ColumnReader>> col_readers_;
+    ColumnReaders col_readers_;
+    FileReader file_reader_;
+    const size_t max_pending_column_readers_ = 2;
+    std::deque<std::tuple<int64_t, FileReader, std::future<ColumnReaders>>>
+            pending_column_readers_;
 
     // Operator configuration
     const int64_t batch_size_ = 100;
