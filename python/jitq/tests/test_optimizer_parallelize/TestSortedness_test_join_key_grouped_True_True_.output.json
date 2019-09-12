@@ -303,7 +303,7 @@
                                 }
                             ]
                         },
-                        "op": "parallel_map",
+                        "op": "parallel_map_omp",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -1074,7 +1074,7 @@
                                 }
                             ]
                         },
-                        "op": "parallel_map",
+                        "op": "parallel_map_omp",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -1985,7 +1985,7 @@
                                 }
                             ]
                         },
-                        "op": "parallel_map",
+                        "op": "parallel_map_omp",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -2254,7 +2254,7 @@
                                 }
                             ]
                         },
-                        "op": "parallel_map",
+                        "op": "parallel_map_omp",
                         "output_type": [
                             {
                                 "layout": "C",
