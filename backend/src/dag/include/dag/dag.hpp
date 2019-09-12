@@ -198,6 +198,7 @@ private:
 public:
     Vertex AddOperator(DAGOperator *op, DAG *inner_dag = nullptr);
     Vertex AddOperator(DAGOperator *op, size_t id, DAG *inner_dag = nullptr);
+    Vertex ReplaceOperator(const DAGOperator *old_op, DAGOperator *new_op);
     void RemoveOperator(const DAGOperator *op);
     void MoveOperator(DAG *other_dag, DAGOperator *op);
 

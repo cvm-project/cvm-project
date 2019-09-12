@@ -48,6 +48,20 @@ auto DAG::AddOperator(DAGOperator *const op, const size_t id,
                        VertexInnerDag(inner_dag_ptr, VertexOperator(op_ptr)));
 }
 
+auto DAG::ReplaceOperator(const DAGOperator *const old_op,
+                          DAGOperator *const new_op) -> Vertex {
+    assert(old_op != nullptr);
+    assert(new_op != nullptr);
+
+    std::shared_ptr<DAGOperator> new_op_ptr(new_op);
+
+    const auto v = to_vertex(old_op);
+    auto properties_map = boost::get(operator_t(), graph_);
+    properties_map[v] = std::move(new_op_ptr);
+
+    return v;
+}
+
 void DAG::RemoveOperator(const DAGOperator *const op) {
     const auto v = to_vertex(op);
     assert(boost::degree(v, graph_) == 0);
