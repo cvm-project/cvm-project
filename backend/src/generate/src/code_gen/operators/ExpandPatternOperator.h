@@ -1,5 +1,5 @@
-#ifndef CODE_GEN_CPP_OPERATORS_EXPANDPATTERNOPERATOR_H
-#define CODE_GEN_CPP_OPERATORS_EXPANDPATTERNOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_EXPANDPATTERNOPERATOR_H
+#define CODE_GEN_OPERATORS_EXPANDPATTERNOPERATOR_H
 
 #include "Utils.h"
 #include "runtime/jit/operators/expand_pattern.hpp"
@@ -47,4 +47,4 @@ makeExpandPatternOperator(PatternUpstream* const pattern_upstream,
             pattern_upstream, parameter_upstream);
 };
 
-#endif  // CODE_GEN_CPP_OPERATORS_EXPANDPATTERNOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_EXPANDPATTERNOPERATOR_H

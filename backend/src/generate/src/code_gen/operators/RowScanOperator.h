@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_ROWSCANOPERATOR_H
-#define CPP_ROWSCANOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_ROWSCANOPERATOR_H
+#define CODE_GEN_OPERATORS_ROWSCANOPERATOR_H
 
 #include <tuple>
 
@@ -73,4 +73,4 @@ RowScanOperator<Tuple, kAddIndex, Upstream> makeRowScanOperator(
     return RowScanOperator<Tuple, kAddIndex, Upstream>(upstream);
 }
 
-#endif  // CPP_ROWSCANOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_ROWSCANOPERATOR_H

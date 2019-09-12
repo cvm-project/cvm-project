@@ -1,5 +1,5 @@
-#ifndef CPP_COLUMNSCANOPERATOR_H
-#define CPP_COLUMNSCANOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_COLUMNSCANOPERATOR_H
+#define CODE_GEN_OPERATORS_COLUMNSCANOPERATOR_H
 
 #include <cstring>
 #include <tuple>
@@ -117,4 +117,4 @@ auto makeColumnScanOperator(Upstream *const upstream) {
     return makeColumnScanOperator<Tuple, kAddIndex>(upstream, StdInputTuple());
 }
 
-#endif  // CPP_COLUMNSCANOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_COLUMNSCANOPERATOR_H

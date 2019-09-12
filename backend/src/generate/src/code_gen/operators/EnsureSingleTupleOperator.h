@@ -1,5 +1,5 @@
-#ifndef CPP_ENSURESINGLETUPLE_OPERATOR_H
-#define CPP_ENSURESINGLETUPLE_OPERATOR_H
+#ifndef CODE_GEN_OPERATORS_ENSURE_SINGLE_TUPLE_OPERATOR_H
+#define CODE_GEN_OPERATORS_ENSURE_SINGLE_TUPLE_OPERATOR_H
 
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
@@ -37,4 +37,4 @@ EnsureSingleTupleOperator<Upstream, Tuple> makeEnsureSingleTupleOperator(
     return EnsureSingleTupleOperator<Upstream, Tuple>(upstream);
 };
 
-#endif  // CPP_ENSURESINGLETUPLE_OPERATOR_H
+#endif  // CODE_GEN_OPERATORS_ENSURE_SINGLE_TUPLE_OPERATOR_H

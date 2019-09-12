@@ -1,5 +1,5 @@
-#ifndef CPP_SPLITRANGEOPERATOR_H
-#define CPP_SPLITRANGEOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_SPLITRANGEOPERATOR_H
+#define CODE_GEN_OPERATORS_SPLITRANGEOPERATOR_H
 
 #include <omp.h>
 
@@ -86,4 +86,4 @@ auto makeSplitRangeOperator(MainUpstream *const main_upstream,
             main_upstream, dop_upstream);
 };
 
-#endif  // CPP_SPLITRANGEOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_SPLITRANGEOPERATOR_H

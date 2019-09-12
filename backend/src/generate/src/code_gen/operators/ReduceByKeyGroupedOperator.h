@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_REDUCEBYKEYGROUPEDOPERATOR_H
-#define CPP_REDUCEBYKEYGROUPEDOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_REDUCEBYKEYGROUPEDOPERATOR_H
+#define CODE_GEN_OPERATORS_REDUCEBYKEYGROUPEDOPERATOR_H
 
 #include <iostream>
 #include <unordered_map>
@@ -81,4 +81,4 @@ makeReduceByKeyGroupedOperator(Upstream *upstream, Function func) {
                                       Function>(upstream, func);
 };
 
-#endif  // CPP_REDUCEBYKEYGROUPEDOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_REDUCEBYKEYGROUPEDOPERATOR_H

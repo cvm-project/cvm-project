@@ -1,5 +1,5 @@
-#ifndef CPP_PARQUETSCANOPERATOR_H
-#define CPP_PARQUETSCANOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_PARQUETSCANOPERATOR_H
+#define CODE_GEN_OPERATORS_PARQUETSCANOPERATOR_H
 
 #include <memory>
 
@@ -91,4 +91,4 @@ auto makeParquetScanOperator(
             std::move(col_ids), filesystem, StdOutputTuple());
 }
 
-#endif  // CPP_PARQUETSCANOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_PARQUETSCANOPERATOR_H

@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_REDUCEOPERATOR_H
-#define CPP_REDUCEOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_REDUCEOPERATOR_H
+#define CODE_GEN_OPERATORS_REDUCEOPERATOR_H
 
 #include <iostream>
 #include <stdexcept>
@@ -55,4 +55,4 @@ ReduceOperator<Upstream, Tuple, Function> makeReduceOperator(
     return ReduceOperator<Upstream, Tuple, Function>(upstream, func);
 };
 
-#endif  // CPP_REDUCEOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_REDUCEOPERATOR_H

@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_RANGESOURCEOPERATOR_H
-#define CPP_RANGESOURCEOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_RANGESOURCEOPERATOR_H
+#define CODE_GEN_OPERATORS_RANGESOURCEOPERATOR_H
 
 #include <iostream>
 
@@ -57,4 +57,4 @@ RangeSourceOperator<Upstream, Tuple> makeRangeSourceOperator(
     return RangeSourceOperator<Upstream, Tuple>(upstream);
 };
 
-#endif  // CPP_RANGESOURCEOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_RANGESOURCEOPERATOR_H

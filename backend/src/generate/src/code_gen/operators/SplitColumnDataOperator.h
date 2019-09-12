@@ -1,5 +1,5 @@
-#ifndef CPP_SPLITCOLUMNDATAOPERATOR_H
-#define CPP_SPLITCOLUMNDATAOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_SPLITCOLUMNDATAOPERATOR_H
+#define CODE_GEN_OPERATORS_SPLITCOLUMNDATAOPERATOR_H
 
 #include <utility>
 
@@ -108,4 +108,4 @@ auto makeSplitColumnDataOperator(MainUpstream *const main_upstream,
             main_upstream, dop_upstream);
 };
 
-#endif  // CPP_SPLITCOLUMNDATAOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_SPLITCOLUMNDATAOPERATOR_H

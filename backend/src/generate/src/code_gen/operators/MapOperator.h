@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_MAPOPERATOR_H
-#define CPP_MAPOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_MAPOPERATOR_H
+#define CODE_GEN_OPERATORS_MAPOPERATOR_H
 
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
@@ -36,4 +36,4 @@ MapOperator<Upstream, Tuple, MapFunction> makeMapOperator(
     return MapOperator<Upstream, Tuple, MapFunction>(upstream, func);
 };
 
-#endif  // CPP_MAPOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_MAPOPERATOR_H

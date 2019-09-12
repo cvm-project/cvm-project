@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_REDUCEBYKEYOPERATOR_H
-#define CPP_REDUCEBYKEYOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_REDUCEBYKEYOPERATOR_H
+#define CODE_GEN_OPERATORS_REDUCEBYKEYOPERATOR_H
 
 #include <iostream>
 #include <unordered_map>
@@ -102,4 +102,4 @@ makeReduceByKeyOperator(Upstream *upstream, Function func) {
             upstream, func);
 };
 
-#endif  // CPP_REDUCEBYKEYOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_REDUCEBYKEYOPERATOR_H

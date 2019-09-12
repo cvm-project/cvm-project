@@ -1,5 +1,5 @@
-#ifndef CPP_PARALLELMAPOPERATOR_H
-#define CPP_PARALLELMAPOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_PARALLELMAPOMPOPERATOR_H
+#define CODE_GEN_OPERATORS_PARALLELMAPOMPOPERATOR_H
 
 #include <cassert>
 #include <list>
@@ -73,4 +73,4 @@ makeParallelMapOmpOperator(Upstream *const upstream,
             upstream, inner_plan);
 };
 
-#endif  // CPP_PARALLELMAPOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_PARALLELMAPOMPOPERATOR_H

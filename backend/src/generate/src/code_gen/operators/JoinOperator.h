@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_JOINOPERATOR_H
-#define CPP_JOINOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_JOINOPERATOR_H
+#define CODE_GEN_OPERATORS_JOINOPERATOR_H
 
 #include <tuple>
 #include <unordered_map>
@@ -136,4 +136,4 @@ JoinOperator<LeftUpstream, RightUpstream, Tuple, KeyType, LeftValueType,
                                                        right_upstream);
 };
 
-#endif  // CPP_JOINOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_JOINOPERATOR_H

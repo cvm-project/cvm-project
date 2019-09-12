@@ -1,5 +1,5 @@
-#ifndef CPP_GROUPBY_OPERATOR_H
-#define CPP_GROUPBY_OPERATOR_H
+#ifndef CODE_GEN_OPERATORS_GROUP_BY_OPERATOR_H
+#define CODE_GEN_OPERATORS_GROUP_BY_OPERATOR_H
 
 #include <unordered_map>
 #include <vector>
@@ -74,4 +74,4 @@ auto makeGroupByOperator(Upstream *const upstream) {
     return GroupByOperator<Upstream, Tuple>(upstream);
 };
 
-#endif  // CPP_GROUPBY_OPERATOR_H
+#endif  // CODE_GEN_OPERATORS_GROUP_BY_OPERATOR_H

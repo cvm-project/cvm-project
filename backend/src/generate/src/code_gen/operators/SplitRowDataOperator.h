@@ -1,5 +1,5 @@
-#ifndef CPP_SPLITROWDATAOPERATOR_H
-#define CPP_SPLITROWDATAOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_SPLITROWDATAOPERATOR_H
+#define CODE_GEN_OPERATORS_SPLITROWDATAOPERATOR_H
 
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
@@ -79,4 +79,4 @@ auto makeSplitRowDataOperator(MainUpstream *const main_upstream,
             main_upstream, dop_upstream);
 };
 
-#endif  // CPP_SPLITROWDATAOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_SPLITROWDATAOPERATOR_H

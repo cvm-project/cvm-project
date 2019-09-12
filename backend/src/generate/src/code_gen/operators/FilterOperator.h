@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_FILTEROPERATOR_H
-#define CPP_FILTEROPERATOR_H
+#ifndef CODE_GEN_OPERATORS_FILTEROPERATOR_H
+#define CODE_GEN_OPERATORS_FILTEROPERATOR_H
 
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
@@ -37,4 +37,4 @@ FilterOperator<Upstream, Tuple, Function> makeFilterOperator(Upstream *upstream,
     return FilterOperator<Upstream, Tuple, Function>(upstream, func);
 };
 
-#endif  // CPP_FILTEROPERATOR_H
+#endif  // CODE_GEN_OPERATORS_FILTEROPERATOR_H

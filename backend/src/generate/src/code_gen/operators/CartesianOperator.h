@@ -2,8 +2,8 @@
 // Created by sabir on 04.07.17.
 //
 
-#ifndef CPP_CARTESIANOPERATOR_H
-#define CPP_CARTESIANOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_CARTESIANOPERATOR_H
+#define CODE_GEN_OPERATORS_CARTESIANOPERATOR_H
 
 #include <vector>
 
@@ -73,4 +73,4 @@ makeCartesianOperator(Upstream1 *upstream1, Upstream2 *upstream2) {
             upstream1, upstream2);
 };
 
-#endif  // CPP_CARTESIANOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_CARTESIANOPERATOR_H

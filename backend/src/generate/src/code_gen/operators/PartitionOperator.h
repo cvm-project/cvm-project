@@ -1,5 +1,5 @@
-#ifndef CPP_PARTITION_OPERATOR_H
-#define CPP_PARTITION_OPERATOR_H
+#ifndef CODE_GEN_OPERATORS_PARTITION_OPERATOR_H
+#define CODE_GEN_OPERATORS_PARTITION_OPERATOR_H
 
 #include <list>
 #include <type_traits>
@@ -94,4 +94,4 @@ PartitionOperator<Upstream, Tuple> makePartitionOperator(
     return PartitionOperator<Upstream, Tuple>(upstream, num_partitions);
 };
 
-#endif  // CPP_PARTITION_OPERATOR_H
+#endif  // CODE_GEN_OPERATORS_PARTITION_OPERATOR_H

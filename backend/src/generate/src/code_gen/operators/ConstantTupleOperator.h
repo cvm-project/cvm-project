@@ -1,5 +1,5 @@
-#ifndef CPP_CONSTANTTUPLEOPERATOR_H
-#define CPP_CONSTANTTUPLEOPERATOR_H
+#ifndef CODE_GEN_OPERATORS_CONSTANTTUPLEOPERATOR_H
+#define CODE_GEN_OPERATORS_CONSTANTTUPLEOPERATOR_H
 
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
@@ -31,4 +31,4 @@ ConstantTupleOperator<Tuple> makeConstantTupleOperator(
     return ConstantTupleOperator<Tuple>(tuple);
 };
 
-#endif  // CPP_CONSTANTTUPLEOPERATOR_H
+#endif  // CODE_GEN_OPERATORS_CONSTANTTUPLEOPERATOR_H

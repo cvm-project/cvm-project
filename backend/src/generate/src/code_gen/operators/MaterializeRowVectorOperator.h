@@ -1,5 +1,5 @@
-#ifndef CPP_MATERIALIZEROWVECTOROPERATOR_H
-#define CPP_MATERIALIZEROWVECTOROPERATOR_H
+#ifndef CODE_GEN_OPERATORS_MATERIALIZEROWVECTOROPERATOR_H
+#define CODE_GEN_OPERATORS_MATERIALIZEROWVECTOROPERATOR_H
 
 #include <stdexcept>
 #include <type_traits>
@@ -68,4 +68,4 @@ makeMaterializeRowVectorOperator(Upstream *const upstream) {
     return MaterializeRowVectorOperator<OuterTuple, Upstream>(upstream);
 };
 
-#endif  // CPP_MATERIALIZEROWVECTOROPERATOR_H
+#endif  // CODE_GEN_OPERATORS_MATERIALIZEROWVECTOROPERATOR_H
