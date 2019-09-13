@@ -18,3 +18,6 @@ leak:libarrow.so
 leak:libfontconfig.so
 leak:libgvc.so
 leak:libcdt.so
+
+# When run through catchsegv, there is a small leak
+leak:libSegFault.so
