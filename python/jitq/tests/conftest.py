@@ -104,7 +104,6 @@ def jitq_context(parallelize, generate_testcases):
     return JitqContext(conf={
         'optimizer': {
             'optimizations': {
-                'code_gen': {'backend': 'cpp'},
                 'parallelize': {'active': parallelize},
             },
         },
