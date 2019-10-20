@@ -9,6 +9,7 @@ set(RUNTIME_SOURCE_FILES
         src/operators/materialize_parquet_impl.cpp
         src/operators/parquet_scan_impl.cpp
         src/operators/value_to_record_batch.cpp
+        src/trace.cpp
         src/values/json_parsing.cpp
         src/values/array_json.cpp
         src/values/tuple_json.cpp
