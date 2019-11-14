@@ -1,6 +1,7 @@
 #include "filesystem.hpp"
 
 #include <memory>
+#include <mutex>
 
 #include "file.hpp"
 #include "utils/registry.hpp"
