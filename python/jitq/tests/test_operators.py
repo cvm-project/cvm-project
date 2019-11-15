@@ -723,6 +723,13 @@ class TestMap:
         res1 = jitq_context.collection(input_).map(lambda x: x).collect()
         assert [(3 == 8)], res1.astuplelist()
 
+    def test_packed_struct(self, jitq_context):
+        res = jitq_context.range_(0, 10) \
+            .map(lambda i: (np.int32(i), np.int64(1))) \
+            .map(lambda t: t[1]) \
+            .reduce(lambda i1, i2: i1 + i2)
+        assert res == 10
+
 
 class TestReduce:
 
