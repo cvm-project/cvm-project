@@ -101,6 +101,27 @@ def make_flat_tuple(type_):
     return None
 
 
+def make_record(type_, names):
+    if str(type_) in NUMPY_DTYPE_MAP:
+        types = [type_]
+    elif isinstance(type_, nb.types.Tuple):
+        types = type_.types
+    elif isinstance(type_, nb.types.Record):
+        fields = sorted(type_.dtype.fields.values(), key=lambda v: v[1])
+        types = [nb.from_dtype(field[0]) for field in fields]
+    else:
+        assert False, "Cannot make record from {}".format(type_)
+    names = list(names)
+    if len(names) != len(types):
+        raise ValueError(
+            "Provided number of names does not match number of fields:\n"
+            "    Names: {}\n"
+            "    Tuple types: {}".format(names, types))
+    dtypes = [NUMPY_DTYPE_MAP[str(t)] for t in types]
+    record = np.dtype(list(zip(names, dtypes)))
+    return nb.numpy_support.from_dtype(record)
+
+
 def numba_type_to_dtype(type_):
     if str(type_) in NUMPY_DTYPE_MAP:
         return nb.numpy_support.as_dtype(type_)

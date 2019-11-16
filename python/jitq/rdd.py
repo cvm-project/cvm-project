@@ -17,7 +17,7 @@ from jitq.config import FAST_MATH, DUMP_DAG
 from jitq.libs.numba.llvm_ir import get_llvm_ir
 from jitq.utils import replace_unituple, get_project_path, RDDEncoder, \
     make_tuple, item_typeof, numba_type_to_dtype, is_item_type, C_TYPE_MAP, \
-    make_flat_tuple
+    make_flat_tuple, make_record
 
 
 def clean_rdds(rdd):
@@ -192,8 +192,11 @@ class RDD(abc.ABC):
     def self_get_inputs(self):
         pass
 
-    def map(self, map_func):
-        return Map(self.context, self, map_func)
+    def map(self, map_func, names=None):
+        return Map(self.context, self, map_func, names)
+
+    def alias(self, names):
+        return self.map(lambda x: x, names)
 
     def filter(self, predicate):
         return Filter(self.context, self, predicate)
@@ -315,10 +318,12 @@ class EnsureSingleTuple(UnaryRDD):
 class Map(PipeRDD):
     NAME = 'map'
 
-    def __init__(self, context, parent, func):
+    def __init__(self, context, parent, func, names):
         super(Map, self).__init__(context, parent, func)
         self.llvm_ir, self.output_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
+        if names is not None:
+            self.output_type = make_record(self.output_type, names)
         if not is_item_type(self.output_type):
             raise BaseException(
                 "Function given to map has the wrong return type:\n"
