@@ -764,6 +764,12 @@ class TestFilter:
         truth = list(enumerate(range(5)))
         assert sorted(res.astuples()) == truth
 
+    def test_complex_udf(self, jitq_context):
+        res = jitq_context.range_(0, 20) \
+            .filter(lambda i: i in [1, 3, 4, 7, 11, 12, 13, 17, 19]) \
+            .count()
+        assert res == 9
+
 
 class TestMap:
 
@@ -794,6 +800,12 @@ class TestMap:
             .collect()
         truth = [(t[0] * 2, t[1] * 2) for t in input_]
         assert sorted(res.astuples()) == truth
+
+    def test_fabs(self, jitq_context):
+        res = jitq_context.range_(0, 10) \
+            .map(lambda i: abs(i * 1.0)) \
+            .count()
+        assert res == 10
 
     def test_count(self, jitq_context):
         res = jitq_context.collection(range(0, 10)) \
