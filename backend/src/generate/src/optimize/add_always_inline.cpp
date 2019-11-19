@@ -7,7 +7,8 @@
 void AddInline(DAGOperator *const op, const DAG *const /*dag*/) {
     if (!op->llvm_ir.empty()) {
         llvm_helpers::Function function(op->llvm_ir);
-        op->llvm_ir = function.AddInlineAttribute();
+        function.AddInlineAttribute();
+        op->llvm_ir = function.str();
     }
 }
 

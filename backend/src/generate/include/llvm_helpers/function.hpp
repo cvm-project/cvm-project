@@ -29,13 +29,14 @@ public:
 
     /**
      * whether this argument is used by the function to produce any output
-     *
      */
     [[nodiscard]] auto ComputeIsArgumentRead(size_t arg_pos) const -> bool;
 
-    auto AdjustFilterSignature(DAGFilter *pFilter,
-                               const DAGOperator *predecessor) -> std::string;
-    auto AddInlineAttribute() -> std::string;
+    void AdjustFilterSignature(DAGFilter *pFilter,
+                               const DAGOperator *predecessor);
+    void AddInlineAttribute();
+
+    [[nodiscard]] auto str() const -> std::string;
 
 private:
     /**

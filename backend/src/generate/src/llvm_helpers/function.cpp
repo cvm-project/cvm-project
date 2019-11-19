@@ -204,11 +204,8 @@ auto Function::ComputeIsArgumentRead(size_t arg_pos) const -> bool {
     return used;
 }
 
-auto Function::AdjustFilterSignature(DAGFilter *const pFilter,
-                                     const DAGOperator *const predecessor)
-        -> std::string {
-    auto const new_mod = std::make_unique<llvm::Module>("filter", context_);
-
+void Function::AdjustFilterSignature(DAGFilter *const pFilter,
+                                     const DAGOperator *const predecessor) {
     std::vector<llvm::Type *> types;
     for (const auto &f : predecessor->tuple->fields) {
         types.push_back(ComputeLLVMType(&context_, f.get()));
@@ -218,19 +215,19 @@ auto Function::AdjustFilterSignature(DAGFilter *const pFilter,
     types.insert(types.begin(), llvm::Type::getInt8PtrTy(context_));
 
     auto old_function = module_->getFunctionList().begin();
-    llvm::FunctionType *FT =
+    llvm::FunctionType *const function_type =
             llvm::FunctionType::get(llvm::Type::getVoidTy(context_),
                                     llvm::ArrayRef<llvm::Type *>(types), false);
-    llvm::Function *filter_predicate =
-            llvm::Function::Create(FT, llvm::Function::ExternalLinkage,
-                                   old_function->getName(), new_mod.get());
+    llvm::Function *const new_function = llvm::Function::Create(
+            function_type, llvm::Function::ExternalLinkage,
+            "cfuncnotuniquename_new", module_.get());
 
-    filter_predicate->getBasicBlockList().splice(
-            filter_predicate->begin(), old_function->getBasicBlockList());
+    new_function->getBasicBlockList().splice(new_function->begin(),
+                                             old_function->getBasicBlockList());
 
     size_t counter = 1;
-    for (auto it = filter_predicate->arg_begin();
-         it != filter_predicate->arg_end(); it++) {
+    for (auto it = new_function->arg_begin(); it != new_function->arg_end();
+         it++) {
         it->setName("." + std::to_string(counter++));
     }
     // In the IR, replace all fields with their new positions
@@ -249,27 +246,28 @@ auto Function::AdjustFilterSignature(DAGFilter *const pFilter,
         // replace all uses of oldPos argument to use of newPos argument
         // +1 accounts for the return pointer
         auto old_arg = old_function->arg_begin() + old_pos + 1;
-        auto new_arg = filter_predicate->arg_begin() + new_pos + 1;
+        auto new_arg = new_function->arg_begin() + new_pos + 1;
         old_arg->replaceAllUsesWith(new_arg);
     }
     // return pointer
     auto old_arg = old_function->arg_begin();
-    auto new_arg = filter_predicate->arg_begin();
+    auto new_arg = new_function->arg_begin();
     old_arg->replaceAllUsesWith(new_arg);
-    std::string ret;
-    llvm::raw_string_ostream OS(ret);
-    OS << *new_mod;
-    OS.flush();
-    return ret;
+
+    old_function->eraseFromParent();
+    new_function->setName("cfuncnotuniquename");
 }
 
-auto Function::AddInlineAttribute() -> std::string {
+void Function::AddInlineAttribute() {
     auto function = module_->getFunctionList().begin();
     function->addFnAttr(llvm::Attribute::AlwaysInline);
+}
+
+auto Function::str() const -> std::string {
     std::string ret;
-    llvm::raw_string_ostream OS(ret);
-    OS << *module_;
-    OS.flush();
+    llvm::raw_string_ostream stream(ret);
+    stream << *module_;
+    stream.flush();
     return ret;
 }
 

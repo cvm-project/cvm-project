@@ -114,9 +114,9 @@ void SimplePredicateMoveAround::Run(DAG *const dag,
             dag->AddFlow(currentOp, 0, filt, 0);
 
             // change the llvm ir signature
-            llvm_helpers::Function parser(filt->llvm_ir);
-            filt->llvm_ir =
-                    parser.AdjustFilterSignature(filt, dag->predecessor(filt));
+            llvm_helpers::Function func(filt->llvm_ir);
+            func.AdjustFilterSignature(filt, dag->predecessor(filt));
+            filt->llvm_ir = func.str();
 
             // copy the tuple
             filt->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
