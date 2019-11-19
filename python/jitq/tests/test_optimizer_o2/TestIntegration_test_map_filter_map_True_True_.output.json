@@ -67,7 +67,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.40.i = srem i64 %.2, 2\n  %.42.i = icmp slt i64 %.40.i, 0\n  %.51.i = add nsw i64 %.40.i, 2\n  %.32.0.i = select i1 %.42.i, i64 %.51.i, i64 %.40.i\n  %.73.i = icmp eq i64 %.32.0.i, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.73.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.40.i = srem i64 %.2, 2\n  %.42.i = icmp slt i64 %.40.i, 0\n  %.51.i = add nsw i64 %.40.i, 2\n  %.32.0.i = select i1 %.42.i, i64 %.51.i, i64 %.40.i\n  %.73.i = icmp eq i64 %.32.0.i, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.73.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                         "id": 3,
                         "op": "filter",
                         "output_type": [

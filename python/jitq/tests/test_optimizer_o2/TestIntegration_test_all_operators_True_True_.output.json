@@ -106,7 +106,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.42.i = srem i64 %.2, 3\n  %.44.i = icmp slt i64 %.42.i, 0\n  %.53.i = add nsw i64 %.42.i, 3\n  %.34.0.i = select i1 %.44.i, i64 %.53.i, i64 %.42.i\n  %.75.i = icmp eq i64 %.34.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.75.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.42.i = srem i64 %.2, 3\n  %.44.i = icmp slt i64 %.42.i, 0\n  %.53.i = add nsw i64 %.42.i, 3\n  %.34.0.i = select i1 %.44.i, i64 %.53.i, i64 %.42.i\n  %.75.i = icmp eq i64 %.34.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.75.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                         "id": 4,
                         "op": "filter",
                         "output_type": [
@@ -182,7 +182,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.42.i = srem i64 %.2, 3\n  %.44.i = icmp slt i64 %.42.i, 0\n  %.53.i = add nsw i64 %.42.i, 3\n  %.34.0.i = select i1 %.44.i, i64 %.53.i, i64 %.42.i\n  %.75.i = icmp eq i64 %.34.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.75.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.42.i = srem i64 %.2, 3\n  %.44.i = icmp slt i64 %.42.i, 0\n  %.53.i = add nsw i64 %.42.i, 3\n  %.34.0.i = select i1 %.44.i, i64 %.53.i, i64 %.42.i\n  %.75.i = icmp eq i64 %.34.0.i, 0\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.75.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                         "id": 9,
                         "op": "filter",
                         "output_type": [

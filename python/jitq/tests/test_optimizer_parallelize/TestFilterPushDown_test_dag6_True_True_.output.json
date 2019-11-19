@@ -1688,7 +1688,7 @@
                                     ]
                                 },
                                 {
-                                    "func": "; ModuleID = 'id'\nsource_filename = \"filter\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.27.i = icmp eq i64 %.2, 2\n  %.20 = bitcast i8* %.1 to i1*\n  store i1 %.27.i, i1* %.20, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                                    "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.27.i = icmp eq i64 %.2, 2\n  %.20 = bitcast i8* %.1 to i1*\n  store i1 %.27.i, i1* %.20, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                                     "id": 3,
                                     "op": "filter",
                                     "output_type": [
