@@ -263,6 +263,16 @@ void Function::AddInlineAttribute() {
     function->addFnAttr(llvm::Attribute::AlwaysInline);
 }
 
+void Function::AdjustLinkage() {
+    for (auto &function : *module_) {
+        if (function.getName() == "cfuncnotuniquename") continue;
+        function.setLinkage(llvm::GlobalValue::LinkageTypes::InternalLinkage);
+    }
+    for (auto &var : module_->getGlobalList()) {
+        var.setLinkage(llvm::GlobalValue::LinkageTypes::InternalLinkage);
+    }
+}
+
 auto Function::str() const -> std::string {
     std::string ret;
     llvm::raw_string_ostream stream(ret);

@@ -35,6 +35,7 @@ public:
     void AdjustFilterSignature(DAGFilter *pFilter,
                                const DAGOperator *predecessor);
     void AddInlineAttribute();
+    void AdjustLinkage();
 
     [[nodiscard]] auto str() const -> std::string;
 
