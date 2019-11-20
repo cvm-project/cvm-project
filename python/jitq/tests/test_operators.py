@@ -435,6 +435,20 @@ class TestJoin:
                  (1, 3, 44, 55), (2, 4, 33, 44), (2, 6, 33, 44)]
         assert sorted(res.astuples()) == sorted(truth)
 
+    def test_int32(self, jitq_context):
+        def as_int32_tuple(tup):
+            return (np.int32(tup[0]), np.int32(tup[1]))
+
+        left = jitq_context.collection(list(enumerate(range(10))))
+        right = jitq_context \
+            .collection(list(enumerate(range(0, 10, 2)))) \
+            .map(lambda t: (t[1], t[0]))
+        res = left.map(as_int32_tuple) \
+            .join(right.map(as_int32_tuple)) \
+            .collect()
+        truth = [(0, 0, 0), (2, 2, 1), (4, 4, 2), (6, 6, 3), (8, 8, 4)]
+        assert sorted(res.astuples()) == truth
+
 
 class TestFilter:
 
