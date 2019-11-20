@@ -654,6 +654,15 @@ class TestReduceByKey:
 
         assert sorted(data.astuples()) == sorted(truth)
 
+    def test_int32(self, jitq_context):
+        res = jitq_context \
+            .range_(0, 10) \
+            .map(lambda i: (np.int32(i % 3), np.int32(i))) \
+            .reduce_by_key(lambda i1, i2: np.int32(i1 + i2)) \
+            .collect()
+        truth = [(0, 18), (1, 12), (2, 15)]
+        assert sorted(res.astuples()) == sorted(truth)
+
 
 class TestCartesian:
 
