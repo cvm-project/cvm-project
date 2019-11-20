@@ -26,4 +26,17 @@ auto constexpr max(T x, U y) ->
     return x > y ? x : y;
 }
 
+template <typename StdTuple, std::size_t... Indexes>
+static auto SplitTupleImpl(const StdTuple tuple,
+                           std::index_sequence<Indexes...> /*indexes*/) {
+    return std::make_pair(std::make_tuple(std::get<0>(tuple)),
+                          std::make_tuple(std::get<Indexes + 1>(tuple)...));
+}
+
+template <typename... Types>
+static auto SplitTuple(const std::tuple<Types...> tuple) {
+    return SplitTupleImpl(tuple,
+                          std::make_index_sequence<sizeof...(Types) - 1u>());
+}
+
 #endif  // CPP_UTILS_H

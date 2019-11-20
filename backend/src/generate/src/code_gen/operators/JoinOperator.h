@@ -1,12 +1,9 @@
-//
-// Created by sabir on 04.07.17.
-//
-
 #ifndef CODE_GEN_OPERATORS_JOINOPERATOR_H
 #define CODE_GEN_OPERATORS_JOINOPERATOR_H
 
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "Utils.h"
@@ -31,17 +28,17 @@ public:
         right_upstream_->open();
 
         // Build table already built
-        if (!ht_.empty()) {
+        if (!build_table_.empty()) {
             return;
         }
 
         // Build hash table from left upstream
-        while (auto ret = left_upstream_->next()) {
-            auto const key = ExtractKey(ret.value());
-            auto const left_value = ExtractLeftValue(ret.value());
-
-            auto const [it, _] = ht_.insert({key, {}});
-            it->second.emplace_back(left_value);
+        while (auto const ret = left_upstream_->next()) {
+            auto const tuple = TupleToStdTuple(ret.value());
+            auto const [key, value] = SplitTuple(tuple);
+            auto const [it, _] =
+                    build_table_.insert({StdTupleToTuple(key), {}});
+            it->second.emplace_back(StdTupleToTuple(value));
         }
 
         // Reset iterators of left matches
@@ -49,18 +46,22 @@ public:
     }
 
     Optional<Tuple> INLINE next() {
-        // If there are no matches from the left upstream left to produces
+        // If there are no matches from the left upstream left to produce
         // results, we need a new tuple from the right upstream
         while (left_matches_it_ == left_matches_end_) {
             const auto ret = right_upstream_->next();
             if (!ret) return {};
 
-            const auto key = ExtractKey(ret.value());
-            const auto it = ht_.find(key);
-            if (it != ht_.end()) {
+            auto const tuple = TupleToStdTuple(ret.value());
+            auto const [key_tuple, value_tuple] = SplitTuple(tuple);
+            auto const key = StdTupleToTuple(key_tuple);
+            auto const value = StdTupleToTuple(value_tuple);
+
+            const auto it = build_table_.find(key);
+            if (it != build_table_.end()) {
                 left_matches_it_ = it->second.begin();
                 left_matches_end_ = it->second.end();
-                last_right_upstream_ = ExtractRightValue(ret.value());
+                last_right_upstream_ = value;
                 last_key_ = key;
             }
         }
@@ -71,7 +72,7 @@ public:
         auto const left_value = *left_matches_it_;
         left_matches_it_++;
 
-        // Concate fields using std::tuple
+        // Concatenate fields using std::tuple
         auto const key_tuple = TupleToStdTuple(last_key_);
         auto const left_tuple = TupleToStdTuple(left_value);
         auto const right_tuple = TupleToStdTuple(last_right_upstream_);
@@ -87,38 +88,24 @@ public:
     }
 
 private:
-    struct hash {
-        size_t operator()(const KeyType x) const {
-            return std::hash<long>()(*((long *)(&x)));
+    struct KeyTypeHash {
+        size_t operator()(const KeyType &key) const {
+            using FieldType = std::remove_cv_t<decltype(key.v0)>;
+            return std::hash<FieldType>()(key.v0);
         }
     };
 
-    struct pred {
-        bool operator()(const KeyType x, const KeyType y) const {
-            return *((long *)(&x)) == *((long *)(&y));
+    struct KeyTypeEquals {
+        bool operator()(const KeyType &lhs, const KeyType &rhs) const {
+            return TupleToStdTuple(lhs) == TupleToStdTuple(rhs);
         }
     };
-
-    template <class UpstreamTuple>
-    INLINE static constexpr KeyType ExtractKey(const UpstreamTuple &t) {
-        return *(const_cast<KeyType *>((KeyType *)(&t)));
-    }
-
-    template <class UpstreamTuple>
-    INLINE static constexpr LeftValueType ExtractLeftValue(
-            const UpstreamTuple &t) {
-        return *((LeftValueType *)(((char *)&t) + sizeof(KeyType)));
-    }
-
-    template <class UpstreamTuple>
-    INLINE static constexpr RightValueType ExtractRightValue(
-            const UpstreamTuple &t) {
-        return *((RightValueType *)(((char *)&t) + sizeof(KeyType)));
-    }
 
     LeftUpstream *const left_upstream_;
     RightUpstream *const right_upstream_;
-    std::unordered_map<KeyType, std::vector<LeftValueType>, hash, pred> ht_;
+    std::unordered_map<KeyType, std::vector<LeftValueType>, KeyTypeHash,
+                       KeyTypeEquals>
+            build_table_;
     RightValueType last_right_upstream_;
     KeyType last_key_;
     typename std::vector<LeftValueType>::iterator left_matches_it_;
