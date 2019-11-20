@@ -1,7 +1,3 @@
-//
-// Created by sabir on 04.07.17.
-//
-
 #ifndef CODE_GEN_OPERATORS_REDUCEBYKEYOPERATOR_H
 #define CODE_GEN_OPERATORS_REDUCEBYKEYOPERATOR_H
 
@@ -23,75 +19,57 @@ template <class Upstream, class Tuple, class KeyType, class ValueType,
           class Function>
 class ReduceByKeyOperator {
 public:
-    Upstream *upstream;
-    Function func;
-
-    ReduceByKeyOperator(Upstream *upstream, Function func)
-        : upstream(upstream), func(func){};
+    ReduceByKeyOperator(Upstream *const upstream, const Function &func)
+        : upstream_(upstream), func_(func){};
 
     Optional<Tuple> INLINE next() {
-        if (tupleIterator != ht.end()) {
-            auto res = *tupleIterator;
-            tupleIterator++;
-            return buildResult(res.first, res.second);
+        if (current_result_it_ == hash_table_.end()) {
+            return {};
         }
-        return {};
+        const auto &res = *(current_result_it_++);
+        const auto key_tuple = TupleToStdTuple(res.first);
+        const auto value_tuple = TupleToStdTuple(res.second);
+        return StdTupleToTuple(std::tuple_cat(key_tuple, value_tuple));
     }
 
-    /**
-     * read all upstream input
-     * reduce in place
-     */
     void INLINE open() {
-        upstream->open();
-        while (auto ret = upstream->next()) {
-            auto key = getKey(ret.value());
-            auto it = ht.find(key);
-            if (it != ht.end()) {
-                auto t = it->second;
-                it->second = func(t, getValue(ret.value()));
-            } else {
-                ht.emplace(key, getValue(ret.value()));
+        upstream_->open();
+        while (const auto ret = upstream_->next()) {
+            auto const tuple = TupleToStdTuple(ret.value());
+            auto const [key_tuple, value_tuple] = SplitTuple(tuple);
+            auto const key = StdTupleToTuple(key_tuple);
+            auto const value = StdTupleToTuple(value_tuple);
+
+            const auto [it, is_new] = hash_table_.emplace(key, value);
+            if (!is_new) {
+                const auto &aggregate = it->second;
+                it->second = func_(aggregate, value);
             }
         }
-        tupleIterator = ht.begin();
+        current_result_it_ = hash_table_.begin();
     }
 
-    void INLINE close() { upstream->close(); }
+    void INLINE close() { upstream_->close(); }
 
 private:
-    struct hash {
-        size_t operator()(const KeyType x) const {
-            return std::hash<long>()(*((long *)(&x)));
+    struct KeyTypeHash {
+        size_t operator()(const KeyType &key) const {
+            using FieldType = std::remove_cv_t<decltype(key.v0)>;
+            return std::hash<FieldType>()(key.v0);
         }
     };
 
-    struct pred {
-        bool operator()(const KeyType x, const KeyType y) const {
-            return *((long *)(&x)) == *((long *)(&y));
+    struct KeyTypeEquals {
+        bool operator()(const KeyType &lhs, const KeyType &rhs) const {
+            return TupleToStdTuple(lhs) == TupleToStdTuple(rhs);
         }
     };
-    std::unordered_map<KeyType, ValueType, hash, pred> ht;
-    typename std::unordered_map<KeyType, ValueType, hash, pred>::iterator
-            tupleIterator;
 
-    template <class UpstreamTuple>
-    INLINE static constexpr KeyType getKey(const UpstreamTuple &t) {
-        return *(const_cast<KeyType *>((KeyType *)(&t)));
-    }
-
-    template <class UpstreamTuple>
-    INLINE static constexpr ValueType getValue(const UpstreamTuple &t) {
-        return *((ValueType *)(((char *)&t) + sizeof(KeyType)));
-    }
-
-    INLINE static Tuple buildResult(const KeyType &key, const ValueType &val) {
-        Tuple res;
-        char *resp = (char *)&res;
-        *((KeyType *)resp) = key;
-        *((ValueType *)(resp + sizeof(KeyType))) = val;
-        return res;
-    }
+    Upstream *const upstream_;
+    Function func_;
+    std::unordered_map<KeyType, ValueType, KeyTypeHash, KeyTypeEquals>
+            hash_table_;
+    typename decltype(hash_table_)::iterator current_result_it_;
 };
 
 template <class Tuple, class KeyType, class ValueType, class Upstream,
