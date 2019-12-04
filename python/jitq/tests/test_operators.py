@@ -619,6 +619,23 @@ class TestReduceByKey:
         truth = {(0, 2), (1, 3)}
         assert set(data.astuples()) == truth
 
+    def test_basic_by_index(self, jitq_context):
+        input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
+        data = jitq_context.collection(input_) \
+            .reduce_by_index(lambda tuple_1, tuple_2: tuple_1 + tuple_2, 0, 1)\
+            .collect()
+        truth = {(0, 2), (1, 3)}
+        assert set(data.astuples()) == truth
+
+    def test_basic_by_index_edge_bounds(self, jitq_context):
+        input_ = [(-100, 1), (100, 1), (100, 1), (-100, 1), (100, 1), (-5, -1)]
+        data = jitq_context.collection(input_) \
+            .reduce_by_index(lambda tuple_1, tuple_2: tuple_1 + tuple_2,
+                             -100, 100)\
+            .collect()
+        truth = {(-100, 2), (-5, -1), (100, 3)}
+        assert set(data.astuples()) == truth
+
     def test_tuple(self, jitq_context):
         input_ = [(0, 1, 2), (1, 1, 2), (1, 1, 2), (0, 1, 2), (1, 1, 2)]
         data = jitq_context.collection(input_) \

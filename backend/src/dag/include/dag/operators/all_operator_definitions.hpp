@@ -24,6 +24,7 @@
 #include "projection.hpp"
 #include "range.hpp"
 #include "reduce.hpp"
+#include "reduce_by_index.hpp"
 #include "reduce_by_key.hpp"
 #include "reduce_by_key_grouped.hpp"
 #include "row_scan.hpp"

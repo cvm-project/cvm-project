@@ -402,7 +402,19 @@ const Tuple *ComputeOutputType(const DAG *const dag,
 
             if (dynamic_cast<const dag::type::Atomic *>(key_type) == nullptr) {
                 throw std::invalid_argument(
-                        "First field of ReduceByKey must be Atomic");
+                        "First field of ReduceByKeyGrouped must be Atomic");
+            }
+
+            return input_type;
+        }
+
+        const Tuple *operator()(const DAGReduceByIndex *const op) const {
+            auto const input_type = dag_->predecessor(op)->tuple->type;
+            auto const key_type = input_type->field_types[0];
+
+            if (dynamic_cast<const dag::type::Atomic *>(key_type) == nullptr) {
+                throw std::invalid_argument(
+                        "First field of ReduceByIndex must be Atomic");
             }
 
             return input_type;

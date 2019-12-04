@@ -58,6 +58,7 @@ public:
     void operator()(DAGFilter *op);
     void operator()(DAGJoin *op);
     void operator()(DAGCartesian *op);
+    void operator()(DAGReduceByIndex *op);
     void operator()(DAGReduceByKey *op);
     void operator()(DAGReduceByKeyGrouped *op);
     void operator()(DAGRowScan *op);

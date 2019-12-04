@@ -204,6 +204,9 @@ class RDD(abc.ABC):
     def reduce_by_key(self, func):
         return ReduceByKey(self.context, self, func)
 
+    def reduce_by_index(self, func, min_idx, max_idx):
+        return ReduceByIndex(self.context, self, func, min_idx, max_idx)
+
     def reduce(self, func):
         return EnsureSingleTuple(self.context,
                                  Reduce(self.context, self, func)) \
@@ -537,6 +540,45 @@ class ReduceByKey(UnaryRDD):
 
     def self_write_dag(self, dic):
         dic['func'] = self.llvm_ir
+
+
+class ReduceByIndex(UnaryRDD):
+    NAME = 'reduce_by_index'
+
+    """
+    binary function must be commutative and associative
+    the return value type should be the same as its arguments minus the key
+    the input cannot be empty
+    """
+
+    def __init__(self, context, parent, func, min_idx, max_idx):
+        super(ReduceByIndex, self).__init__(context, parent)
+        self.func = func
+        self.min_idx = min_idx
+        self.max_idx = max_idx
+        aggregate_type = make_tuple(self.parents[0].output_type.types[1:])
+        if len(aggregate_type) == 1:
+            aggregate_type = aggregate_type.types[0]
+        self.llvm_ir, output_type = get_llvm_ir_and_output_type(
+            func, [aggregate_type, aggregate_type])
+        if str(aggregate_type) != str(output_type):
+            raise BaseException(
+                "Function given to reduce_by_index has the wrong return type:"
+                "\n  expected: {0}"
+                "\n  found:    {1}".format(aggregate_type, output_type))
+        self.output_type = self.parents[0].output_type
+
+    def self_hash(self):
+        file_ = io.StringIO()
+        dis.dis(self.func, file=file_)
+        # Add some extra spice to the hashed value
+        file_.write("{}#{}".format(self.min_idx, self.max_idx))
+        return hash(file_.getvalue())
+
+    def self_write_dag(self, dic):
+        dic['func'] = self.llvm_ir
+        dic['min'] = self.min_idx
+        dic['max'] = self.max_idx
 
 
 class CSVSource(SourceRDD):

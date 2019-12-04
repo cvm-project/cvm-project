@@ -30,6 +30,7 @@ class DAGPipeline;
 class DAGProjection;
 class DAGRange;
 class DAGReduce;
+class DAGReduceByIndex;
 class DAGReduceByKey;
 class DAGReduceByKeyGrouped;
 class DAGRowScan;
@@ -63,6 +64,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGProjection,                      //
         DAGRange,                           //
         DAGReduce,                          //
+        DAGReduceByIndex,                   //
         DAGReduceByKey,                     //
         DAGReduceByKeyGrouped,              //
         DAGRowScan,                         //

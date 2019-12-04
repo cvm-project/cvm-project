@@ -361,6 +361,33 @@ void CodeGenVisitor::operator()(DAGReduceByKeyGrouped *op) {
     visit_reduce_by_key(op, "ReduceByKeyGroupedOperator");
 }
 
+void CodeGenVisitor::operator()(DAGReduceByIndex *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ReduceByIndexOperator");
+
+    // Build key and value types
+    const auto key_type_tuple = op->tuple->type->ComputeHeadTuple();
+    const auto key_type = EmitTupleStructDefinition(context_, key_type_tuple);
+
+    const auto value_type_tuple = op->tuple->type->ComputeTailTuple();
+    const auto value_type =
+            EmitTupleStructDefinition(context_, value_type_tuple);
+
+    // Construct functor
+    const std::string functor_class =
+            GenerateLlvmFunctor(context_, op->name(), op->llvm_ir,
+                                {value_type, value_type}, value_type->name);
+
+    // Collect template arguments
+    std::vector<std::string> template_args = {key_type->name, value_type->name,
+                                              std::to_string(op->min),
+                                              std::to_string(op->max)};
+
+    // Generate call with parameters
+    emitOperatorMake(var_name, "ReduceByIndexOperator", op, template_args,
+                     {functor_class + "()"});
+}
+
 void CodeGenVisitor::operator()(DAGOperator *const op) {
     throw std::runtime_error("CodeGen encountered unknown operator type: " +
                              op->name());
