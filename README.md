@@ -21,7 +21,7 @@ git submodule update --recursive --init
 Install necessary system packages.
 
 ```bash
-sudo apt install python3 python3-pip python3-dev
+sudo apt install python3 python3-pip python3-dev python3-setuptools
 ```
 
 Create a virtualenv and activate it
@@ -95,7 +95,7 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-7.0.1
 5. Gold linker
 
 ```bash
-sudo apt install binutils-dev ninja-build python-minimal
+sudo apt install binutils-dev ninja-build
 ```
 
 Download and build with ninja:
@@ -153,7 +153,7 @@ done
 7. GraphViz
 
 ```bash
-sudo apt-get install libgraphviz-dev
+sudo apt install libgraphviz-dev
 ```
 
 8. Boost
@@ -167,8 +167,8 @@ cd /tmp/boost_1_71_0 && \
 echo "using clang : 7.0 : $(which clang-7.0) ; " > tools/build/src/user-config.jam && \
 PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.' + str(sys.version_info.minor))")" && \
 ./bootstrap.sh --with-python=$(which python3) && \
-./bjam --toolset=clang-7.0 --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.71.0 && \
-sudo ./bjam install --prefix=/opt/boost-1.71.0
+./b2 --toolset=clang-7.0 --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.71.0 && \
+sudo ./b2 install --prefix=/opt/boost-1.71.0
 ```
 
 Make the following command executed in the shells you use for development,
