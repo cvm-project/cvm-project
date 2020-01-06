@@ -109,8 +109,10 @@ private:
             VisitCatchAll(&visitor_functor, visitable, HasCatchAll());
         }
 
-        // This cast either casts 'void*' to 'void' or some type to itself
-        return static_cast<ReturnType>(return_value);
+        // NOLINTNEXTLINE  // False positive from clang-tidy
+        if constexpr (!std::is_same_v<ReturnType, void>) {
+            return return_value;
+        }
     }
 
     template <typename QualifiedConcreteVisitor>
