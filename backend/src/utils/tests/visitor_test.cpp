@@ -128,6 +128,14 @@ struct NoCatchAllVisitor
     void operator()(C *t) { count(t); }
 };
 
+struct MoveOnlyReturnTypeVisitor
+    : public Visitor<MoveOnlyReturnTypeVisitor, Visitable, SampleTypes,
+                     std::unique_ptr<int>> {
+    std::unique_ptr<int> operator()(A * /*t*/) { return {}; }
+    std::unique_ptr<int> operator()(B * /*t*/) { return {}; }
+    std::unique_ptr<int> operator()(C * /*t*/) { return {}; }
+};
+
 // cppcheck-suppress missingOverride
 TEST(VisitorTest, NonConstVisitableVoidReturning) {  // NOLINT
     NonConstVisitableVoidReturningVisitor v;
@@ -344,4 +352,11 @@ TEST(VisitorTest, NoCatchAll) {  // NOLINT
     EXPECT_EQ(count_b, 0);
     EXPECT_EQ(count_c, 0);
     EXPECT_EQ(count_other, 0);
+}
+
+// cppcheck-suppress missingOverride
+TEST(VisitorTest, MoveOnlyReturnType) {  // NOLINT
+    MoveOnlyReturnTypeVisitor v;
+    std::unique_ptr<Visitable> visitable_ptr = std::make_unique<A>(0);
+    v.Visit(visitable_ptr.get());
 }
