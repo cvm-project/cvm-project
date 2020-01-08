@@ -14,6 +14,6 @@ target_link_libraries(print_dag
     PUBLIC
         dag
     PRIVATE
-        GraphViz::gvc
         Boost::boost
+        GraphViz::gvc
     )

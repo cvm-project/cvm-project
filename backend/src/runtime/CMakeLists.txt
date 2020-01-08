@@ -42,6 +42,8 @@ target_link_libraries(runtime
         ${arrow_LIBRARY}
         ${parquet_LIBRARY}
         utils
+    PRIVATE
+        Boost::boost
     )
 
 add_executable(runtime_tests
