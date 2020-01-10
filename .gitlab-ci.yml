@@ -104,7 +104,7 @@ python-tests-parallel:
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_parallel_enironment.py --parallelize true
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_parallel_environment.py --parallelize true
     - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_operators.py --parallelize true
 
 python-tests-asan:
