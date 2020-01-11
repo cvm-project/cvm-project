@@ -18,8 +18,7 @@
 #include "runtime/jit/memory/shared_pointer.hpp"
 #include "runtime/jit/values/none.hpp"
 
-namespace runtime {
-namespace operators {
+namespace runtime::operators {
 
 auto MakeParquetScanOperator(
         std::unique_ptr<FileNameOperator> upstream,
@@ -404,5 +403,4 @@ auto ParquetScanOperatorImpl::ReadColumnBatch(int col)
             column_info.type_tag);
 }
 
-}  // namespace operators
-}  // namespace runtime
+}  // namespace runtime::operators

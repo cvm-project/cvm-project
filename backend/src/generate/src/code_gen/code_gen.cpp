@@ -26,8 +26,7 @@
 using boost::format;
 using boost::algorithm::join;
 
-namespace code_gen {
-namespace cpp {
+namespace code_gen::cpp {
 
 auto GenerateCode(DAG *const dag, const std::string &config)
         -> std::pair<std::string, std::string> {
@@ -705,5 +704,4 @@ auto EmitTupleStructDefinition(Context *const context,
     return ret.first;
 }
 
-}  // namespace cpp
-}  // namespace code_gen
+}  // namespace code_gen::cpp

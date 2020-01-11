@@ -19,8 +19,7 @@
 
 using boost::format;
 
-namespace runtime {
-namespace filesystem {
+namespace runtime::filesystem {
 
 static const char* const kS3FileSystemAllocationTag = "S3FileSystemAllocation";
 
@@ -279,5 +278,4 @@ auto S3FileSystem::OpenForWrite(const std::string& path)
             new S3OutputStream(s3_client_, bucket, key));
 }
 
-}  // namespace filesystem
-}  // namespace runtime
+}  // namespace runtime::filesystem

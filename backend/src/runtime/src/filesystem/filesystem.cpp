@@ -10,8 +10,7 @@
 #include "s3.hpp"
 #endif
 
-namespace runtime {
-namespace filesystem {
+namespace runtime::filesystem {
 
 struct FilesystemFactory {
     virtual ~FilesystemFactory() = default;
@@ -60,5 +59,4 @@ auto MakeFilesystem(const std::string &name) -> std::unique_ptr<FileSystem> {
     return Registry::at(name)->MakeFilesystem();
 }
 
-}  // namespace filesystem
-}  // namespace runtime
+}  // namespace runtime::filesystem

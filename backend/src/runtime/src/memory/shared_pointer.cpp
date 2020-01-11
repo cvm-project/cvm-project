@@ -3,8 +3,7 @@
 #include <cassert>
 #include <cstddef>
 
-namespace runtime {
-namespace memory {
+namespace runtime::memory {
 
 RefCounter::RefCounter(void* const pointer) : counter_(0), pointer_(pointer) {
     assert((reinterpret_cast<std::size_t>(this) & 63u) == 0);
@@ -41,5 +40,4 @@ auto Decrement(RefCounter* const ref_counter) -> uint64_t {
     return remaining_refs;
 }
 
-}  // namespace memory
-}  // namespace runtime
+}  // namespace runtime::memory

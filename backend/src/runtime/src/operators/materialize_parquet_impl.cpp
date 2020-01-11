@@ -24,8 +24,7 @@
 #include "runtime/jit/values/none.hpp"
 #include "runtime/jit/values/tuple.hpp"
 
-namespace runtime {
-namespace operators {
+namespace runtime::operators {
 
 void from_json(const nlohmann::json& j,
                runtime::operators::ParquetProperties& properties) {
@@ -44,8 +43,7 @@ void from_json(const nlohmann::json& j,
     }
 }
 
-}  // namespace operators
-}  // namespace runtime
+}  // namespace runtime::operators
 
 namespace parquet {
 
@@ -128,8 +126,7 @@ void from_json(const nlohmann::json& j,
 
 }  // namespace parquet
 
-namespace runtime {
-namespace operators {
+namespace runtime::operators {
 
 auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
     if (has_returned_) return {};
@@ -220,5 +217,4 @@ auto MakeMaterializeParquetOperator(
             std::move(conf_upstream), schema);
 }
 
-}  // namespace operators
-}  // namespace runtime
+}  // namespace runtime::operators

@@ -20,8 +20,7 @@
 using boost::format;
 using boost::algorithm::join;
 
-namespace code_gen {
-namespace cpp {
+namespace code_gen::cpp {
 
 void CodeGenVisitor::operator()(DAGAssertCorrectOpenNextClose *op) {
     const std::string var_name = CodeGenVisitor::visit_common(
@@ -438,5 +437,4 @@ void CodeGenVisitor::emitOperatorMake(
                           join(args, ",");
 }
 
-}  // namespace cpp
-}  // namespace code_gen
+}  // namespace code_gen::cpp

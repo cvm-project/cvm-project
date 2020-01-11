@@ -6,8 +6,7 @@
 #include "runtime/jit/values/value.hpp"
 #include "values/value_json.hpp"
 
-namespace runtime {
-namespace values {
+namespace runtime::values {
 
 void from_json(const nlohmann::json &json, Tuple *const val) {
     val->fields = json.at("fields").get<std::vector<std::unique_ptr<Value>>>();
@@ -18,5 +17,4 @@ void to_json(nlohmann::json &json, const Tuple *const val) {
     json.emplace("fields", val->fields);
 }
 
-}  // namespace values
-}  // namespace runtime
+}  // namespace runtime::values

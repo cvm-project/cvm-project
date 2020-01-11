@@ -5,8 +5,7 @@
 
 using dag::type::Atomic;
 
-namespace dag {
-namespace type {
+namespace dag::type {
 
 auto Atomic::MakeAtomic(const std::string &type) -> const Atomic * {
     std::unique_ptr<Atomic> ret(new Atomic());
@@ -23,5 +22,4 @@ void Atomic::to_json(nlohmann::json *json) const {
     json->emplace("type", type);
 }
 
-}  // namespace type
-}  // namespace dag
+}  // namespace dag::type

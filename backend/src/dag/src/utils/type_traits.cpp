@@ -2,8 +2,7 @@
 
 #include "dag/operators/all_operator_definitions.hpp"
 
-namespace dag {
-namespace utils {
+namespace dag::utils {
 
 auto IsPipelineDriver(DAGOperator *const op) -> bool {
     return IsInstanceOf<              //
@@ -38,5 +37,4 @@ auto IsSourceOperator(DAGOperator *const op) -> bool {
             >(op);
 }
 
-}  // namespace utils
-}  // namespace dag
+}  // namespace dag::utils

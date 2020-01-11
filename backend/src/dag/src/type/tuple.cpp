@@ -10,8 +10,7 @@
 
 using dag::type::Tuple;
 
-namespace dag {
-namespace type {
+namespace dag::type {
 
 auto Tuple::MakeTuple(const std::vector<const FieldType *> &field_types)
         -> const Tuple * {
@@ -61,5 +60,4 @@ void Tuple::from_json(const nlohmann::json &json) {
 
 void Tuple::to_json(nlohmann::json *json) const { *json = field_types; }
 
-}  // namespace type
-}  // namespace dag
+}  // namespace dag::type

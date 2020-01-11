@@ -8,9 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include <skyr/url.hpp>
 
-namespace runtime {
-namespace aws {
-namespace s3 {
+namespace runtime::aws::s3 {
 
 auto MakeClient() -> Aws::S3::S3Client* {
     Aws::Client::ClientConfiguration cfg;
@@ -104,6 +102,4 @@ auto LookupErrorString(const Aws::S3::S3Errors& code) -> std::string {
     return it->second;
 }
 
-}  // namespace s3
-}  // namespace aws
-}  // namespace runtime
+}  // namespace runtime::aws::s3

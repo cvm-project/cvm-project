@@ -7,8 +7,7 @@
 #include "runtime/jit/values/value.hpp"
 #include "values/value_parser.hpp"
 
-namespace runtime {
-namespace values {
+namespace runtime::values {
 
 // NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const Value *const val) {
@@ -22,8 +21,7 @@ void to_json(nlohmann::json &json, const Value *const val) {
     throw std::runtime_error("Unknown value type");
 }
 
-}  // namespace values
-}  // namespace runtime
+}  // namespace runtime::values
 
 namespace nlohmann {
 

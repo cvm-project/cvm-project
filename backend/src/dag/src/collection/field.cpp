@@ -1,7 +1,6 @@
 #include "dag/collection/attribute_id.hpp"
 
-namespace dag {
-namespace collection {
+namespace dag::collection {
 
 Field::~Field() {
     if (attribute_id_ != nullptr) {
@@ -45,5 +44,4 @@ void Field::CopyProperties(const Field &other) {
 
 void Field::ClearProperties() { properties_.clear(); }
 
-}  // namespace collection
-}  // namespace dag
+}  // namespace dag::collection

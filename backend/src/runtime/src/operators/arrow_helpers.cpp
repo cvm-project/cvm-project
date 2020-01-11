@@ -8,8 +8,7 @@
 
 #include <arrow/type.h>
 
-namespace runtime {
-namespace operators {
+namespace runtime::operators {
 
 auto MakeArrowSchema(std::vector<std::string> column_types,
                      std::vector<std::string> column_names)
@@ -34,5 +33,4 @@ auto arrow_types()
     return map;
 }
 
-}  // namespace operators
-}  // namespace runtime
+}  // namespace runtime::operators

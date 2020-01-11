@@ -15,8 +15,7 @@
 #include "values/tuple_json.hpp"
 #include "values/value_json.hpp"
 
-namespace runtime {
-namespace values {
+namespace runtime::values {
 
 template <typename ConcreteValueType>
 struct DefaultValueParser : public ValueParser {
@@ -56,5 +55,4 @@ void LoadValueParsers() {
     has_loaded = true;
 }
 
-}  // namespace values
-}  // namespace runtime
+}  // namespace runtime::values

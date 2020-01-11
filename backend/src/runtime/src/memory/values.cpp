@@ -9,8 +9,7 @@
 #include "runtime/jit/values/value.hpp"
 #include "utils/visitor.hpp"
 
-namespace runtime {
-namespace memory {
+namespace runtime::memory {
 
 template <uint64_t kOperation(RefCounter*)>
 struct ValueVisitor
@@ -50,5 +49,4 @@ void Increment(const values::VectorOfValues& values) {
     }
 }
 
-}  // namespace memory
-}  // namespace runtime
+}  // namespace runtime::memory

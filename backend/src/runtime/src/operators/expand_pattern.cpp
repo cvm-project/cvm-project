@@ -2,8 +2,7 @@
 
 #include <boost/format.hpp>
 
-namespace runtime {
-namespace operators {
+namespace runtime::operators {
 
 auto ExpandPattern(const std::string &pattern, const int64_t parameter)
         -> std::string {
@@ -13,5 +12,4 @@ auto ExpandPattern(const std::string &pattern, const int64_t parameter)
     return (formatter % parameter).str();
 }
 
-}  // namespace operators
-}  // namespace runtime
+}  // namespace runtime::operators

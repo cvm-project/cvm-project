@@ -16,8 +16,7 @@ using runtime::values::Array;
 using runtime::values::None;
 using runtime::values::Tuple;
 
-namespace runtime {
-namespace operators {
+namespace runtime::operators {
 
 auto ValueToRecordBatchOperator::next()
         -> Optional<std::shared_ptr<arrow::RecordBatch>> {
@@ -55,5 +54,4 @@ auto ValueToRecordBatchOperator::next()
     return arrow::RecordBatch::Make(schema_, num_rows, arrow_columns);
 }
 
-}  // namespace operators
-}  // namespace runtime
+}  // namespace runtime::operators

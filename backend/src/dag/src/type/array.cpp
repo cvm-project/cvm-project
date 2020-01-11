@@ -13,8 +13,7 @@ using dag::type::Array;
 using dag::type::ArrayLayout;
 using dag::type::Tuple;
 
-namespace dag {
-namespace type {
+namespace dag::type {
 
 auto Array::MakeArray(const dag::type::Tuple *type, const ArrayLayout &layout,
                       const size_t &num_dimensions) -> const Array * {
@@ -55,8 +54,7 @@ auto to_string(const ArrayLayout &layout) -> std::string {
     }
 }
 
-}  // namespace type
-}  // namespace dag
+}  // namespace dag::type
 
 // JSON serialization ArrayLayout
 auto nlohmann::adl_serializer<ArrayLayout>::from_json(

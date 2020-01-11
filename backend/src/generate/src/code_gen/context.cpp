@@ -11,8 +11,7 @@
 using boost::format;
 using boost::algorithm::join;
 
-namespace code_gen {
-namespace cpp {
+namespace code_gen::cpp {
 
 StructDef::StructDef(
         const std::string &name,  // NOLINT(modernize-pass-by-value)
@@ -44,5 +43,4 @@ auto Context::GenerateSymbolName(const std::string &prefix,
     return prefix + "_" + std::to_string(counter);
 }
 
-}  // namespace cpp
-}  // namespace code_gen
+}  // namespace code_gen::cpp

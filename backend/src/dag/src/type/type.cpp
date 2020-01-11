@@ -11,8 +11,7 @@
 using dag::type::Type;
 using dag::type::TypeRegistry;
 
-namespace dag {
-namespace type {
+namespace dag::type {
 
 auto MakeType(std::unique_ptr<const Type> &&type) -> const Type * {
     const auto str = type->to_string();
@@ -20,8 +19,7 @@ auto MakeType(std::unique_ptr<const Type> &&type) -> const Type * {
     return TypeRegistry::at(str);
 }
 
-}  // namespace type
-}  // namespace dag
+}  // namespace dag::type
 
 auto nlohmann::adl_serializer<std::unique_ptr<Type>>::from_json(
         const nlohmann::json &json) -> std::unique_ptr<Type> {

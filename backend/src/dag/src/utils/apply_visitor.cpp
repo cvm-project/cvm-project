@@ -13,8 +13,7 @@
 // NOLINTNEXTLINE(google-build-using-namespace)
 using namespace std::placeholders;
 
-namespace dag {
-namespace utils {
+namespace dag::utils {
 
 template <bool kReverseGraph, bool kDoRecursion>
 void ApplyInTopologicalOrderImpl(DAG *const dag,
@@ -110,5 +109,4 @@ void ApplyInReverseTopologicalOrderRecursively(
                                             on_exit_visitor);
 }
 
-}  // namespace utils
-}  // namespace dag
+}  // namespace dag::utils

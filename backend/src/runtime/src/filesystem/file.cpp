@@ -5,8 +5,7 @@
 
 #include "operators/arrow_helpers.hpp"
 
-namespace runtime {
-namespace filesystem {
+namespace runtime::filesystem {
 
 auto LocalFileSystem::OpenForRead(const std::string &path)
         -> std::shared_ptr<::arrow::io::RandomAccessFile> {
@@ -24,5 +23,4 @@ auto LocalFileSystem::OpenForWrite(const std::string &path)
     return handle;
 }
 
-}  // namespace filesystem
-}  // namespace runtime
+}  // namespace runtime::filesystem

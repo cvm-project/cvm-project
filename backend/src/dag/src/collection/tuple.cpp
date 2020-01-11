@@ -7,8 +7,7 @@
 #include "dag/collection/attribute_id.hpp"
 #include "utils/raw_ptr.hpp"
 
-namespace dag {
-namespace collection {
+namespace dag::collection {
 
 Tuple::Tuple(const type::Tuple *type) {
     this->type = type;
@@ -27,5 +26,4 @@ Tuple::Tuple(const type::Tuple *type) {
     }
 }
 
-}  // namespace collection
-}  // namespace dag
+}  // namespace dag::collection

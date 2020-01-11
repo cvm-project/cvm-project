@@ -6,8 +6,7 @@
 #include <aws/core/utils/logging/AWSLogging.h>
 #include <aws/core/utils/logging/ConsoleLogSystem.h>
 
-namespace runtime {
-namespace aws {
+namespace runtime::aws {
 
 struct AwsApiHandle {
     explicit AwsApiHandle(Aws::SDKOptions&& options)
@@ -50,5 +49,4 @@ void EnsureApiInitialized() {
     is_initialized = true;
 }
 
-}  // namespace aws
-}  // namespace runtime
+}  // namespace runtime::aws

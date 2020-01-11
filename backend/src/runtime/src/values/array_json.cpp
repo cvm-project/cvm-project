@@ -6,8 +6,7 @@
 #include "runtime/jit/values/array.hpp"
 #include "runtime/jit/values/value.hpp"
 
-namespace runtime {
-namespace values {
+namespace runtime::values {
 
 void from_json(const nlohmann::json &json, Array *const val) {
     auto const data = reinterpret_cast<char *>(json.at("data").get<size_t>());
@@ -35,5 +34,4 @@ void to_json(nlohmann::json &json, const Array *const val) {
     json.emplace("shape", val->shape);
 }
 
-}  // namespace values
-}  // namespace runtime
+}  // namespace runtime::values
