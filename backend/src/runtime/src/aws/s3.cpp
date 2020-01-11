@@ -12,7 +12,9 @@ namespace runtime::aws::s3 {
 
 auto MakeClient() -> Aws::S3::S3Client* {
     Aws::Client::ClientConfiguration cfg;
+    // NOLINTNEXTLINE(readability-magic-numbers)
     cfg.connectTimeoutMs = 3000;
+    // NOLINTNEXTLINE(readability-magic-numbers)
     cfg.requestTimeoutMs = 3000;
 
     const auto endpoint_override = std::getenv("AWS_S3_ENDPOINT");

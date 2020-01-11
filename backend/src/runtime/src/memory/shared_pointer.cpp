@@ -6,7 +6,8 @@
 namespace runtime::memory {
 
 RefCounter::RefCounter(void* const pointer) : counter_(0), pointer_(pointer) {
-    assert((reinterpret_cast<std::size_t>(this) & 63u) == 0);
+    assert((reinterpret_cast<std::size_t>(this) &
+            detail::kCacheLineSizeBytes - 1) == 0);
 }
 
 RefCounter::~RefCounter() { assert(counter_.load() == 0); }

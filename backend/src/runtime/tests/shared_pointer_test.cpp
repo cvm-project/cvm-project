@@ -40,7 +40,7 @@ TEST(SharedPointerTest, ConstAccess) {  // NOLINT
 
     // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage) False positive
     const SharedPointer<S> ptr1(new FreeRefCounter<S>(malloc(sizeof(S)), 1));
-    new (ptr1.get()) S{42};
+    new (ptr1.get()) S{42};  // NOLINT(readability-magic-numbers)
 
     // Special members
     SharedPointer<S> ptr2 = ptr1.as<S>();
@@ -333,13 +333,15 @@ TEST(SharedPointerTest, Move) {  // NOLINT
 
 // cppcheck-suppress missingOverride
 TEST(SharedPointerTest, ThreadedMove) {  // NOLINT
+    static constexpr size_t kNumIterations = 10000;
+
     int* const int_ptr = new int(42);
     // NOLINTNEXTLINE clang-analyzer-core.CallAndMessage
     const auto rc = new TestRefCounter(int_ptr);
     SharedPointer<int> ptr1(rc);
 
-    int64_t min = 5;
-    int64_t max = 0;
+    int64_t min = 5;  // NOLINT(readability-magic-numbers)
+    int64_t max = 0;  // NOLINT(readability-magic-numbers)
 
     std::atomic<size_t> num_threads_started = 0;
 
@@ -349,7 +351,7 @@ TEST(SharedPointerTest, ThreadedMove) {  // NOLINT
         while (num_threads_started.load() != 2) {
         }
 
-        for (size_t i = 0; i < 10000; i++) {
+        for (size_t i = 0; i < kNumIterations; i++) {
             min = std::min(rc->counter(), min);
             // NOLINTNEXTLINE performance-unnecessary-copy-initialization
             SharedPointer<int> ptr2(ptr1);

@@ -40,6 +40,7 @@ public:
     auto Writes(const dag::AttributeId *attribute) const -> bool;
 };
 
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
 #define JITQ_DAGOPERATOR(CLASS_NAME, OPERATOR_NAME)                           \
 public:                                                                       \
     constexpr static const char *kName = OPERATOR_NAME;                       \

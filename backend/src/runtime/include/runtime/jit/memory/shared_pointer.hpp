@@ -18,7 +18,11 @@ auto Increment(RefCounter* ref_counter) -> uint64_t;
 // Deletes the ref_counter if the count was decreased to 0.
 auto Decrement(RefCounter* ref_counter) -> uint64_t;
 
-class alignas(64) RefCounter {
+namespace detail {
+static constexpr std::size_t kCacheLineSizeBytes = 64;
+}  // namespace detail
+
+class alignas(detail::kCacheLineSizeBytes) RefCounter {
     friend auto Increment(RefCounter* ref_counter) -> uint64_t;
     friend auto Decrement(RefCounter* ref_counter) -> uint64_t;
 
