@@ -6,9 +6,18 @@
 #include <string>
 #include <vector>
 
+#include <arrow/status.h>
 #include <arrow/type.h>
+#include <boost/config.hpp>
 
 namespace runtime::operators {
+
+void ThrowIfNotOK(const arrow::Status& status) {
+    if (BOOST_UNLIKELY(!status.ok())) {
+        throw std::runtime_error(status.CodeAsString() + ": " +
+                                 status.message());
+    }
+}
 
 auto MakeArrowSchema(std::vector<std::string> column_types,
                      std::vector<std::string> column_names)

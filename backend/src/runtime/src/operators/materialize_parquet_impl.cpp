@@ -156,7 +156,7 @@ auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
     auto output_stream = fs->OpenForWrite(filename);
 
     std::unique_ptr<parquet::arrow::FileWriter> file_writer;
-    ARROW_TRHOW_NOT_OK(parquet::arrow::FileWriter::Open(
+    operators::ThrowIfNotOK(parquet::arrow::FileWriter::Open(
             *schema_, arrow::default_memory_pool(), output_stream,
             writer_properties, &file_writer));
 
@@ -179,13 +179,13 @@ auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
 
         if (current_row_group_size >= target_num_rows_per_row_group || !input) {
             std::shared_ptr<arrow::Table> table;
-            ARROW_TRHOW_NOT_OK(
+            operators::ThrowIfNotOK(
                     arrow::Table::FromRecordBatches(current_row_group, &table));
             const size_t num_rows = table->num_rows();
 
-            ARROW_TRHOW_NOT_OK(file_writer->NewRowGroup(num_rows));
+            operators::ThrowIfNotOK(file_writer->NewRowGroup(num_rows));
             for (size_t i = 0; i < table->num_columns(); i++) {
-                ARROW_TRHOW_NOT_OK(file_writer->WriteColumnChunk(
+                operators::ThrowIfNotOK(file_writer->WriteColumnChunk(
                         table->column(i)->data(), 0, num_rows));
             }
 
@@ -194,8 +194,8 @@ auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
         }
     }
 
-    ARROW_TRHOW_NOT_OK(file_writer->Close());
-    ARROW_TRHOW_NOT_OK(output_stream->Close());
+    operators::ThrowIfNotOK(file_writer->Close());
+    operators::ThrowIfNotOK(output_stream->Close());
 
     main_upstream_->close();
 
