@@ -21,10 +21,12 @@ public:
     static auto MakeTuple(const std::vector<const FieldType *> &field_types)
             -> const Tuple *;
 
-    auto ComputeHeadTuple(size_t head_size = 1) const -> const Tuple *;
-    auto ComputeTailTuple(size_t head_size = 1) const -> const Tuple *;
+    [[nodiscard]] auto ComputeHeadTuple(size_t head_size = 1) const
+            -> const Tuple *;
+    [[nodiscard]] auto ComputeTailTuple(size_t head_size = 1) const
+            -> const Tuple *;
 
-    auto to_string() const -> std::string override;
+    [[nodiscard]] auto to_string() const -> std::string override;
     void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 

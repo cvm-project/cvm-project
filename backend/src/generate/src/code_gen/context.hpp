@@ -18,7 +18,7 @@ struct StructDef {
     explicit StructDef(const std::string &name,
                        const std::vector<std::string> &types,
                        const std::vector<std::string> &names);
-    auto ComputeDefinition() const -> std::string;
+    [[nodiscard]] auto ComputeDefinition() const -> std::string;
 
     const std::string name;
     const std::vector<std::string> types;

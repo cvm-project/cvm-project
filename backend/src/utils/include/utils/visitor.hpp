@@ -69,7 +69,7 @@ struct Visitor {
     auto functor() -> VisitorFunctor<ThisType> {
         return MakeVisitorFunctor(this);
     }
-    auto functor() const -> VisitorFunctor<const ThisType> {
+    [[nodiscard]] auto functor() const -> VisitorFunctor<const ThisType> {
         return MakeVisitorFunctor(this);
     }
 

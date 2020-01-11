@@ -10,21 +10,25 @@ struct Visitable {
     explicit Visitable(int /*unused*/) {}
     virtual ~Visitable() = default;
     virtual auto f() -> int = 0;
+    // NOLINTNEXTLINE(modernize-use-nodiscard)
     virtual auto g() const -> int = 0;
 };
 struct A : public Visitable {
     explicit A(int i) : Visitable(i) {}
     auto f() -> int override { return g(); }
+    // NOLINTNEXTLINE(modernize-use-nodiscard)
     auto g() const -> int override { return 1; }
 };
 struct B : public Visitable {
     explicit B(int i) : Visitable(i) {}
     auto f() -> int override { return g(); }
+    // NOLINTNEXTLINE(modernize-use-nodiscard)
     auto g() const -> int override { return 2; }
 };
 struct C : public Visitable {
     explicit C(int i) : Visitable(i) {}
     auto f() -> int override { return g(); }
+    // NOLINTNEXTLINE(modernize-use-nodiscard)
     auto g() const -> int override { return 3; }
 };
 

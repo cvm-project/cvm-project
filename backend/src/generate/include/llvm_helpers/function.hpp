@@ -24,14 +24,14 @@ public:
     /**
      * if the argument is part of the output, return its positions in the output
      */
-    auto ComputeOutputPositions(size_t arg_position) const
+    [[nodiscard]] auto ComputeOutputPositions(size_t arg_position) const
             -> std::vector<size_t>;
 
     /**
      * whether this argument is used by the function to produce any output
      *
      */
-    auto ComputeIsArgumentRead(size_t arg_pos) const -> bool;
+    [[nodiscard]] auto ComputeIsArgumentRead(size_t arg_pos) const -> bool;
 
     auto AdjustFilterSignature(DAGFilter *pFilter,
                                const DAGOperator *predecessor) -> std::string;
@@ -62,12 +62,12 @@ private:
      */
     enum class ReturnType { kUnknown, kPrimitive, kStruct, kCallerPtr };
 
-    auto ComputeOutputPositionsPrimitive(size_t arg_position) const
+    [[nodiscard]] auto ComputeOutputPositionsPrimitive(
+            size_t arg_position) const -> std::vector<size_t>;
+    [[nodiscard]] auto ComputeOutputPositionsStruct(size_t arg_position) const
             -> std::vector<size_t>;
-    auto ComputeOutputPositionsStruct(size_t arg_position) const
-            -> std::vector<size_t>;
-    auto ComputeOutputPositionsCallerPtr(size_t arg_position) const
-            -> std::vector<size_t>;
+    [[nodiscard]] auto ComputeOutputPositionsCallerPtr(
+            size_t arg_position) const -> std::vector<size_t>;
 
     // these 3 fields must be declared in this order
     llvm::SMDiagnostic err_;

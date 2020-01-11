@@ -32,7 +32,7 @@ public:
     static auto MakeArray(const Tuple *type, const ArrayLayout &layout,
                           const size_t &num_dimensions) -> const Array *;
 
-    auto to_string() const -> std::string override;
+    [[nodiscard]] auto to_string() const -> std::string override;
     void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 

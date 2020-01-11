@@ -23,7 +23,7 @@ protected:
 public:
     static auto MakeAtomic(const std::string &type) -> const Atomic *;
 
-    auto to_string() const -> std::string override;
+    [[nodiscard]] auto to_string() const -> std::string override;
     void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 

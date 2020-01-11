@@ -26,11 +26,11 @@ public:
 
     virtual ~DAGOperator() = default;
 
-    virtual auto Clone() const -> DAGOperator * = 0;
+    [[nodiscard]] virtual auto Clone() const -> DAGOperator * = 0;
 
-    virtual auto name() const -> std::string = 0;
-    virtual auto num_in_ports() const -> size_t = 0;
-    virtual auto num_out_ports() const -> size_t = 0;
+    [[nodiscard]] virtual auto name() const -> std::string = 0;
+    [[nodiscard]] virtual auto num_in_ports() const -> size_t = 0;
+    [[nodiscard]] virtual auto num_out_ports() const -> size_t = 0;
 
     virtual void to_json(nlohmann::json *json) const {};
     virtual void from_json(const nlohmann::json &json){};

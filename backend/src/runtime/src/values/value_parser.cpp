@@ -29,7 +29,7 @@ struct DefaultValueParser : public ValueParser {
         return false;
     }
 
-    auto from_json(const nlohmann::json &json) const
+    [[nodiscard]] auto from_json(const nlohmann::json &json) const
             -> std::unique_ptr<Value> override {
         auto ptr = std::make_unique<ConcreteValueType>();
         runtime::values::from_json(json, ptr.get());

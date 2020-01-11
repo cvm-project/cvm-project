@@ -8,7 +8,9 @@ namespace optimize {
 class AddAlwaysInline : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    auto name() const -> std::string override { return "add_always_inline"; }
+    [[nodiscard]] auto name() const -> std::string override {
+        return "add_always_inline";
+    }
 };
 
 }  // namespace optimize

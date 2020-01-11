@@ -79,7 +79,9 @@ public:
         return arrow::Status::OK();
     }
 
-    auto supports_zero_copy() const -> bool override { return false; }
+    [[nodiscard]] auto supports_zero_copy() const -> bool override {
+        return false;
+    }
 
     auto ReadAt(const int64_t position, const int64_t nbytes,
                 int64_t* const bytes_read, void* const buffer)
@@ -137,7 +139,7 @@ public:
         return arrow::Status::OK();
     }
 
-    auto closed() const -> bool override { return false; }
+    [[nodiscard]] auto closed() const -> bool override { return false; }
 
     /*
      * Implement Readable interface
@@ -218,7 +220,7 @@ public:
         return arrow::Status::OK();
     }
 
-    auto closed() const -> bool override { return false; }
+    [[nodiscard]] auto closed() const -> bool override { return false; }
 
     /*
      * Implement Writable

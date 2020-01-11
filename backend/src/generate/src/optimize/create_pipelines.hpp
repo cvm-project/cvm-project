@@ -8,7 +8,9 @@ namespace optimize {
 class CreatePipelines : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    auto name() const -> std::string override { return "create_pipelines"; }
+    [[nodiscard]] auto name() const -> std::string override {
+        return "create_pipelines";
+    }
 };
 
 }  // namespace optimize

@@ -16,7 +16,7 @@ namespace type {
 struct Type {
 public:
     virtual ~Type() = default;
-    virtual auto to_string() const -> std::string = 0;
+    [[nodiscard]] virtual auto to_string() const -> std::string = 0;
 
     Type(Type const &) = delete;
     Type(Type const &&) = delete;

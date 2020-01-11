@@ -15,7 +15,7 @@ public:
 
     auto operator-> () const -> Pointee * { return ptr_; }
     auto operator*() const -> Pointee & { return *ptr_; }
-    auto get() const -> Pointee * { return ptr_; }
+    [[nodiscard]] auto get() const -> Pointee * { return ptr_; }
 
 private:
     Pointee *ptr_;

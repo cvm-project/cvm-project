@@ -221,23 +221,23 @@ public:
 
     void Clear();
 
-    auto HasCycle() const -> bool;
-    auto IsTree() const -> bool;
+    [[nodiscard]] auto HasCycle() const -> bool;
+    [[nodiscard]] auto IsTree() const -> bool;
 
     /*
      * Getter/setter type functions
      */
-    auto graph() const -> const Graph & { return graph_; }
+    [[nodiscard]] auto graph() const -> const Graph & { return graph_; }
 
-    auto operators() const -> OperatorRange;
-    auto flows() const -> FlowRange;
+    [[nodiscard]] auto operators() const -> OperatorRange;
+    [[nodiscard]] auto flows() const -> FlowRange;
 
     auto contains(const DAGOperator *op) const -> bool;
 
-    auto to_operator(const Vertex &v) const -> DAGOperator *;
-    auto to_flow(const Edge &e) const -> Flow;
+    [[nodiscard]] auto to_operator(const Vertex &v) const -> DAGOperator *;
+    [[nodiscard]] auto to_flow(const Edge &e) const -> Flow;
     auto to_vertex(const DAGOperator *op) const -> Vertex;
-    auto to_edge(const Flow &f) const -> Edge { return f.e; }
+    [[nodiscard]] auto to_edge(const Flow &f) const -> Edge { return f.e; }
 
     auto in_flows(const DAGOperator *op) const -> InFlowRange;
     auto out_flows(const DAGOperator *op) const -> OutFlowRange;
@@ -268,13 +268,13 @@ public:
     void set_inner_dag(const DAGOperator *op, DAG *inner_dag);
     void remove_inner_dag(const DAGOperator *op);
 
-    auto in_degree() const -> size_t;
-    auto num_in_ports() const -> size_t;
-    auto inputs() const -> InputRange;
-    auto inputs(int dag_input_port) const -> InputRangeTips;
+    [[nodiscard]] auto in_degree() const -> size_t;
+    [[nodiscard]] auto num_in_ports() const -> size_t;
+    [[nodiscard]] auto inputs() const -> InputRange;
+    [[nodiscard]] auto inputs(int dag_input_port) const -> InputRangeTips;
     auto inputs(const DAGOperator *op) const -> InputRangeByOperator;
-    auto input() const -> FlowTip;
-    auto input(int dag_input_port) const -> FlowTip;
+    [[nodiscard]] auto input() const -> FlowTip;
+    [[nodiscard]] auto input(int dag_input_port) const -> FlowTip;
     auto input(const DAGOperator *op) const -> std::pair<int, FlowTip>;
     auto input_port(const DAGOperator *op) const -> int;
     void set_input(const FlowTip &input);
@@ -287,12 +287,12 @@ public:
                    int operator_input_port = 0);
     void reset_inputs();
 
-    auto out_degree() const -> size_t;
-    auto num_out_ports() const -> size_t;
-    auto outputs() const -> OutputRange;
+    [[nodiscard]] auto out_degree() const -> size_t;
+    [[nodiscard]] auto num_out_ports() const -> size_t;
+    [[nodiscard]] auto outputs() const -> OutputRange;
     auto outputs(const DAGOperator *op) const -> OutputRangeByOperator;
-    auto output() const -> FlowTip;
-    auto output(int dag_output_port) const -> FlowTip;
+    [[nodiscard]] auto output() const -> FlowTip;
+    [[nodiscard]] auto output(int dag_output_port) const -> FlowTip;
     void set_output(const FlowTip &output);
     void set_output(DAGOperator *op, int operator_output_port = 0);
     void set_output(int dag_output_port, const FlowTip &output);
@@ -301,7 +301,7 @@ public:
     void reset_outputs();
 
 private:
-    auto last_operator_id() const -> size_t;
+    [[nodiscard]] auto last_operator_id() const -> size_t;
 
     Graph graph_;
     std::set<size_t> operator_ids_;

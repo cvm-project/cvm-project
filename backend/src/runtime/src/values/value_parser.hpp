@@ -16,7 +16,7 @@ struct ValueParser {
     // NOLINTNEXTLINE(google-runtime-references)
     virtual auto try_to_json(nlohmann::json &json, const Value *val) const
             -> bool = 0;
-    virtual auto from_json(const nlohmann::json &json) const
+    [[nodiscard]] virtual auto from_json(const nlohmann::json &json) const
             -> std::unique_ptr<Value> = 0;
 };
 

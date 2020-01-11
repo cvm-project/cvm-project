@@ -38,15 +38,16 @@ public:
 
     virtual ~Field();
 
-    auto position() const -> size_t;
+    [[nodiscard]] auto position() const -> size_t;
     void set_position(size_t position);
 
-    auto field_type() const -> const type::FieldType *;
+    [[nodiscard]] auto field_type() const -> const type::FieldType *;
     void set_field_type(const type::FieldType *field_type);
 
-    auto attribute_id() const -> const std::shared_ptr<AttributeId> &;
+    [[nodiscard]] auto attribute_id() const
+            -> const std::shared_ptr<AttributeId> &;
 
-    auto properties() const -> const std::set<FieldProperty> &;
+    [[nodiscard]] auto properties() const -> const std::set<FieldProperty> &;
     void AddProperty(const FieldProperty &fieldProperty);
     void CopyProperties(const Field &other);
     void RemoveProperty(const FieldProperty &fieldProperty);

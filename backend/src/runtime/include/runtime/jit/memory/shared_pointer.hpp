@@ -31,8 +31,8 @@ public:
 
     virtual ~RefCounter();
 
-    auto pointer() const -> void*;
-    auto counter() const -> int64_t;
+    [[nodiscard]] auto pointer() const -> void*;
+    [[nodiscard]] auto counter() const -> int64_t;
 
 protected:
     auto Increment() -> int64_t;
@@ -131,7 +131,7 @@ public:
      * Pointer interface
      */
 
-    auto get() const -> T* { return pointer_; }
+    [[nodiscard]] auto get() const -> T* { return pointer_; }
     auto operator-> () const -> T* { return pointer_; }
     auto operator*() const -> T& { return *pointer_; }
     auto operator[](const std::size_t idx) const -> T& { return pointer_[idx]; }
@@ -143,7 +143,7 @@ public:
     // If this is a pointer, creates a new pointer to type U, with which it
     // shares ownership. Returns not-a-pointer otherwise.
     template <typename U>
-    auto as() const -> SharedPointer<U> {
+    [[nodiscard]] auto as() const -> SharedPointer<U> {
         return SharedPointer<U>(ref_counter_, reinterpret_cast<U*>(pointer_));
     }
 
@@ -161,7 +161,9 @@ public:
      * Member access
      */
 
-    auto ref_counter() const -> RefCounter* { return ref_counter_; }
+    [[nodiscard]] auto ref_counter() const -> RefCounter* {
+        return ref_counter_;
+    }
 
 private:
     static void Decrement(RefCounter** const ref_counter_ptr,
