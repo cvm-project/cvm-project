@@ -10,7 +10,6 @@
 #include <boost/format.hpp>
 #include <boost/range/algorithm/transform.hpp>
 #include <boost/range/irange.hpp>
-
 #include <graphviz/gvc.h>
 
 #include "dag/dag.hpp"

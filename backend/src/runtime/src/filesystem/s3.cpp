@@ -7,14 +7,11 @@
 #include <arrow/buffer.h>
 #include <arrow/io/interfaces.h>
 #include <arrow/status.h>
-
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/GetObjectRequest.h>
 #include <aws/s3/model/HeadObjectRequest.h>
 #include <aws/s3/model/PutObjectRequest.h>
-
 #include <boost/format.hpp>
-
 #include <skyr/url.hpp>
 
 #include "aws/aws.hpp"

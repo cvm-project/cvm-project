@@ -9,7 +9,6 @@
 #include <vector>
 
 #include <boost/mpl/list.hpp>
-
 #include <polymorphic_value.h>
 
 #include "dag/dag.hpp"

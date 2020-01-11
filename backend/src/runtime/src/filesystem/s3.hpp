@@ -5,7 +5,6 @@
 #include <string>
 
 #include <arrow/io/interfaces.h>
-
 #include <aws/s3/S3Client.h>
 
 #include "filesystem.hpp"

@@ -3,7 +3,6 @@
 #include <stdexcept>
 
 #include <boost/format.hpp>
-
 #include <polymorphic_value.h>
 
 #include "dag/dag.hpp"

@@ -11,7 +11,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/adaptor/transformed.hpp>
-
 #include <nlohmann/json.hpp>
 
 #include "collection/attribute_id.hpp"

@@ -6,9 +6,8 @@
 #include <string>
 
 #include <arrow/type.h>
-#include <parquet/arrow/writer.h>
-
 #include <nlohmann/json.hpp>
+#include <parquet/arrow/writer.h>
 
 #include "operators/value_to_record_batch.hpp"
 #include "runtime/jit/operators/materialize_parquet.hpp"

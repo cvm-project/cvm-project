@@ -1,7 +1,6 @@
 #include "grouped_reduce_by_key.hpp"
 
 #include <boost/mpl/list.hpp>
-
 #include <polymorphic_value.h>
 
 #include "dag/dag.hpp"

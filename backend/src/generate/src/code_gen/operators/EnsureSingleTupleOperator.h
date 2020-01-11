@@ -1,10 +1,10 @@
 #ifndef CODE_GEN_OPERATORS_ENSURE_SINGLE_TUPLE_OPERATOR_H
 #define CODE_GEN_OPERATORS_ENSURE_SINGLE_TUPLE_OPERATOR_H
 
+#include <stdexcept>
+
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
-
-#include <stdexcept>
 
 template <class Upstream, class Tuple>
 class EnsureSingleTupleOperator {

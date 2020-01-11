@@ -1,9 +1,9 @@
 #ifndef CODE_GEN_OPERATORS_PARQUETSCANOPERATOR_H
 #define CODE_GEN_OPERATORS_PARQUETSCANOPERATOR_H
 
-#include <memory>
-
 #include <cstdlib>
+
+#include <memory>
 
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"

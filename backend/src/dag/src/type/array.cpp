@@ -4,7 +4,6 @@
 
 #include <boost/format.hpp>
 #include <boost/polymorphic_pointer_cast.hpp>
-
 #include <nlohmann/json.hpp>
 
 #include "dag/type/tuple.hpp"

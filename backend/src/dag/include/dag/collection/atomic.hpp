@@ -1,9 +1,8 @@
 #ifndef DAG_COLLECTION_ATOMIC_HPP
 #define DAG_COLLECTION_ATOMIC_HPP
 
-#include "field.hpp"
-
 #include "dag/type/atomic.hpp"
+#include "field.hpp"
 
 namespace dag {
 namespace collection {

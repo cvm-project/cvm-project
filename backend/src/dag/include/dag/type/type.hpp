@@ -5,7 +5,6 @@
 #include <string>
 
 #include <boost/polymorphic_pointer_cast.hpp>
-
 #include <nlohmann/json.hpp>
 
 #include "utils/raw_ptr.hpp"

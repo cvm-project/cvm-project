@@ -1,7 +1,6 @@
 #include "dag/type/atomic.hpp"
 
 #include <boost/polymorphic_pointer_cast.hpp>
-
 #include <nlohmann/json.hpp>
 
 using dag::type::Atomic;

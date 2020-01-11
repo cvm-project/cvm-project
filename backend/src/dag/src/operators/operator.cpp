@@ -2,7 +2,6 @@
 
 #include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/mpl/for_each.hpp>
-
 #include <polymorphic_value.h>
 
 #include "dag/operators/all_operator_declarations.hpp"

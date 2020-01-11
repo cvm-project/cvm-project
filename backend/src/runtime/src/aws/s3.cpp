@@ -1,12 +1,11 @@
 #include "s3.hpp"
 
+#include <cstdlib>
+
 #include <map>
 #include <string>
 
-#include <cstdlib>
-
 #include <boost/algorithm/string.hpp>
-
 #include <skyr/url.hpp>
 
 namespace runtime {

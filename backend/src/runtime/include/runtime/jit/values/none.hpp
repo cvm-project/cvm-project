@@ -1,10 +1,10 @@
 #ifndef RUNTIME_JIT_VALUES_NONE_HPP
 #define RUNTIME_JIT_VALUES_NONE_HPP
 
-#include "value.hpp"
-
 #include <memory>
 #include <vector>
+
+#include "value.hpp"
 
 namespace runtime {
 namespace values {

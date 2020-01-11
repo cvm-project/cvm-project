@@ -2,6 +2,7 @@
 #define CODE_GEN_OPERATORS_PARALLELMAPOMPOPERATOR_H
 
 #include <cassert>
+
 #include <list>
 #include <mutex>
 

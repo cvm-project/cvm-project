@@ -4,9 +4,8 @@
 #include <iostream>
 #endif  // TRACE_EXCEPTIONS_TO_STDERR
 
-#include <dlfcn.h>
-
 #include <boost/stacktrace.hpp>
+#include <dlfcn.h>
 
 #include "trace_exceptions/trace_exceptions.hpp"
 

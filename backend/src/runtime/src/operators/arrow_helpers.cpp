@@ -1,10 +1,10 @@
 #include "arrow_helpers.hpp"
 
+#include <cassert>
+
 #include <memory>
 #include <string>
 #include <vector>
-
-#include <cassert>
 
 #include <arrow/type.h>
 

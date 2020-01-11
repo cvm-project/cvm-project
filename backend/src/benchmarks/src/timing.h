@@ -3,9 +3,9 @@
 #ifndef TIMING_H
 #define TIMING_H
 
-#include <chrono>
-
 #include <cstdio>
+
+#include <chrono>
 
 // TODO(sabir): make the timing mechanism cleaner
 std::chrono::steady_clock::time_point timing_tp1, timing_tp2;  // NOLINT

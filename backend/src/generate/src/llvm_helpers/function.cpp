@@ -4,7 +4,6 @@
 #include <regex>
 
 #include <boost/mpl/list.hpp>
-
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>

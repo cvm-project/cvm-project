@@ -1,11 +1,11 @@
 #include "materialize_parquet_impl.hpp"
 
+#include <cassert>
+
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
-
-#include <cassert>
 
 #include <arrow/array.h>
 #include <arrow/buffer.h>
@@ -14,9 +14,8 @@
 #include <arrow/record_batch.h>
 #include <arrow/table.h>
 #include <arrow/type.h>
-#include <parquet/arrow/writer.h>
-
 #include <nlohmann/json.hpp>
+#include <parquet/arrow/writer.h>
 
 #include "filesystem/filesystem.hpp"
 #include "operators/arrow_helpers.hpp"

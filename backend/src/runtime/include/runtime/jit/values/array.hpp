@@ -2,6 +2,7 @@
 #define RUNTIME_JIT_VALUES_ARRAY_HPP
 
 #include <cstdint>
+
 #include <vector>
 
 #include "runtime/jit/memory/shared_pointer.hpp"

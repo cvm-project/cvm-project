@@ -1,3 +1,5 @@
+#include "runtime/jit/memory/shared_pointer.hpp"
+
 #include <memory>
 #include <thread>
 #include <unordered_map>
@@ -5,7 +7,6 @@
 #include <gtest/gtest.h>
 
 #include "runtime/jit/memory/free_ref_counter.hpp"
-#include "runtime/jit/memory/shared_pointer.hpp"
 
 using runtime::memory::FreeRefCounter;
 using runtime::memory::RefCounter;

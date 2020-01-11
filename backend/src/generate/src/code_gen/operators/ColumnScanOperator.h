@@ -2,6 +2,7 @@
 #define CODE_GEN_OPERATORS_COLUMNSCANOPERATOR_H
 
 #include <cstring>
+
 #include <tuple>
 #include <type_traits>
 #include <utility>

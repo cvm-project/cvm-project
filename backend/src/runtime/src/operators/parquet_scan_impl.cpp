@@ -1,5 +1,7 @@
 #include "parquet_scan_impl.hpp"
 
+#include <cassert>
+
 #include <chrono>
 #include <iostream>
 #include <map>
@@ -10,8 +12,6 @@
 #include <type_traits>
 #include <variant>
 #include <vector>
-
-#include <cassert>
 
 #include "filesystem/filesystem.hpp"
 #include "runtime/jit/memory/default_ref_counter.hpp"

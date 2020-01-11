@@ -1,12 +1,12 @@
 #include "dag/dag.hpp"
 
+#include <cassert>
+
 #include <algorithm>
 #include <map>
 #include <sstream>
 #include <unordered_map>
 #include <vector>
-
-#include <cassert>
 
 #include <boost/algorithm/cxx11/any_of.hpp>
 #include <boost/graph/adjacency_list.hpp>

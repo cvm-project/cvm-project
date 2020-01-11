@@ -1,10 +1,10 @@
 #ifndef RUNTIME_JIT_MEMORY_SHARED_POINTER_HPP
 #define RUNTIME_JIT_MEMORY_SHARED_POINTER_HPP
 
+#include <cassert>
+
 #include <atomic>
 #include <utility>
-
-#include <cassert>
 
 namespace runtime {
 namespace memory {

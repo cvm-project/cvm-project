@@ -6,7 +6,6 @@
 #include <vector>
 
 #include <nlohmann/json.hpp>
-
 #include <polymorphic_value.h>
 
 #include "code_gen/code_gen.hpp"

@@ -1,12 +1,12 @@
 #ifndef FILESYSTEM_FILE_HPP
 #define FILESYSTEM_FILE_HPP
 
-#include "filesystem.hpp"
-
 #include <memory>
 #include <string>
 
 #include <arrow/io/interfaces.h>
+
+#include "filesystem.hpp"
 
 namespace runtime {
 namespace filesystem {

@@ -1,10 +1,9 @@
+#include "utils/visitor.hpp"
+
 #include <memory>
 
 #include <boost/mpl/list.hpp>
-
 #include <gtest/gtest.h>
-
-#include "utils/visitor.hpp"
 
 // Sample type hierarchy (non-DefaultConstructable)
 struct Visitable {
