@@ -40,8 +40,9 @@ struct FileNameOperator {
 auto MakeParquetScanOperator(
         std::unique_ptr<FileNameOperator> upstream,
         std::vector<std::vector<std::shared_ptr<Predicate>>> range_predicates,
-        std::vector<std::string> column_types, std::vector<int> col_ids,
-        const std::string& filesystem) -> ValueOperator*;
+        const std::vector<std::string>& column_types,
+        const std::vector<int>& col_ids, const std::string& filesystem)
+        -> ValueOperator*;
 
 }  // namespace operators
 }  // namespace runtime

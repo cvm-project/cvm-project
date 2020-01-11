@@ -54,7 +54,7 @@ public:
 private:
     static constexpr int32_t WAIT_DOWNLOAD_MS = 10;
 
-    void FetchMetaData(std::vector<std::string> file_paths);
+    void FetchMetaData(const std::vector<std::string>& file_paths);
 
     auto HasPendingFileHandles() -> bool;
     auto AreAllFilesProcessed() -> bool;
@@ -103,16 +103,17 @@ private:
         std::vector<std::shared_ptr<Predicate>> range_predicates;
     };
 
-    auto MakeColumnInfos(std::vector<std::vector<std::shared_ptr<Predicate>>>
-                                 range_predicates,
-                         std::vector<std::string> column_types,
-                         std::vector<int> col_ids) -> std::vector<ColumnInfo>;
+    static auto MakeColumnInfos(
+            std::vector<std::vector<std::shared_ptr<Predicate>>>
+                    range_predicates,
+            std::vector<std::string> column_types, std::vector<int> col_ids)
+            -> std::vector<ColumnInfo>;
 
     auto ComputeInterestingRowGroups(
             const std::shared_ptr<parquet::FileMetaData>& file_metadata)
             -> std::vector<int>;
 
-    auto EvaluateRangePredicates(
+    static auto EvaluateRangePredicates(
             const std::shared_ptr<parquet::RowGroupStatistics>& statistics,
             const std::vector<std::shared_ptr<Predicate>>& range_predicates,
             const TypeTag& type_tag) -> bool;
@@ -149,8 +150,9 @@ private:
         TypeTag type_tag;
     };
 
-    auto MakeColumnInfos(std::vector<std::string> column_types,
-                         std::vector<int> col_ids) -> std::vector<ColumnInfo>;
+    static auto MakeColumnInfos(std::vector<std::string> column_types,
+                                std::vector<int> col_ids)
+            -> std::vector<ColumnInfo>;
 
     auto ReadColumnBatch(int col)
             -> std::pair<int64_t, std::unique_ptr<runtime::values::Value>>;
@@ -166,7 +168,7 @@ private:
             pending_column_readers_;
 
     // Operator configuration
-    const int64_t batch_size_ = 1ul << 15u;
+    const int64_t batch_size_ = 1UL << 15U;
     const std::unique_ptr<ParquetRowGroupOperator> upstream_;
 };
 

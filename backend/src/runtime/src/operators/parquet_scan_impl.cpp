@@ -23,8 +23,9 @@ namespace runtime::operators {
 auto MakeParquetScanOperator(
         std::unique_ptr<FileNameOperator> upstream,
         std::vector<std::vector<std::shared_ptr<Predicate>>> range_predicates,
-        std::vector<std::string> column_types, std::vector<int> col_ids,
-        const std::string& filesystem) -> ValueOperator* {
+        const std::vector<std::string>& column_types,
+        const std::vector<int>& col_ids, const std::string& filesystem)
+        -> ValueOperator* {
     auto parquet_file_op = std::make_unique<ParquetFileOperator>(
             std::move(upstream), filesystem::MakeFilesystem(filesystem));
 
@@ -70,7 +71,8 @@ void ParquetFileOperator::close() {
     upstream_->close();
 }
 
-void ParquetFileOperator::FetchMetaData(std::vector<std::string> file_paths) {
+void ParquetFileOperator::FetchMetaData(
+        const std::vector<std::string>& file_paths) {
     for (auto const& path : file_paths) {
         auto source = fs_->OpenForRead(path);
         auto pq_file_reader = parquet::ParquetFileReader::Open(source);
@@ -285,6 +287,7 @@ auto ParquetScanOperatorImpl::next()
                             [this](auto const row_group_reader,
                                    auto const file_reader) {
                                 ColumnReaders col_readers;
+                                (void)file_reader;  // Needs to be alive
                                 for (const auto& column_info : column_infos_) {
                                     auto const col_id = column_info.col_id;
                                     col_readers.push_back(
@@ -361,6 +364,7 @@ auto ReadColumnBatchImpl(const std::shared_ptr<parquet::ColumnReader>& reader,
                     reader.get());
     assert(typed_reader != nullptr);
 
+    // NOLINTNEXTLINE(modernize-avoid-c-arrays)
     std::unique_ptr<T[]> values(new T[batch_size]);
 
     int64_t num_remaining = batch_size;
@@ -378,6 +382,7 @@ auto ReadColumnBatchImpl(const std::shared_ptr<parquet::ColumnReader>& reader,
     auto ret = std::make_unique<runtime::values::Array>();
     ret->data = memory::SharedPointer<char>(
             // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
+            // NOLINTNEXTLINE(modernize-avoid-c-arrays)
             new memory::DefaultRefCounter<T[]>(values.release()));
     ret->outer_shape = {static_cast<size_t>(result_size)};
     ret->offsets = {0};

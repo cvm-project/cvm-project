@@ -10,7 +10,9 @@
 #   bugprone-exception-escape: TODO(ingo): we should fix this one day
 #   cppcoreguidelines-owning-memory: TODO(ingo): fix this
 #   cppcoreguidelines-avoid-magic-numbers: alias for readability-magic-numbers, which is active
-Checks: '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-hicpp-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp,-fuchsia-*,-hicpp-no-array-decay,-cert-msc32-c,-cert-msc51-cpp,-hicpp-vararg,-bugprone-exception-escape,-cppcoreguidelines-owning-memory,-cppcoreguidelines-avoid-magic-numbers'
+#   cppcoreguidelines-avoid-c-arrays: alias for modernize-avoid-c-arrays, which is active
+#   hipp-avoid-c-arrays: alias for modernize-avoid-c-arrays, which is active
+Checks: '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-hicpp-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp,-fuchsia-*,-hicpp-no-array-decay,-cert-msc32-c,-cert-msc51-cpp,-hicpp-vararg,-bugprone-exception-escape,-cppcoreguidelines-owning-memory,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-avoid-c-arrays,-hicpp-avoid-c-arrays'
 WarningsAsErrors: '*'
 CheckOptions:
   - key: hicpp-braces-around-statements.ShortStatementLines
