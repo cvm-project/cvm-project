@@ -38,7 +38,6 @@ TEST(SharedPointerTest, ConstAccess) {  // NOLINT
         int val;
     };
 
-    // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage) False positive
     const SharedPointer<S> ptr1(new FreeRefCounter<S>(malloc(sizeof(S)), 1));
     new (ptr1.get()) S{42};  // NOLINT(readability-magic-numbers)
 
@@ -62,7 +61,6 @@ TEST(SharedPointerTest, SimpleDelete) {  // NOLINT
     {
         EXPECT_EQ(pointers.count(int_ptr), 0);
         EXPECT_EQ(pointers.size(), 0);
-        // NOLINTNEXTLINE clang-analyzer-core.CallAndMessage
         SharedPointer<int> ptr(new TestRefCounter(int_ptr));
         EXPECT_EQ(pointers.count(int_ptr), 1);
         EXPECT_EQ(pointers.size(), 1);
@@ -78,7 +76,6 @@ TEST(SharedPointerTest, SimpleDelete) {  // NOLINT
 TEST(SharedPointerTest, PointerAccess) {  // NOLINT
     int* const int_ptr = new int(42);
 
-    // NOLINTNEXTLINE clang-analyzer-core.CallAndMessage
     SharedPointer<int> ptr1(new TestRefCounter(int_ptr));
 
     EXPECT_EQ(*ptr1, 42);
@@ -103,7 +100,6 @@ TEST(SharedPointerTest, Copy) {  // NOLINT
     int* const int_ptr2 = new int(2);
 
     {
-        // NOLINTNEXTLINE clang-analyzer-core.CallAndMessage
         SharedPointer<int> ptr1(new TestRefCounter(int_ptr1));
 
         EXPECT_EQ(pointers.count(int_ptr1), 1);
@@ -226,7 +222,6 @@ TEST(SharedPointerTest, Move) {  // NOLINT
     int* const int_ptr5 = new int(5);
 
     {
-        // NOLINTNEXTLINE clang-analyzer-core.CallAndMessage
         SharedPointer<int> ptr1(new TestRefCounter(int_ptr1));
 
         EXPECT_EQ(pointers.count(int_ptr1), 1);
@@ -336,7 +331,6 @@ TEST(SharedPointerTest, ThreadedMove) {  // NOLINT
     static constexpr size_t kNumIterations = 10000;
 
     int* const int_ptr = new int(42);
-    // NOLINTNEXTLINE clang-analyzer-core.CallAndMessage
     const auto rc = new TestRefCounter(int_ptr);
     SharedPointer<int> ptr1(rc);
 

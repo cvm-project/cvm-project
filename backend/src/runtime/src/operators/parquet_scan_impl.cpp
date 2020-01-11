@@ -381,7 +381,6 @@ auto ReadColumnBatchImpl(const std::shared_ptr<parquet::ColumnReader>& reader,
 
     auto ret = std::make_unique<runtime::values::Array>();
     ret->data = memory::SharedPointer<char>(
-            // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
             // NOLINTNEXTLINE(modernize-avoid-c-arrays)
             new memory::DefaultRefCounter<T[]>(values.release()));
     ret->outer_shape = {static_cast<size_t>(result_size)};

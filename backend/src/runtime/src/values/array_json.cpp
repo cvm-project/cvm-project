@@ -13,9 +13,6 @@ void from_json(const nlohmann::json &json, Array *const val) {
     auto const rc = reinterpret_cast<memory::RefCounter *>(
             json.at("ref_counter").get<size_t>());
     val->data = memory::SharedPointer<char>(
-            // False positive? clang-tidy complains about wrong number of
-            // arguments.
-            // NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage)
             rc == nullptr ? (new memory::NoOpRefCounter(data)) : rc);
     assert(val->data.ref_counter()->pointer() == val->data.get());
 
