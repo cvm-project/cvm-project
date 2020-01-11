@@ -7,9 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "timing.h"
-
-#define MAX (1ul << 29u)
+static constexpr size_t kNumElements = 1ul << 29u;
 
 template <typename T>
 auto realloc_or_throw(T *old_ptr, const size_t n_elements) -> T * {
@@ -21,31 +19,38 @@ auto realloc_or_throw(T *old_ptr, const size_t n_elements) -> T * {
 auto my_add(double a, double b) -> double { return a + b; }
 
 auto simple_sum(const double *const array) -> double {
-    TICK1
+    auto const start = std::chrono::steady_clock::now();
     double acc = 0;
     for (size_t j = 0; j < 1; j++) {
-        for (size_t i = 0; i < MAX; i++) {
+        for (size_t i = 0; i < kNumElements; i++) {
             acc = my_add(acc, array[i]);
         }
     }
-    TOCK1
-    std::cout << "outer loop sum " << DIFF1 << std::endl;
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << "outer loop sum "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << std::endl;
     return acc;
 }
 
 auto unrolled_sum(const double *const array) -> double {
-    TICK2
+    auto const start = std::chrono::steady_clock::now();
     double acc[] = {0.0, 0.0, 0.0, 0.0};
     for (size_t j = 0; j < 1; j++) {
-        for (size_t i = 0; i < MAX; i += 4) {
+        for (size_t i = 0; i < kNumElements; i += 4) {
             acc[0] += array[i];
             acc[1] += array[i + 1];
             acc[2] += array[i + 2];
             acc[3] += array[i + 3];
         }
     }
-    TOCK2
-    std::cout << DIFF2 << std::endl;
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << std::endl;
     return acc[0] + acc[1] + acc[2] + acc[3];
 }
 
@@ -60,13 +65,15 @@ struct result_struct1 {
 };
 
 auto gap_filter(const double *const array) -> result_struct1 {
-    TICK1
+    auto const start = std::chrono::steady_clock::now();
     size_t allocatedSize = 2;
     size_t resSize = 0;
     auto *result = reinterpret_cast<tuple_1 *>(
             malloc(sizeof(tuple_1) * allocatedSize));
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
+        // NOLINTNEXTLINE(readability-magic-numbers)
         tuple_1 t1 = {array[i], array[i] * 3 + 7};
+        // NOLINTNEXTLINE(readability-magic-numbers)
         if (t1.v0 > 0.5) {
             continue;
         }
@@ -77,66 +84,79 @@ auto gap_filter(const double *const array) -> result_struct1 {
         result[resSize] = t1;
         resSize++;
     }
-    TOCK1
-    std::cout << DIFF1 << " outer loop map filter\n";
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " outer loop map filter\n";
 
     return {resSize, result};
 }
 
 auto filter_sum(const double *const array) -> double {
     double res = 0;
-    TICK1
-    for (size_t i = 0; i < MAX; i++) {
+    auto const start = std::chrono::steady_clock::now();
+    for (size_t i = 0; i < kNumElements; i++) {
         if (array[i] > 0) {
             res += array[i];
             //            tot--;
         }
     }
-    TOCK1
-    std::cout << DIFF1 << " filter sum\n";
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " filter sum\n";
     return res;
 }
 
 auto filter_sum2(const double *const array) -> double {
     double res = 0;
-    TICK1
-    for (size_t i = 0; i < MAX; i++) {
+    auto const start = std::chrono::steady_clock::now();
+    for (size_t i = 0; i < kNumElements; i++) {
         res += array[i] * static_cast<double>(array[i] > 0);
     }
-    TOCK1
-    std::cout << DIFF1 << " filter sum2\n";
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " filter sum2\n";
     return res;
 }
 
 auto filter_sum3(const double *const array) -> double {
     double res = 0;
-    TICK1
+    auto const start = std::chrono::steady_clock::now();
     size_t allocatedSize = 2;
     size_t resSize = 0;
     auto *result =  // cppcheck-suppress constArgument
             reinterpret_cast<double *>(malloc(sizeof(double) * allocatedSize));
 
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
         result[resSize] = array[i];
         resSize += static_cast<size_t>(array[i] > 0);
     }
 
-    TOCK1
+    auto const end = std::chrono::steady_clock::now();
     free(result);
-    std::cout << DIFF1 << " filter sum3\n";
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " filter sum3\n";
     return res;
 }
 
+// NOLINTNEXTLINE(readability-magic-numbers)
 auto map_1(double a) -> tuple_1 { return {a, a * 3 + 7}; }
 
 auto map(const double *array) -> result_struct1 {
-    TICK1
+    auto const start = std::chrono::steady_clock::now();
     size_t allocatedSize = 2;
     size_t resSize = 0;
     auto *result = reinterpret_cast<tuple_1 *>(
             malloc(sizeof(tuple_1) * allocatedSize));
 
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
         tuple_1 t1 = map_1(array[i]);
         if (allocatedSize <= resSize) {
             allocatedSize *= 2;
@@ -145,8 +165,11 @@ auto map(const double *array) -> result_struct1 {
         result[resSize] = t1;
         resSize++;
     }
-    TOCK1
-    std::cout << DIFF1 << " outer loop map \n";
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " outer loop map \n";
 
     return {resSize, result};
 }
@@ -157,12 +180,14 @@ struct result_struct2 {
 };
 
 auto filter(const double *const array) -> result_struct2 {
-    TICK1
+    auto const start = std::chrono::steady_clock::now();
     size_t allocatedSize = 2;
     size_t resSize = 0;
-    auto *result = reinterpret_cast<double *>(malloc(sizeof(double) * MAX));
+    auto *result =
+            reinterpret_cast<double *>(malloc(sizeof(double) * kNumElements));
 
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
+        // NOLINTNEXTLINE(readability-magic-numbers)
         if (array[i] * 100 > 50) {
             if (allocatedSize <= resSize) {
                 allocatedSize *= 2;
@@ -172,8 +197,11 @@ auto filter(const double *const array) -> result_struct2 {
             resSize++;
         }
     }
-    TOCK1
-    std::cout << DIFF1 << " outer loop filter \n";
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " outer loop filter \n";
 
     return {resSize, result};
 }
@@ -199,11 +227,11 @@ struct result_struct {
     tuple_4 *data;
 };
 
-size_t len2 = MAX >> 1u;
+size_t len2 = kNumElements >> 1u;
 
 auto join(tuple_2 *array1, tuple_3 *array2) -> result_struct {
     // build ht
-    TICK1
+    auto const start = std::chrono::steady_clock::now();
     std::unordered_map<int64_t, std::vector<tuple_3>> ht;
     for (size_t i = 0; i < len2; i++) {
         auto key = array2[i].v0;
@@ -215,15 +243,18 @@ auto join(tuple_2 *array1, tuple_3 *array2) -> result_struct {
             ht.emplace(key, values);
         }
     }
-    TOCK1
-    std::cout << DIFF1 << " build \n";
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " build \n";
 
     size_t allocatedSize = 2;
     size_t resSize = 0;
     auto *result = reinterpret_cast<tuple_4 *>(
             malloc(sizeof(tuple_4) * allocatedSize));
 
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
         auto key = array1[i].v0;
         if (ht.count(key) > 0) {
             for (auto t : ht[key]) {
@@ -249,7 +280,7 @@ auto join(tuple_2 *array1, tuple_3 *array2) -> result_struct {
 auto map_filter_join(const int64_t *const array1, const tuple_3 *const array2)
         -> result_struct {
     // build ht
-    TICK1
+    auto const start1 = std::chrono::steady_clock::now();
     std::unordered_map<int64_t, std::vector<tuple_3>> ht;
     for (size_t i = 0; i < len2; i++) {
         auto key = array2[i].v0;
@@ -261,17 +292,22 @@ auto map_filter_join(const int64_t *const array1, const tuple_3 *const array2)
             ht.emplace(key, values);
         }
     }
-    TOCK1
-    std::cout << DIFF1 << " build \n";
+    auto const end1 = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end1 -
+                                                                       start1)
+                         .count()
+              << " build \n";
 
-    TICK1
+    auto const start2 = std::chrono::steady_clock::now();
     size_t allocatedSize = 2;
     size_t resSize = 0;
     auto *result = reinterpret_cast<tuple_4 *>(
             malloc(sizeof(tuple_4) * allocatedSize));
 
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
+        // NOLINTNEXTLINE(readability-magic-numbers)
         tuple_2 t1 = {array1[i], array1[i] * 3 + 7};
+        // NOLINTNEXTLINE(readability-magic-numbers)
         if (t1.v0 <= 0.5) {
             continue;
         }
@@ -294,8 +330,11 @@ auto map_filter_join(const int64_t *const array1, const tuple_3 *const array2)
     result_struct ret{};
     ret.data = result;
     ret.size = resSize;
-    TOCK1
-    std::cout << DIFF1 << " prob \n";
+    auto const end2 = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end2 -
+                                                                       start2)
+                         .count()
+              << " prob \n";
     return ret;
 }
 
@@ -311,9 +350,9 @@ struct result_struct_rbk {
 
 auto map_reduce_by_key(const int64_t *const array) -> result_struct_rbk {
     // build ht
-    TICK1
+    auto const start = std::chrono::steady_clock::now();
     std::unordered_map<int64_t, int64_t> ht;
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
         tuple_5 mapped = {array[i], 1};
         auto key = mapped.v0;
         auto it = ht.find(key);
@@ -342,18 +381,24 @@ auto map_reduce_by_key(const int64_t *const array) -> result_struct_rbk {
     result_struct_rbk ret{};
     ret.data = result;
     ret.size = resSize;
-    TOCK1
-    std::cout << DIFF1 << " group by \n";
+    auto const end = std::chrono::steady_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end -
+                                                                       start)
+                         .count()
+              << " group by \n";
     return ret;
 }
 
 auto main() -> int {
+    // NOLINTNEXTLINE(readability-magic-numbers)
     std::mt19937 gen(1337);
+    // NOLINTNEXTLINE(readability-magic-numbers)
     std::uniform_real_distribution<double> dis(0.1, 1.0);
 
-    auto *array = reinterpret_cast<double *>(malloc((MAX) * sizeof(double)));
+    auto *array =
+            reinterpret_cast<double *>(malloc((kNumElements) * sizeof(double)));
 
-    for (size_t i = 0; i < MAX; i++) {
+    for (size_t i = 0; i < kNumElements; i++) {
         array[i] = dis(gen);
     }
     //    auto res = simple_sum(array);
@@ -383,8 +428,8 @@ auto main() -> int {
     std::cout << res << std::endl;
 
     //    srand(time(NULL));
-    //    int64_t *array_rbk = new int64_t[MAX];
-    //    for (size_t i = 0; i < MAX; i++) {
+    //    int64_t *array_rbk = new int64_t[kNumElements];
+    //    for (size_t i = 0; i < kNumElements; i++) {
     //        array_rbk[i] = rand() % 100;
     //    }
     //    auto res = map_reduce_by_key(array_rbk);
@@ -410,8 +455,8 @@ auto main() -> int {
     //              << std::endl;
 
     //
-    //    tuple_2 *array1 = new tuple_2[MAX];
-    //    for (size_t i = 0; i < MAX; i++) {
+    //    tuple_2 *array1 = new tuple_2[kNumElements];
+    //    for (size_t i = 0; i < kNumElements; i++) {
     //        array1[i] = {rand() % 1000, rand() % 1000};
     //    }
     //
@@ -420,19 +465,18 @@ auto main() -> int {
     //        array2[i] = {rand() % 1000, rand() % 1000};
     //    }
     ////
-    //    TICK1
+    //    auto const start = std::chrono::steady_clock::now();
     //    auto res = join(array1, array2);
-    //    TOCK1
+    //    auto const end = std::chrono::steady_clock::now();
     //
     //    std::cout << (res.data)[rand() % res.size].v0 << " " <<
     //    (res.data)[rand() % res.size].v1 << " "
     //            << (res.data)[rand() % res.size].v2 << std::endl;
-    //    std::cout << DIFF1 << " whole join\n";
-    //    free(array1);
-    //    free(array2);
+    //    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end
+    //    - start).count() << " whole join\n"; free(array1); free(array2);
 
-    //    int64_t *array1 = new int64_t[MAX];
-    //    for (size_t i = 0; i < MAX; i++) {
+    //    int64_t *array1 = new int64_t[kNumElements];
+    //    for (size_t i = 0; i < kNumElements; i++) {
     //        array1[i] = rand() % 1000;
     //    }
     //
@@ -441,16 +485,15 @@ auto main() -> int {
     //        array2[i] = {rand() % 1000, rand() % 1000};
     //    }
     //////
-    //    TICK1
+    //    auto const start = std::chrono::steady_clock::now();
     //    auto res = map_filter_join(array1, array2);
-    //    TOCK1
+    //    auto const end = std::chrono::steady_clock::now();
     ////
     //    std::cout << (res.data)[rand() % res.size].v0 << " " <<
     //    (res.data)[rand() % res.size].v1 << " "
     //              << (res.data)[rand() % res.size].v2 << std::endl;
-    //    std::cout << DIFF1 << " whole join\n";
-    //    free(array1);
-    //    free(array2);
+    //    std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end
+    //    - start).count() << " whole join\n"; free(array1); free(array2);
     free(array);
     return 0;
 }
