@@ -104,6 +104,8 @@ public:
     // counter and pointee). If provided with a pointer, assigns that pointer
     // to this and increments its counter. Otherwise, assigns not-a-pointer.
     auto operator=(const SharedPointer& other) -> SharedPointer& {
+        if (this == &other) return *this;
+
         // Update this, saving current state
         auto tmp_pointer = std::exchange(pointer_, other.pointer_);
         auto tmp_ref_counter = std::exchange(ref_counter_, other.ref_counter_);
