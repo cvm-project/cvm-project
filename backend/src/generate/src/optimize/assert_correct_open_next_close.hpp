@@ -8,7 +8,7 @@ namespace optimize {
 class AssertCorrectOpenNextClose : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override {
+    auto name() const -> std::string override {
         return "assert_correct_open_next_close";
     }
 };

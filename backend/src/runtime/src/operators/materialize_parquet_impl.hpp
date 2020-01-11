@@ -78,7 +78,7 @@ struct MaterializeParquetOperatorImpl : public MaterializeParquetOperator {
           has_returned_(false) {}
 
     void open() override {}
-    Optional<std::string> next() override;
+    auto next() -> Optional<std::string> override;
     void close() override {}
 
 private:

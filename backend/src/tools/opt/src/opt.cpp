@@ -14,7 +14,7 @@ namespace po = boost::program_options;
 // Enum and I/O of output formats
 enum class OutputFormat { kJson, kDot, kBin };
 
-std::istream& operator>>(std::istream& in, OutputFormat& format) {
+auto operator>>(std::istream& in, OutputFormat& format) -> std::istream& {
     std::string token;
     in >> token;
     if (token == "JSON") {
@@ -29,7 +29,8 @@ std::istream& operator>>(std::istream& in, OutputFormat& format) {
     return in;
 }
 
-std::ostream& operator<<(std::ostream& out, const OutputFormat& format) {
+auto operator<<(std::ostream& out, const OutputFormat& format)
+        -> std::ostream& {
     switch (format) {
         case OutputFormat::kJson:
             out << "JSON";
@@ -46,7 +47,7 @@ std::ostream& operator<<(std::ostream& out, const OutputFormat& format) {
     return out;
 }
 
-int main(int argc, char* argv[]) {
+auto main(int argc, char* argv[]) -> int {
     // Read command line parameters
     std::string input_file_name;
     std::string output_file_name;

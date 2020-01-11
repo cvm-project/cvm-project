@@ -22,31 +22,32 @@ using PortInfoMap = std::unordered_map<
         const DAGOperator *,
         std::unordered_multimap<int, std::tuple<Agnode_t *, std::string>>>;
 
-std::string node_name(const std::string &graph_name,
-                      const DAGOperator *const op) {
+auto node_name(const std::string &graph_name, const DAGOperator *const op)
+        -> std::string {
     return (boost::format("%1%%2%_%3%") % graph_name % op->name() % op->id)
             .str();
 }
 
-std::string head_port(const DAGOperator *const op, const int port) {
+auto head_port(const DAGOperator *const op, const int port) -> std::string {
     if (op->num_in_ports() > 1) {
         return (boost::format("in%1%:n") % port).str();
     }
     return "n";
 }
 
-std::string tail_port(const DAGOperator *const op, const int port) {
+auto tail_port(const DAGOperator *const op, const int port) -> std::string {
     if (op->num_out_ports() > 1) {
         return (boost::format("out%1%:s") % port).str();
     }
     return "s";
 }
 
-char *to_char_ptr(const std::string &s) {
+auto to_char_ptr(const std::string &s) -> char * {
     return const_cast<char *>(s.c_str());
 }
 
-std::string short_property_label(const dag::collection::FieldProperty prop) {
+auto short_property_label(const dag::collection::FieldProperty prop)
+        -> std::string {
     const static std::unordered_map<dag::collection::FieldProperty, std::string,
                                     std::hash<int>>
             property_labels = {
@@ -251,7 +252,7 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
     }
 }
 
-const char *ToDotCharPtr(const DAG *dag) {
+auto ToDotCharPtr(const DAG *dag) -> const char * {
     char *buffer_ptr;
     size_t buffer_size;
     FILE *const outfile = open_memstream(&buffer_ptr, &buffer_size);
@@ -262,7 +263,7 @@ const char *ToDotCharPtr(const DAG *dag) {
     return buffer_ptr;
 }
 
-std::string ToDotString(const DAG *dag) {
+auto ToDotString(const DAG *dag) -> std::string {
     const char *const buffer_ptr = ToDotCharPtr(dag);
     const std::string ret(buffer_ptr);
     free(const_cast<char *>(buffer_ptr));

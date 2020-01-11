@@ -12,8 +12,8 @@ namespace values {
 
 using VectorOfValues = std::vector<std::shared_ptr<values::Value>>;
 
-VectorOfValues ConvertFromJsonString(const char* inputs_str);
-std::string ConvertToJsonString(const VectorOfValues& val);
+auto ConvertFromJsonString(const char* inputs_str) -> VectorOfValues;
+auto ConvertToJsonString(const VectorOfValues& val) -> std::string;
 
 }  // namespace values
 }  // namespace runtime

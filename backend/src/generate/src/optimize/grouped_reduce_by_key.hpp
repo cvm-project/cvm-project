@@ -8,7 +8,9 @@ namespace optimize {
 class GroupedReduceByKey : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override { return "grouped_reduce_by_key"; }
+    auto name() const -> std::string override {
+        return "grouped_reduce_by_key";
+    }
 };
 
 }  // namespace optimize

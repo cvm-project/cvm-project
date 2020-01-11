@@ -8,7 +8,9 @@ namespace optimize {
 class AttributeIdTracking : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override { return "attribute_id_tracking"; }
+    auto name() const -> std::string override {
+        return "attribute_id_tracking";
+    }
 };
 
 }  // namespace optimize

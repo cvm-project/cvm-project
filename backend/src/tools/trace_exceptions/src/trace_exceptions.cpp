@@ -14,7 +14,7 @@ thread_local ExceptionInfo current_exception_info;
 
 }  // namespace impl
 
-std::string demangle(const char *const symbol) {
+auto demangle(const char *const symbol) -> std::string {
 #ifdef __GLIBCXX__
     int status;
     std::unique_ptr<char, void (*)(void *)> demangled_symbol(

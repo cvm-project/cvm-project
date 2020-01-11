@@ -20,8 +20,8 @@ namespace nlohmann {
 
 template <>
 struct adl_serializer<std::shared_ptr<runtime::values::Value>> {
-    static std::shared_ptr<runtime::values::Value> from_json(
-            const nlohmann::json &json);
+    static auto from_json(const nlohmann::json &json)
+            -> std::shared_ptr<runtime::values::Value>;
 
     // NOLINTNEXTLINE(google-runtime-references)
     static void to_json(nlohmann::json &json,
@@ -32,8 +32,8 @@ struct adl_serializer<std::shared_ptr<runtime::values::Value>> {
 
 template <>
 struct adl_serializer<std::unique_ptr<runtime::values::Value>> {
-    static std::unique_ptr<runtime::values::Value> from_json(
-            const nlohmann::json &json);
+    static auto from_json(const nlohmann::json &json)
+            -> std::unique_ptr<runtime::values::Value>;
 
     // NOLINTNEXTLINE(google-runtime-references)
     static void to_json(nlohmann::json &json,

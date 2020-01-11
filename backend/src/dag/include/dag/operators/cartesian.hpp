@@ -7,8 +7,8 @@ class DAGCartesian : public DAGOperator {
     JITQ_DAGOPERATOR(DAGCartesian, "cartesian");
 
 public:
-    size_t num_in_ports() const override { return 2; }
-    size_t num_out_ports() const override { return 1; }
+    auto num_in_ports() const -> size_t override { return 2; }
+    auto num_out_ports() const -> size_t override { return 1; }
 };
 
 #endif  // DAG_OPERATORS_CARTESIAN_HPP

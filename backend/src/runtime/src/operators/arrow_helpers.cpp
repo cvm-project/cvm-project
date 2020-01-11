@@ -11,9 +11,9 @@
 namespace runtime {
 namespace operators {
 
-std::shared_ptr<arrow::Schema> MakeArrowSchema(
-        std::vector<std::string> column_types,
-        std::vector<std::string> column_names) {
+auto MakeArrowSchema(std::vector<std::string> column_types,
+                     std::vector<std::string> column_names)
+        -> std::shared_ptr<arrow::Schema> {
     assert(column_types.size() == column_names.size());
     std::vector<std::shared_ptr<arrow::Field>> fields;
     for (size_t i = 0; i < column_types.size(); i++) {
@@ -24,7 +24,8 @@ std::shared_ptr<arrow::Schema> MakeArrowSchema(
     return std::make_shared<arrow::Schema>(std::move(fields));
 }
 
-const std::map<std::string, std::shared_ptr<arrow::DataType>>& arrow_types() {
+auto arrow_types()
+        -> const std::map<std::string, std::shared_ptr<arrow::DataType>>& {
     static const std::map<std::string, std::shared_ptr<arrow::DataType>> map = {
             {"int", arrow::int32()},      //
             {"long", arrow::int64()},     //

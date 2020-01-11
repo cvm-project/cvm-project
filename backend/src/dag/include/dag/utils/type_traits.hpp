@@ -23,7 +23,7 @@ class IsInstanceOfVisitor;
 }  // namespace impl
 
 template <typename... OperatorTypes>
-bool IsInstanceOf(const DAGOperator *const op) {
+auto IsInstanceOf(const DAGOperator *const op) -> bool {
     return impl::IsInstanceOfVisitor<OperatorTypes...>().Visit(op);
 }
 
@@ -40,18 +40,18 @@ public:
     template <class OperatorType,
               typename = std::enable_if_t<boost::mpl::contains<
                       OperatorTypeList, std::remove_cv_t<OperatorType>>::value>>
-    bool operator()(OperatorType *const /*op*/) {
+    auto operator()(OperatorType *const /*op*/) -> bool {
         return true;
     }
-    bool operator()(DAGOperator *const /*op*/) { return false; }
+    auto operator()(DAGOperator *const /*op*/) -> bool { return false; }
 };
 
 }  // namespace impl
 
-bool IsPipelineDriver(DAGOperator *op);
-bool IsPipelinePredecessor(DAGOperator *op);
-bool IsSingleTupleProducer(DAGOperator *op);
-bool IsSourceOperator(DAGOperator *op);
+auto IsPipelineDriver(DAGOperator *op) -> bool;
+auto IsPipelinePredecessor(DAGOperator *op) -> bool;
+auto IsSingleTupleProducer(DAGOperator *op) -> bool;
+auto IsSourceOperator(DAGOperator *op) -> bool;
 
 }  // namespace utils
 }  // namespace dag

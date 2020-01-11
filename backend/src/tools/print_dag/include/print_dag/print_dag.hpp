@@ -8,8 +8,8 @@
 
 #include "dag/dag.hpp"
 
-std::string ToDotString(const DAG *dag);
-const char *ToDotCharPtr(const DAG *dag);
+auto ToDotString(const DAG *dag) -> std::string;
+auto ToDotCharPtr(const DAG *dag) -> const char *;
 void ToDotFile(const DAG *dag, FILE *outfile);
 void ToDotStream(const DAG *dag, std::ostream *outstream);
 

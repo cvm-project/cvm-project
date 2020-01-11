@@ -13,8 +13,8 @@ using dag::type::Tuple;
 namespace dag {
 namespace type {
 
-const Tuple *Tuple::MakeTuple(
-        const std::vector<const FieldType *> &field_types) {
+auto Tuple::MakeTuple(const std::vector<const FieldType *> &field_types)
+        -> const Tuple * {
     std::unique_ptr<Tuple> ret(new Tuple());
     ret->field_types = field_types;
 
@@ -24,7 +24,7 @@ const Tuple *Tuple::MakeTuple(
             TypeRegistry::at(str));
 }
 
-const Tuple *Tuple::ComputeHeadTuple(size_t head_size) const {
+auto Tuple::ComputeHeadTuple(size_t head_size) const -> const Tuple * {
     assert(head_size > 0);
     assert(field_types.size() >= head_size);
     auto first = field_types.begin();
@@ -33,7 +33,7 @@ const Tuple *Tuple::ComputeHeadTuple(size_t head_size) const {
     return MakeTuple(new_vec);
 }
 
-const Tuple *Tuple::ComputeTailTuple(size_t head_size) const {
+auto Tuple::ComputeTailTuple(size_t head_size) const -> const Tuple * {
     assert(head_size > 0);
     assert(field_types.size() >= head_size);
     auto first = field_types.begin() + head_size;
@@ -42,7 +42,7 @@ const Tuple *Tuple::ComputeTailTuple(size_t head_size) const {
     return MakeTuple(new_vec);
 }
 
-std::string Tuple::to_string() const {
+auto Tuple::to_string() const -> std::string {
     std::vector<std::string> item_strings;
     for (auto t : this->field_types) {
         item_strings.push_back(t->to_string());

@@ -131,7 +131,7 @@ void from_json(const nlohmann::json& j,
 namespace runtime {
 namespace operators {
 
-Optional<std::string> MaterializeParquetOperatorImpl::next() {
+auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
     if (has_returned_) return {};
 
     // Read config and create writer properties
@@ -206,11 +206,12 @@ Optional<std::string> MaterializeParquetOperatorImpl::next() {
     return {filename};
 }
 
-std::unique_ptr<MaterializeParquetOperator> MakeMaterializeParquetOperator(
+auto MakeMaterializeParquetOperator(
         std::unique_ptr<ValueOperator> main_upstream,
         std::unique_ptr<ValueOperator> conf_upstream,
         std::vector<std::string> column_types,
-        std::vector<std::string> column_names) {
+        std::vector<std::string> column_names)
+        -> std::unique_ptr<MaterializeParquetOperator> {
     auto const schema =
             MakeArrowSchema(std::move(column_types), std::move(column_names));
     return std::make_unique<MaterializeParquetOperatorImpl>(

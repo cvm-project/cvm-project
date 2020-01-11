@@ -9,17 +9,19 @@ Field::~Field() {
     }
 }
 
-size_t Field::position() const { return position_; }
+auto Field::position() const -> size_t { return position_; }
 
 void Field::set_position(size_t position) { position_ = position; }
 
-const dag::type::FieldType *Field::field_type() const { return field_type_; }
+auto Field::field_type() const -> const dag::type::FieldType * {
+    return field_type_;
+}
 
 void Field::set_field_type(const dag::type::FieldType *field_type) {
     field_type_ = field_type;
 }
 
-const std::shared_ptr<dag::AttributeId> &Field::attribute_id() const {
+auto Field::attribute_id() const -> const std::shared_ptr<dag::AttributeId> & {
     return attribute_id_;
 }
 
@@ -31,7 +33,9 @@ void Field::RemoveProperty(const FieldProperty &fieldProperty) {
     properties_.erase(fieldProperty);
 }
 
-const std::set<FieldProperty> &Field::properties() const { return properties_; }
+auto Field::properties() const -> const std::set<FieldProperty> & {
+    return properties_;
+}
 
 void Field::CopyProperties(const Field &other) {
     for (auto p : other.properties()) {

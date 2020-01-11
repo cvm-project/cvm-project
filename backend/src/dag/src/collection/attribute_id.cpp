@@ -4,7 +4,7 @@ namespace dag {
 
 size_t AttributeId::column_counter_ = 0;
 
-std::shared_ptr<AttributeId> AttributeId::MakeAttributeId() {
+auto AttributeId::MakeAttributeId() -> std::shared_ptr<AttributeId> {
     return std::shared_ptr<AttributeId>(new AttributeId);
 }
 

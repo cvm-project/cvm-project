@@ -12,7 +12,7 @@ struct Value {
     virtual ~Value() = default;
 
     template <typename ConcreteValueType>
-    const ConcreteValueType *as() const {
+    auto as() const -> const ConcreteValueType * {
         static_assert(std::is_base_of<Value, ConcreteValueType>::value,
                       "Can only cast to types inheriting from Value.");
         auto ret = dynamic_cast<const ConcreteValueType *>(this);
@@ -20,7 +20,7 @@ struct Value {
         return ret;
     }
     template <typename ConcreteValueType>
-    ConcreteValueType *as() {
+    auto as() -> ConcreteValueType * {
         return const_cast<ConcreteValueType *>(
                 static_cast<const Value *>(this)->as<ConcreteValueType>());
     }

@@ -18,13 +18,13 @@ protected:
     friend struct nlohmann::adl_serializer<std::unique_ptr<Type>>;
 
 public:
-    static const Tuple *MakeTuple(
-            const std::vector<const FieldType *> &field_types);
+    static auto MakeTuple(const std::vector<const FieldType *> &field_types)
+            -> const Tuple *;
 
-    const Tuple *ComputeHeadTuple(size_t head_size = 1) const;
-    const Tuple *ComputeTailTuple(size_t head_size = 1) const;
+    auto ComputeHeadTuple(size_t head_size = 1) const -> const Tuple *;
+    auto ComputeTailTuple(size_t head_size = 1) const -> const Tuple *;
 
-    std::string to_string() const override;
+    auto to_string() const -> std::string override;
     void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 

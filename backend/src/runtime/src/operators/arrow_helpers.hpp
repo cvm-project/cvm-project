@@ -29,12 +29,12 @@
 namespace runtime {
 namespace operators {
 
-std::shared_ptr<arrow::Schema> MakeArrowSchema(
-        std::vector<std::string> column_types,
-        std::vector<std::string> column_names);
+auto MakeArrowSchema(std::vector<std::string> column_types,
+                     std::vector<std::string> column_names)
+        -> std::shared_ptr<arrow::Schema>;
 
-static const std::map<std::string, std::shared_ptr<arrow::DataType>>&
-arrow_types();
+static auto arrow_types()
+        -> const std::map<std::string, std::shared_ptr<arrow::DataType>>&;
 
 }  // namespace operators
 }  // namespace runtime

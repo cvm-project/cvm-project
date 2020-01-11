@@ -10,8 +10,8 @@ namespace runtime {
 namespace aws {
 namespace s3 {
 
-Aws::S3::S3Client* MakeClient();
-std::string LookupErrorString(const Aws::S3::S3Errors& code);
+auto MakeClient() -> Aws::S3::S3Client*;
+auto LookupErrorString(const Aws::S3::S3Errors& code) -> std::string;
 
 }  // namespace s3
 }  // namespace aws

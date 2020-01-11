@@ -14,7 +14,7 @@ using dag::type::TypeRegistry;
 namespace dag {
 namespace type {
 
-const Type *MakeType(std::unique_ptr<const Type> &&type) {
+auto MakeType(std::unique_ptr<const Type> &&type) -> const Type * {
     const auto str = type->to_string();
     TypeRegistry::Register(str, std::move(type));
     return TypeRegistry::at(str);
@@ -23,8 +23,8 @@ const Type *MakeType(std::unique_ptr<const Type> &&type) {
 }  // namespace type
 }  // namespace dag
 
-std::unique_ptr<Type> nlohmann::adl_serializer<
-        std::unique_ptr<Type>>::from_json(const nlohmann::json &json) {
+auto nlohmann::adl_serializer<std::unique_ptr<Type>>::from_json(
+        const nlohmann::json &json) -> std::unique_ptr<Type> {
     if (json.is_array()) {
         return std::unique_ptr<Type>(new dag::type::Tuple);
     }

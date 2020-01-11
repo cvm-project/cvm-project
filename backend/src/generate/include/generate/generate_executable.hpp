@@ -3,6 +3,7 @@
 
 #include <string>
 
-int64_t GenerateExecutable(const std::string &conf, const std::string &dagstr);
+auto GenerateExecutable(const std::string &conf, const std::string &dagstr)
+        -> int64_t;
 
 #endif  // GENERATE_GENERATE_EXECUTABLE_HPP

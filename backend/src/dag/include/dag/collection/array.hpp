@@ -14,7 +14,7 @@ class Array : public FieldBase<Array, type::Array> {
 public:
     Array(const type::Array *array_type, const size_t &position);
 
-    Tuple *tuple() { return tuple_.get(); }
+    auto tuple() -> Tuple * { return tuple_.get(); }
 
 private:
     std::unique_ptr<Tuple> tuple_;

@@ -12,8 +12,8 @@ using PlanFunction =
         runtime::values::VectorOfValues(runtime::values::VectorOfValues);
 using Plan = std::function<PlanFunction>;
 
-std::string ExecutePlan(size_t plan_id, const std::string& inputs_str);
-size_t RegisterPlan(const Plan& plan);
+auto ExecutePlan(size_t plan_id, const std::string& inputs_str) -> std::string;
+auto RegisterPlan(const Plan& plan) -> size_t;
 
 }  // namespace runtime
 

@@ -8,7 +8,7 @@ namespace optimize {
 class ParallelizeOmp : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override { return "parallelize_omp"; }
+    auto name() const -> std::string override { return "parallelize_omp"; }
 };
 
 }  // namespace optimize

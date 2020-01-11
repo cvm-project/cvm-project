@@ -29,13 +29,13 @@ namespace nlohmann {
 
 using runtime::values::Value;
 
-std::shared_ptr<Value> adl_serializer<std::shared_ptr<Value>>::from_json(
-        const nlohmann::json &json) {
+auto adl_serializer<std::shared_ptr<Value>>::from_json(
+        const nlohmann::json &json) -> std::shared_ptr<Value> {
     return std::shared_ptr<Value>(json.get<std::unique_ptr<Value>>().release());
 }
 
-std::unique_ptr<Value> adl_serializer<std::unique_ptr<Value>>::from_json(
-        const nlohmann::json &json) {
+auto adl_serializer<std::unique_ptr<Value>>::from_json(
+        const nlohmann::json &json) -> std::unique_ptr<Value> {
     runtime::values::LoadValueParsers();  // TODO(ingo): load in a central place
     return runtime::values::ValueParserRegistry::at(json.at("type"))
             ->from_json(json);

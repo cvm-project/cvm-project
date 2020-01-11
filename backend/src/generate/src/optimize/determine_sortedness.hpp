@@ -8,7 +8,7 @@ namespace optimize {
 class DetermineSortedness : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override { return "determine_sortedness"; }
+    auto name() const -> std::string override { return "determine_sortedness"; }
 };
 
 }  // namespace optimize

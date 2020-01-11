@@ -29,8 +29,8 @@ using boost::algorithm::join;
 namespace code_gen {
 namespace cpp {
 
-std::pair<std::string, std::string> GenerateCode(DAG *const dag,
-                                                 const std::string &config) {
+auto GenerateCode(DAG *const dag, const std::string &config)
+        -> std::pair<std::string, std::string> {
     auto const jconfig = nlohmann::json::parse(config).flatten();
 
     const boost::filesystem::path temp_path_model =
@@ -159,7 +159,8 @@ std::pair<std::string, std::string> GenerateCode(DAG *const dag,
     return {(lib_dir.filename() / lib_name).string(), function_name};
 }
 
-std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name) {
+auto AtomicTypeNameToRuntimeTypename(const std::string &type_name)
+        -> std::string {
     static const std::unordered_map<std::string, std::string> type_map = {
             {"float", "Float"},        //
             {"double", "Double"},      //
@@ -187,7 +188,8 @@ void GenerateTupleToValue(Context *const context,
               output_(output),
               context_(context) {}
 
-        std::string operator()(const dag::type::Atomic *const type) const {
+        auto operator()(const dag::type::Atomic *const type) const
+                -> std::string {
             const auto temp_var_name = context_->GenerateSymbolName("val");
             output_ << format("std::unique_ptr<%2%> %1%(new %2%());"
                               "%1%->value = %3%;") %
@@ -197,7 +199,8 @@ void GenerateTupleToValue(Context *const context,
             return temp_var_name + ".release()";
         }
 
-        std::string operator()(const dag::type::Array * /*type*/) const {
+        auto operator()(const dag::type::Array * /*type*/) const
+                -> std::string {
             const auto temp_var_name = context_->GenerateSymbolName("val");
             output_ << format("std::unique_ptr<Array> %2%(new Array());"
                               "%2%->data = %1%.data.as<char>();"
@@ -257,7 +260,8 @@ void GenerateValueToTuple(Context *const context,
                 const std::string &input_var_name, Context *const context)
             : input_var_name_(input_var_name), context_(context) {}
 
-        std::string operator()(const dag::type::Array *const type) const {
+        auto operator()(const dag::type::Array *const type) const
+                -> std::string {
             const auto inner_type = type->tuple_type;
             const auto inner_typedef =
                     context_->tuple_type_descs().at(inner_type).get();
@@ -270,13 +274,15 @@ void GenerateValueToTuple(Context *const context,
                     .str();
         }
 
-        std::string operator()(const dag::type::Atomic *const type) const {
+        auto operator()(const dag::type::Atomic *const type) const
+                -> std::string {
             return (format("%1%->as<%2%>()->value") % input_var_name_ %
                     AtomicTypeNameToRuntimeTypename(type->type))
                     .str();
         }
 
-        std::string operator()(const dag::type::FieldType *const type) const {
+        auto operator()(const dag::type::FieldType *const type) const
+                -> std::string {
             throw std::runtime_error("Unknown field type: " +
                                      type->to_string());
         }
@@ -312,7 +318,8 @@ void GenerateValueToTuple(Context *const context,
                     tuple_type_desc->name % join(field_values, ", ");
 }
 
-FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
+auto GenerateExecuteTuples(DAG *const dag, Context *const context)
+        -> FunctionDef {
     std::stringstream plan_body;
 
     CodeGenVisitor visitor(dag, context, plan_body);
@@ -364,7 +371,8 @@ FunctionDef GenerateExecuteTuples(DAG *const dag, Context *const context) {
     return {func_name, sink.return_type};
 }
 
-std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
+auto GenerateExecuteValues(DAG *const dag, Context *const context)
+        -> std::string {
     // Generate plan function on tuples
     auto execute_tuples = GenerateExecuteTuples(dag, context);
 
@@ -413,7 +421,8 @@ std::string GenerateExecuteValues(DAG *const dag, Context *const context) {
     return func_name;
 }
 
-std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
+auto GenerateExecutePipelines(Context *const context, DAG *const dag)
+        -> std::string {
     using ResultNames = std::map<const DAGOperator *, std::string>;
 
     struct GeneratePipelinesVisitor
@@ -427,14 +436,14 @@ std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
                                  ResultNames *const result_names)
             : dag_(dag), context_(context), result_names_(result_names) {}
 
-        std::string operator()(const DAGParameterLookup *const op) {
+        auto operator()(const DAGParameterLookup *const op) -> std::string {
             auto const result_name = GenerateResultVarName(op);
             return (format("VectorOfValues %1% = { inputs.at(%2%) };") %  //
                     result_name % dag_->input_port(op))
                     .str();
         }
 
-        std::string operator()(const DAGPipeline *const op) {
+        auto operator()(const DAGPipeline *const op) -> std::string {
             auto const result_name = GenerateResultVarName(op);
 
             std::vector<std::string> input_names(dag_->in_degree(op));
@@ -460,14 +469,14 @@ std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
                     .str();
         }
 
-        std::string operator()(const DAGOperator *const op) {
+        auto operator()(const DAGOperator *const op) -> std::string {
             throw std::runtime_error(
                     "Pipeline generation encountered unknown operator type: " +
                     op->name());
         }
 
     private:
-        std::string GenerateResultVarName(const DAGOperator *const op) {
+        auto GenerateResultVarName(const DAGOperator *const op) -> std::string {
             auto const name = context_->GenerateSymbolName(
                     (format("op_%1%_result") % op->id).str(), true);
             auto const ret = result_names_->emplace(op, name);
@@ -513,11 +522,11 @@ std::string GenerateExecutePipelines(Context *const context, DAG *const dag) {
     return func_name;
 }
 
-std::string GenerateLlvmFunctor(
-        Context *const context, const std::string &func_name_prefix,
-        const std::string &llvm_ir,
-        const std::vector<const StructDef *> &input_types,
-        const std::string &return_type) {
+auto GenerateLlvmFunctor(Context *const context,
+                         const std::string &func_name_prefix,
+                         const std::string &llvm_ir,
+                         const std::vector<const StructDef *> &input_types,
+                         const std::string &return_type) -> std::string {
     // Generate symbol names
     const auto func_name =
             context->GenerateSymbolName(func_name_prefix + "_llvm");
@@ -585,10 +594,10 @@ void StoreLlvmCode(Context *const context, const std::string &llvm_ir,
     context->llvm_code() << patched_ir;
 }
 
-std::pair<const StructDef *, bool> EmitStructDefinition(
-        Context *const context, const dag::type::Type *key,
-        const std::vector<std::string> &types,
-        const std::vector<std::string> &names) {
+auto EmitStructDefinition(Context *const context, const dag::type::Type *key,
+                          const std::vector<std::string> &types,
+                          const std::vector<std::string> &names)
+        -> std::pair<const StructDef *, bool> {
     if (context->tuple_type_descs().count(key) > 0) {
         return std::make_pair(context->tuple_type_descs().at(key).get(), false);
     }
@@ -604,8 +613,9 @@ std::pair<const StructDef *, bool> EmitStructDefinition(
     return std::make_pair(ret.first->second.get(), true);
 }
 
-const StructDef *EmitTupleStructDefinition(Context *const context,
-                                           const dag::type::Tuple *tuple) {
+auto EmitTupleStructDefinition(Context *const context,
+                               const dag::type::Tuple *tuple)
+        -> const StructDef * {
     class FieldTypeVisitor
         : public Visitor<FieldTypeVisitor, const dag::type::FieldType,
                          boost::mpl::list<const dag::type::Atomic,
@@ -614,11 +624,11 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
     public:
         explicit FieldTypeVisitor(Context *const context) : context_(context) {}
 
-        std::string operator()(const dag::type::Atomic *const field) {
+        auto operator()(const dag::type::Atomic *const field) -> std::string {
             return field->type;
         }
 
-        std::string operator()(const dag::type::Array *const field) {
+        auto operator()(const dag::type::Array *const field) -> std::string {
             auto item_desc =
                     EmitTupleStructDefinition(context_, field->tuple_type);
             std::vector<std::string> names;
@@ -639,7 +649,8 @@ const StructDef *EmitTupleStructDefinition(Context *const context,
                     .first->name;
         }
 
-        std::string operator()(const dag::type::FieldType *const field) const {
+        auto operator()(const dag::type::FieldType *const field) const
+                -> std::string {
             throw std::runtime_error(
                     "Code gen encountered unknown field type: " +
                     field->to_string());

@@ -20,23 +20,24 @@ public:
     using ObjectRange =
             boost::iterator_range<typename decltype(objects_)::const_iterator>;
 
-    static bool Register(const Key &key, std::unique_ptr<Object> object);
-    static Object *at(const Key &key);
-    static ObjectRange objects();
-    static size_t num_objects();
+    static auto Register(const Key &key, std::unique_ptr<Object> object)
+            -> bool;
+    static auto at(const Key &key) -> Object *;
+    static auto objects() -> ObjectRange;
+    static auto num_objects() -> size_t;
 
 private:
-    static Registry *instance();
+    static auto instance() -> Registry *;
 };
 
 template <typename Object, typename Key>
-bool Registry<Object, Key>::Register(const Key &key,
-                                     std::unique_ptr<Object> object) {
+auto Registry<Object, Key>::Register(const Key &key,
+                                     std::unique_ptr<Object> object) -> bool {
     return instance()->objects_.emplace(key, std::move(object)).second;
 }
 
 template <typename Object, typename Key>
-Object *Registry<Object, Key>::at(const Key &key) {
+auto Registry<Object, Key>::at(const Key &key) -> Object * {
     const auto it = instance()->objects_.find(key);
     if (it != instance()->objects_.end()) {
         return it->second.get();
@@ -52,12 +53,12 @@ auto Registry<Object, Key>::objects() -> ObjectRange {
 }
 
 template <typename Object, typename Key>
-size_t Registry<Object, Key>::num_objects() {
+auto Registry<Object, Key>::num_objects() -> size_t {
     return instance()->objects_.size();
 }
 
 template <typename Object, typename Key>
-Registry<Object, Key> *Registry<Object, Key>::instance() {
+auto Registry<Object, Key>::instance() -> Registry<Object, Key> * {
     static auto registry = std::make_unique<Registry<Object, Key>>();
     return registry.get();
 }

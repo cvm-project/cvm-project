@@ -44,7 +44,7 @@ private:
 };
 
 template <typename Visitor>
-VisitorFunctor<Visitor> MakeVisitorFunctor(Visitor *const visitor) {
+auto MakeVisitorFunctor(Visitor *const visitor) -> VisitorFunctor<Visitor> {
     return VisitorFunctor<Visitor>(visitor);
 }
 
@@ -59,15 +59,17 @@ struct Visitor {
 
     virtual ~Visitor() = default;
 
-    ReturnType Visit(VisitableBase *const visitable) const {
+    auto Visit(VisitableBase *const visitable) const -> ReturnType {
         return VisitImpl<true>(visitable);
     }
-    ReturnType Visit(VisitableBase *const visitable) {
+    auto Visit(VisitableBase *const visitable) -> ReturnType {
         return VisitImpl<false>(visitable);
     }
 
-    VisitorFunctor<ThisType> functor() { return MakeVisitorFunctor(this); }
-    VisitorFunctor<const ThisType> functor() const {
+    auto functor() -> VisitorFunctor<ThisType> {
+        return MakeVisitorFunctor(this);
+    }
+    auto functor() const -> VisitorFunctor<const ThisType> {
         return MakeVisitorFunctor(this);
     }
 
@@ -77,7 +79,7 @@ private:
                                       void *, ReturnType>::type;
 
     template <const bool is_visitor_const>
-    ReturnType VisitImpl(VisitableBase *const visitable) const {
+    auto VisitImpl(VisitableBase *const visitable) const -> ReturnType {
         static_assert(
                 std::is_base_of<ThisType, ConcreteVisitor>::value,
                 "'YourVisitor' must inherit from 'Visitor<YourVisitor, T, U>'");

@@ -15,12 +15,12 @@ namespace filesystem {
 
 struct FilesystemFactory {
     virtual ~FilesystemFactory() = default;
-    virtual std::unique_ptr<FileSystem> MakeFilesystem() = 0;
+    virtual auto MakeFilesystem() -> std::unique_ptr<FileSystem> = 0;
 };
 
 template <typename FileSystemType>
 struct DefaultFilesystemFactory : public FilesystemFactory {
-    std::unique_ptr<FileSystem> MakeFilesystem() override {
+    auto MakeFilesystem() -> std::unique_ptr<FileSystem> override {
         return std::make_unique<FileSystemType>();
     }
 };
@@ -55,7 +55,7 @@ void LoadFilesystemFactories() {
     has_loaded = true;
 }
 
-std::unique_ptr<FileSystem> MakeFilesystem(const std::string &name) {
+auto MakeFilesystem(const std::string &name) -> std::unique_ptr<FileSystem> {
     LoadFilesystemFactories();
     return Registry::at(name)->MakeFilesystem();
 }

@@ -47,7 +47,7 @@ public:
      * Implement RandomAccessFile interface
      */
 
-    arrow::Status GetSize(int64_t* const size) override {
+    auto GetSize(int64_t* const size) -> arrow::Status override {
         if (file_size_ < 0) {
             Aws::S3::Model::HeadObjectRequest request;
             request.WithBucket(bucket_.c_str()).WithKey(key_.c_str());
@@ -79,11 +79,11 @@ public:
         return arrow::Status::OK();
     }
 
-    bool supports_zero_copy() const override { return false; }
+    auto supports_zero_copy() const -> bool override { return false; }
 
-    arrow::Status ReadAt(const int64_t position, const int64_t nbytes,
-                         int64_t* const bytes_read,
-                         void* const buffer) override {
+    auto ReadAt(const int64_t position, const int64_t nbytes,
+                int64_t* const bytes_read, void* const buffer)
+            -> arrow::Status override {
         Aws::S3::Model::GetObjectRequest request;
         request.WithBucket(bucket_.c_str()).WithKey(key_.c_str());
         request.SetRange(
@@ -111,8 +111,9 @@ public:
         return arrow::Status::OK();
     }
 
-    arrow::Status ReadAt(const int64_t position, const int64_t nbytes,
-                         std::shared_ptr<arrow::Buffer>* const out) override {
+    auto ReadAt(const int64_t position, const int64_t nbytes,
+                std::shared_ptr<arrow::Buffer>* const out)
+            -> arrow::Status override {
         std::shared_ptr<arrow::ResizableBuffer> buffer;
 
         ARROW_RETURN_NOT_OK(AllocateResizableBuffer(pool_, nbytes, &buffer));
@@ -130,25 +131,25 @@ public:
      * Implement FileInterface interface
      */
 
-    arrow::Status Close() override { return arrow::Status::OK(); }
+    auto Close() -> arrow::Status override { return arrow::Status::OK(); }
 
-    arrow::Status Tell(int64_t* /*position*/) const override {
+    auto Tell(int64_t* /*position*/) const -> arrow::Status override {
         return arrow::Status::OK();
     }
 
-    bool closed() const override { return false; }
+    auto closed() const -> bool override { return false; }
 
     /*
      * Implement Readable interface
      */
 
-    arrow::Status Read(const int64_t nbytes, int64_t* const bytes_read,
-                       void* const out) override {
+    auto Read(const int64_t nbytes, int64_t* const bytes_read, void* const out)
+            -> arrow::Status override {
         return ReadAt(0, nbytes, bytes_read, out);
     }
 
-    arrow::Status Read(const int64_t nbytes,
-                       std::shared_ptr<arrow::Buffer>* const out) override {
+    auto Read(const int64_t nbytes, std::shared_ptr<arrow::Buffer>* const out)
+            -> arrow::Status override {
         // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
         return ReadAt(0, nbytes, out);
     }
@@ -157,7 +158,7 @@ public:
      * Implement Seekable interface
      */
 
-    arrow::Status Seek(int64_t /*position*/) override {
+    auto Seek(int64_t /*position*/) -> arrow::Status override {
         return arrow::Status::OK();
     }
 
@@ -190,7 +191,7 @@ public:
      * Implement FileInterface
      */
 
-    arrow::Status Close() override {
+    auto Close() -> arrow::Status override {
         Aws::S3::Model::PutObjectRequest object_request;
         object_request.SetBucket(bucket_);
         object_request.SetKey(key_);
@@ -212,24 +213,25 @@ public:
         return arrow::Status::OK();
     }
 
-    arrow::Status Tell(int64_t* const position) const override {
+    auto Tell(int64_t* const position) const -> arrow::Status override {
         *position = data_.size();
         return arrow::Status::OK();
     }
 
-    bool closed() const override { return false; }
+    auto closed() const -> bool override { return false; }
 
     /*
      * Implement Writable
      */
 
-    arrow::Status Write(const void* const data, const int64_t nbytes) override {
+    auto Write(const void* const data, const int64_t nbytes)
+            -> arrow::Status override {
         auto const ptr = reinterpret_cast<const uint8_t*>(data);
         data_.insert(data_.end(), ptr, ptr + nbytes);
         return arrow::Status::OK();
     }
 
-    arrow::Status Flush() override { return arrow::Status::OK(); }
+    auto Flush() -> arrow::Status override { return arrow::Status::OK(); }
 
 private:
     const std::string bucket_;
@@ -243,8 +245,8 @@ S3FileSystem::S3FileSystem() {
     s3_client_.reset(aws::s3::MakeClient());
 }
 
-std::shared_ptr<::arrow::io::RandomAccessFile> S3FileSystem::OpenForRead(
-        const std::string& s3_path) {
+auto S3FileSystem::OpenForRead(const std::string& s3_path)
+        -> std::shared_ptr<::arrow::io::RandomAccessFile> {
     auto const url = skyr::make_url(s3_path);
     if (!url) {
         std::cerr << "Parsing failed: " << url.error().message() << std::endl;
@@ -259,8 +261,8 @@ std::shared_ptr<::arrow::io::RandomAccessFile> S3FileSystem::OpenForRead(
             new S3ReadableFile(s3_client_, bucket, key));
 }
 
-std::shared_ptr<::arrow::io::OutputStream> S3FileSystem::OpenForWrite(
-        const std::string& path) {
+auto S3FileSystem::OpenForWrite(const std::string& path)
+        -> std::shared_ptr<::arrow::io::OutputStream> {
     auto const url = skyr::make_url(path);
     if (!url) {
         std::cerr << "Parsing failed: " << url.error().message() << std::endl;

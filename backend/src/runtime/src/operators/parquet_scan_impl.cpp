@@ -21,11 +21,11 @@
 namespace runtime {
 namespace operators {
 
-ValueOperator* MakeParquetScanOperator(
+auto MakeParquetScanOperator(
         std::unique_ptr<FileNameOperator> upstream,
         std::vector<std::vector<std::shared_ptr<Predicate>>> range_predicates,
         std::vector<std::string> column_types, std::vector<int> col_ids,
-        const std::string& filesystem) {
+        const std::string& filesystem) -> ValueOperator* {
     auto parquet_file_op = std::make_unique<ParquetFileOperator>(
             std::move(upstream), filesystem::MakeFilesystem(filesystem));
 
@@ -88,12 +88,12 @@ void ParquetFileOperator::FetchMetaData(std::vector<std::string> file_paths) {
     }
 }
 
-bool ParquetFileOperator::HasPendingFileHandles() {
+auto ParquetFileOperator::HasPendingFileHandles() -> bool {
     std::lock_guard<std::mutex> lock(mutex_);
     return file_handles_.empty() && nfiles_to_process_ > 0;
 }
 
-bool ParquetFileOperator::AreAllFilesProcessed() {
+auto ParquetFileOperator::AreAllFilesProcessed() -> bool {
     std::lock_guard<std::mutex> lock(mutex_);
     return file_handles_.empty() && nfiles_to_process_ == 0;
 }
@@ -156,8 +156,9 @@ auto ParquetRowGroupOperator::MakeColumnInfos(
     return column_infos;
 }
 
-std::vector<int> ParquetRowGroupOperator::ComputeInterestingRowGroups(
-        const std::shared_ptr<parquet::FileMetaData>& file_metadata) {
+auto ParquetRowGroupOperator::ComputeInterestingRowGroups(
+        const std::shared_ptr<parquet::FileMetaData>& file_metadata)
+        -> std::vector<int> {
     const int num_row_groups = file_metadata->num_row_groups();
 
     std::vector<int> interesting_row_groups;
@@ -224,9 +225,10 @@ struct ColumnTypeTraits<double> {
 };
 
 template <typename ColumnType>
-bool EvaluateRangePredicatesImpl(
+auto EvaluateRangePredicatesImpl(
         const std::shared_ptr<parquet::RowGroupStatistics>& statistics,
-        const std::vector<std::shared_ptr<Predicate>>& range_predicates) {
+        const std::vector<std::shared_ptr<Predicate>>& range_predicates)
+        -> bool {
     using Traits = ColumnTypeTraits<ColumnType>;
     using Statistics = typename Traits::ParquetStatistics;
     using RangePredicate = typename Traits::RangePredicate;
@@ -246,10 +248,10 @@ bool EvaluateRangePredicatesImpl(
     return res;
 }
 
-bool ParquetRowGroupOperator::EvaluateRangePredicates(
+auto ParquetRowGroupOperator::EvaluateRangePredicates(
         const std::shared_ptr<parquet::RowGroupStatistics>& statistics,
         const std::vector<std::shared_ptr<Predicate>>& range_predicates,
-        const TypeTag& type_tag) {
+        const TypeTag& type_tag) -> bool {
     return std::visit(
             [&](auto const tag) {
                 using ColumnType = std::remove_cv_t<
@@ -263,7 +265,8 @@ bool ParquetRowGroupOperator::EvaluateRangePredicates(
 
 void ParquetScanOperatorImpl::open() { upstream_->open(); }
 
-std::shared_ptr<runtime::values::Value> ParquetScanOperatorImpl::next() {
+auto ParquetScanOperatorImpl::next()
+        -> std::shared_ptr<runtime::values::Value> {
     // Start reading next row group if no batches left in current one
     if (batch_index_ >= num_batches_) {
         while (auto res = upstream_->next()) {
@@ -351,9 +354,9 @@ auto ParquetScanOperatorImpl::MakeColumnInfos(
 }
 
 template <class T>
-std::pair<int64_t, std::unique_ptr<runtime::values::Value>> ReadColumnBatchImpl(
-        const std::shared_ptr<parquet::ColumnReader>& reader,
-        const int batch_size) {
+auto ReadColumnBatchImpl(const std::shared_ptr<parquet::ColumnReader>& reader,
+                         const int batch_size)
+        -> std::pair<int64_t, std::unique_ptr<runtime::values::Value>> {
     auto const typed_reader =
             dynamic_cast<typename ColumnTypeTraits<T>::ParquetReader*>(
                     reader.get());
@@ -384,8 +387,8 @@ std::pair<int64_t, std::unique_ptr<runtime::values::Value>> ReadColumnBatchImpl(
     return {result_size, std::move(ret)};
 };
 
-std::pair<int64_t, std::unique_ptr<runtime::values::Value>>
-ParquetScanOperatorImpl::ReadColumnBatch(int col) {
+auto ParquetScanOperatorImpl::ReadColumnBatch(int col)
+        -> std::pair<int64_t, std::unique_ptr<runtime::values::Value>> {
     auto const& column_info = column_infos_.at(col);
     auto const& col_reader = col_readers_.at(col);
 

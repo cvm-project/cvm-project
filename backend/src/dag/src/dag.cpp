@@ -143,7 +143,7 @@ struct CycleDetectionVisitor : public boost::default_dfs_visitor {
     bool *const result_;
 };
 
-bool DAG::HasCycle() const {
+auto DAG::HasCycle() const -> bool {
     for (const auto op : operators()) {
         if (in_degree(op) == 0) {
             bool has_cycle = false;
@@ -167,7 +167,7 @@ struct TreeDetectionVisitor : public boost::default_bfs_visitor {
     bool *const result_;
 };
 
-bool DAG::IsTree() const {
+auto DAG::IsTree() const -> bool {
     const DAGOperator *root = nullptr;
     for (const auto op : operators()) {
         if (out_degree(op) > 1) return false;
@@ -202,17 +202,17 @@ auto DAG::flows() const -> FlowRange {
            boost::adaptors::transformed(EdgeToFlowFunc(this));
 }
 
-bool DAG::contains(const DAGOperator *op) const {
+auto DAG::contains(const DAGOperator *op) const -> bool {
     return boost::algorithm::any_of_equal(operators(), op);
 }
 
-DAGOperator *DAG::to_operator(const Vertex &v) const {
+auto DAG::to_operator(const Vertex &v) const -> DAGOperator * {
     const auto operator_map = boost::get(operator_t(), graph_);
     const auto op = operator_map[v];
     return op.get();
 }
 
-DAG::Flow DAG::to_flow(const Edge &e) const {
+auto DAG::to_flow(const Edge &e) const -> DAG::Flow {
     const auto source_v = boost::source(e, graph_);
     const auto target_v = boost::target(e, graph_);
     const auto source_op = to_operator(source_v);
@@ -284,45 +284,45 @@ auto DAG::out_flow(const DAGOperator *const op, const int source_port) const
     return flows.front();
 }
 
-size_t DAG::in_degree(const DAGOperator *op) const {
+auto DAG::in_degree(const DAGOperator *op) const -> size_t {
     return boost::in_degree(to_vertex(op), graph_);
 }
 
-size_t DAG::in_degree(const DAGOperator *op, int target_port) const {
+auto DAG::in_degree(const DAGOperator *op, int target_port) const -> size_t {
     return boost::distance(in_flows(op, target_port));
 }
 
-size_t DAG::out_degree(const DAGOperator *op) const {
+auto DAG::out_degree(const DAGOperator *op) const -> size_t {
     return boost::out_degree(to_vertex(op), graph_);
 }
 
-size_t DAG::out_degree(const DAGOperator *op, int source_port) const {
+auto DAG::out_degree(const DAGOperator *op, int source_port) const -> size_t {
     return boost::distance(out_flows(op, source_port));
 }
 
-DAGOperator *DAG::predecessor(const DAGOperator *const op) const {
+auto DAG::predecessor(const DAGOperator *const op) const -> DAGOperator * {
     return in_flow(op).source.op;
 }
 
-DAGOperator *DAG::predecessor(const DAGOperator *const op,
-                              const int target_port) const {
+auto DAG::predecessor(const DAGOperator *const op, const int target_port) const
+        -> DAGOperator * {
     return in_flow(op, target_port).source.op;
 }
 
-DAGOperator *DAG::successor(const DAGOperator *const op) const {
+auto DAG::successor(const DAGOperator *const op) const -> DAGOperator * {
     return out_flow(op).target.op;
 }
 
-DAGOperator *DAG::successor(const DAGOperator *const op,
-                            const int source_port) const {
+auto DAG::successor(const DAGOperator *const op, const int source_port) const
+        -> DAGOperator * {
     return out_flow(op, source_port).target.op;
 }
 
-bool DAG::has_inner_dag(const DAGOperator *const op) const {
+auto DAG::has_inner_dag(const DAGOperator *const op) const -> bool {
     return inner_dag(op) != nullptr;
 }
 
-DAG *DAG::inner_dag(const DAGOperator *const op) const {
+auto DAG::inner_dag(const DAGOperator *const op) const -> DAG * {
     const auto inner_graph_map = boost::get(inner_graph_t(), graph_);
     const auto dag = inner_graph_map[to_vertex(op)];
     return dag.get();
@@ -337,46 +337,48 @@ void DAG::remove_inner_dag(const DAGOperator *const op) {
     set_inner_dag(op, nullptr);
 }
 
-size_t DAG::in_degree() const { return inputs_.size(); }
+auto DAG::in_degree() const -> size_t { return inputs_.size(); }
 
-size_t DAG::num_in_ports() const {
+auto DAG::num_in_ports() const -> size_t {
     return boost::distance(boost::make_iterator_range(inputs_) |
                            boost::adaptors::transformed(
                                    [](auto const &it) { return it.first; }) |
                            boost::adaptors::uniqued);
 }
 
-DAG::InputRange DAG::inputs() const {
+auto DAG::inputs() const -> DAG::InputRange {
     return boost::make_iterator_range(inputs_.cbegin(), inputs_.cend());
 }
 
-DAG::InputRangeTips DAG::inputs(int dag_input_port) const {
+auto DAG::inputs(int dag_input_port) const -> DAG::InputRangeTips {
     return boost::make_iterator_range(inputs_.equal_range(dag_input_port)) |
            boost::adaptors::transformed(ExtractFlowTipFunc());
 }
 
-DAG::InputRangeByOperator DAG::inputs(const DAGOperator *const op) const {
+auto DAG::inputs(const DAGOperator *const op) const
+        -> DAG::InputRangeByOperator {
     return inputs() | boost::adaptors::filtered(FilterInputByOperatorFunc(op));
 }
 
-DAG::FlowTip DAG::input() const {
+auto DAG::input() const -> DAG::FlowTip {
     assert(inputs_.size() == 1);
     return input(0);
 }
 
-DAG::FlowTip DAG::input(const int dag_input_port) const {
+auto DAG::input(const int dag_input_port) const -> DAG::FlowTip {
     auto const ret = inputs(dag_input_port);
     assert(boost::distance(ret) == 1);
     return ret.front();
 }
 
-std::pair<int, DAG::FlowTip> DAG::input(const DAGOperator *const op) const {
+auto DAG::input(const DAGOperator *const op) const
+        -> std::pair<int, DAG::FlowTip> {
     auto const ret = inputs(op);
     assert(boost::distance(ret) == 1);
     return ret.front();
 }
 
-int DAG::input_port(const DAGOperator *const op) const {
+auto DAG::input_port(const DAGOperator *const op) const -> int {
     return input(op).first;
 }
 
@@ -411,24 +413,24 @@ void DAG::add_input(const int dag_input_port, DAGOperator *const op,
 
 void DAG::reset_inputs() { inputs_.clear(); }
 
-size_t DAG::out_degree() const { return outputs_.size(); }
+auto DAG::out_degree() const -> size_t { return outputs_.size(); }
 
-size_t DAG::num_out_ports() const { return out_degree(); }
+auto DAG::num_out_ports() const -> size_t { return out_degree(); }
 
-DAG::OutputRange DAG::outputs() const {
+auto DAG::outputs() const -> DAG::OutputRange {
     return boost::make_iterator_range(outputs_.cbegin(), outputs_.cend());
 }
 
-DAG::OutputRangeByOperator DAG::outputs(const DAGOperator *op) const {
+auto DAG::outputs(const DAGOperator *op) const -> DAG::OutputRangeByOperator {
     return outputs() | boost::adaptors::filtered(FilterInputByOperatorFunc(op));
 }
 
-DAG::FlowTip DAG::output() const {
+auto DAG::output() const -> DAG::FlowTip {
     assert(outputs_.size() == 1);
     return output(0);
 }
 
-DAG::FlowTip DAG::output(const int dag_output_port) const {
+auto DAG::output(const int dag_output_port) const -> DAG::FlowTip {
     return outputs_.at(dag_output_port);
 }
 
@@ -454,15 +456,15 @@ void DAG::set_output(const int dag_output_port, DAGOperator *const op,
 
 void DAG::reset_outputs() { outputs_.clear(); }
 
-size_t DAG::last_operator_id() const {
+auto DAG::last_operator_id() const -> size_t {
     if (!operator_ids_.empty()) {
         return *(operator_ids_.rbegin());
     }
     return 0;
 }
 
-std::unique_ptr<DAG> nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
-        const nlohmann::json &json) {
+auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
+        const nlohmann::json &json) -> std::unique_ptr<DAG> {
     std::unique_ptr<DAG> dag(new DAG);
 
     std::map<size_t, DAGOperator *> operators;
@@ -564,14 +566,14 @@ void nlohmann::adl_serializer<std::unique_ptr<DAG>>::to_json(
     ::to_json(json, dag.get());
 }
 
-DAG *ParseDag(std::istream *istream) {
+auto ParseDag(std::istream *istream) -> DAG * {
     nlohmann::json json;
     (*istream) >> json;
     auto dag = json.get<std::unique_ptr<DAG>>();
 
     return dag.release();
 }
-DAG *ParseDag(const std::string &dagstr) {
+auto ParseDag(const std::string &dagstr) -> DAG * {
     std::stringstream stream(dagstr);
     return ParseDag(&stream);
 }

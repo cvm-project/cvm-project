@@ -10,7 +10,7 @@ namespace operators {
 
 struct ValueOperator {
     virtual void open() {}
-    virtual std::shared_ptr<runtime::values::Value> next() = 0;
+    virtual auto next() -> std::shared_ptr<runtime::values::Value> = 0;
     virtual void close() {}
     virtual ~ValueOperator() = default;
 };

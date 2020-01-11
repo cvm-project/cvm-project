@@ -21,9 +21,9 @@ protected:
     friend struct nlohmann::adl_serializer<std::unique_ptr<Type>>;
 
 public:
-    static const Atomic *MakeAtomic(const std::string &type);
+    static auto MakeAtomic(const std::string &type) -> const Atomic *;
 
-    std::string to_string() const override;
+    auto to_string() const -> std::string override;
     void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 

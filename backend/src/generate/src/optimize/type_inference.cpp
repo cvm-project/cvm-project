@@ -21,20 +21,20 @@ using dag::type::Atomic;
 using dag::type::FieldType;
 using dag::type::Tuple;
 
-const Tuple *ComputeOutputType(const DAG *const dag,
-                               const DAGOperator *const op) {
+auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
+        -> const Tuple * {
     class TypeInferenceVisitor
         : public Visitor<TypeInferenceVisitor, const DAGOperator,
                          dag::AllOperatorTypes, const Tuple *> {
     public:
         explicit TypeInferenceVisitor(const DAG *const dag) : dag_(dag) {}
 
-        const Tuple *operator()(
-                const DAGAssertCorrectOpenNextClose *const op) const {
+        auto operator()(const DAGAssertCorrectOpenNextClose *const op) const
+                -> const Tuple * {
             return dag_->predecessor(op)->tuple->type;
         }
 
-        const Tuple *operator()(const DAGCartesian *const op) const {
+        auto operator()(const DAGCartesian *const op) const -> const Tuple * {
             auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
             auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
 
@@ -46,7 +46,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(output_fields);
         }
 
-        const Tuple *operator()(const DAGColumnScan *const op) const {
+        auto operator()(const DAGColumnScan *const op) const -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
 
             if (input_type->field_types.empty()) {
@@ -87,11 +87,12 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(fields);
         }
 
-        const Tuple *operator()(const DAGCompiledPipeline *const op) const {
+        auto operator()(const DAGCompiledPipeline *const op) const
+                -> const Tuple * {
             return op->tuple->type;
         }
 
-        const Tuple *operator()(const DAGRowScan *const op) const {
+        auto operator()(const DAGRowScan *const op) const -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
 
             if (input_type->field_types.size() != 1) {
@@ -120,15 +121,17 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(field_types);
         }
 
-        const Tuple *operator()(const DAGConstantTuple *const op) const {
+        auto operator()(const DAGConstantTuple *const op) const
+                -> const Tuple * {
             return op->tuple->type;
         }
 
-        const Tuple *operator()(const DAGEnsureSingleTuple *const op) const {
+        auto operator()(const DAGEnsureSingleTuple *const op) const
+                -> const Tuple * {
             return dag_->predecessor(op)->tuple->type;
         }
 
-        const Tuple *operator()(const DAGGroupBy *const op) const {
+        auto operator()(const DAGGroupBy *const op) const -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
             auto const partition_id_type = input_type->field_types[0];
 
@@ -144,11 +147,12 @@ const Tuple *ComputeOutputType(const DAG *const dag,
                      Array::MakeArray(element_type, ArrayLayout::kC, 1)});
         }
 
-        const Tuple *operator()(const DAGFilter *const op) const {
+        auto operator()(const DAGFilter *const op) const -> const Tuple * {
             return dag_->predecessor(op)->tuple->type;
         }
 
-        const Tuple *operator()(const DAGExpandPattern *const op) const {
+        auto operator()(const DAGExpandPattern *const op) const
+                -> const Tuple * {
             auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
             auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
 
@@ -186,7 +190,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple({Atomic::MakeAtomic("std::string")});
         }
 
-        const Tuple *operator()(const DAGJoin *const op) const {
+        auto operator()(const DAGJoin *const op) const -> const Tuple * {
             auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
             auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
 
@@ -223,12 +227,12 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(output_fields);
         }
 
-        const Tuple *operator()(const DAGMap *const op) const {
+        auto operator()(const DAGMap *const op) const -> const Tuple * {
             return op->tuple->type;
         }
 
-        const Tuple *operator()(
-                const DAGMaterializeColumnChunks *const op) const {
+        auto operator()(const DAGMaterializeColumnChunks *const op) const
+                -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
 
             std::vector<const FieldType *> column_types;
@@ -240,7 +244,8 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(column_types);
         }
 
-        const Tuple *operator()(const DAGMaterializeParquet *const op) const {
+        auto operator()(const DAGMaterializeParquet *const op) const
+                -> const Tuple * {
             auto const conf_input_type = dag_->predecessor(op, 1)->tuple->type;
             auto const conf_type = dynamic_cast<const dag::type::Atomic *>(
                     conf_input_type->field_types.at(0));
@@ -286,34 +291,37 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple({Atomic::MakeAtomic("std::string")});
         }
 
-        const Tuple *operator()(const DAGMaterializeRowVector *const op) const {
+        auto operator()(const DAGMaterializeRowVector *const op) const
+                -> const Tuple * {
             auto const element_type = dag_->predecessor(op)->tuple->type;
 
             return Tuple::MakeTuple(
                     {Array::MakeArray(element_type, ArrayLayout::kC, 1)});
         }
 
-        const Tuple *operator()(const DAGParallelMap *const op) const {
+        auto operator()(const DAGParallelMap *const op) const -> const Tuple * {
             assert(dag_->has_inner_dag(op));
             auto const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
-        const Tuple *operator()(const DAGParallelMapOmp *const op) const {
+        auto operator()(const DAGParallelMapOmp *const op) const
+                -> const Tuple * {
             assert(dag_->has_inner_dag(op));
             auto const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
-        const Tuple *operator()(const DAGParameterLookup *const op) const {
+        auto operator()(const DAGParameterLookup *const op) const
+                -> const Tuple * {
             return op->tuple->type;
         }
 
-        const Tuple *operator()(const DAGParquetScan *const op) const {
+        auto operator()(const DAGParquetScan *const op) const -> const Tuple * {
             return op->tuple->type;
         }
 
-        const Tuple *operator()(const DAGPartition *const op) const {
+        auto operator()(const DAGPartition *const op) const -> const Tuple * {
             auto const element_type = dag_->predecessor(op)->tuple->type;
 
             return Tuple::MakeTuple(
@@ -321,13 +329,13 @@ const Tuple *ComputeOutputType(const DAG *const dag,
                      Array::MakeArray(element_type, ArrayLayout::kC, 1)});
         }
 
-        const Tuple *operator()(const DAGPipeline *const op) const {
+        auto operator()(const DAGPipeline *const op) const -> const Tuple * {
             assert(dag_->has_inner_dag(op));
             auto const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
-        const Tuple *operator()(const DAGProjection *const op) const {
+        auto operator()(const DAGProjection *const op) const -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
             auto const &input_field_types = input_type->field_types;
 
@@ -350,7 +358,7 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return Tuple::MakeTuple(output_field_types);
         }
 
-        const Tuple *operator()(const DAGRange *const op) const {
+        auto operator()(const DAGRange *const op) const -> const Tuple * {
             auto const pred = dag_->predecessor(op);
             auto const input_type = pred->tuple->type;
             auto const element_type = input_type->field_types[0];
@@ -379,11 +387,11 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return computed_output_type;
         }
 
-        const Tuple *operator()(const DAGReduce *const op) const {
+        auto operator()(const DAGReduce *const op) const -> const Tuple * {
             return dag_->predecessor(op)->tuple->type;
         }
 
-        const Tuple *operator()(const DAGReduceByKey *const op) const {
+        auto operator()(const DAGReduceByKey *const op) const -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
             auto const key_type = input_type->field_types[0];
 
@@ -395,7 +403,8 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return input_type;
         }
 
-        const Tuple *operator()(const DAGReduceByKeyGrouped *const op) const {
+        auto operator()(const DAGReduceByKeyGrouped *const op) const
+                -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
             auto const key_type = input_type->field_types[0];
 
@@ -407,7 +416,8 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return input_type;
         }
 
-        const Tuple *operator()(const DAGReduceByIndex *const op) const {
+        auto operator()(const DAGReduceByIndex *const op) const
+                -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
             auto const key_type = input_type->field_types[0];
 
@@ -419,19 +429,21 @@ const Tuple *ComputeOutputType(const DAG *const dag,
             return input_type;
         }
 
-        const Tuple *operator()(const DAGSplitColumnData *const op) const {
+        auto operator()(const DAGSplitColumnData *const op) const
+                -> const Tuple * {
             return dag_->predecessor(op, 0)->tuple->type;
         }
 
-        const Tuple *operator()(const DAGSplitRowData *const op) const {
+        auto operator()(const DAGSplitRowData *const op) const
+                -> const Tuple * {
             return dag_->predecessor(op, 0)->tuple->type;
         }
 
-        const Tuple *operator()(const DAGSplitRange *const op) const {
+        auto operator()(const DAGSplitRange *const op) const -> const Tuple * {
             return dag_->predecessor(op, 0)->tuple->type;
         }
 
-        const Tuple *operator()(const DAGOperator *const op) const {
+        auto operator()(const DAGOperator *const op) const -> const Tuple * {
             throw std::invalid_argument(
                     "Cannot infer output type of unknown operator " +
                     op->name());

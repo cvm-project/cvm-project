@@ -15,8 +15,8 @@
 
 namespace llvm_helpers {
 
-llvm::Type *c_type_to_llvm(const std::string &type_,
-                           llvm::LLVMContext *context) {
+auto c_type_to_llvm(const std::string &type_, llvm::LLVMContext *context)
+        -> llvm::Type * {
     assert(context != nullptr);
     if (type_ == "long") return llvm::Type::getInt64Ty(*context);
     if (type_ == "int") return llvm::Type::getInt32Ty(*context);
@@ -26,8 +26,8 @@ llvm::Type *c_type_to_llvm(const std::string &type_,
     return llvm::Type::getDoubleTy(*context);
 }
 
-llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
-                            dag::collection::Field *const field) {
+auto ComputeLLVMType(llvm::LLVMContext *const context,
+                     dag::collection::Field *const field) -> llvm::Type * {
     class LLVMFieldTypeVisitor
         : public Visitor<LLVMFieldTypeVisitor, dag::collection::Field,
                          boost::mpl::list<                //
@@ -38,7 +38,7 @@ llvm::Type *ComputeLLVMType(llvm::LLVMContext *const context,
         explicit LLVMFieldTypeVisitor(llvm::LLVMContext *context)
             : context(context) {}
 
-        llvm::Type *operator()(dag::collection::Atomic *const field) {
+        auto operator()(dag::collection::Atomic *const field) -> llvm::Type * {
             return c_type_to_llvm(field->field_type()->type, context);
         }
 
@@ -93,8 +93,8 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
     }
 }
 
-std::vector<size_t> Function::ComputeOutputPositionsPrimitive(
-        size_t arg_position) const {
+auto Function::ComputeOutputPositionsPrimitive(size_t arg_position) const
+        -> std::vector<size_t> {
     std::vector<size_t> res;
 
     auto function = module_->getFunctionList().begin();
@@ -113,8 +113,8 @@ std::vector<size_t> Function::ComputeOutputPositionsPrimitive(
     return res;
 }
 
-std::vector<size_t> Function::ComputeOutputPositionsStruct(
-        size_t arg_position) const {
+auto Function::ComputeOutputPositionsStruct(size_t arg_position) const
+        -> std::vector<size_t> {
     std::vector<size_t> res;
 
     auto function = module_->getFunctionList().begin();
@@ -137,8 +137,8 @@ std::vector<size_t> Function::ComputeOutputPositionsStruct(
     return res;
 }
 
-std::vector<size_t> Function::ComputeOutputPositionsCallerPtr(
-        size_t arg_position) const {
+auto Function::ComputeOutputPositionsCallerPtr(size_t arg_position) const
+        -> std::vector<size_t> {
     std::vector<size_t> res;
 
     // the first arg is the return pointer
@@ -163,8 +163,8 @@ std::vector<size_t> Function::ComputeOutputPositionsCallerPtr(
     return res;
 }
 
-std::vector<size_t> Function::ComputeOutputPositions(
-        size_t arg_position) const {
+auto Function::ComputeOutputPositions(size_t arg_position) const
+        -> std::vector<size_t> {
     switch (ret_type_) {
         case ReturnType::kPrimitive:
             return ComputeOutputPositionsPrimitive(arg_position);
@@ -177,7 +177,7 @@ std::vector<size_t> Function::ComputeOutputPositions(
     }
 }
 
-bool Function::ComputeIsArgumentRead(size_t arg_pos) const {
+auto Function::ComputeIsArgumentRead(size_t arg_pos) const -> bool {
     // go over uses and check if at least one is not an insert or a store
     if (ret_type_ == ReturnType::kCallerPtr) {
         arg_pos++;
@@ -204,8 +204,9 @@ bool Function::ComputeIsArgumentRead(size_t arg_pos) const {
     return used;
 }
 
-std::string Function::AdjustFilterSignature(
-        DAGFilter *const pFilter, const DAGOperator *const predecessor) {
+auto Function::AdjustFilterSignature(DAGFilter *const pFilter,
+                                     const DAGOperator *const predecessor)
+        -> std::string {
     auto const new_mod = std::make_unique<llvm::Module>("filter", context_);
 
     std::vector<llvm::Type *> types;
@@ -262,7 +263,7 @@ std::string Function::AdjustFilterSignature(
     return ret;
 }
 
-std::string Function::AddInlineAttribute() {
+auto Function::AddInlineAttribute() -> std::string {
     auto function = module_->getFunctionList().begin();
     function->addFnAttr(llvm::Attribute::AlwaysInline);
     std::string ret;

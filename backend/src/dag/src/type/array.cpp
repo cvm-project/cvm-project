@@ -16,9 +16,8 @@ using dag::type::Tuple;
 namespace dag {
 namespace type {
 
-const Array *Array::MakeArray(const dag::type::Tuple *type,
-                              const ArrayLayout &layout,
-                              const size_t &num_dimensions) {
+auto Array::MakeArray(const dag::type::Tuple *type, const ArrayLayout &layout,
+                      const size_t &num_dimensions) -> const Array * {
     std::unique_ptr<Array> ret(new Array(type));
     ret->layout = layout;
     ret->num_dimensions = num_dimensions;
@@ -26,7 +25,7 @@ const Array *Array::MakeArray(const dag::type::Tuple *type,
             MakeType(std::move(ret)));
 }
 
-std::string Array::to_string() const {
+auto Array::to_string() const -> std::string {
     return "{" + tuple_type->to_string() + "}" + dag::type::to_string(layout) +
            std::to_string(num_dimensions);
 }
@@ -45,7 +44,7 @@ void Array::to_json(nlohmann::json *json) const {
     json->emplace("tuple_type", tuple_type);
 }
 
-std::string to_string(const ArrayLayout &layout) {
+auto to_string(const ArrayLayout &layout) -> std::string {
     switch (layout) {
         case kC:
             return "C";
@@ -60,8 +59,8 @@ std::string to_string(const ArrayLayout &layout) {
 }  // namespace dag
 
 // JSON serialization ArrayLayout
-ArrayLayout nlohmann::adl_serializer<ArrayLayout>::from_json(
-        const nlohmann::json &json) {
+auto nlohmann::adl_serializer<ArrayLayout>::from_json(
+        const nlohmann::json &json) -> ArrayLayout {
     std::string layout = json;
     if (layout == "C") {
         return ArrayLayout::kC;

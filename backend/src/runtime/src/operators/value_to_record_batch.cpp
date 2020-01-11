@@ -19,8 +19,8 @@ using runtime::values::Tuple;
 namespace runtime {
 namespace operators {
 
-Optional<std::shared_ptr<arrow::RecordBatch>>
-ValueToRecordBatchOperator::next() {
+auto ValueToRecordBatchOperator::next()
+        -> Optional<std::shared_ptr<arrow::RecordBatch>> {
     auto const input = upstream_->next();
     if (dynamic_cast<None*>(input.get()) != nullptr) {
         return {};

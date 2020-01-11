@@ -2,7 +2,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-boost::filesystem::path get_lib_path() {
+auto get_lib_path() -> boost::filesystem::path {
     const auto lib_path = std::getenv("JITQPATH");
     if (lib_path == nullptr) {
         throw std::runtime_error(

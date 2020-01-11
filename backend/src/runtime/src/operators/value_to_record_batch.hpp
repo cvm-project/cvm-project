@@ -27,7 +27,7 @@ struct ValueToRecordBatchOperator {
         : upstream_(std::move(upstream)), schema_(std::move(schema)) {}
 
     void open() { upstream_->open(); }
-    Optional<std::shared_ptr<arrow::RecordBatch>> next();
+    auto next() -> Optional<std::shared_ptr<arrow::RecordBatch>>;
     void close() { upstream_->close(); }
 
 private:

@@ -20,8 +20,8 @@ namespace values {
 
 template <typename ConcreteValueType>
 struct DefaultValueParser : public ValueParser {
-    bool try_to_json(nlohmann::json &json,
-                     const Value *const val) const override {
+    auto try_to_json(nlohmann::json &json, const Value *const val) const
+            -> bool override {
         if (dynamic_cast<const ConcreteValueType *>(val) != nullptr) {
             to_json(json, val->as<const ConcreteValueType>());
             return true;
@@ -29,8 +29,8 @@ struct DefaultValueParser : public ValueParser {
         return false;
     }
 
-    std::unique_ptr<Value> from_json(
-            const nlohmann::json &json) const override {
+    auto from_json(const nlohmann::json &json) const
+            -> std::unique_ptr<Value> override {
         auto ptr = std::make_unique<ConcreteValueType>();
         runtime::values::from_json(json, ptr.get());
         return ptr;

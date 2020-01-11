@@ -8,14 +8,14 @@ using dag::type::Atomic;
 namespace dag {
 namespace type {
 
-const Atomic *Atomic::MakeAtomic(const std::string &type) {
+auto Atomic::MakeAtomic(const std::string &type) -> const Atomic * {
     std::unique_ptr<Atomic> ret(new Atomic());
     ret->type = type;
     return boost::polymorphic_pointer_downcast<const Atomic>(
             MakeType(std::move(ret)));
 }
 
-std::string Atomic::to_string() const { return type; }
+auto Atomic::to_string() const -> std::string { return type; }
 
 void Atomic::from_json(const nlohmann::json &json) { type = json.at("type"); }
 

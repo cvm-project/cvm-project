@@ -20,8 +20,8 @@ extern thread_local ExceptionInfo current_exception_info;
 }  //  namespace impl
 
 template <class ExceptionType>
-std::optional<boost::stacktrace::stacktrace> GetStackTrace(
-        const ExceptionType &ex) {
+auto GetStackTrace(const ExceptionType &ex)
+        -> std::optional<boost::stacktrace::stacktrace> {
     auto const current_info = impl::current_exception_info;
     if (&typeid(ex) != current_info.type || current_info.ptr != &ex) {
         return {};
@@ -29,7 +29,7 @@ std::optional<boost::stacktrace::stacktrace> GetStackTrace(
     return current_info.stacktrace;
 }
 
-std::string demangle(const char *symbol);
+auto demangle(const char *symbol) -> std::string;
 
 }  // namespace trace_exceptions
 

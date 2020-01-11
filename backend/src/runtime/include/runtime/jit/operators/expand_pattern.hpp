@@ -6,7 +6,8 @@
 namespace runtime {
 namespace operators {
 
-std::string ExpandPattern(const std::string &pattern, int64_t parameter);
+auto ExpandPattern(const std::string &pattern, int64_t parameter)
+        -> std::string;
 
 }  // namespace operators
 }  // namespace runtime

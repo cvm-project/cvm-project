@@ -5,7 +5,7 @@
 namespace dag {
 namespace utils {
 
-bool IsPipelineDriver(DAGOperator *const op) {
+auto IsPipelineDriver(DAGOperator *const op) -> bool {
     return IsInstanceOf<              //
             DAGMaterializeRowVector,  //
             DAGEnsureSingleTuple,     //
@@ -15,14 +15,14 @@ bool IsPipelineDriver(DAGOperator *const op) {
             >(op);
 }
 
-bool IsPipelinePredecessor(DAGOperator *const op) {
+auto IsPipelinePredecessor(DAGOperator *const op) -> bool {
     return IsInstanceOf<         //
             DAGParameterLookup,  //
             DAGPipeline          //
             >(op);
 }
 
-bool IsSingleTupleProducer(DAGOperator *const op) {
+auto IsSingleTupleProducer(DAGOperator *const op) -> bool {
     return IsInstanceOf<              //
             DAGMaterializeRowVector,  //
             DAGEnsureSingleTuple,     //
@@ -30,7 +30,7 @@ bool IsSingleTupleProducer(DAGOperator *const op) {
             >(op);
 }
 
-bool IsSourceOperator(DAGOperator *const op) {
+auto IsSourceOperator(DAGOperator *const op) -> bool {
     return IsInstanceOf<    //
             DAGColumnScan,  //
             DAGRowScan,     //

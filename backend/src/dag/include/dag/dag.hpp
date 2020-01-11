@@ -96,14 +96,16 @@ private:
      */
     struct EdgeToFlowFunc {
         explicit EdgeToFlowFunc(const DAG *const dag) : dag_(dag) {}
-        Flow operator()(const Edge &e) const { return dag_->to_flow(e); }
+        auto operator()(const Edge &e) const -> Flow {
+            return dag_->to_flow(e);
+        }
         const DAG *const dag_;
     };
 
     struct FilterFlowBySourcePortFunc {
         explicit FilterFlowBySourcePortFunc(const int source_port)
             : source_port_(source_port) {}
-        bool operator()(const Flow &f) const {
+        auto operator()(const Flow &f) const -> bool {
             return f.source.port == source_port_;
         }
         const int source_port_;
@@ -112,7 +114,7 @@ private:
     struct FilterFlowByTargetPortFunc {
         explicit FilterFlowByTargetPortFunc(const int target_port)
             : target_port_(target_port) {}
-        bool operator()(const Flow &f) const {
+        auto operator()(const Flow &f) const -> bool {
             return f.target.port == target_port_;
         }
         const int target_port_;
@@ -120,7 +122,7 @@ private:
 
     struct VertexToOperatorFunc {
         explicit VertexToOperatorFunc(const DAG *const dag) : dag_(dag) {}
-        DAGOperator *operator()(const Vertex &v) const {
+        auto operator()(const Vertex &v) const -> DAGOperator * {
             return dag_->to_operator(v);
         }
         const DAG *const dag_;
@@ -130,7 +132,7 @@ private:
         explicit FilterInputByOperatorFunc(const DAGOperator *const op)
             : op_(op) {}
         template <typename T>
-        bool operator()(const T &it) const {
+        auto operator()(const T &it) const -> bool {
             return it.second.op == op_;
         }
         const DAGOperator *const op_;
@@ -190,86 +192,91 @@ public:
      * Normal member functions
      */
 private:
-    Vertex AddOperator(DAGOperator *op, const VertexProperties &properties);
-    Vertex AddOperator(DAGOperator *op, size_t id,
-                       const VertexProperties &properties);
+    auto AddOperator(DAGOperator *op, const VertexProperties &properties)
+            -> Vertex;
+    auto AddOperator(DAGOperator *op, size_t id,
+                     const VertexProperties &properties) -> Vertex;
 
 public:
-    Vertex AddOperator(DAGOperator *op, DAG *inner_dag = nullptr);
-    Vertex AddOperator(DAGOperator *op, size_t id, DAG *inner_dag = nullptr);
-    Vertex ReplaceOperator(const DAGOperator *old_op, DAGOperator *new_op);
+    auto AddOperator(DAGOperator *op, DAG *inner_dag = nullptr) -> Vertex;
+    auto AddOperator(DAGOperator *op, size_t id, DAG *inner_dag = nullptr)
+            -> Vertex;
+    auto ReplaceOperator(const DAGOperator *old_op, DAGOperator *new_op)
+            -> Vertex;
     void RemoveOperator(const DAGOperator *op);
     void MoveOperator(DAG *other_dag, DAGOperator *op);
 
-    Edge AddFlow(const DAGOperator *source, const DAGOperator *target,
-                 int target_port = 0);
-    Edge AddFlow(const DAGOperator *source, int source_port,
-                 const DAGOperator *target, int target_port = 0);
-    Edge AddFlow(const DAGOperator *source, const FlowTip &target);
-    Edge AddFlow(const DAGOperator *source, int source_port,
-                 const FlowTip &target);
-    Edge AddFlow(const FlowTip &source, const DAGOperator *target,
-                 int target_port = 0);
-    Edge AddFlow(const FlowTip &source, const FlowTip &target);
+    auto AddFlow(const DAGOperator *source, const DAGOperator *target,
+                 int target_port = 0) -> Edge;
+    auto AddFlow(const DAGOperator *source, int source_port,
+                 const DAGOperator *target, int target_port = 0) -> Edge;
+    auto AddFlow(const DAGOperator *source, const FlowTip &target) -> Edge;
+    auto AddFlow(const DAGOperator *source, int source_port,
+                 const FlowTip &target) -> Edge;
+    auto AddFlow(const FlowTip &source, const DAGOperator *target,
+                 int target_port = 0) -> Edge;
+    auto AddFlow(const FlowTip &source, const FlowTip &target) -> Edge;
     void RemoveFlow(const Flow &f) { RemoveFlow(f.e); }
     void RemoveFlow(const Edge &e);
 
     void Clear();
 
-    bool HasCycle() const;
-    bool IsTree() const;
+    auto HasCycle() const -> bool;
+    auto IsTree() const -> bool;
 
     /*
      * Getter/setter type functions
      */
-    const Graph &graph() const { return graph_; }
+    auto graph() const -> const Graph & { return graph_; }
 
-    OperatorRange operators() const;
-    FlowRange flows() const;
+    auto operators() const -> OperatorRange;
+    auto flows() const -> FlowRange;
 
-    bool contains(const DAGOperator *op) const;
+    auto contains(const DAGOperator *op) const -> bool;
 
-    DAGOperator *to_operator(const Vertex &v) const;
-    Flow to_flow(const Edge &e) const;
-    Vertex to_vertex(const DAGOperator *op) const;
-    Edge to_edge(const Flow &f) const { return f.e; }
+    auto to_operator(const Vertex &v) const -> DAGOperator *;
+    auto to_flow(const Edge &e) const -> Flow;
+    auto to_vertex(const DAGOperator *op) const -> Vertex;
+    auto to_edge(const Flow &f) const -> Edge { return f.e; }
 
-    InFlowRange in_flows(const DAGOperator *op) const;
-    OutFlowRange out_flows(const DAGOperator *op) const;
-    InFlowByTargetPortRange in_flows(const DAGOperator *op,
-                                     int target_port) const;
-    OutFlowBySourcePortRange out_flows(const DAGOperator *op,
-                                       int source_port) const;
+    auto in_flows(const DAGOperator *op) const -> InFlowRange;
+    auto out_flows(const DAGOperator *op) const -> OutFlowRange;
+    auto in_flows(const DAGOperator *op, int target_port) const
+            -> InFlowByTargetPortRange;
+    auto out_flows(const DAGOperator *op, int source_port) const
+            -> OutFlowBySourcePortRange;
 
-    Flow in_flow(const DAGOperator *op) const;
-    Flow in_flow(const DAGOperator *op, int target_port) const;
-    Flow out_flow(const DAGOperator *op) const;
-    Flow out_flow(const DAGOperator *op, int source_port) const;
+    auto in_flow(const DAGOperator *op) const -> Flow;
+    auto in_flow(const DAGOperator *op, int target_port) const -> Flow;
+    auto out_flow(const DAGOperator *op) const -> Flow;
+    auto out_flow(const DAGOperator *op, int source_port) const -> Flow;
 
-    size_t in_degree(const DAGOperator *op) const;
-    size_t in_degree(const DAGOperator *op, int target_port) const;
-    size_t out_degree(const DAGOperator *op) const;
-    size_t out_degree(const DAGOperator *op, int source_port) const;
+    auto in_degree(const DAGOperator *op) const -> size_t;
+    auto in_degree(const DAGOperator *op, int target_port) const -> size_t;
+    auto out_degree(const DAGOperator *op) const -> size_t;
+    auto out_degree(const DAGOperator *op, int source_port) const -> size_t;
 
-    DAGOperator *predecessor(const DAGOperator *op) const;
-    DAGOperator *predecessor(const DAGOperator *op, int target_port) const;
-    DAGOperator *successor(const DAGOperator *op) const;
-    DAGOperator *successor(const DAGOperator *op, int source_port) const;
+    auto predecessor(const DAGOperator *op) const -> DAGOperator *;
+    auto predecessor(const DAGOperator *op, int target_port) const
+            -> DAGOperator *;
+    auto successor(const DAGOperator *op) const -> DAGOperator *;
+    auto successor(const DAGOperator *op, int source_port) const
+            -> DAGOperator *;
 
-    bool has_inner_dag(const DAGOperator *op) const;
-    DAG *inner_dag(const DAGOperator *op) const;
+    auto has_inner_dag(const DAGOperator *op) const -> bool;
+    auto inner_dag(const DAGOperator *op) const -> DAG *;
     void set_inner_dag(const DAGOperator *op, DAG *inner_dag);
     void remove_inner_dag(const DAGOperator *op);
 
-    size_t in_degree() const;
-    size_t num_in_ports() const;
-    InputRange inputs() const;
-    InputRangeTips inputs(int dag_input_port) const;
-    InputRangeByOperator inputs(const DAGOperator *op) const;
-    FlowTip input() const;
-    FlowTip input(int dag_input_port) const;
-    std::pair<int, FlowTip> input(const DAGOperator *op) const;
-    int input_port(const DAGOperator *op) const;
+    auto in_degree() const -> size_t;
+    auto num_in_ports() const -> size_t;
+    auto inputs() const -> InputRange;
+    auto inputs(int dag_input_port) const -> InputRangeTips;
+    auto inputs(const DAGOperator *op) const -> InputRangeByOperator;
+    auto input() const -> FlowTip;
+    auto input(int dag_input_port) const -> FlowTip;
+    auto input(const DAGOperator *op) const -> std::pair<int, FlowTip>;
+    auto input_port(const DAGOperator *op) const -> int;
     void set_input(const FlowTip &input);
     void set_input(DAGOperator *op, int operator_input_port = 0);
     void set_input(int dag_input_port, const FlowTip &input);
@@ -280,12 +287,12 @@ public:
                    int operator_input_port = 0);
     void reset_inputs();
 
-    size_t out_degree() const;
-    size_t num_out_ports() const;
-    OutputRange outputs() const;
-    OutputRangeByOperator outputs(const DAGOperator *op) const;
-    FlowTip output() const;
-    FlowTip output(int dag_output_port) const;
+    auto out_degree() const -> size_t;
+    auto num_out_ports() const -> size_t;
+    auto outputs() const -> OutputRange;
+    auto outputs(const DAGOperator *op) const -> OutputRangeByOperator;
+    auto output() const -> FlowTip;
+    auto output(int dag_output_port) const -> FlowTip;
     void set_output(const FlowTip &output);
     void set_output(DAGOperator *op, int operator_output_port = 0);
     void set_output(int dag_output_port, const FlowTip &output);
@@ -294,7 +301,7 @@ public:
     void reset_outputs();
 
 private:
-    size_t last_operator_id() const;
+    auto last_operator_id() const -> size_t;
 
     Graph graph_;
     std::set<size_t> operator_ids_;
@@ -306,7 +313,7 @@ namespace nlohmann {
 
 template <>
 struct adl_serializer<std::unique_ptr<DAG>> {
-    static std::unique_ptr<DAG> from_json(const nlohmann::json &json);
+    static auto from_json(const nlohmann::json &json) -> std::unique_ptr<DAG>;
     // NOLINTNEXTLINE(google-runtime-references)
     static void to_json(nlohmann::json &json, const std::unique_ptr<DAG> &dag);
 };
@@ -320,7 +327,7 @@ void to_json(nlohmann::json &json, const DAG *dag);
 // NOLINTNEXTLINE(google-runtime-references)
 void to_json(nlohmann::json &json, const std::unique_ptr<const DAG> &dag);
 
-DAG *ParseDag(std::istream *istream);
-DAG *ParseDag(const std::string &dagstr);
+auto ParseDag(std::istream *istream) -> DAG *;
+auto ParseDag(const std::string &dagstr) -> DAG *;
 
 #endif  // DAG_DAG_HPP

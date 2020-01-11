@@ -13,10 +13,10 @@ struct FreeRefCounter : public RefCounter {
 
     FreeRefCounter(const FreeRefCounter& other) = default;
     FreeRefCounter(FreeRefCounter&& other) = delete;
-    FreeRefCounter& operator=(const FreeRefCounter& other) = default;
-    FreeRefCounter& operator=(FreeRefCounter&& other) = delete;
+    auto operator=(const FreeRefCounter& other) -> FreeRefCounter& = default;
+    auto operator=(FreeRefCounter&& other) -> FreeRefCounter& = delete;
 
-    std::size_t num_elements() const { return num_elements; }
+    auto num_elements() const -> std::size_t { return num_elements; }
     void set_num_elements(const std::size_t num_elements) {
         num_elements_ = num_elements;
     }

@@ -40,13 +40,15 @@ public:
         : upstream_(std::move(upstream)), fs_(std::move(fs)) {}
     ParquetFileOperator(const ParquetFileOperator& other) = delete;
     ParquetFileOperator(ParquetFileOperator&& other) = delete;
-    ParquetFileOperator& operator=(const ParquetFileOperator& other) = delete;
-    ParquetFileOperator& operator=(ParquetFileOperator&& other) = delete;
+    auto operator=(const ParquetFileOperator& other)
+            -> ParquetFileOperator& = delete;
+    auto operator=(ParquetFileOperator&& other)
+            -> ParquetFileOperator& = delete;
 
     ~ParquetFileOperator() { assert(!metadata_fetcher_.joinable()); }
 
     void open();
-    std::optional<std::unique_ptr<ParquetFileHandle>> next();
+    auto next() -> std::optional<std::unique_ptr<ParquetFileHandle>>;
     void close();
 
 private:
@@ -54,8 +56,8 @@ private:
 
     void FetchMetaData(std::vector<std::string> file_paths);
 
-    bool HasPendingFileHandles();
-    bool AreAllFilesProcessed();
+    auto HasPendingFileHandles() -> bool;
+    auto AreAllFilesProcessed() -> bool;
     void WaitForFileHandles();
 
     std::unique_ptr<FileNameOperator> upstream_;
@@ -89,10 +91,10 @@ public:
                                         std::move(col_ids))) {}
 
     void open();
-    std::optional<OutputType> next();
+    auto next() -> std::optional<OutputType>;
     void close();
 
-    static const std::map<std::string, TypeTag>& type_tags();
+    static auto type_tags() -> const std::map<std::string, TypeTag>&;
 
 private:
     struct ColumnInfo {
@@ -101,18 +103,19 @@ private:
         std::vector<std::shared_ptr<Predicate>> range_predicates;
     };
 
-    std::vector<ColumnInfo> MakeColumnInfos(
-            std::vector<std::vector<std::shared_ptr<Predicate>>>
-                    range_predicates,
-            std::vector<std::string> column_types, std::vector<int> col_ids);
+    auto MakeColumnInfos(std::vector<std::vector<std::shared_ptr<Predicate>>>
+                                 range_predicates,
+                         std::vector<std::string> column_types,
+                         std::vector<int> col_ids) -> std::vector<ColumnInfo>;
 
-    std::vector<int> ComputeInterestingRowGroups(
-            const std::shared_ptr<parquet::FileMetaData>& file_metadata);
+    auto ComputeInterestingRowGroups(
+            const std::shared_ptr<parquet::FileMetaData>& file_metadata)
+            -> std::vector<int>;
 
-    bool EvaluateRangePredicates(
+    auto EvaluateRangePredicates(
             const std::shared_ptr<parquet::RowGroupStatistics>& statistics,
             const std::vector<std::shared_ptr<Predicate>>& range_predicates,
-            const TypeTag& type_tag);
+            const TypeTag& type_tag) -> bool;
 
     const std::vector<ColumnInfo> column_infos_;
     const std::unique_ptr<ParquetFileOperator> upstream_;
@@ -133,7 +136,7 @@ public:
                                         std::move(col_ids))) {}
 
     void open() override;
-    std::shared_ptr<runtime::values::Value> next() override;
+    auto next() -> std::shared_ptr<runtime::values::Value> override;
     void close() override;
 
 private:
@@ -146,11 +149,11 @@ private:
         TypeTag type_tag;
     };
 
-    std::vector<ColumnInfo> MakeColumnInfos(
-            std::vector<std::string> column_types, std::vector<int> col_ids);
+    auto MakeColumnInfos(std::vector<std::string> column_types,
+                         std::vector<int> col_ids) -> std::vector<ColumnInfo>;
 
-    std::pair<int64_t, std::unique_ptr<runtime::values::Value>> ReadColumnBatch(
-            int col);
+    auto ReadColumnBatch(int col)
+            -> std::pair<int64_t, std::unique_ptr<runtime::values::Value>>;
 
     // "Iterator" state
     size_t num_batches_ = 0;

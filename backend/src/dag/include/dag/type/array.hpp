@@ -18,7 +18,7 @@ namespace type {
 struct Tuple;
 
 enum ArrayLayout { kC, kF };
-std::string to_string(const ArrayLayout &layout);
+auto to_string(const ArrayLayout &layout) -> std::string;
 
 struct Array : public FieldType {
 private:
@@ -29,10 +29,10 @@ protected:
     friend struct nlohmann::adl_serializer<std::unique_ptr<Type>>;
 
 public:
-    static const Array *MakeArray(const Tuple *type, const ArrayLayout &layout,
-                                  const size_t &num_dimensions);
+    static auto MakeArray(const Tuple *type, const ArrayLayout &layout,
+                          const size_t &num_dimensions) -> const Array *;
 
-    std::string to_string() const override;
+    auto to_string() const -> std::string override;
     void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 
@@ -48,7 +48,7 @@ namespace nlohmann {
 
 template <>
 struct adl_serializer<dag::type::ArrayLayout> {
-    static dag::type::ArrayLayout from_json(const nlohmann::json &json);
+    static auto from_json(const nlohmann::json &json) -> dag::type::ArrayLayout;
     // NOLINTNEXTLINE(google-runtime-references)
     static void to_json(nlohmann::json &json, dag::type::ArrayLayout layout);
 };

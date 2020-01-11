@@ -23,37 +23,37 @@ class Context;
 class StructDef;
 class FunctionDef;
 
-std::pair<std::string, std::string> GenerateCode(DAG *dag,
-                                                 const std::string &config);
+auto GenerateCode(DAG *dag, const std::string &config)
+        -> std::pair<std::string, std::string>;
 
-std::string AtomicTypeNameToRuntimeTypename(const std::string &type_name);
+auto AtomicTypeNameToRuntimeTypename(const std::string &type_name)
+        -> std::string;
 
 void GenerateTupleToValue(Context *context, const dag::type::Tuple *tuple_type);
 
 void GenerateValueToTuple(Context *context, const dag::type::Tuple *tuple_type);
 
-FunctionDef GenerateExecuteTuples(DAG *dag, Context *context);
+auto GenerateExecuteTuples(DAG *dag, Context *context) -> FunctionDef;
 
-std::string GenerateExecuteValues(DAG *dag, Context *context);
+auto GenerateExecuteValues(DAG *dag, Context *context) -> std::string;
 
-std::string GenerateExecutePipelines(Context *context, DAG *dag);
+auto GenerateExecutePipelines(Context *context, DAG *dag) -> std::string;
 
-std::string GenerateLlvmFunctor(
-        Context *context, const std::string &func_name_prefix,
-        const std::string &llvm_ir,
-        const std::vector<const StructDef *> &input_types,
-        const std::string &return_type);
+auto GenerateLlvmFunctor(Context *context, const std::string &func_name_prefix,
+                         const std::string &llvm_ir,
+                         const std::vector<const StructDef *> &input_types,
+                         const std::string &return_type) -> std::string;
 
 void StoreLlvmCode(Context *context, const std::string &llvm_ir,
                    const std::string &func_name);
 
-std::pair<const StructDef *, bool> EmitStructDefinition(
-        Context *context, const dag::type::Type *key,
-        const std::vector<std::string> &types,
-        const std::vector<std::string> &names);
+auto EmitStructDefinition(Context *context, const dag::type::Type *key,
+                          const std::vector<std::string> &types,
+                          const std::vector<std::string> &names)
+        -> std::pair<const StructDef *, bool>;
 
-const StructDef *EmitTupleStructDefinition(Context *context,
-                                           const dag::type::Tuple *tuple);
+auto EmitTupleStructDefinition(Context *context, const dag::type::Tuple *tuple)
+        -> const StructDef *;
 
 }  // namespace cpp
 }  // namespace code_gen

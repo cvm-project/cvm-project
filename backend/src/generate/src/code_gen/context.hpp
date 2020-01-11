@@ -18,7 +18,7 @@ struct StructDef {
     explicit StructDef(const std::string &name,
                        const std::vector<std::string> &types,
                        const std::vector<std::string> &names);
-    std::string ComputeDefinition() const;
+    auto ComputeDefinition() const -> std::string;
 
     const std::string name;
     const std::vector<std::string> types;
@@ -49,15 +49,17 @@ public:
           includes_(includes),
           tuple_type_descs_(tuple_type_descs) {}
 
-    std::string GenerateSymbolName(const std::string &prefix,
-                                   bool try_empty_suffix = false);
+    auto GenerateSymbolName(const std::string &prefix,
+                            bool try_empty_suffix = false) -> std::string;
 
-    std::ostream &declarations() { return *declarations_; }
-    std::ostream &definitions() { return *definitions_; }
-    std::ostream &llvm_code() { return *llvm_code_; }
+    auto declarations() -> std::ostream & { return *declarations_; }
+    auto definitions() -> std::ostream & { return *definitions_; }
+    auto llvm_code() -> std::ostream & { return *llvm_code_; }
 
-    std::set<std::string> &includes() { return *includes_; }
-    TupleTypeRegistry &tuple_type_descs() { return *tuple_type_descs_; }
+    auto includes() -> std::set<std::string> & { return *includes_; }
+    auto tuple_type_descs() -> TupleTypeRegistry & {
+        return *tuple_type_descs_;
+    }
 
 private:
     std::ostream *const declarations_;

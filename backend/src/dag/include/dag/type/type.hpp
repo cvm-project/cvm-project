@@ -16,7 +16,7 @@ namespace type {
 struct Type {
 public:
     virtual ~Type() = default;
-    virtual std::string to_string() const = 0;
+    virtual auto to_string() const -> std::string = 0;
 
     Type(Type const &) = delete;
     Type(Type const &&) = delete;
@@ -32,7 +32,7 @@ protected:
 };
 
 using TypeRegistry = ::utils::Registry<const Type>;
-const Type *MakeType(std::unique_ptr<const Type> &&type);
+auto MakeType(std::unique_ptr<const Type> &&type) -> const Type *;
 
 }  // namespace type
 }  // namespace dag
@@ -42,12 +42,13 @@ namespace nlohmann {
 template <>
 struct adl_serializer<std::unique_ptr<dag::type::Type>> {
     using Type = dag::type::Type;
-    static std::unique_ptr<Type> from_json(const nlohmann::json &json);
+    static auto from_json(const nlohmann::json &json) -> std::unique_ptr<Type>;
 };
 
 template <typename DagType>
 struct adl_serializer<raw_ptr<const DagType>> {
-    static raw_ptr<const DagType> from_json(const nlohmann::json &json) {
+    static auto from_json(const nlohmann::json &json)
+            -> raw_ptr<const DagType> {
         // Get empty type and use it for deserialization
         auto type = json.get<std::unique_ptr<dag::type::Type>>();
         type->from_json(json);

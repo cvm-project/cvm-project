@@ -12,7 +12,7 @@ namespace runtime {
 namespace aws {
 namespace s3 {
 
-Aws::S3::S3Client* MakeClient() {
+auto MakeClient() -> Aws::S3::S3Client* {
     Aws::Client::ClientConfiguration cfg;
     cfg.connectTimeoutMs = 3000;
     cfg.requestTimeoutMs = 3000;
@@ -58,7 +58,7 @@ Aws::S3::S3Client* MakeClient() {
             false);
 }
 
-std::string LookupErrorString(const Aws::S3::S3Errors& code) {
+auto LookupErrorString(const Aws::S3::S3Errors& code) -> std::string {
     using S3Errors = Aws::S3::S3Errors;
     const static std::map<Aws::S3::S3Errors, std::string> strings = {
             {S3Errors::INCOMPLETE_SIGNATURE, "INCOMPLETE_SIGNATURE"},

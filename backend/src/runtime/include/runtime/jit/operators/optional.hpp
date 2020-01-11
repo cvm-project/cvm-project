@@ -16,7 +16,7 @@ public:
     // NOLINTNEXTLINE(google-explicit-constructor, hicpp-explicit-conversions)
     operator T() const { return value(); }
 
-    const T &value() const {
+    auto value() const -> const T & {
         assert(initialized_);
         return value_;
     }

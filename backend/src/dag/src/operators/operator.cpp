@@ -41,18 +41,19 @@ void to_json(nlohmann::json &json, const std::unique_ptr<DAGOperator> &op) {
     to_json(json, *op);
 }
 
-bool DAGOperator::HasInOutput(const dag::AttributeId *const attribute) const {
+auto DAGOperator::HasInOutput(const dag::AttributeId *const attribute) const
+        -> bool {
     return boost::algorithm::any_of(tuple->fields, [&](auto const &f) {
         return *(f->attribute_id()) == *attribute;
     });
 }
 
-bool DAGOperator::Reads(const dag::AttributeId *attribute) const {
+auto DAGOperator::Reads(const dag::AttributeId *attribute) const -> bool {
     return boost::algorithm::any_of(
             read_set, [&](auto const &col) { return *col == *attribute; });
 }
 
-bool DAGOperator::Writes(const dag::AttributeId *attribute) const {
+auto DAGOperator::Writes(const dag::AttributeId *attribute) const -> bool {
     return boost::algorithm::any_of(
             write_set, [&](auto const &col) { return *col == *attribute; });
 }
@@ -76,7 +77,7 @@ void LoadOperators() {
     has_loaded = true;
 }
 
-DAGOperator *MakeDAGOperator(const std::string &op_name) {
+auto MakeDAGOperator(const std::string &op_name) -> DAGOperator * {
     LoadOperators();
     return (*OperatorParserRegistry::at(op_name))();
 }

@@ -24,7 +24,7 @@ StructDef::StructDef(
     assert(types.size() == names.size());
 }
 
-std::string StructDef::ComputeDefinition() const {
+auto StructDef::ComputeDefinition() const -> std::string {
     std::vector<std::string> name_types;
     name_types.reserve(names.size());
     for (auto i = 0; i < names.size(); i++) {
@@ -35,8 +35,8 @@ std::string StructDef::ComputeDefinition() const {
             .str();
 }
 
-std::string Context::GenerateSymbolName(const std::string &prefix,
-                                        const bool try_empty_suffix) {
+auto Context::GenerateSymbolName(const std::string &prefix,
+                                 const bool try_empty_suffix) -> std::string {
     const size_t counter = ((*unique_counters_)[prefix])++;
     if (counter == 0 && try_empty_suffix) {
         return prefix;

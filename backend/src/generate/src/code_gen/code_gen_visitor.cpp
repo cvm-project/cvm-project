@@ -394,8 +394,9 @@ void CodeGenVisitor::operator()(DAGOperator *const op) {
 }
 
 // TODO(ingo): This could be an independent visitor
-std::string CodeGenVisitor::visit_common(DAGOperator *op,
-                                         const std::string &operator_name) {
+auto CodeGenVisitor::visit_common(DAGOperator *op,
+                                  const std::string &operator_name)
+        -> std::string {
     plan_body_ << format("\n/** %s **/\n") % operator_name;
     const std::string var_name =
             context_->GenerateSymbolName("op_" + std::to_string(op->id), true);

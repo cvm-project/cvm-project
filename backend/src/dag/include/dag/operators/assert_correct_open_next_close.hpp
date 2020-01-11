@@ -8,10 +8,10 @@ class DAGAssertCorrectOpenNextClose : public DAGOperator {
                      "assert_correct_open_next_close");
 
 public:
-    size_t num_in_ports() const override {
+    auto num_in_ports() const -> size_t override {
         return 1;
     }  // XXX: make this dynamic
-    size_t num_out_ports() const override { return 1; }
+    auto num_out_ports() const -> size_t override { return 1; }
 };
 
 #endif  // DAG_OPERATORS_ASSERT_CORRECT_OPEN_NEXT_CLOSE_HPP

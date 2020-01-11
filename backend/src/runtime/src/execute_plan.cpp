@@ -12,7 +12,8 @@ namespace runtime {
 
 using PlanRegistry = utils::Registry<Plan, size_t>;
 
-std::string ExecutePlan(const size_t plan_id, const std::string &inputs_str) {
+auto ExecutePlan(const size_t plan_id, const std::string &inputs_str)
+        -> std::string {
     const auto inputs = values::ConvertFromJsonString(inputs_str.c_str());
     const auto plan = *(PlanRegistry::at(plan_id));
     const auto ret = plan(inputs);
@@ -20,7 +21,7 @@ std::string ExecutePlan(const size_t plan_id, const std::string &inputs_str) {
     return values::ConvertToJsonString(ret);
 }
 
-size_t RegisterPlan(const Plan &plan) {
+auto RegisterPlan(const Plan &plan) -> size_t {
     auto const plan_id = PlanRegistry::num_objects();
     PlanRegistry::Register(plan_id, std::make_unique<Plan>(plan));
     return plan_id;

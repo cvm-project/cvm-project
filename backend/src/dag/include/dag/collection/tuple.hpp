@@ -23,8 +23,8 @@ struct Tuple {
     Tuple() = delete;
     ~Tuple() = default;
     Tuple(Tuple &&field) = default;
-    Tuple &operator=(const Tuple &rhs) = delete;
-    Tuple &operator=(Tuple &&rhs) = default;
+    auto operator=(const Tuple &rhs) -> Tuple & = delete;
+    auto operator=(Tuple &&rhs) -> Tuple & = default;
 
     const type::Tuple *type{};
     std::vector<std::unique_ptr<Field>> fields{};

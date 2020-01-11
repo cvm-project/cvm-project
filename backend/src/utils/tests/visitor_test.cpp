@@ -9,23 +9,23 @@
 struct Visitable {
     explicit Visitable(int /*unused*/) {}
     virtual ~Visitable() = default;
-    virtual int f() = 0;
-    virtual int g() const = 0;
+    virtual auto f() -> int = 0;
+    virtual auto g() const -> int = 0;
 };
 struct A : public Visitable {
     explicit A(int i) : Visitable(i) {}
-    int f() override { return g(); }
-    int g() const override { return 1; }
+    auto f() -> int override { return g(); }
+    auto g() const -> int override { return 1; }
 };
 struct B : public Visitable {
     explicit B(int i) : Visitable(i) {}
-    int f() override { return g(); }
-    int g() const override { return 2; }
+    auto f() -> int override { return g(); }
+    auto g() const -> int override { return 2; }
 };
 struct C : public Visitable {
     explicit C(int i) : Visitable(i) {}
-    int f() override { return g(); }
-    int g() const override { return 3; }
+    auto f() -> int override { return g(); }
+    auto g() const -> int override { return 3; }
 };
 
 // Overloaded function with observable side effect
@@ -86,14 +86,14 @@ struct NonConstVisitableIntReturningVisitor
     : public Visitor<NonConstVisitableIntReturningVisitor, Visitable,
                      SampleTypes, int> {
     template <typename T>
-    int operator()(T *t) {
+    auto operator()(T *t) -> int {
         count_non_const++;
         count(t);
         t->f();
         return t->g();
     }
     template <typename T>
-    int operator()(T *t) const {
+    auto operator()(T *t) const -> int {
         count_const++;
         count(t);
         t->f();
@@ -105,14 +105,14 @@ struct ConstVisitableIntReturningVisitor
     : public Visitor<ConstVisitableIntReturningVisitor, const Visitable,
                      SampleTypes, int> {
     template <typename T>
-    int operator()(T *t) {
+    auto operator()(T *t) -> int {
         count_non_const++;
         count(t);
         // t->f();  // Not allowed: T is const
         return t->g();
     }
     template <typename T>
-    int operator()(T *t) const {
+    auto operator()(T *t) const -> int {
         count_const++;
         count(t);
         // t->f();  // Not allowed: T is const
@@ -130,9 +130,9 @@ struct NoCatchAllVisitor
 struct MoveOnlyReturnTypeVisitor
     : public Visitor<MoveOnlyReturnTypeVisitor, Visitable, SampleTypes,
                      std::unique_ptr<int>> {
-    std::unique_ptr<int> operator()(A * /*t*/) { return {}; }
-    std::unique_ptr<int> operator()(B * /*t*/) { return {}; }
-    std::unique_ptr<int> operator()(C * /*t*/) { return {}; }
+    auto operator()(A * /*t*/) -> std::unique_ptr<int> { return {}; }
+    auto operator()(B * /*t*/) -> std::unique_ptr<int> { return {}; }
+    auto operator()(C * /*t*/) -> std::unique_ptr<int> { return {}; }
 };
 
 // cppcheck-suppress missingOverride

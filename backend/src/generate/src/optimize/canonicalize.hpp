@@ -8,7 +8,7 @@ namespace optimize {
 class Canonicalize : public DagTransformation {
 public:
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override { return "canonicalize"; }
+    auto name() const -> std::string override { return "canonicalize"; }
 };
 
 }  // namespace optimize

@@ -11,7 +11,7 @@ public:
         : only_check_(only_check) {}
 
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override { return "type_inference"; }
+    auto name() const -> std::string override { return "type_inference"; }
 
 private:
     const bool only_check_;

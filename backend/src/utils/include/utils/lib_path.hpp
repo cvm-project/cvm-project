@@ -3,6 +3,6 @@
 
 #include <boost/filesystem/path.hpp>
 
-boost::filesystem::path get_lib_path();
+auto get_lib_path() -> boost::filesystem::path;
 
 #endif  // UTILS_LIB_PATH_HPP

@@ -12,31 +12,31 @@ namespace memory {
 class RefCounter;
 
 // Increments the given ref_counter if not nullptr and returns the new count.
-uint64_t Increment(RefCounter* ref_counter);
+auto Increment(RefCounter* ref_counter) -> uint64_t;
 
 // Decrements the given ref_counter if not nullptr and returns the new count.
 // Deletes the ref_counter if the count was decreased to 0.
-uint64_t Decrement(RefCounter* ref_counter);
+auto Decrement(RefCounter* ref_counter) -> uint64_t;
 
 class alignas(64) RefCounter {
-    friend uint64_t Increment(RefCounter* ref_counter);
-    friend uint64_t Decrement(RefCounter* ref_counter);
+    friend auto Increment(RefCounter* ref_counter) -> uint64_t;
+    friend auto Decrement(RefCounter* ref_counter) -> uint64_t;
 
 public:
     explicit RefCounter(void* pointer);
     RefCounter(const RefCounter& other) = delete;
     RefCounter(RefCounter&& other) = delete;
-    RefCounter& operator=(const RefCounter& other) = delete;
-    RefCounter& operator=(RefCounter&& other) = delete;
+    auto operator=(const RefCounter& other) -> RefCounter& = delete;
+    auto operator=(RefCounter&& other) -> RefCounter& = delete;
 
     virtual ~RefCounter();
 
-    void* pointer() const;
-    int64_t counter() const;
+    auto pointer() const -> void*;
+    auto counter() const -> int64_t;
 
 protected:
-    int64_t Increment();
-    int64_t Decrement();
+    auto Increment() -> int64_t;
+    auto Decrement() -> int64_t;
 
     void* pointer_;
 
@@ -99,7 +99,7 @@ public:
     // If this was a pointer, decrements its counter (which may delete the
     // counter and pointee). If provided with a pointer, assigns that pointer
     // to this and increments its counter. Otherwise, assigns not-a-pointer.
-    SharedPointer& operator=(const SharedPointer& other) {
+    auto operator=(const SharedPointer& other) -> SharedPointer& {
         // Update this, saving current state
         auto tmp_pointer = std::exchange(pointer_, other.pointer_);
         auto tmp_ref_counter = std::exchange(ref_counter_, other.ref_counter_);
@@ -114,7 +114,7 @@ public:
     // counter and pointee). If provided with a pointer, assigns that pointer
     // to this and takes over ownership. Otherwise, assigns not-a-pointer.
     // Leaves other as not-a-pointer.
-    SharedPointer& operator=(SharedPointer&& other) noexcept {
+    auto operator=(SharedPointer&& other) noexcept -> SharedPointer& {
         if (other.pointer_ != pointer_) {
             Decrement();
         }
@@ -131,10 +131,10 @@ public:
      * Pointer interface
      */
 
-    T* get() const { return pointer_; }
-    T* operator->() const { return pointer_; }
-    T& operator*() const { return *pointer_; }
-    T& operator[](const std::size_t idx) const { return pointer_[idx]; }
+    auto get() const -> T* { return pointer_; }
+    auto operator-> () const -> T* { return pointer_; }
+    auto operator*() const -> T& { return *pointer_; }
+    auto operator[](const std::size_t idx) const -> T& { return pointer_[idx]; }
 
     /*
      * Type conversion
@@ -143,14 +143,14 @@ public:
     // If this is a pointer, creates a new pointer to type U, with which it
     // shares ownership. Returns not-a-pointer otherwise.
     template <typename U>
-    SharedPointer<U> as() const {
+    auto as() const -> SharedPointer<U> {
         return SharedPointer<U>(ref_counter_, reinterpret_cast<U*>(pointer_));
     }
 
     // If this is a pointer, creates a new pointer to type U, to which it
     // transfers ownership. Returns not-a-pointer otherwise.
     template <typename U>
-    SharedPointer<U> into() {
+    auto into() -> SharedPointer<U> {
         return SharedPointer<U>(
                 std::exchange(ref_counter_, nullptr),
                 reinterpret_cast<U*>(std::exchange(pointer_, nullptr)),
@@ -161,7 +161,7 @@ public:
      * Member access
      */
 
-    RefCounter* ref_counter() const { return ref_counter_; }
+    auto ref_counter() const -> RefCounter* { return ref_counter_; }
 
 private:
     static void Decrement(RefCounter** const ref_counter_ptr,

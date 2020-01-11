@@ -12,27 +12,27 @@ RefCounter::RefCounter(void* const pointer) : counter_(0), pointer_(pointer) {
 
 RefCounter::~RefCounter() { assert(counter_.load() == 0); }
 
-void* RefCounter::pointer() const { return pointer_; }
-int64_t RefCounter::counter() const { return counter_.load(); }
+auto RefCounter::pointer() const -> void* { return pointer_; }
+auto RefCounter::counter() const -> int64_t { return counter_.load(); }
 
-int64_t RefCounter::Increment() {
+auto RefCounter::Increment() -> int64_t {
     assert(pointer_ != nullptr);
     return counter_.fetch_add(1) + 1;
 }
 
-int64_t RefCounter::Decrement() {
+auto RefCounter::Decrement() -> int64_t {
     assert(pointer_ != nullptr);
     const int64_t old_value = counter_.fetch_sub(1);
     assert(old_value > 0);
     return old_value - 1;
 }
 
-uint64_t Increment(RefCounter* const ref_counter) {
+auto Increment(RefCounter* const ref_counter) -> uint64_t {
     if (ref_counter == nullptr) return -1;
     return ref_counter->Increment();
 }
 
-uint64_t Decrement(RefCounter* const ref_counter) {
+auto Decrement(RefCounter* const ref_counter) -> uint64_t {
     if (ref_counter == nullptr) return -1;
     const uint64_t remaining_refs = ref_counter->Decrement();
     if (remaining_refs == 0) {

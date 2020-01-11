@@ -17,7 +17,7 @@ using dag::utils::IsInstanceOf;
 using dag::utils::IsSingleTupleProducer;
 using dag::utils::IsSourceOperator;
 
-DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
+auto MakeSplitOperator(const DAGOperator *const op) -> DAGOperator * {
     class MakeSplitOperatorVisitor
         : public Visitor<MakeSplitOperatorVisitor, const DAGOperator,
                          boost::mpl::list<       //
@@ -27,13 +27,13 @@ DAGOperator *MakeSplitOperator(const DAGOperator *const op) {
                                  >::type,
                          DAGOperator *> {
     public:
-        DAGOperator *operator()(const DAGColumnScan * /*op*/) {
+        auto operator()(const DAGColumnScan * /*op*/) -> DAGOperator * {
             return new DAGSplitColumnData();
         }
-        DAGOperator *operator()(const DAGRowScan * /*op*/) {
+        auto operator()(const DAGRowScan * /*op*/) -> DAGOperator * {
             return new DAGSplitRowData();
         }
-        DAGOperator *operator()(const DAGRange * /*op*/) {
+        auto operator()(const DAGRange * /*op*/) -> DAGOperator * {
             return new DAGSplitRange();
         }
     };
@@ -53,7 +53,8 @@ struct CollectSourcesVisitor
     std::deque<DAGOperator *> sources_;
 };
 
-DAGParallelMap *StartParallelMap(DAG *const dag, DAGOperator *const source_op) {
+auto StartParallelMap(DAG *const dag, DAGOperator *const source_op)
+        -> DAGParallelMap * {
     assert(dag->in_degree(source_op) == 1);
     assert(dag->out_degree(source_op) == 1);
 

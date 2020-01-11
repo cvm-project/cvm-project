@@ -33,20 +33,20 @@ public:
     Field() = delete;
     Field(const Field &field) = default;
     Field(Field &&field) = default;
-    Field &operator=(const Field &rhs) = default;
-    Field &operator=(Field &&rhs) = default;
+    auto operator=(const Field &rhs) -> Field & = default;
+    auto operator=(Field &&rhs) -> Field & = default;
 
     virtual ~Field();
 
-    size_t position() const;
+    auto position() const -> size_t;
     void set_position(size_t position);
 
-    const type::FieldType *field_type() const;
+    auto field_type() const -> const type::FieldType *;
     void set_field_type(const type::FieldType *field_type);
 
-    const std::shared_ptr<AttributeId> &attribute_id() const;
+    auto attribute_id() const -> const std::shared_ptr<AttributeId> &;
 
-    const std::set<FieldProperty> &properties() const;
+    auto properties() const -> const std::set<FieldProperty> &;
     void AddProperty(const FieldProperty &fieldProperty);
     void CopyProperties(const Field &other);
     void RemoveProperty(const FieldProperty &fieldProperty);
@@ -66,7 +66,7 @@ public:
                        const size_t &position)
         : Field(field_type_, position) {}
 
-    const FieldTypeClass *field_type() {
+    auto field_type() -> const FieldTypeClass * {
         return boost::polymorphic_pointer_downcast<const FieldTypeClass>(
                 Field::field_type());
     }

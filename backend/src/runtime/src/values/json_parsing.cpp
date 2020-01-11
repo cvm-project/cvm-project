@@ -8,11 +8,11 @@
 namespace runtime {
 namespace values {
 
-VectorOfValues ConvertFromJsonString(const char* const inputs_str) {
+auto ConvertFromJsonString(const char* const inputs_str) -> VectorOfValues {
     return nlohmann::json::parse(inputs_str).get<VectorOfValues>();
 }
 
-std::string ConvertToJsonString(const VectorOfValues& val) {
+auto ConvertToJsonString(const VectorOfValues& val) -> std::string {
     return nlohmann::json(val).dump();
 }
 

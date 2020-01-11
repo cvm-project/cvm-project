@@ -16,8 +16,9 @@ struct DefaultRefCounter : public RefCounter {
 
     DefaultRefCounter(const DefaultRefCounter& other) = default;
     DefaultRefCounter(DefaultRefCounter&& other) = delete;
-    DefaultRefCounter& operator=(const DefaultRefCounter& other) = default;
-    DefaultRefCounter& operator=(DefaultRefCounter&& other) = delete;
+    auto operator=(const DefaultRefCounter& other)
+            -> DefaultRefCounter& = default;
+    auto operator=(DefaultRefCounter&& other) -> DefaultRefCounter& = delete;
     ~DefaultRefCounter() override = default;
 
 private:

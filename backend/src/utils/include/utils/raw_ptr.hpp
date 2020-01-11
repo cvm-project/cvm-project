@@ -9,20 +9,20 @@ public:
     raw_ptr() = default;
     raw_ptr(const raw_ptr &other) = default;
     raw_ptr(raw_ptr &&other) noexcept = default;
-    raw_ptr &operator=(const raw_ptr &other) = default;
-    raw_ptr &operator=(raw_ptr &&other) noexcept = default;
+    auto operator=(const raw_ptr &other) -> raw_ptr & = default;
+    auto operator=(raw_ptr &&other) noexcept -> raw_ptr & = default;
     ~raw_ptr() = default;
 
-    Pointee *operator->() const { return ptr_; }
-    Pointee &operator*() const { return *ptr_; }
-    Pointee *get() const { return ptr_; }
+    auto operator-> () const -> Pointee * { return ptr_; }
+    auto operator*() const -> Pointee & { return *ptr_; }
+    auto get() const -> Pointee * { return ptr_; }
 
 private:
     Pointee *ptr_;
 };
 
 template <typename Pointee>
-static raw_ptr<Pointee> make_raw(Pointee *ptr) {
+static auto make_raw(Pointee *ptr) -> raw_ptr<Pointee> {
     return raw_ptr<Pointee>(ptr);
 }
 

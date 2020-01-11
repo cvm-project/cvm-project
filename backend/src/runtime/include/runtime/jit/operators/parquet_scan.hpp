@@ -24,7 +24,8 @@ struct RangePredicate : public Predicate {
 };
 
 template <typename T>
-std::shared_ptr<Predicate> MakeRangePredicate(const T& lo, const T& hi) {
+auto MakeRangePredicate(const T& lo, const T& hi)
+        -> std::shared_ptr<Predicate> {
     // cppcheck-suppress internalAstError
     return std::shared_ptr<Predicate>(new RangePredicate<T>(lo, hi));
 }
@@ -32,15 +33,15 @@ std::shared_ptr<Predicate> MakeRangePredicate(const T& lo, const T& hi) {
 struct FileNameOperator {
     virtual ~FileNameOperator() = default;
     virtual void open() = 0;
-    virtual Optional<std::string> next() = 0;
+    virtual auto next() -> Optional<std::string> = 0;
     virtual void close() = 0;
 };
 
-ValueOperator* MakeParquetScanOperator(
+auto MakeParquetScanOperator(
         std::unique_ptr<FileNameOperator> upstream,
         std::vector<std::vector<std::shared_ptr<Predicate>>> range_predicates,
         std::vector<std::string> column_types, std::vector<int> col_ids,
-        const std::string& filesystem);
+        const std::string& filesystem) -> ValueOperator*;
 
 }  // namespace operators
 }  // namespace runtime

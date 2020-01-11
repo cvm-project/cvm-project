@@ -12,15 +12,15 @@
 #define MAX (1ul << 29u)
 
 template <typename T>
-T *realloc_or_throw(T *old_ptr, const size_t n_elements) {
+auto realloc_or_throw(T *old_ptr, const size_t n_elements) -> T * {
     void *ptr = realloc(old_ptr, sizeof(T) * n_elements);
     if (ptr == nullptr) throw std::bad_alloc();
     return reinterpret_cast<T *>(ptr);
 }
 
-double my_add(double a, double b) { return a + b; }
+auto my_add(double a, double b) -> double { return a + b; }
 
-double simple_sum(const double *const array) {
+auto simple_sum(const double *const array) -> double {
     TICK1
     double acc = 0;
     for (size_t j = 0; j < 1; j++) {
@@ -33,7 +33,7 @@ double simple_sum(const double *const array) {
     return acc;
 }
 
-double unrolled_sum(const double *const array) {
+auto unrolled_sum(const double *const array) -> double {
     TICK2
     double acc[] = {0.0, 0.0, 0.0, 0.0};
     for (size_t j = 0; j < 1; j++) {
@@ -59,7 +59,7 @@ struct result_struct1 {
     tuple_1 *data;
 };
 
-result_struct1 gap_filter(const double *const array) {
+auto gap_filter(const double *const array) -> result_struct1 {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
@@ -83,7 +83,7 @@ result_struct1 gap_filter(const double *const array) {
     return {resSize, result};
 }
 
-double filter_sum(const double *const array) {
+auto filter_sum(const double *const array) -> double {
     double res = 0;
     TICK1
     for (size_t i = 0; i < MAX; i++) {
@@ -97,7 +97,7 @@ double filter_sum(const double *const array) {
     return res;
 }
 
-double filter_sum2(const double *const array) {
+auto filter_sum2(const double *const array) -> double {
     double res = 0;
     TICK1
     for (size_t i = 0; i < MAX; i++) {
@@ -108,7 +108,7 @@ double filter_sum2(const double *const array) {
     return res;
 }
 
-double filter_sum3(const double *const array) {
+auto filter_sum3(const double *const array) -> double {
     double res = 0;
     TICK1
     size_t allocatedSize = 2;
@@ -127,9 +127,9 @@ double filter_sum3(const double *const array) {
     return res;
 }
 
-tuple_1 map_1(double a) { return {a, a * 3 + 7}; }
+auto map_1(double a) -> tuple_1 { return {a, a * 3 + 7}; }
 
-result_struct1 map(const double *array) {
+auto map(const double *array) -> result_struct1 {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
@@ -156,7 +156,7 @@ struct result_struct2 {
     double *data;
 };
 
-result_struct2 filter(const double *const array) {
+auto filter(const double *const array) -> result_struct2 {
     TICK1
     size_t allocatedSize = 2;
     size_t resSize = 0;
@@ -201,7 +201,7 @@ struct result_struct {
 
 size_t len2 = MAX >> 1u;
 
-result_struct join(tuple_2 *array1, tuple_3 *array2) {
+auto join(tuple_2 *array1, tuple_3 *array2) -> result_struct {
     // build ht
     TICK1
     std::unordered_map<int64_t, std::vector<tuple_3>> ht;
@@ -246,8 +246,8 @@ result_struct join(tuple_2 *array1, tuple_3 *array2) {
     return ret;
 }
 
-result_struct map_filter_join(const int64_t *const array1,
-                              const tuple_3 *const array2) {
+auto map_filter_join(const int64_t *const array1, const tuple_3 *const array2)
+        -> result_struct {
     // build ht
     TICK1
     std::unordered_map<int64_t, std::vector<tuple_3>> ht;
@@ -309,7 +309,7 @@ struct result_struct_rbk {
     tuple_5 *data;
 };
 
-result_struct_rbk map_reduce_by_key(const int64_t *const array) {
+auto map_reduce_by_key(const int64_t *const array) -> result_struct_rbk {
     // build ht
     TICK1
     std::unordered_map<int64_t, int64_t> ht;
@@ -347,7 +347,7 @@ result_struct_rbk map_reduce_by_key(const int64_t *const array) {
     return ret;
 }
 
-int main() {
+auto main() -> int {
     std::mt19937 gen(1337);
     std::uniform_real_distribution<double> dis(0.1, 1.0);
 

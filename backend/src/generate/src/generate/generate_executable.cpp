@@ -16,7 +16,8 @@
 #include "runtime/execute_plan.hpp"
 #include "utils/lib_path.hpp"
 
-int64_t GenerateExecutable(const std::string &conf, const std::string &dagstr) {
+auto GenerateExecutable(const std::string &conf, const std::string &dagstr)
+        -> int64_t {
     auto conf_json = nlohmann::json::parse(conf).flatten();
     conf_json.emplace("/optimizer/optimization-level", 2);
 

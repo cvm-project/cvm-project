@@ -13,7 +13,9 @@ public:
     explicit CompositeTransformation(std::vector<std::string> transformations)
         : transformations_(std::move(transformations)) {}
     void Run(DAG *dag, const std::string &config) const override;
-    std::string name() const override { return "composite_transformation"; }
+    auto name() const -> std::string override {
+        return "composite_transformation";
+    }
 
 private:
     const std::vector<std::string> transformations_;
