@@ -9,6 +9,7 @@
 #include "operator.hpp"
 
 class DAGMaterializeParquet : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGMaterializeParquet, "materialize_parquet_file");
 
 public:

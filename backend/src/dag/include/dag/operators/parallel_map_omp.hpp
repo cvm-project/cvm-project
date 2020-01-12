@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGParallelMapOmp : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGParallelMapOmp, "parallel_map_omp");
 
 public:

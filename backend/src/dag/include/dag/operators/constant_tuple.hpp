@@ -9,6 +9,7 @@
 #include "operator.hpp"
 
 class DAGConstantTuple : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGConstantTuple, "constant_tuple");
 
 public:

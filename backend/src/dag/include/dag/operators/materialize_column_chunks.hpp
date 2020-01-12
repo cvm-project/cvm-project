@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGMaterializeColumnChunks : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGMaterializeColumnChunks, "materialize_column_chunks");
 
 public:

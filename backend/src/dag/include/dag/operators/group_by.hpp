@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGGroupBy : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGGroupBy, "groupby");
 
 public:

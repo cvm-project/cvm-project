@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGAssertCorrectOpenNextClose : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGAssertCorrectOpenNextClose,
                      "assert_correct_open_next_close");
 

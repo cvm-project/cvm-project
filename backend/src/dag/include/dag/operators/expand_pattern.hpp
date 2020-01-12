@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGExpandPattern : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGExpandPattern, "expand_pattern");
 
 public:

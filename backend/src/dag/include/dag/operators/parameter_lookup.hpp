@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGParameterLookup : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGParameterLookup, "parameter_lookup");
 
 public:

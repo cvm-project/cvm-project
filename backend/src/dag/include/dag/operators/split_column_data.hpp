@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGSplitColumnData : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGSplitColumnData, "split_column_data");
 
 public:

@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGCartesian : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGCartesian, "cartesian");
 
 public:

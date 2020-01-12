@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGPartition : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGPartition, "partition");
 
 public:

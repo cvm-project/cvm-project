@@ -10,6 +10,7 @@ public:
     raw_ptr(const raw_ptr &other) = default;
     raw_ptr(raw_ptr &&other) noexcept = default;
     auto operator=(const raw_ptr &other) -> raw_ptr & = default;
+    // cppcheck-suppress operatorEq  // false positive
     auto operator=(raw_ptr &&other) noexcept -> raw_ptr & = default;
     ~raw_ptr() = default;
 

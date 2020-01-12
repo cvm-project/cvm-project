@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGRange : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGRange, "range_source");
 
 public:

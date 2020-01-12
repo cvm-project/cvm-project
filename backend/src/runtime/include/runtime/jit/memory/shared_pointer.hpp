@@ -119,6 +119,7 @@ public:
     // counter and pointee). If provided with a pointer, assigns that pointer
     // to this and takes over ownership. Otherwise, assigns not-a-pointer.
     // Leaves other as not-a-pointer.
+    // cppcheck-suppress operatorEq  // false positive
     auto operator=(SharedPointer&& other) noexcept -> SharedPointer& {
         if (other.pointer_ != pointer_) {
             Decrement();

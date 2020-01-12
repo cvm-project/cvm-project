@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGMap : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGMap, "map");
 
 public:

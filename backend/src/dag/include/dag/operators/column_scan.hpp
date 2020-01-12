@@ -6,6 +6,7 @@
 #include "operator.hpp"
 
 class DAGColumnScan : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGColumnScan, "column_scan");
 
 public:

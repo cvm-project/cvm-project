@@ -6,6 +6,7 @@
 #include "operator.hpp"
 
 class DAGPipeline : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGPipeline, "pipeline");
 
 public:

@@ -8,6 +8,7 @@
 #include "operator.hpp"
 
 class DAGCompiledPipeline : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGCompiledPipeline, "compiled_pipeline");
 
 public:

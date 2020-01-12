@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGReduceByKey : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGReduceByKey, "reduce_by_key");
 
 public:

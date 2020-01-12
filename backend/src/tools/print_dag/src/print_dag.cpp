@@ -253,8 +253,8 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
 }
 
 auto ToDotCharPtr(const DAG *dag) -> const char * {
-    char *buffer_ptr;
-    size_t buffer_size;
+    char *buffer_ptr = nullptr;
+    size_t buffer_size = 0;
     FILE *const outfile = open_memstream(&buffer_ptr, &buffer_size);
 
     ToDotFile(dag, outfile);

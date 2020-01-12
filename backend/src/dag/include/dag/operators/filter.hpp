@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGFilter : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGFilter, "filter");
 
 public:

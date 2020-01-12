@@ -9,6 +9,7 @@
 #include "operator.hpp"
 
 class DAGParquetScan : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGParquetScan, "parquet_scan");
 
 public:

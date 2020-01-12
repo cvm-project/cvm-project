@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGMaterializeRowVector : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGMaterializeRowVector, "materialize_row_vector");
 
 public:

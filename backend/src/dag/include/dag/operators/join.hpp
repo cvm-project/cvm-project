@@ -4,6 +4,7 @@
 #include "operator.hpp"
 
 class DAGJoin : public DAGOperator {
+    // cppcheck-suppress noExplicitConstructor  // false positive
     JITQ_DAGOPERATOR(DAGJoin, "join");
 
 public:
