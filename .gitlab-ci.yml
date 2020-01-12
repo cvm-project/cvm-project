@@ -15,12 +15,12 @@ variables:
   GTEST_COLOR: "1"
   PYTHONPATH: $CI_PROJECT_DIR:$CI_PROJECT_DIR/backend/build
   JITQPATH: $CI_PROJECT_DIR
-  LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-7.0.1/lib
-  ASAN_SYMBOLIZER_PATH: /opt/clang+llvm-7.0.1/bin/llvm-symbolizer
-  ASAN_LIBRARY_PATH: /opt/clang+llvm-7.0.1/lib/clang/7.0.1/lib/linux/libclang_rt.asan-x86_64.so
+  LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-9.0.0/lib
+  ASAN_SYMBOLIZER_PATH: /opt/clang+llvm-9.0.0/bin/llvm-symbolizer
+  ASAN_LIBRARY_PATH: /opt/clang+llvm-9.0.0/lib/clang/9.0.0/lib/linux/libclang_rt.asan-x86_64.so
   SEGFAULT_SIGNALS: "bus abrt"
-  CC: clang-7.0
-  CXX: clang++-7.0
+  CC: clang-9.0
+  CXX: clang++-9.0
 
 services:
   - name: minio/minio:RELEASE.2019-06-01T03-46-14Z
@@ -28,7 +28,7 @@ services:
     alias: s3server
 
 default:
-  image: ingomuellernet/buildenv-jitq:2019-08-12
+  image: ingomuellernet/buildenv-jitq:2020-01-12
 
 format-cpp:
   stage: build
@@ -100,7 +100,7 @@ python-tests-parallel:
   before_script:
     - apt-get update && apt-get install -y time
     - pip3 install -r requirements.txt
-    - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nCXXFORMAT=clang-format-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/generate/src/code_gen/Makefile.local
+    - echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
@@ -119,7 +119,7 @@ python-tests-asan:
   before_script:
     - apt-get update && apt-get install -y graphviz time
     - pip3 install -r requirements.txt
-    - echo -e "CC=clang-7.0\nCXX=clang++-7.0\nCXXFORMAT=clang-format-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > backend/src/generate/src/code_gen/Makefile.local
+    - echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests

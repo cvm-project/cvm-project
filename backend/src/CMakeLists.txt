@@ -10,13 +10,13 @@ include (ReleaseAsDefault)
 include (ExternalProject)
 
 # Setup clang-format
-find_package (ClangFormat 7.0 EXACT)
+find_package (ClangFormat 9.0 EXACT)
 if(ClangFormat_FOUND)
     enable_clang_format_targets()
 endif()
 
 # Setup clang-tidy
-find_package (ClangTidy 7.0 EXACT)
+find_package (ClangTidy 9.0 EXACT)
 if(ClangTidy_FOUND)
     enable_clang_tidy_targets()
 endif()

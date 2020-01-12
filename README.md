@@ -39,11 +39,12 @@ pip3 install -r requirements.txt
 
 ```bash
 sudo apt install build-essential \
-        libtinfo-dev \
         bison \
         flex \
         gcc-7 \
         g++-7 \
+        libtinfo5 \
+        libtinfo-dev \
         pkg-config \
         wget \
         xz-utils
@@ -75,13 +76,13 @@ done
 Download and add links:
 
 ```bash
-sudo mkdir /opt/clang+llvm-7.0.1/ && \
-cd /opt/clang+llvm-7.0.1/ && \
-wget http://releases.llvm.org/7.0.1/clang+llvm-7.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz -O - \
+sudo mkdir /opt/clang+llvm-9.0.0/ && \
+cd /opt/clang+llvm-9.0.0/ && \
+wget http://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz -O - \
      | sudo tar -x -I xz --strip-components=1 && \
 for file in bin/*; \
 do \
-    sudo ln -s $PWD/$file /usr/bin/$(basename $file)-7.0; \
+    sudo ln -s $PWD/$file /usr/bin/$(basename $file)-9.0; \
 done
 ```
 
@@ -89,7 +90,7 @@ Make the following command executed in the shells you use for development,
 for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
-export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-7.0.1
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-9.0.0
 ```
 
 5. Gold linker
@@ -102,11 +103,11 @@ Download and build with ninja:
 
 ```bash
 cd /tmp/ && \
-wget http://releases.llvm.org/7.0.1/llvm-7.0.1.src.tar.xz && \
-tar -xf llvm-7.0.1.src.tar.xz && \
-mkdir /tmp/llvm-7.0.1.src/build && \
-cd /tmp/llvm-7.0.1.src/build && \
-CXX=clang++-7.0 CC=clang-7.0 cmake -G Ninja ../ \
+wget http://releases.llvm.org/9.0.0/llvm-9.0.0.src.tar.xz && \
+tar -xf llvm-9.0.0.src.tar.xz && \
+mkdir /tmp/llvm-9.0.0.src/build && \
+cd /tmp/llvm-9.0.0.src/build && \
+CXX=clang++-9.0 CC=clang-9.0 cmake -G Ninja ../ \
     -DLLVM_BINUTILS_INCDIR=/usr/include \
     -DLLVM_TARGETS_TO_BUILD=X86 \
     -DCMAKE_BUILD_TYPE=MinSizeRel \
@@ -117,7 +118,7 @@ ninja LLVMgold
 Copy goldlinker:
 
 ```bash
-sudo cp /tmp/llvm-7.0.1.src/build/lib/LLVMgold.so /opt/clang+llvm-7.0.1/lib
+sudo cp /tmp/llvm-9.0.0.src/build/lib/LLVMgold.so /opt/clang+llvm-9.0.0/lib
 ```
 
 6. cppcheck
@@ -164,10 +165,10 @@ cd /tmp/ && \
 wget https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz -O - \
     | tar -xz && \
 cd /tmp/boost_1_71_0 && \
-echo "using clang : 7.0 : $(which clang-7.0) ; " > tools/build/src/user-config.jam && \
+echo "using clang : 9.0 : $(which clang-9.0) ; " > tools/build/src/user-config.jam && \
 PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.' + str(sys.version_info.minor))")" && \
 ./bootstrap.sh --with-python=$(which python3) && \
-./b2 --toolset=clang-7.0 --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.71.0 && \
+./b2 --toolset=clang-9.0 --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.71.0 && \
 sudo ./b2 install --prefix=/opt/boost-1.71.0
 ```
 
@@ -208,7 +209,7 @@ pip3 install -r /tmp/arrow/python/requirements-build.txt && \
 pip3 install wheel && \
 mkdir -p /tmp/arrow/cpp/build && \
 cd /tmp/arrow/cpp/build && \
-CXX=clang++-7.0 CC=clang-7.0 \
+CXX=clang++-9.0 CC=clang-9.0 \
     cmake \
         -DCMAKE_CXX_STANDARD=17 \
         -DCMAKE_INSTALL_PREFIX=/tmp/arrow/dist \
@@ -256,7 +257,7 @@ wget https://github.com/aws/aws-sdk-cpp/archive/1.7.138.tar.gz -O - \
     | tar -xz --strip-components=1 && \
 mkdir -p /tmp/aws-sdk-cpp/build && \
 cd /tmp/aws-sdk-cpp/build && \
-CXX=clang++-7.0 CC=clang-7.0 \
+CXX=clang++-9.0 CC=clang-9.0 \
     sudo cmake \
         -DBUILD_ONLY="dynamodb;lambda;s3;sqs" \
         -DCMAKE_BUILD_TYPE=Debug \
@@ -284,7 +285,7 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/aws-sdk-cpp-1.7
 # Run in the root folder of the project
 export JITQPATH=$PWD
 export PYTHONPATH=$JITQPATH/python:$JITQPATH/backend/build
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-7.0.1/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-9.0.0/lib
 ```
 
 2. Setup build (once):
@@ -293,13 +294,13 @@ Configure CMake:
 
 ```bash
 cd $JITQPATH/backend/build
-CXX=clang++-7.0 CC=clang-7.0 cmake ../src/
+CXX=clang++-9.0 CC=clang-9.0 cmake ../src/
 ```
 
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-7.0\nCXX=clang++-7.0\nCXXFORMAT=clang-format-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > ../src/generate/src/code_gen/Makefile.local
+echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > ../src/generate/src/code_gen/Makefile.local
 ```
 
 3. Build (after every change to the backend):
@@ -358,8 +359,8 @@ cmake <...> -DLLVM_ASAN=ON
 Then, set up the following environment variables:
 
 ```bash
-export ASAN_SYMBOLIZER_PATH=/opt/clang+llvm-7.0.1/bin/llvm-symbolizer
-export ASAN_LIBRARY_PATH=/opt/clang+llvm-7.0.1/lib/clang/7.0.1/lib/linux/libclang_rt.asan-x86_64.so
+export ASAN_SYMBOLIZER_PATH=/opt/clang+llvm-9.0.0/bin/llvm-symbolizer
+export ASAN_LIBRARY_PATH=/opt/clang+llvm-9.0.0/lib/clang/9.0.0/lib/linux/libclang_rt.asan-x86_64.so
 ```
 
 Finally, run unittests or queries you want to test.
