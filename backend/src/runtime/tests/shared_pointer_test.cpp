@@ -120,7 +120,7 @@ TEST(SharedPointerTest, Copy) {  // NOLINT
 
             {
                 // Add ownership through construction
-                // NOLINTNEXTLINE performance-unnecessary-copy-initialization
+                // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
                 SharedPointer<int> ptr3(ptr2);
                 EXPECT_EQ(pointers.count(int_ptr2), 1);
                 EXPECT_EQ(pointers.size(), 2);
@@ -134,7 +134,7 @@ TEST(SharedPointerTest, Copy) {  // NOLINT
 
             {
                 // Add ownership through assignment
-                // NOLINTNEXTLINE performance-unnecessary-copy-initialization
+                // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
                 SharedPointer<int> ptr3 = ptr2;
                 EXPECT_EQ(pointers.count(int_ptr2), 1);
                 EXPECT_EQ(pointers.size(), 2);
@@ -311,7 +311,7 @@ TEST(SharedPointerTest, Move) {  // NOLINT
 
             EXPECT_EQ(pointers.count(int_ptr5), 1);
             EXPECT_EQ(pointers.size(), 1);
-            // NOLINTNEXTLINE bugprone-use-after-move
+            // NOLINTNEXTLINE(bugprone-use-after-move,hicpp-invalid-access-moved)
             EXPECT_EQ(ptr1.ref_counter()->counter(), 1);
             EXPECT_EQ(*ptr1, *int_ptr5);
         }  // Nothing happens here
@@ -347,7 +347,7 @@ TEST(SharedPointerTest, ThreadedMove) {  // NOLINT
 
         for (size_t i = 0; i < kNumIterations; i++) {
             min = std::min(rc->counter(), min);
-            // NOLINTNEXTLINE performance-unnecessary-copy-initialization
+            // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
             SharedPointer<int> ptr2(ptr1);
             max = std::max(rc->counter(), max);
         }
