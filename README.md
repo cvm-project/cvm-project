@@ -299,7 +299,7 @@ CXX=clang++-7.0 CC=clang-7.0 cmake ../src/
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-7.0\nCXX=clang++-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > ../src/generate/src/code_gen/Makefile.local
+echo -e "CC=clang-7.0\nCXX=clang++-7.0\nCXXFORMAT=clang-format-7.0\nLIBOMPDIR=/opt/clang+llvm-7.0.1/lib" > ../src/generate/src/code_gen/Makefile.local
 ```
 
 3. Build (after every change to the backend):

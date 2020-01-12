@@ -9,6 +9,9 @@ endif
 ifeq ($(origin CXX),default)
     CXX = clang++
 endif
+ifeq ($(CXXFORMAT),)
+    CXXFORMAT := cat
+endif
 
 BACKEND_DIR = $(realpath $(SCRIPT_DIR)/../../../../)
 
@@ -60,7 +63,7 @@ execute.opt.cpp: execute.cpp
 	cp $^ $@
 
 execute.dbg.cpp: execute.cpp
-	clang-format-7.0 $< > $@
+	$(CXXFORMAT) $< > $@
 
 execute.opt.o: execute.opt.cpp $(GCHEADER)
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(INC) -include-pch $(GCHEADER)
