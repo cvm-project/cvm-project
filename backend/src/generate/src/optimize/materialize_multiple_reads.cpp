@@ -20,10 +20,11 @@ public:
         if (dag_->out_degree(op) > 1) operators_.emplace_back(op);
     }
 
-    std::vector<DAGOperator *> operators_;
+    [[nodiscard]] auto operators() const { return operators_; }
 
 private:
     const DAG *const dag_;
+    std::vector<DAGOperator *> operators_;
 };
 
 namespace optimize {
@@ -36,7 +37,7 @@ void MaterializeMultipleReads::Run(DAG *const dag,
         operator_collector.Visit(op);
     }
 
-    for (auto const &op : operator_collector.operators_) {
+    for (auto const &op : operator_collector.operators()) {
         // Collect out flows
         std::vector<DAG::Flow> out_flows;
         boost::copy(dag->out_flows(op), std::back_inserter(out_flows));

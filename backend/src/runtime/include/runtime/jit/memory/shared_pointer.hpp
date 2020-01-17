@@ -42,9 +42,8 @@ protected:
     auto Increment() -> int64_t;
     auto Decrement() -> int64_t;
 
-    void* pointer_;
-
 private:
+    void* pointer_;
     std::atomic_int64_t counter_;
 };
 

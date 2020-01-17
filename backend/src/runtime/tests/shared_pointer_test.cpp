@@ -21,7 +21,7 @@ struct TestRefCounter : public RefCounter {  // NOLINT
     }
 
     ~TestRefCounter() override {
-        auto const int_ptr = reinterpret_cast<int*>(pointer_);
+        auto const int_ptr = reinterpret_cast<int*>(pointer());
         EXPECT_EQ(pointers.count(int_ptr), 1);
         pointers.erase(int_ptr);
     }

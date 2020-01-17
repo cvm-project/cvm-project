@@ -25,11 +25,11 @@ struct FreeRefCounter : public RefCounter {
 
 protected:
     ~FreeRefCounter() override {
-        auto const t_ptr = reinterpret_cast<T*>(pointer_);
+        auto const t_ptr = reinterpret_cast<T*>(pointer());
         for (std::size_t i = 0; i < num_elements_; i++) {
             t_ptr[i].~T();
         }
-        free(pointer_);
+        free(pointer());
     }
 
 private:
