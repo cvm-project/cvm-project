@@ -61,7 +61,7 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
         // save the insert instructions
         for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; i++) {
-                if (auto instr = llvm::cast<llvm::Instruction>(i)) {
+                if (auto instr = llvm::dyn_cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::InsertValue) {
                         auto insert = llvm::cast<llvm::InsertValueInst>(instr);
                         assert(insert->getIndices().size() == 1);
@@ -79,7 +79,7 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
         // save the store instructions
         for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; ++i) {
-                if (auto instr = llvm::cast<llvm::Instruction>(i)) {
+                if (auto instr = llvm::dyn_cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::Store) {
                         // the store target uniquely identifies this instruction
                         ret_instruction_ids_.push_back(
@@ -122,7 +122,7 @@ auto Function::ComputeOutputPositionsStruct(size_t arg_position) const
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
 
-        if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
+        if (auto inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() == llvm::Instruction::InsertValue) {
                 // find the index
                 for (size_t i = 0; i < ret_instruction_ids_.size(); i++) {
@@ -148,7 +148,7 @@ auto Function::ComputeOutputPositionsCallerPtr(size_t arg_position) const
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
 
-        if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
+        if (auto inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() == llvm::Instruction::Store) {
                 // find the index
                 for (size_t i = 0; i < ret_instruction_ids_.size(); i++) {
@@ -189,7 +189,7 @@ auto Function::ComputeIsArgumentRead(size_t arg_pos) const -> bool {
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
 
-        if (auto inst = llvm::cast<llvm::Instruction>(u.getUser())) {
+        if (auto inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() != llvm::Instruction::Store &&
                 inst->getOpcode() != llvm::Instruction::InsertValue &&
                 inst->getOpcode() != llvm::Instruction::Ret) {
