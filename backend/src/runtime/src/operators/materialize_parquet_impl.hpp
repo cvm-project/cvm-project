@@ -37,7 +37,8 @@ void from_json(const nlohmann::json& j,
                // NOLINTNEXTLINE(google-runtime-references)
                parquet::WriterProperties::Builder& properties_builder);
 
-NLOHMANN_JSON_SERIALIZE_ENUM(  // NOLINT(google-runtime-references)
+// NOLINTNEXTLINE(google-runtime-references,modernize-avoid-c-arrays)
+NLOHMANN_JSON_SERIALIZE_ENUM(  //
         Compression::type,     //
         {
                 {Compression::UNCOMPRESSED, "UNCOMPRESSED"},
@@ -49,7 +50,8 @@ NLOHMANN_JSON_SERIALIZE_ENUM(  // NOLINT(google-runtime-references)
                 {Compression::ZSTD, "ZSTD"},
         })
 
-NLOHMANN_JSON_SERIALIZE_ENUM(  // NOLINT(google-runtime-references)
+// NOLINTNEXTLINE(google-runtime-references,modernize-avoid-c-arrays)
+NLOHMANN_JSON_SERIALIZE_ENUM(  //
         Encoding::type,        //
         {
                 {Encoding::PLAIN, "PLAIN"},
