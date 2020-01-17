@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-static constexpr size_t kNumElements = 1ul << 29u;
+static constexpr size_t kNumElements = 1UL << 29U;
 
 template <typename T>
 auto realloc_or_throw(T *old_ptr, const size_t n_elements) -> T * {
@@ -37,7 +37,7 @@ auto simple_sum(const double *const array) -> double {
 
 auto unrolled_sum(const double *const array) -> double {
     auto const start = std::chrono::steady_clock::now();
-    double acc[] = {0.0, 0.0, 0.0, 0.0};
+    std::array<double, 4> acc = {0.0, 0.0, 0.0, 0.0};
     for (size_t j = 0; j < 1; j++) {
         for (size_t i = 0; i < kNumElements; i += 4) {
             acc[0] += array[i];
@@ -227,7 +227,7 @@ struct result_struct {
     tuple_4 *data;
 };
 
-size_t len2 = kNumElements >> 1u;
+size_t len2 = kNumElements >> 1U;
 
 auto join(tuple_2 *array1, tuple_3 *array2) -> result_struct {
     // build ht
