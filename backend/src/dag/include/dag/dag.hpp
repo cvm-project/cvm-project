@@ -180,13 +180,11 @@ public:
     using InputRangeTips =
             boost::transformed_range<ExtractFlowTipFunc, const InputRange>;
     using InputRangeByOperator =
-            const boost::filtered_range<FilterInputByOperatorFunc,
-                                        const InputRange>;
+            boost::filtered_range<FilterInputByOperatorFunc, const InputRange>;
     using OutputRange =
             boost::iterator_range<std::map<int, FlowTip>::const_iterator>;
     using OutputRangeByOperator =
-            const boost::filtered_range<FilterInputByOperatorFunc,
-                                        const OutputRange>;
+            boost::filtered_range<FilterInputByOperatorFunc, const OutputRange>;
 
     /*
      * Normal member functions
@@ -237,7 +235,7 @@ public:
     [[nodiscard]] auto to_operator(const Vertex &v) const -> DAGOperator *;
     [[nodiscard]] auto to_flow(const Edge &e) const -> Flow;
     auto to_vertex(const DAGOperator *op) const -> Vertex;
-    [[nodiscard]] auto to_edge(const Flow &f) const -> Edge { return f.e; }
+    [[nodiscard]] static auto to_edge(const Flow &f) -> Edge { return f.e; }
 
     auto in_flows(const DAGOperator *op) const -> InFlowRange;
     auto out_flows(const DAGOperator *op) const -> OutFlowRange;

@@ -64,7 +64,7 @@ void ParallelizeOmp::Run(DAG *const dag, const std::string & /*config*/) const {
 
     // Specialize degree of parallelism
     dag::utils::ApplyInTopologicalOrderRecursively(
-            dag, [&](DAGOperator *const op, DAG *const dag) {
+            dag, [&](DAGOperator *const op, DAG *const /*dag*/) {
                 parallelize_omp::SpecializeDegreeOfParallelismVisitor visitor;
                 visitor.Visit(op);
             });
