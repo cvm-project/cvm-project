@@ -492,10 +492,11 @@ auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
 
     for (const auto &op_val : operators) {
         DAGOperator *const op = op_val.second;
-        auto preds = predecessors.at(op);
-        for (const auto &pred_id : preds) {
+        auto const preds = predecessors.at(op);
+        for (size_t i = 0; i < preds.size(); i++) {
+            auto const pred_id = preds.at(i);
             auto predecessor = operators.at(pred_id);
-            dag->AddFlow(predecessor, op, &pred_id - &*preds.begin());
+            dag->AddFlow(predecessor, op, i);
         }
     }
 
