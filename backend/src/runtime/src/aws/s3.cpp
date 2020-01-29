@@ -8,9 +8,12 @@
 #include <boost/algorithm/string.hpp>
 #include <skyr/url.hpp>
 
+#include "aws.hpp"
 namespace runtime::aws::s3 {
 
 auto MakeClient() -> Aws::S3::S3Client* {
+    aws::EnsureApiInitialized();
+
     Aws::Client::ClientConfiguration cfg;
     // NOLINTNEXTLINE(readability-magic-numbers)
     cfg.connectTimeoutMs = 3000;
