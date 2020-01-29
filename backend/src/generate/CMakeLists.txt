@@ -21,6 +21,7 @@ add_library(generate SHARED
         src/optimize/type_inference.cpp
         src/optimize/grouped_reduce_by_key.cpp
         src/optimize/simple_predicate_move_around.cpp
+        src/optimize/utils.cpp
         src/optimize/verify.cpp
     )
 

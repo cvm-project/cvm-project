@@ -12,34 +12,12 @@
 #include "dag/type/tuple.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
+#include "optimize/utils.hpp"
 #include "utils/visitor.hpp"
 
 using dag::utils::IsInstanceOf;
 using dag::utils::IsSingleTupleProducer;
 using dag::utils::IsSourceOperator;
-
-auto MakeSplitOperator(const DAGOperator *const op) -> DAGOperator * {
-    class MakeSplitOperatorVisitor
-        : public Visitor<MakeSplitOperatorVisitor, const DAGOperator,
-                         boost::mpl::list<       //
-                                 DAGColumnScan,  //
-                                 DAGRowScan,     //
-                                 DAGRange        //
-                                 >::type,
-                         DAGOperator *> {
-    public:
-        auto operator()(const DAGColumnScan * /*op*/) -> DAGOperator * {
-            return new DAGSplitColumnData();
-        }
-        auto operator()(const DAGRowScan * /*op*/) -> DAGOperator * {
-            return new DAGSplitRowData();
-        }
-        auto operator()(const DAGRange * /*op*/) -> DAGOperator * {
-            return new DAGSplitRange();
-        }
-    };
-    return MakeSplitOperatorVisitor().Visit(op);
-}
 
 namespace optimize {
 
