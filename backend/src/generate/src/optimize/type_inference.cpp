@@ -193,6 +193,15 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             return dag_->predecessor(op)->tuple->type;
         }
 
+        // cppcheck-suppress cstyleCast  // false positive
+        auto operator()(const DAGExchangeS3 *const /*op*/) const
+                -> const Tuple * {
+            return Tuple::MakeTuple({Atomic::MakeAtomic("std::string"),
+                                     Atomic::MakeAtomic("long"),
+                                     Atomic::MakeAtomic("long"),
+                                     Atomic::MakeAtomic("long")});
+        }
+
         auto operator()(const DAGGroupBy *const op) const -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
             auto const partition_id_type = input_type->field_types[0];

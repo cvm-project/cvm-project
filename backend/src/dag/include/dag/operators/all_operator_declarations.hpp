@@ -18,6 +18,7 @@ class DAGConcurrentExecute;
 class DAGConstantTuple;
 class DAGEnsureSingleTuple;
 class DAGExchange;
+class DAGExchangeS3;
 class DAGExpandPattern;
 class DAGFilter;
 class DAGGroupBy;
@@ -62,6 +63,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGConstantTuple,                   //
         DAGEnsureSingleTuple,               //
         DAGExchange,                        //
+        DAGExchangeS3,                      //
         DAGExpandPattern,                   //
         DAGFilter,                          //
         DAGGroupBy,                         //

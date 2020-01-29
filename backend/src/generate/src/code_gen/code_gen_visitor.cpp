@@ -252,6 +252,24 @@ void CodeGenVisitor::operator()(DAGEnsureSingleTuple *op) {
     emitOperatorMake(var_name, "EnsureSingleTupleOperator", op, {}, {});
 };
 
+void CodeGenVisitor::operator()(DAGExchangeS3 *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ExchangeS3Operator");
+
+    GenerateTupleToValue(context_, dag_->predecessor(op, 0)->tuple->type);
+    GenerateTupleToValue(context_, dag_->predecessor(op, 1)->tuple->type);
+    GenerateTupleToValue(context_, dag_->predecessor(op, 2)->tuple->type);
+    GenerateValueToTuple(context_, op->tuple->type);
+
+    static const std::hash<std::string> Hash;
+    auto const exchange_id = std::to_string(Hash(var_name)) + "U";
+    auto const num_levels = std::to_string(op->num_levels);
+    auto const level_num = std::to_string(op->level_num);
+
+    emitOperatorMake(var_name, "ExchangeS3Operator", op, {},
+                     {exchange_id, num_levels, level_num});
+}
+
 void CodeGenVisitor::operator()(DAGExpandPattern *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ExpandPatternOperator");

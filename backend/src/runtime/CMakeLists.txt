@@ -5,6 +5,7 @@ set(RUNTIME_SOURCE_FILES
         src/memory/shared_pointer.cpp
         src/memory/values.cpp
         src/operators/arrow_helpers.cpp
+        src/operators/exchange_s3.cpp
         src/operators/expand_pattern.cpp
         src/operators/materialize_parquet_impl.cpp
         src/operators/murmur_hash2.cpp
