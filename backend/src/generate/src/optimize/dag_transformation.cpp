@@ -16,6 +16,7 @@
 #include "materialize_multiple_reads.hpp"
 #include "parallelize.hpp"
 #include "parallelize_concurrent.hpp"
+#include "parallelize_concurrent_single_inout.hpp"
 #include "parallelize_omp.hpp"
 #include "simple_predicate_move_around.hpp"
 #include "type_inference.hpp"
@@ -43,6 +44,7 @@ void LoadDagTransformations() {
     RegisterDefault(std::make_unique<MaterializeMultipleReads>());
     RegisterDefault(std::make_unique<Parallelize>());
     RegisterDefault(std::make_unique<ParallelizeConcurrent>());
+    RegisterDefault(std::make_unique<ParallelizeConcurrentSingleInout>());
     RegisterDefault(std::make_unique<ParallelizeOmp>());
     RegisterDefault(std::make_unique<SimplePredicateMoveAround>());
     RegisterDefault(std::make_unique<TypeInference>());
