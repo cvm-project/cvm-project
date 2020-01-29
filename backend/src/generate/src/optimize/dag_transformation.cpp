@@ -12,6 +12,7 @@
 #include "compile_inner_plans.hpp"
 #include "create_pipelines.hpp"
 #include "determine_sortedness.hpp"
+#include "exchange_s3.hpp"
 #include "grouped_reduce_by_key.hpp"
 #include "materialize_multiple_reads.hpp"
 #include "parallelize.hpp"
@@ -40,6 +41,7 @@ void LoadDagTransformations() {
     RegisterDefault(std::make_unique<CompileInnerPlans>());
     RegisterDefault(std::make_unique<CreatePipelines>());
     RegisterDefault(std::make_unique<DetermineSortedness>());
+    RegisterDefault(std::make_unique<ExchangeS3>());
     RegisterDefault(std::make_unique<GroupedReduceByKey>());
     RegisterDefault(std::make_unique<MaterializeMultipleReads>());
     RegisterDefault(std::make_unique<Parallelize>());

@@ -14,6 +14,7 @@ add_library(generate SHARED
         src/optimize/create_pipelines.cpp
         src/optimize/dag_transformation.cpp
         src/optimize/determine_sortedness.cpp
+        src/optimize/exchange_s3.cpp
         src/optimize/grouped_reduce_by_key.cpp
         src/optimize/materialize_multiple_reads.cpp
         src/optimize/optimizer.cpp
