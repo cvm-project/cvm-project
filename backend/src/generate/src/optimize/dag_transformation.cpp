@@ -22,6 +22,7 @@
 #include "parallelize_omp.hpp"
 #include "parallelize_process.hpp"
 #include "simple_predicate_move_around.hpp"
+#include "two_level_exchange.hpp"
 #include "type_inference.hpp"
 #include "verify.hpp"
 
@@ -53,6 +54,7 @@ void LoadDagTransformations() {
     RegisterDefault(std::make_unique<ParallelizeOmp>());
     RegisterDefault(std::make_unique<ParallelizeProcess>());
     RegisterDefault(std::make_unique<SimplePredicateMoveAround>());
+    RegisterDefault(std::make_unique<TwoLevelExchange>());
     RegisterDefault(std::make_unique<TypeInference>());
     RegisterDefault(std::make_unique<Verify>());
     RegisterDefault(std::make_unique<AddAlwaysInline>());
