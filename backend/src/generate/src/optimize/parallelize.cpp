@@ -3,6 +3,7 @@
 #include <queue>
 
 #include <boost/mpl/list.hpp>
+#include <polymorphic_value.h>
 
 #include "dag/collection/tuple.hpp"
 #include "dag/dag.hpp"
