@@ -63,12 +63,12 @@ public:
                                 : error.GetExceptionName() + " - ";
 
                 return arrow::Status::IOError(
-                        (format("Error %1% (%2%%3%) when fetching file "
-                                "metadata: %4%") %
+                        (format("Error %1% (%2%%3%) when fetching metadata "
+                                "of file s3://%5%%6%: %4%") %
                          static_cast<int>(error.GetErrorType()) %
                          error.GetExceptionName() %
                          aws::s3::LookupErrorString(error.GetErrorType()) %
-                         error.GetMessage())
+                         error.GetMessage() % bucket_ % key_)
                                 .str());
             }
             file_size_ = outcome.GetResult().GetContentLength();
