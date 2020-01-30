@@ -1,6 +1,9 @@
 #ifndef CODE_GEN_OPERATORS_ZIPOPERATOR_H
 #define CODE_GEN_OPERATORS_ZIPOPERATOR_H
 
+#include <tuple>
+#include <utility>
+
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
 
