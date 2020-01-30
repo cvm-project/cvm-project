@@ -29,6 +29,7 @@
 #include "parameter_lookup.hpp"
 #include "parquet_scan.hpp"
 #include "partition.hpp"
+#include "partitioned_exchange.hpp"
 #include "pipeline.hpp"
 #include "projection.hpp"
 #include "range.hpp"

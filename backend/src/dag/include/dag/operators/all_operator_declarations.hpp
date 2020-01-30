@@ -35,6 +35,7 @@ class DAGParallelMapOmp;
 class DAGParameterLookup;
 class DAGParquetScan;
 class DAGPartition;
+class DAGPartitionedExchange;
 class DAGPipeline;
 class DAGProjection;
 class DAGRange;
@@ -82,6 +83,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGParameterLookup,                 //
         DAGParquetScan,                     //
         DAGPartition,                       //
+        DAGPartitionedExchange,             //
         DAGPipeline,                        //
         DAGProjection,                      //
         DAGRange,                           //
