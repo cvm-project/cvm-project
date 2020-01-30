@@ -46,8 +46,8 @@ auto ValueToRecordBatchOperator::next()
         std::shared_ptr<arrow::Buffer> buffer(
                 new arrow::Buffer(ptr, num_rows * type_width),
                 BufferDeleter{value->data});
-        const auto arrow_column = std::make_shared<arrow::PrimitiveArray>(
-                arrow::int64(), num_rows, buffer);
+        const auto arrow_column =
+                std::make_shared<arrow::PrimitiveArray>(type, num_rows, buffer);
         arrow_columns.push_back(arrow_column);
     }
 
