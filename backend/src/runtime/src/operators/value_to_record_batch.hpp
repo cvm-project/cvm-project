@@ -28,7 +28,7 @@ auto ConvertValueToRecordBatch(
         -> std::shared_ptr<arrow::RecordBatch>;
 
 struct ValueToRecordBatchOperator {
-    ValueToRecordBatchOperator(std::unique_ptr<ValueOperator> upstream,
+    ValueToRecordBatchOperator(std::unique_ptr<ValueOperator>&& upstream,
                                std::shared_ptr<arrow::Schema> schema)
         : upstream_(std::move(upstream)), schema_(std::move(schema)) {}
 
