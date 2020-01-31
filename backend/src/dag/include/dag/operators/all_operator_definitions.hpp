@@ -20,6 +20,7 @@
 #include "materialize_column_chunks.hpp"
 #include "materialize_parquet.hpp"
 #include "materialize_row_vector.hpp"
+#include "nested_map.hpp"
 #include "parallel_map.hpp"
 #include "parallel_map_omp.hpp"
 #include "parameter_lookup.hpp"

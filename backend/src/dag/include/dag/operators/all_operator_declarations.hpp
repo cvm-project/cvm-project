@@ -26,6 +26,7 @@ class DAGMap;
 class DAGMaterializeColumnChunks;
 class DAGMaterializeParquet;
 class DAGMaterializeRowVector;
+class DAGNestedMap;
 class DAGParallelMap;
 class DAGParallelMapOmp;
 class DAGParameterLookup;
@@ -69,6 +70,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGMaterializeColumnChunks,         //
         DAGMaterializeParquet,              //
         DAGMaterializeRowVector,            //
+        DAGNestedMap,                       //
         DAGParallelMap,                     //
         DAGParallelMapOmp,                  //
         DAGParameterLookup,                 //

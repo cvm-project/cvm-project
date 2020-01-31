@@ -365,6 +365,12 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                     {Array::MakeArray(element_type, ArrayLayout::kC, 1)});
         }
 
+        auto operator()(const DAGNestedMap *const op) const -> const Tuple * {
+            assert(dag_->has_inner_dag(op));
+            auto const inner_dag = dag_->inner_dag(op);
+            return inner_dag->output().op->tuple->type;
+        }
+
         auto operator()(const DAGParallelMap *const op) const -> const Tuple * {
             assert(dag_->has_inner_dag(op));
             auto const inner_dag = dag_->inner_dag(op);

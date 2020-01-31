@@ -165,6 +165,17 @@ void CodeGenVisitor::operator()(DAGMaterializeRowVector *op) {
     emitOperatorMake(var_name, "MaterializeRowVectorOperator", op, {}, {});
 }
 
+void CodeGenVisitor::operator()(DAGNestedMap *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "NestedMapOperator");
+
+    // Call nested code gen
+    const auto inner_plan =
+            GenerateExecuteTuples(dag_->inner_dag(op), context_);
+
+    emitOperatorMake(var_name, "NestedMapOperator", op, {}, {inner_plan.name});
+}
+
 void CodeGenVisitor::operator()(DAGPipeline * /*op*/) {
     throw std::runtime_error("CodeGen encountered pipeline operator.");
 }
