@@ -9,7 +9,7 @@
 namespace runtime::values {
 
 void from_json(const nlohmann::json &json, Tuple *const val) {
-    val->fields = json.at("fields").get<std::vector<std::unique_ptr<Value>>>();
+    val->fields = json.at("fields").get<std::vector<std::shared_ptr<Value>>>();
 }
 
 // NOLINTNEXTLINE(google-runtime-references)

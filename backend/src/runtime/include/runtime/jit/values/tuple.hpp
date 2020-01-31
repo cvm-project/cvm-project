@@ -10,7 +10,7 @@ namespace runtime {
 namespace values {
 
 struct Tuple : public Value {
-    std::vector<std::unique_ptr<Value>> fields;
+    std::vector<std::shared_ptr<Value>> fields;
 };
 
 }  // namespace values

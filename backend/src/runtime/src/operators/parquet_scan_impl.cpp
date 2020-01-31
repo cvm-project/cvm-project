@@ -323,7 +323,7 @@ auto ParquetScanOperatorImpl::next()
     // We have an active row group --> fetch new batch
 
     // Fetch batch of all columns
-    std::vector<std::unique_ptr<runtime::values::Value>> columns;
+    std::vector<std::shared_ptr<runtime::values::Value>> columns;
     int32_t prev_num_values_read = 0;
     for (size_t i = 0; i < this->column_infos_.size(); i++) {
         auto [num_values_read, batch] = ReadColumnBatch(i);
