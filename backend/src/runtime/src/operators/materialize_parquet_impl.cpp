@@ -204,8 +204,8 @@ auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
 }
 
 auto MakeMaterializeParquetOperator(
-        std::unique_ptr<ValueOperator> main_upstream,
-        std::unique_ptr<ValueOperator> conf_upstream,
+        std::unique_ptr<ValueOperator>&& main_upstream,
+        std::unique_ptr<ValueOperator>&& conf_upstream,
         std::vector<std::string> column_types,
         std::vector<std::string> column_names)
         -> std::unique_ptr<MaterializeParquetOperator> {
