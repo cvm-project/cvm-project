@@ -10,6 +10,7 @@
 #include "runtime/jit/memory/shared_pointer.hpp"
 #include "runtime/jit/operators/optional.hpp"
 #include "runtime/jit/operators/value_operator.hpp"
+#include "runtime/jit/values/value.hpp"
 
 namespace runtime {
 namespace operators {
@@ -20,6 +21,11 @@ struct BufferDeleter {
         std::default_delete<arrow::Buffer>()(ptr);
     }
 };
+
+auto ConvertValueToRecordBatch(
+        const std::shared_ptr<const values::Value>& value,
+        const std::shared_ptr<arrow::Schema>& schema)
+        -> std::shared_ptr<arrow::RecordBatch>;
 
 struct ValueToRecordBatchOperator {
     ValueToRecordBatchOperator(std::unique_ptr<ValueOperator> upstream,
