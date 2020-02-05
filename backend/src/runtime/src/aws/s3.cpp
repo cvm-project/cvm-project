@@ -8,6 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include <skyr/url.hpp>
 
+#include "aggressive_retry_strategy.hpp"
 #include "aws.hpp"
 namespace runtime::aws::s3 {
 
@@ -19,6 +20,8 @@ auto MakeClient() -> Aws::S3::S3Client* {
     cfg.connectTimeoutMs = 3000;
     // NOLINTNEXTLINE(readability-magic-numbers)
     cfg.requestTimeoutMs = 3000;
+    // NOLINTNEXTLINE(readability-magic-numbers)
+    cfg.retryStrategy = std::make_shared<AggressiveRetryStrategy>(8, 750);
 
     const auto endpoint_override = std::getenv("AWS_S3_ENDPOINT");
     if (endpoint_override != nullptr) {
