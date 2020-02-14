@@ -677,6 +677,64 @@ void ParallelizeConcurrent::Run(DAG *const dag,
         inner_dag->RemoveOperator(broadcast_op);
         inner_dag->AddFlow(op, out_flow.target);
     }
+
+    // HACK: do not parallelize final RBKs
+    for (auto const op : dag->operators()) {
+        if (!IsInstanceOf<DAGConcurrentExecute>(op)) continue;
+        auto const inner_dag = dag->inner_dag(op);
+
+        // Find Exchange->RBK[->{Filter|Map}]*->(sink) pattern
+        std::vector<DAGOperator *> candidate_ops;
+        std::vector<DAG::Flow> candidate_flows;
+
+        candidate_ops.push_back(inner_dag->output().op);
+
+        while (IsInstanceOf<DAGFilter,  //
+                            DAGMap>(candidate_ops.back())) {
+            candidate_flows.push_back(inner_dag->in_flow(candidate_ops.back()));
+            candidate_ops.push_back(
+                    inner_dag->predecessor(candidate_ops.back()));
+        }
+
+        if (!IsInstanceOf<DAGReduceByKey>(candidate_ops.back())) continue;
+
+        auto const exchange_op = inner_dag->predecessor(candidate_ops.back());
+
+        if (!IsInstanceOf<DAGExchange>(exchange_op)) continue;
+
+        // Fix inner DAG
+        {
+            auto const in_flow = inner_dag->in_flow(exchange_op);
+            auto const out_flow = inner_dag->out_flow(exchange_op);
+
+            inner_dag->set_output(in_flow.source);
+            inner_dag->RemoveFlow(in_flow);
+            inner_dag->RemoveFlow(out_flow);
+
+            for (auto const &f : candidate_flows) {
+                inner_dag->RemoveFlow(f);
+            }
+
+            for (auto const cand_op : candidate_ops) {
+                inner_dag->MoveOperator(dag, cand_op);
+            }
+
+            inner_dag->RemoveOperator(exchange_op);
+        }
+
+        // Fix outer DAG
+        {
+            auto const out_flow = dag->out_flow(op);
+            dag->RemoveFlow(out_flow);
+
+            for (auto const &f : candidate_flows) {
+                dag->AddFlow(f.source, f.target);
+            }
+
+            dag->AddFlow(op, candidate_ops.back());
+            dag->AddFlow(candidate_ops.front(), out_flow.target);
+        }
+    }
 }
 
 }  // namespace optimize
