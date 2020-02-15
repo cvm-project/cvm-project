@@ -35,7 +35,7 @@ public:
         std::shared_ptr<parquet::FileMetaData> metadata;
     };
 
-    ParquetFileOperator(std::unique_ptr<FileNameOperator> upstream,
+    ParquetFileOperator(std::unique_ptr<ValueOperator> upstream,
                         std::unique_ptr<filesystem::FileSystem> fs)
         : upstream_(std::move(upstream)), fs_(std::move(fs)) {}
     ParquetFileOperator(const ParquetFileOperator& other) = delete;
@@ -60,7 +60,7 @@ private:
     auto AreAllFilesProcessed() -> bool;
     void WaitForFileHandles();
 
-    std::unique_ptr<FileNameOperator> upstream_;
+    std::unique_ptr<ValueOperator> upstream_;
     std::unique_ptr<filesystem::FileSystem> fs_;
 
     // Meta data fetcher thread and communication with the main thread

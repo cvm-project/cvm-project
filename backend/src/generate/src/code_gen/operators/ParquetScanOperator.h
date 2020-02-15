@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include "TupleToValueOperator.h"
 #include "Utils.h"
 #include "runtime/jit/operators/optional.hpp"
 #include "runtime/jit/operators/parquet_scan.hpp"
@@ -15,26 +16,6 @@ class ParquetScanOperator {
     using IndexSequence = std::make_index_sequence<sizeof...(OutputTypes)>;
     using OutputStdTuple = std::tuple<OutputTypes...>;
 
-    class FileNameFromUpstreamOperator
-        : public runtime::operators::FileNameOperator {
-    public:
-        explicit FileNameFromUpstreamOperator(Upstream* const upstream)
-            : upstream_(upstream) {}
-
-        void open() override { upstream_->open(); }
-
-        Optional<std::string> next() override {
-            auto const input = upstream_->next();
-            if (!input) return {};
-            return input.value().v0;
-        }
-
-        void close() override { upstream_->close(); }
-
-    private:
-        Upstream* const upstream_;
-    };
-
 public:
     ParquetScanOperator(
             Upstream* const upstream,
@@ -44,7 +25,7 @@ public:
             std::vector<std::string>&& column_types, std::vector<int>&& col_ids,
             const std::string& filesystem)
         : upstream_(runtime::operators::MakeParquetScanOperator(
-                  std::make_unique<FileNameFromUpstreamOperator>(upstream),
+                  std::make_unique<TupleToValueOperator<Upstream>>(upstream),
                   std::move(range_predicates), std::move(column_types),
                   std::move(col_ids), filesystem)) {}
 

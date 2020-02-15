@@ -16,12 +16,14 @@
 #include "filesystem/filesystem.hpp"
 #include "runtime/jit/memory/default_ref_counter.hpp"
 #include "runtime/jit/memory/shared_pointer.hpp"
+#include "runtime/jit/values/atomics.hpp"
 #include "runtime/jit/values/none.hpp"
+#include "runtime/jit/values/tuple.hpp"
 
 namespace runtime::operators {
 
 auto MakeParquetScanOperator(
-        std::unique_ptr<FileNameOperator> upstream,
+        std::unique_ptr<ValueOperator> upstream,
         std::vector<std::vector<std::shared_ptr<Predicate>>> range_predicates,
         const std::vector<std::string>& column_types,
         const std::vector<int>& col_ids, const std::string& filesystem)
@@ -41,8 +43,14 @@ void ParquetFileOperator::open() {
     upstream_->open();
 
     std::vector<std::string> file_paths;
-    while (auto const tuple = upstream_->next()) {
-        file_paths.push_back(tuple.value());
+    while (true) {
+        auto const ret = upstream_->next();
+
+        if (dynamic_cast<runtime::values::None*>(ret.get()) != nullptr) break;
+
+        auto const tuple = ret->as<runtime::values::Tuple>();
+        auto const string = tuple->fields.at(0)->as<runtime::values::String>();
+        file_paths.push_back(string->value);
     }
     nfiles_to_process_ = file_paths.size();
 

@@ -111,6 +111,8 @@ void CodeGenVisitor::operator()(DAGMaterializeParquet *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeParquetOperator");
 
+    GenerateValueToTuple(context_, op->tuple->type);
+
     std::vector<std::string> column_names;
     for (auto const &n : op->column_names) {
         column_names.emplace_back((format("\"%1%\"") % n).str());
@@ -209,6 +211,8 @@ void CodeGenVisitor::operator()(DAGExpandPattern *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ExpandPatternOperator");
 
+    GenerateTupleToValue(context_, dag_->predecessor(op, 0)->tuple->type);
+
     emitOperatorMake(var_name, "ExpandPatternOperator", op, {}, {});
 }
 
@@ -275,6 +279,7 @@ void CodeGenVisitor::operator()(DAGParquetScan *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ParquetScanOperator");
 
+    GenerateTupleToValue(context_, dag_->predecessor(op)->tuple->type);
     GenerateValueToTuple(context_, op->tuple->type);
 
     const auto &column_types = op->tuple->type->field_types;
