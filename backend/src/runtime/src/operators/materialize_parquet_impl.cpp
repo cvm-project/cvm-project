@@ -128,8 +128,11 @@ void from_json(const nlohmann::json& j,
 
 namespace runtime::operators {
 
-auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
-    if (has_returned_) return {};
+auto MaterializeParquetOperatorImpl::next()
+        -> std::shared_ptr<runtime::values::Value> {
+    if (has_returned_) {
+        return std::make_shared<values::None>();
+    };
 
     // Read config and create writer properties
     conf_upstream_->open();
@@ -199,8 +202,13 @@ auto MaterializeParquetOperatorImpl::next() -> Optional<std::string> {
 
     main_upstream_->close();
 
+    auto file_path = std::make_shared<values::String>();
+    file_path->value = filename;
+    auto tuple = std::make_shared<values::Tuple>();
+    tuple->fields = {std::move(file_path)};
+
     has_returned_ = true;
-    return {filename};
+    return tuple;
 }
 
 auto MakeMaterializeParquetOperator(
@@ -208,7 +216,7 @@ auto MakeMaterializeParquetOperator(
         std::unique_ptr<ValueOperator>&& conf_upstream,
         std::vector<std::string> column_types,
         std::vector<std::string> column_names)
-        -> std::unique_ptr<MaterializeParquetOperator> {
+        -> std::unique_ptr<ValueOperator> {
     auto const schema =
             MakeArrowSchema(std::move(column_types), std::move(column_names));
     return std::make_unique<MaterializeParquetOperatorImpl>(

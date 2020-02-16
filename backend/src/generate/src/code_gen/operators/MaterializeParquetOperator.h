@@ -10,28 +10,29 @@
 #include "runtime/jit/operators/materialize_parquet.hpp"
 #include "runtime/jit/operators/optional.hpp"
 #include "runtime/jit/operators/type_traits.hpp"
+#include "runtime/jit/values/none.hpp"
 
 template <class OutputTuple>
 class MaterializeParquetOperator {
 public:
     MaterializeParquetOperator(
-            std::unique_ptr<runtime::operators::MaterializeParquetOperator>
-                    upstream)
+            std::unique_ptr<runtime::operators::ValueOperator> upstream)
         : upstream_(std::move(upstream)) {}
 
     INLINE void open() { upstream_->open(); }
 
     INLINE Optional<OutputTuple> next() {
-        auto const ret = upstream_->next();
-
-        if (!ret) return {};
-        return OutputTuple{ret.value()};
+        const auto ret = upstream_->next();
+        if (dynamic_cast<const runtime::values::None *>(ret.get()) != nullptr) {
+            return {};
+        }
+        return ValueToTuple<OutputTuple>(ret);
     }
 
     INLINE void close() { upstream_->close(); }
 
 private:
-    std::unique_ptr<runtime::operators::MaterializeParquetOperator> upstream_;
+    std::unique_ptr<runtime::operators::ValueOperator> upstream_;
 };
 
 template <class OutputTuple, class MainUpstream, class ConfUpstream,

@@ -12,19 +12,12 @@
 namespace runtime {
 namespace operators {
 
-struct MaterializeParquetOperator {
-    virtual ~MaterializeParquetOperator() = default;
-    virtual void open() = 0;
-    virtual auto next() -> Optional<std::string> = 0;
-    virtual void close() = 0;
-};
-
 auto MakeMaterializeParquetOperator(
         std::unique_ptr<ValueOperator> &&main_upstream,
         std::unique_ptr<ValueOperator> &&conf_upstream,
         std::vector<std::string> column_types,
         std::vector<std::string> column_names)
-        -> std::unique_ptr<MaterializeParquetOperator>;
+        -> std::unique_ptr<ValueOperator>;
 
 }  // namespace operators
 }  // namespace runtime

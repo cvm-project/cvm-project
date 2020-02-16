@@ -69,7 +69,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(  //
 namespace runtime {
 namespace operators {
 
-struct MaterializeParquetOperatorImpl : public MaterializeParquetOperator {
+struct MaterializeParquetOperatorImpl : public ValueOperator {
     MaterializeParquetOperatorImpl(
             std::unique_ptr<ValueToRecordBatchOperator> main_upstream,
             std::unique_ptr<ValueOperator> conf_upstream,
@@ -80,7 +80,7 @@ struct MaterializeParquetOperatorImpl : public MaterializeParquetOperator {
           has_returned_(false) {}
 
     void open() override {}
-    auto next() -> Optional<std::string> override;
+    auto next() -> std::shared_ptr<runtime::values::Value> override;
     void close() override {}
 
 private:
