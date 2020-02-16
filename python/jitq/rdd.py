@@ -269,7 +269,7 @@ class RDD(abc.ABC):
                 self.context,
                 MaterializeParquetFile(
                     self.context, parents, column_names)) \
-            .execute_dag()
+            .execute_dag()[0]
 
     def count(self):
         ret = self.map(lambda t: 1).reduce(lambda t1, t2: t1 + t2)
@@ -403,7 +403,7 @@ class MaterializeParquetFile(BinaryRDD):
         super(MaterializeParquetFile, self).__init__(context, parents)
 
         self.column_names = column_names
-        self.output_type = types.unicode_type
+        self.output_type = make_tuple([types.unicode_type] + [types.int64] * 3)
 
     def self_write_dag(self, dic):
         dic['column_names'] = self.column_names

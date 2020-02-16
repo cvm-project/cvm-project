@@ -7,7 +7,7 @@ import jsonmerge
 from pandas import DataFrame
 
 from jitq.rdd import RowScan, GeneratorSource, Range, \
-    ColumnScan, ParquetScan, ExpandPattern
+    Cartesian, ConstantTuple, ColumnScan, ParquetScan, ExpandPattern
 from jitq.utils import get_project_path
 
 
@@ -64,7 +64,10 @@ class JitqContext:
             self,
             ParquetScan(
                 self,
-                ExpandPattern(self, filename_or_pattern, pattern_range),
+                Cartesian(
+                    self,
+                    ExpandPattern(self, filename_or_pattern, pattern_range),
+                    ConstantTuple(self, (0, 1, 1))),
                 columns=columns,
                 filesystem=filesystem,
             ),

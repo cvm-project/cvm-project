@@ -354,7 +354,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                 }
             }
 
-            return Tuple::MakeTuple({Atomic::MakeAtomic("std::string")});
+            return Tuple::MakeTuple({Atomic::MakeAtomic("std::string"),
+                                     Atomic::MakeAtomic("long"),
+                                     Atomic::MakeAtomic("long"),
+                                     Atomic::MakeAtomic("long")});
         }
 
         auto operator()(const DAGMaterializeRowVector *const op) const
@@ -391,20 +394,31 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGParquetScan *const op) const -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;
+            auto const &input_field_types = input_type->field_types;
 
-            if (input_type->field_types.size() != 1) {
+            if (input_field_types.size() != 4) {
                 throw std::invalid_argument(
-                        "Input of ParquetScan operator must have a single "
-                        "field");
+                        "Input of ParquetScan needs to have 4 fields "
+                        "(file_path, slice_from, slice_to, num_slices).");
             }
 
-            auto const atomic_type =
-                    dynamic_cast<const Atomic *>(input_type->field_types[0]);
-
-            if (atomic_type == nullptr || atomic_type->type != "std::string") {
+            auto const file_path_field_type =
+                    dynamic_cast<const Atomic *>(input_field_types.at(0));
+            if (file_path_field_type == nullptr ||
+                file_path_field_type->type != "std::string") {
                 throw std::invalid_argument(
-                        "Input of ParquetScan must be string, found: " +
-                        input_type->to_string());
+                        "file_path input of ParquetScan needs to be "
+                        "'std::string'.");
+            }
+
+            for (size_t i = 1; i < input_field_types.size(); i++) {
+                auto const atomic_type =
+                        dynamic_cast<const Atomic *>(input_field_types.at(i));
+                if (atomic_type == nullptr || atomic_type->type != "long") {
+                    throw std::invalid_argument(
+                            "Slice descriptor inputs of ParquetScan need to be "
+                            "'long'.");
+                }
             }
 
             return op->tuple->type;

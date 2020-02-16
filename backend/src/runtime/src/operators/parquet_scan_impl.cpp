@@ -22,6 +22,8 @@
 
 namespace runtime::operators {
 
+using impl::RowGroupRange;
+
 auto MakeParquetScanOperator(
         std::unique_ptr<ValueOperator> upstream,
         std::vector<std::vector<std::shared_ptr<Predicate>>> range_predicates,
@@ -42,20 +44,26 @@ auto MakeParquetScanOperator(
 void ParquetFileOperator::open() {
     upstream_->open();
 
-    std::vector<std::string> file_paths;
+    std::vector<std::pair<std::string, RowGroupRange>> file_infos;
     while (true) {
         auto const ret = upstream_->next();
 
-        if (dynamic_cast<runtime::values::None*>(ret.get()) != nullptr) break;
+        if (dynamic_cast<values::None*>(ret.get()) != nullptr) break;
 
-        auto const tuple = ret->as<runtime::values::Tuple>();
-        auto const string = tuple->fields.at(0)->as<runtime::values::String>();
-        file_paths.push_back(string->value);
+        auto const& fields = ret->as<values::Tuple>()->fields;
+        auto const file_path = fields.at(0)->as<values::String>()->value;
+
+        const size_t slice_from = fields.at(1)->as<values::Int64>()->value;
+        const size_t slice_to = fields.at(2)->as<values::Int64>()->value;
+        const size_t num_slices = fields.at(3)->as<values::Int64>()->value;
+        const RowGroupRange row_group_range{slice_from, slice_to, num_slices};
+
+        file_infos.emplace_back(file_path, row_group_range);
     }
-    nfiles_to_process_ = file_paths.size();
+    nfiles_to_process_ = file_infos.size();
 
     metadata_fetcher_ = std::thread(&ParquetFileOperator::FetchMetaData, this,
-                                    std::move(file_paths));
+                                    std::move(file_infos));
 }
 
 auto ParquetFileOperator::next()
@@ -80,14 +88,15 @@ void ParquetFileOperator::close() {
 }
 
 void ParquetFileOperator::FetchMetaData(
-        const std::vector<std::string>& file_paths) {
-    for (auto const& path : file_paths) {
+        const std::vector<std::pair<std::string, RowGroupRange>>& file_infos) {
+    for (auto const& [path, row_group_range] : file_infos) {
         auto source = fs_->OpenForRead(path);
         auto pq_file_reader = parquet::ParquetFileReader::Open(source);
         auto file_metadata = pq_file_reader->metadata();
 
         std::unique_ptr<ParquetFileHandle> handle(new ParquetFileHandle{
-                path, std::move(pq_file_reader), std::move(file_metadata)});
+                path, std::move(pq_file_reader), std::move(file_metadata),
+                row_group_range});
         {
             std::lock_guard<std::mutex> lock(mutex_);
             file_handles_.push(
@@ -131,6 +140,21 @@ auto ParquetRowGroupOperator::next() -> std::optional<OutputType> {
         parquet_reader_ = std::move(handle->reader);
 
         interesting_row_groups_ = ComputeInterestingRowGroups(file_metadata);
+
+        // Take only desired range of row groups
+        const int num_row_groups = file_metadata->num_row_groups();
+        const size_t slice_from = handle->row_group_range.slice_from;
+        const size_t slice_to = handle->row_group_range.slice_to;
+        const size_t num_slices = handle->row_group_range.num_slices;
+
+        const size_t first = slice_from * num_row_groups / num_slices;
+        const size_t last = slice_to * num_row_groups / num_slices;
+
+        std::vector<int> sliced_row_groups;
+        for (auto const idx : interesting_row_groups_) {
+            if (idx >= first && idx < last) sliced_row_groups.push_back(idx);
+        }
+        interesting_row_groups_.swap(sliced_row_groups);
     }
 
     auto const current_row_group =

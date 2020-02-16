@@ -27,12 +27,23 @@
 namespace runtime {
 namespace operators {
 
+namespace impl {
+
+struct RowGroupRange {
+    size_t slice_from;
+    size_t slice_to;
+    size_t num_slices;
+};
+
+}  // namespace impl
+
 class ParquetFileOperator {
 public:
     struct ParquetFileHandle {
         std::string file_path;
         std::shared_ptr<parquet::ParquetFileReader> reader;
         std::shared_ptr<parquet::FileMetaData> metadata;
+        impl::RowGroupRange row_group_range;
     };
 
     ParquetFileOperator(std::unique_ptr<ValueOperator> upstream,
@@ -54,7 +65,9 @@ public:
 private:
     static constexpr int32_t WAIT_DOWNLOAD_MS = 10;
 
-    void FetchMetaData(const std::vector<std::string>& file_paths);
+    void FetchMetaData(
+            const std::vector<std::pair<std::string, impl::RowGroupRange>>&
+                    file_infos);
 
     auto HasPendingFileHandles() -> bool;
     auto AreAllFilesProcessed() -> bool;

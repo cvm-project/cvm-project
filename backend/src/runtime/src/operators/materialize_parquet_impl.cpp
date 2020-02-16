@@ -205,9 +205,18 @@ auto MaterializeParquetOperatorImpl::next()
     main_upstream_->close();
 
     auto file_path = std::make_shared<values::String>();
+    auto slice_from = std::make_shared<values::Int64>();
+    auto slice_to = std::make_shared<values::Int64>();
+    auto num_slices = std::make_shared<values::Int64>();
+
     file_path->value = filename;
+    slice_from->value = 0;
+    slice_to->value = 1;
+    num_slices->value = 1;
+
     auto tuple = std::make_shared<values::Tuple>();
-    tuple->fields = {std::move(file_path)};
+    tuple->fields = {std::move(file_path), std::move(slice_from),
+                     std::move(slice_to), std::move(num_slices)};
 
     has_returned_ = true;
     return tuple;
