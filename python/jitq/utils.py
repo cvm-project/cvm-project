@@ -5,8 +5,6 @@ import time
 from collections import namedtuple
 
 import numba as nb
-from numba import from_dtype, typeof, types
-from numba.numpy_support import as_dtype
 import numpy as np
 
 
@@ -94,7 +92,7 @@ def make_flat_tuple(type_):
         return make_tuple([replace_unituple(type_)])
     if isinstance(type_, nb.types.Record):
         fields = sorted(type_.dtype.fields.values(), key=lambda v: v[1])
-        field_types = [from_dtype(field[0]) for field in fields]
+        field_types = [nb.from_dtype(field[0]) for field in fields]
         return make_flat_tuple(make_tuple(field_types))
     if isinstance(type_, nb.types.List):
         type_ = type_.copy(dtype=make_flat_tuple(type_.dtype))
@@ -105,7 +103,7 @@ def make_flat_tuple(type_):
 
 def numba_type_to_dtype(type_):
     if str(type_) in NUMPY_DTYPE_MAP:
-        return as_dtype(type_)
+        return nb.numpy_support.as_dtype(type_)
     if isinstance(type_, nb.types.Tuple):
         child_types = [numba_type_to_dtype(t) for t in type_.types]
         fields = [('f%i' % i, t) for i, t in enumerate(child_types)]
@@ -127,7 +125,7 @@ def dtype_to_numba(type_):
             numba_type = dtype_to_numba(val[0])
             types_.append(numba_type)
         return "(" + ",".join(types_) + ")"
-    return typeof(type_.name)
+    return nb.typeof(type_.name)
 
 
 def get_type_size(type_):
@@ -171,7 +169,7 @@ def error_print(*args, **kwargs):
 
 
 def item_typeof(expression):
-    return replace_unituple(typeof(expression))
+    return replace_unituple(nb.typeof(expression))
 
 
 def make_tuple(child_types):
@@ -266,24 +264,24 @@ NAMED_TUPLE_REGISTRY = {}
 
 
 def replace_record(type_):
-    if isinstance(type_, types.BaseAnonymousTuple):
+    if isinstance(type_, nb.types.BaseAnonymousTuple):
         child_types = [replace_record(t) for t in type_.types]
         return make_tuple(child_types)
-    if isinstance(type_, types.Array):
+    if isinstance(type_, nb.types.Array):
         dtype = replace_record(type_.dtype)
-        return types.Array(dtype, type_.ndim, type_.layout, False,
-                           type_.name, type_.aligned)
-    if isinstance(type_, types.Record):
+        return nb.types.Array(dtype, type_.ndim, type_.layout, False,
+                              type_.name, type_.aligned)
+    if isinstance(type_, nb.types.Record):
         fields_sorted = sorted(
             type_.dtype.fields.items(),
             key=lambda item: item[1][1])
-        child_types = [replace_record(from_dtype(v[1][0]))
+        child_types = [replace_record(nb.from_dtype(v[1][0]))
                        for v in fields_sorted]
         child_names = [v[0] for v in fields_sorted]
         key = str([child_names] + [child_types])
         namedtpl = NAMED_TUPLE_REGISTRY.setdefault(
             key, namedtuple('Record', child_names))
-        return types.NamedTuple(child_types, namedtpl)
+        return nb.types.NamedTuple(child_types, namedtpl)
     if str(type_) in NUMPY_DTYPE_MAP:
         return type_
     raise TypeError("Can only replace UniTuple on valid nested objects.")
