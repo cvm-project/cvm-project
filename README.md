@@ -181,6 +181,8 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.71.0
 
 9. Apache Arrow
 
+Run the following outside your `venv`.
+
 (Note: The patch fixes a problem mentioned [here](https://issues.apache.org/jira/browse/ARROW-5960). Maybe it will be addressed in a future verison.)
 
 ```bash
@@ -235,8 +237,7 @@ PYARROW_WITH_PARQUET=1 ARROW_HOME=/tmp/arrow/dist \
     python3 setup.py build_ext --bundle-arrow-cpp bdist_wheel && \
 sudo mkdir -p /opt/arrow-0.14/share && \
 sudo cp /tmp/arrow/python/dist/*.whl /opt/arrow-0.14/share &&\
-sudo cp -r /tmp/arrow/dist/* /opt/arrow-0.14/ && \
-pip3 install /opt/arrow-0.14/share/*.whl
+sudo cp -r /tmp/arrow/dist/* /opt/arrow-0.14/
 ```
 
 Make the following command executed in the shells you use for development,
@@ -244,6 +245,12 @@ for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
 export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/arrow-0.14
+```
+
+Finally, run the following **in your `venv`**.
+
+```bash
+pip3 install /opt/arrow-0.14/share/*.whl
 ```
 
 ### AWS SDK (optional)
