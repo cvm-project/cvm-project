@@ -321,7 +321,7 @@ make -j$(nproc)
 
 ```bash
 $JITQPATH/tools/check_all.sh
-cd $JITQPATH/python/jitq/tests && python3 -u -m pytest -vs
+cd $JITQPATH/python/jitq/tests && python3 -u -m pytest -vs --filesystem file
 cd $JITQPATH/backend/build && make test
 ```
 
