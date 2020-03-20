@@ -301,7 +301,7 @@ Configure CMake:
 
 ```bash
 cd $JITQPATH/backend/build
-CXX=clang++-9.0 CC=clang-9.0 cmake ../src/
+CXX=clang++-9.0 CC=clang-9.0 cmake ../src/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 ```
 
 Configure JIT compilation:
