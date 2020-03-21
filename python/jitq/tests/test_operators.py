@@ -30,15 +30,6 @@ class TestCollection:
         res = jitq_context.collection(input_).collect()
         assert sorted(res.astuples()) == input_
 
-    def test_tuple_alias(self, jitq_context):
-        input_ = [(i, 2 * i) for i in range(10)]
-        res = jitq_context.collection(input_)\
-            .alias(['a', 'b']) \
-            .map(lambda r: r.a + r.b) \
-            .collect()
-        truth = list(range(0, 30, 3))
-        assert sorted(res.astuplelist()) == truth
-
     def test_scalar_index(self, jitq_context):
         input_ = range(10)
         res = jitq_context.collection(input_, add_index=True).collect()
@@ -224,6 +215,33 @@ class TestRange:
             .cartesian(jitq_context.range_(0, 10)) \
             .count()
         assert res == 100
+
+
+class TestAlias:
+    def test_alias_tuple(self, jitq_context):
+        input_ = [(i, 2 * i) for i in range(10)]
+        res = jitq_context.collection(input_) \
+            .alias(['a', 'b']) \
+            .collect()
+        assert input_ == res.astuplelist()
+        assert np.dtype([('a', 'i8'), ('b', 'i8')]) == res.dtype
+
+    def test_alias_record(self, jitq_context):
+        dtype = [('x', 'i8'), ('y', 'i8')]
+        input_ = np.array([(1, 2)], dtype=dtype)
+        res = jitq_context.collection(input_) \
+            .alias(['a', 'b']) \
+            .collect()
+        assert [tuple(e) for e in input_] == res.astuplelist()
+        assert np.dtype([('a', 'i8'), ('b', 'i8')]) == res.dtype
+
+    def test_map_names(self, jitq_context):
+        res = jitq_context.range_(0, 10) \
+            .map(lambda i: (i, i + 1), names=['a', 'b']) \
+            .collect()
+        truth = [(i, i + 1) for i in range(10)]
+        assert truth == res.astuplelist()
+        assert np.dtype([('a', 'i8'), ('b', 'i8')]) == res.dtype
 
 
 class TestParquet:
