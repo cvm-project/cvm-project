@@ -3,6 +3,7 @@
 #include <stdexcept>
 
 #include <boost/format.hpp>
+#include <boost/range/algorithm/copy.hpp>
 #include <polymorphic_value.h>
 
 #include "dag/dag.hpp"
@@ -441,6 +442,15 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGSplitRange *const op) const -> const Tuple * {
             return dag_->predecessor(op, 0)->tuple->type;
+        }
+
+        auto operator()(const DAGZip *const op) const -> const Tuple * {
+            std::vector<const FieldType *> output_field_types;
+            for (auto const f : dag_->in_flows(op)) {
+                boost::copy(f.source.op->tuple->type->field_types,
+                            std::back_inserter(output_field_types));
+            }
+            return Tuple::MakeTuple(output_field_types);
         }
 
         auto operator()(const DAGOperator *const op) const -> const Tuple * {

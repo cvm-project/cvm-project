@@ -741,6 +741,69 @@ class TestCartesian:
         assert sorted(res.astuples()) == sorted(truth)
 
 
+class TestZip:
+
+    def test_count(self, jitq_context):
+        input_1 = jitq_context.range_(0, 10)
+        input_2 = jitq_context.range_(0, 10)
+
+        res = input_1.zip(input_2).count()
+        truth = 10
+
+        assert res == truth
+
+    def test_tuple_tuple(self, jitq_context):
+        input_1 = [(1, 2), (1, 3)]
+        input_2 = [(1, 22, 33), (1, 44, 55)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.zip(data2).collect()
+        truth = [x + y for x, y in zip(input_1, input_2)]
+        assert sorted(res.astuples()) == sorted(truth)
+
+    def test_scalar_tuple(self, jitq_context):
+        input_1 = list(range(5))
+        input_2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.zip(data2).collect()
+        truth = [(x,) + y for x, y in zip(input_1, input_2)]
+        assert sorted(res.astuples()) == sorted(truth)
+
+    def test_tuple_scalar(self, jitq_context):
+        input_1 = [(1, 2), (1, 3)]
+        input_2 = list(range(5))
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.zip(data2).collect()
+        truth = [x + (y,) for x, y in zip(input_1, input_2)]
+        assert sorted(res.astuples()) == sorted(truth)
+
+    def test_scalar_scalar(self, jitq_context):
+        input1 = jitq_context.collection(range(0, 2))
+        input2 = jitq_context.collection(range(0, 2))
+        res = input1.zip(input2).collect()
+        truth = [(0, 0), (1, 1)]
+        assert sorted(res.astuples()) == sorted(truth)
+
+    def test_unequal_left(self, jitq_context):
+        input1 = jitq_context.collection(range(0, 5))
+        input2 = jitq_context.collection(range(0, 2))
+        res = input1.zip(input2).collect()
+        truth = [(0, 0), (1, 1)]
+        assert sorted(res.astuples()) == sorted(truth)
+
+    def test_unequal_right(self, jitq_context):
+        input1 = jitq_context.collection(range(0, 3))
+        input2 = jitq_context.collection(range(0, 7))
+        res = input1.zip(input2).collect()
+        truth = [(0, 0), (1, 1), (2, 2)]
+        assert sorted(res.astuples()) == sorted(truth)
+
+
 class TestCache:
 
     def test_map1(self, jitq_context):

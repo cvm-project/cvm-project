@@ -79,7 +79,7 @@ find_package(Boost 1.64 REQUIRED COMPONENTS
         system
     )
 set(_BOOST_COMPILE_DEFINITIONS
-        "BOOST_MPL_LIMIT_LIST_SIZE=30"
+        "BOOST_MPL_LIMIT_LIST_SIZE=40"
         "BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS"
     )
 set_target_properties(Boost::boost PROPERTIES

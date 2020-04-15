@@ -56,6 +56,7 @@ def get_llvm_ir_for_generator(func):
 
 
 class RDD(abc.ABC):
+    # pylint: disable=too-many-public-methods
     NAME = 'abstract'
 
     """
@@ -220,6 +221,9 @@ class RDD(abc.ABC):
 
     def cartesian(self, other):
         return Cartesian(self.context, self, other)
+
+    def zip(self, other):
+        return Zip(self.context, self, other)
 
     def collect(self):
         return MaterializeRowVector(self.context, self).execute_dag()
@@ -482,6 +486,27 @@ class Cartesian(BinaryRDD):
 
     def self_write_dag(self, dic):
         pass
+
+
+class Zip(BinaryRDD):
+    NAME = 'zip'
+
+    def __init__(self, context, *args):
+        super(Zip, self).__init__(context, list(args))
+        self.output_type = self.compute_output_type()
+
+    def compute_output_type(self):
+        output_types = []
+        for parent in self.parents:
+            tuple_type = parent.output_type
+            if not isinstance(tuple_type, types.Tuple):
+                tuple_type = make_tuple([tuple_type])
+            for inner_type in tuple_type.types:
+                output_types.append(inner_type)
+        return make_tuple(tuple(output_types))
+
+    def self_write_dag(self, dic):
+        dic['num_inputs'] = len(self.parents)
 
 
 class Reduce(UnaryRDD):

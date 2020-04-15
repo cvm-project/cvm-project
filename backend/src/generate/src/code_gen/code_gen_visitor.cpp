@@ -387,6 +387,13 @@ void CodeGenVisitor::operator()(DAGReduceByIndex *op) {
                      {functor_class + "()"});
 }
 
+void CodeGenVisitor::operator()(DAGZip *const op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ZipOperator");
+
+    emitOperatorMake(var_name, "ZipOperator", op, {}, {});
+}
+
 void CodeGenVisitor::operator()(DAGOperator *const op) {
     throw std::runtime_error("CodeGen encountered unknown operator type: " +
                              op->name());

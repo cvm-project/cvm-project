@@ -37,6 +37,7 @@ class DAGRowScan;
 class DAGSplitColumnData;
 class DAGSplitRange;
 class DAGSplitRowData;
+class DAGZip;
 
 namespace dag {
 
@@ -70,7 +71,8 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGRowScan,                         //
         DAGSplitColumnData,                 //
         DAGSplitRange,                      //
-        DAGSplitRowData                     //
+        DAGSplitRowData,                    //
+        DAGZip                              //
         >::type;
 
 using AllOperatorPointerTypes = typename boost::mpl::transform_view<
