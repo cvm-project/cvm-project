@@ -1,6 +1,7 @@
 #ifndef DAG_OPERATORS_ALL_OPERATOR_DEFINITIONS_HPP
 #define DAG_OPERATORS_ALL_OPERATOR_DEFINITIONS_HPP
 
+#include "antijoin.hpp"
 #include "assert_correct_open_next_close.hpp"
 #include "cartesian.hpp"
 #include "column_scan.hpp"

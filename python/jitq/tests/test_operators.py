@@ -459,6 +459,111 @@ class TestJoin:
         assert sorted(res.astuples()) == truth
 
 
+class TestAntiJoin:
+
+    def test_scalars(self, jitq_context):
+        input_1 = range(10)
+        input_2 = range(10)
+
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+        res = data1.antijoin(data2).collect()
+        truth = []
+        assert sorted(res.astuples()) == truth
+
+    def test_scalar_left(self, jitq_context):
+        input_1 = range(10)
+        input_2 = list(enumerate(range(10)))
+
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+        res = data1.antijoin(data2).collect()
+        truth = []
+        assert sorted(res.astuples()) == truth
+
+    def test_scalar_right(self, jitq_context):
+        input_1 = list(enumerate(range(10)))
+        input_2 = range(10)
+
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+        res = data1.antijoin(data2).collect()
+        truth = []
+        assert sorted(res.astuples()) == truth
+
+    def test_nonmatching_keys(self, jitq_context):
+        input_1 = list(enumerate(range(10)))
+        input_2 = [(float(a), b) for a, b in input_1]
+
+        with pytest.raises(TypeError):
+            jitq_context.collection(input_1) \
+                .join(jitq_context.collection(input_2))
+
+    def test_overlap(self, jitq_context):
+        input_1 = [(r, r * 10) for r in range(10)]
+        input_2 = [(r, r * 13, r + 100) for r in range(5, 15)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.antijoin(data2).collect()
+        truth = [(r, r * 10) for r in range(0, 5)]
+        assert sorted(res.astuples()) == truth
+
+    def test_left_single_field(self, jitq_context):
+        input_1 = [(r,) for r in range(10)]
+        input_2 = [(r, r * 13, r + 100) for r in range(5, 15)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.antijoin(data2).collect()
+        truth = [(r, ) for r in range(0, 5)]
+        assert sorted(res.astuples()) == truth
+
+    def test_right_single_field(self, jitq_context):
+        input_1 = [(r, r * 10) for r in range(10)]
+        input_2 = [(r,) for r in range(5, 15)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.antijoin(data2).collect()
+        truth = [(r, r * 10) for r in range(0, 5)]
+        assert sorted(res.astuples()) == truth
+
+    def test_repeated_keys(self, jitq_context):
+        input_1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        input_2 = [(1, 22, 33), (1, 44, 55), (8, 66, 77), (2, 33, 44)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.antijoin(data2).collect()
+        truth = [(3, 5)]
+        assert sorted(res.astuples()) == sorted(truth)
+
+    def test_non_overlapping(self, jitq_context):
+        input_1 = [(1, 2), (1, 3), (2, 4), (3, 5), (2, 6)]
+        input_2 = [(7, 22, 33), (4, 44, 55), (8, 66, 77), (10, 33, 44)]
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+
+        res = data1.antijoin(data2).collect()
+        truth = input_1
+        assert sorted(res.astuples()) == sorted(truth)
+
+    def test_int32(self, jitq_context):
+        def as_int32_tuple(tup):
+            return (np.int32(tup[0]), np.int32(tup[1]))
+
+        left = jitq_context.collection(list(enumerate(range(10, 15))))
+        right = jitq_context \
+            .collection(list(enumerate(range(0, 10, 2)))) \
+            .map(lambda t: (t[1], t[0]))
+        res = left.map(as_int32_tuple) \
+            .antijoin(right.map(as_int32_tuple)) \
+            .collect()
+        truth = [(1, 11), (3, 13)]
+        assert sorted(res.astuples()) == truth
+
+
 class TestFilter:
 
     def test_count_scalar(self, jitq_context):

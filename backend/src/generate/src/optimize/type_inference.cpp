@@ -30,6 +30,38 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
     public:
         explicit TypeInferenceVisitor(const DAG *const dag) : dag_(dag) {}
 
+        auto operator()(const DAGAntiJoin *const op) const -> const Tuple * {
+            auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
+            auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
+
+            if (left_input_type->field_types.empty()) {
+                throw std::invalid_argument(
+                        "Left join input cannot be empty tuple");
+            }
+
+            if (right_input_type->field_types.empty()) {
+                throw std::invalid_argument(
+                        "Right join input cannot be empty tuple");
+            }
+
+            auto const left_key_type = left_input_type->field_types[0];
+            auto const right_key_type = right_input_type->field_types[0];
+
+            if (dynamic_cast<const dag::type::Atomic *>(left_key_type) ==
+                nullptr) {
+                throw std::invalid_argument(
+                        "First field of left input of Join must be Atomic");
+            }
+
+            if (dynamic_cast<const dag::type::Atomic *>(right_key_type) ==
+                nullptr) {
+                throw std::invalid_argument(
+                        "First field of right input of Join must be Atomic");
+            }
+
+            return left_input_type;
+        }
+
         auto operator()(const DAGAssertCorrectOpenNextClose *const op) const
                 -> const Tuple * {
             return dag_->predecessor(op)->tuple->type;
