@@ -408,6 +408,13 @@ void CodeGenVisitor::operator()(DAGReduceByIndex *op) {
                      {functor_class + "()"});
 }
 
+void CodeGenVisitor::operator()(DAGTopK *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "TopKOperator");
+    emitOperatorMake(var_name, "TopKOperator", op, {},
+                     {std::to_string(op->num_elements)});
+}
+
 void CodeGenVisitor::operator()(DAGZip *const op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ZipOperator");

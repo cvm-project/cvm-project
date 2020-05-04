@@ -32,6 +32,7 @@
 #include "split_column_data.hpp"
 #include "split_range.hpp"
 #include "split_row_data.hpp"
+#include "topk.hpp"
 #include "zip.hpp"
 
 #endif

@@ -14,6 +14,7 @@ add_library(dag SHARED
         src/operators/projection.cpp
         src/operators/reduce_by_index.cpp
         src/operators/row_scan.cpp
+        src/operators/topk.cpp
         src/operators/zip.cpp
         src/type/array.cpp
         src/type/atomic.cpp

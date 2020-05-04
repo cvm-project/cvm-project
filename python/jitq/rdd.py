@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 import abc
 import dis
 import io
@@ -224,6 +225,9 @@ class RDD(abc.ABC):
 
     def cartesian(self, other):
         return Cartesian(self.context, self, other)
+
+    def topk(self, num_elements):
+        return TopK(self.context, self, num_elements)
 
     def zip(self, other):
         return Zip(self.context, self, other)
@@ -469,6 +473,27 @@ class Join(BinaryRDD):
 
     def self_write_dag(self, dic):
         pass
+
+
+class TopK(UnaryRDD):
+    NAME = 'topk'
+
+    def __init__(self, context, parent, num_elements):
+        super(TopK, self).__init__(context, parent)
+        self.output_type = self.parents[0].output_type
+        self.num_elements = num_elements
+        if self.num_elements <= 0:
+            raise TypeError(
+                "TopK takes a positive parameter.\n"
+                "  found :    {0}\n"
+                .format(self.num_elements))
+
+    def self_hash(self):
+        hash_objects = [str(self.output_type), str(self.num_elements)]
+        return hash("#".join(hash_objects))
+
+    def self_write_dag(self, dic):
+        dic['num_elements'] = self.num_elements
 
 
 class AntiJoin(BinaryRDD):

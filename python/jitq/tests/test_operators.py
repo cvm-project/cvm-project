@@ -795,6 +795,49 @@ class TestReduceByKey:
         assert sorted(res.astuples()) == sorted(truth)
 
 
+class TestTopK:
+
+    def test_scalar(self, jitq_context):
+        input_ = [5, 7, 12, 600, 4]
+        data = jitq_context.collection(input_)
+
+        res = data.topk(3).collect()
+        truth = [600, 12, 7]
+        assert list(res.astuples()) == truth
+
+    def test_tuple(self, jitq_context):
+        input_ = [(1, 2), (1, 3), (4, 4), (3, 5), (2, 6)]
+        data = jitq_context.collection(input_)
+
+        res = data.topk(2).collect()
+        truth = [(4, 4), (3, 5)]
+        assert list(res.astuples()) == truth
+
+    def test_triple(self, jitq_context):
+        input_ = [(5, 1, 2), (12, 1, 3), (8, 4, 4), (1, 3, 5), (7, 2, 6)]
+        data = jitq_context.collection(input_)
+
+        res = data.topk(4).collect()
+        truth = [(12, 1, 3), (8, 4, 4), (7, 2, 6), (5, 1, 2)]
+        assert list(res.astuples()) == truth
+
+    def test_whole(self, jitq_context):
+        input_ = [8, 14, 6, 9, 3, 5, 4]
+        data = jitq_context.collection(input_)
+
+        res = data.topk(len(input_)).collect()
+        assert list(res.astuples()) == sorted(input_, reverse=True)
+
+    def test_tie(self, jitq_context):
+        input_ = [(1, 3), (5, 6), (1, 4)]
+        data = jitq_context.collection(input_)
+
+        res = data.topk(2).collect()
+        truth = [(5, 6), (1, 3)]
+
+        assert list(res.astuples()) == truth
+
+
 class TestCartesian:
 
     def test_count(self, jitq_context):
