@@ -325,7 +325,8 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 continue;
             }
             if (IsInstanceOf<DAGJoin>(dag->successor(op))) {
-                auto const join_op = dag->successor(op);
+                auto const join_op =
+                        reinterpret_cast<DAGJoin *>(dag->successor(op));
 
                 auto const this_in_flow = dag->out_flow(op);
                 auto const this_in_port = this_in_flow.target.port;
@@ -423,6 +424,8 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
 
                 // Use the original join operator to do the actual join
                 auto const inner_join_op = new DAGJoin();
+                inner_join_op->num_keys = join_op->num_keys;
+                join_op->num_keys = 1;
                 next_inner_dag->AddOperator(inner_join_op);
 
                 // Connect new operators in next inner DAG

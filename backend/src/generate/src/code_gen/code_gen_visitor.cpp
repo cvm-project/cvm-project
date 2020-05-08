@@ -229,22 +229,23 @@ void CodeGenVisitor::operator()(DAGJoin *op) {
             CodeGenVisitor::visit_common(op, "JoinOperator");
 
     // Build key and value types
-    // TODO(sabir): This currently only works for keys of size 1
     const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
     const auto up2Type = dag_->predecessor(op, 1)->tuple->type;
-    auto key_Tuple = up1Type->ComputeHeadTuple();
+
+    auto key_Tuple = up1Type->ComputeHeadTuple(op->num_keys);
 
     auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
 
-    auto value_tuple1 = up1Type->ComputeTailTuple();
+    auto value_tuple1 = up1Type->ComputeTailTuple(op->num_keys);
     auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
 
-    auto value_tuple2 = up2Type->ComputeTailTuple();
+    auto value_tuple2 = up2Type->ComputeTailTuple(op->num_keys);
     auto value_type2 = EmitTupleStructDefinition(context_, value_tuple2);
 
     // Build operator
     std::vector<std::string> template_args = {key_type->name, value_type1->name,
-                                              value_type2->name};
+                                              value_type2->name,
+                                              std::to_string(op->num_keys)};
 
     emitOperatorMake(var_name, "JoinOperator", op, template_args);
 };

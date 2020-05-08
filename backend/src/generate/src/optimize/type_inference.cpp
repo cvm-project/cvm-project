@@ -237,25 +237,29 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         "Right join input cannot be empty tuple");
             }
 
-            auto const left_key_type = left_input_type->field_types[0];
-            auto const right_key_type = right_input_type->field_types[0];
+            for (int i = 0; i < op->num_keys; ++i) {
+                auto const left_key_type = left_input_type->field_types[i];
+                auto const right_key_type = right_input_type->field_types[i];
 
-            if (dynamic_cast<const dag::type::Atomic *>(left_key_type) ==
-                nullptr) {
-                throw std::invalid_argument(
-                        "First field of left input of Join must be Atomic");
-            }
+                if (dynamic_cast<const dag::type::Atomic *>(left_key_type) ==
+                    nullptr) {
+                    throw std::invalid_argument(
+                            "Each key of left input of Join must be Atomic");
+                }
 
-            if (dynamic_cast<const dag::type::Atomic *>(right_key_type) ==
-                nullptr) {
-                throw std::invalid_argument(
-                        "First field of right input of Join must be Atomic");
+                if (dynamic_cast<const dag::type::Atomic *>(right_key_type) ==
+                    nullptr) {
+                    throw std::invalid_argument(
+                            "Each key of right input of Join must be "
+                            "Atomic");
+                }
             }
 
             auto output_fields = left_input_type->field_types;
-            output_fields.insert(output_fields.end(),
-                                 right_input_type->field_types.begin() + 1,
-                                 right_input_type->field_types.end());
+            output_fields.insert(
+                    output_fields.end(),
+                    right_input_type->field_types.begin() + op->num_keys,
+                    right_input_type->field_types.end());
 
             return Tuple::MakeTuple(output_fields);
         }

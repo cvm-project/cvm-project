@@ -55,8 +55,9 @@ public:
                     op->tuple->fields[i].get());
         }
 
-        for (size_t i = 1; i < right_input_fields.size(); i++) {
-            auto &field = op->tuple->fields[i + left_input_fields.size() - 1];
+        for (size_t i = op->num_keys; i < right_input_fields.size(); i++) {
+            auto &field = op->tuple->fields[i + left_input_fields.size() -
+                                            op->num_keys];
             right_input_fields[i]->attribute_id()->AddField(field.get());
         }
     }

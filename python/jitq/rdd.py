@@ -217,8 +217,8 @@ class RDD(abc.ABC):
                                  Reduce(self.context, self, func)) \
             .execute_dag()
 
-    def join(self, other):
-        return Join(self.context, self, other)
+    def join(self, other, num_keys=1):
+        return Join(self.context, self, other, num_keys)
 
     def antijoin(self, other):
         return AntiJoin(self.context, self, other)
@@ -440,11 +440,17 @@ class Join(BinaryRDD):
     NAME = 'join'
 
     """
-    the first element in a tuple is the key
+    the first num_keys elements in a tuple are the key
     """
 
-    def __init__(self, context, left, right):
+    def __init__(self, context, left, right, num_keys):
         super(Join, self).__init__(context, [left, right])
+        self.num_keys = num_keys
+        if self.num_keys <= 0:
+            raise TypeError(
+                "Number of keys cannot be zero or negative \n"
+                "  found :    {0}\n"
+                .format(self.num_keys))
         self.output_type = self.compute_output_type()
 
     def compute_output_type(self):
@@ -455,12 +461,20 @@ class Join(BinaryRDD):
         if not isinstance(right_type, types.Tuple):
             right_type = make_tuple([right_type])
 
-        if str(left_type[0]) != str(right_type[0]):
+        if min(len(left_type), len(right_type)) < self.num_keys:
             raise TypeError(
-                "Join keys must be of matching type.\n"
-                "  found left:    {0}\n"
-                "  found right:   {1}"
-                .format(left_type[0], right_type[0]))
+                "Number of keys cannot be bigger than \n"
+                "number of tuple elements found: \n"
+                "tuple elements: {0}, number of keys: {1}\n"
+                .format(min(len(left_type), len(right_type)), self.num_keys))
+
+        for pos in list(range(self.num_keys)):
+            if str(left_type[pos]) != str(right_type[pos]):
+                raise TypeError(
+                    "Join keys must be of matching type.\n"
+                    "  found left:    {0}\n"
+                    "  found right:   {1}"
+                    .format(left_type[pos], right_type[pos]))
 
         # Special case: two scalar inputs produce a scalar output
         if not isinstance(self.parents[0].output_type, types.Tuple) and \
@@ -468,14 +482,14 @@ class Join(BinaryRDD):
             return self.parents[0].output_type
 
         # Common case: concatenate tuples
-        key_type = left_type[0]
-        left_payload = left_type.types[1:]
-        right_payload = right_type.types[1:]
+        key_type = left_type[0:self.num_keys]
+        left_payload = left_type.types[self.num_keys:]
+        right_payload = right_type.types[self.num_keys:]
 
-        return make_tuple((key_type,) + left_payload + right_payload)
+        return make_tuple((key_type) + left_payload + right_payload)
 
     def self_write_dag(self, dic):
-        pass
+        dic['num_keys'] = self.num_keys
 
 
 class TopK(UnaryRDD):

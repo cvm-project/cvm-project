@@ -458,6 +458,16 @@ class TestJoin:
         truth = [(0, 0, 0), (2, 2, 1), (4, 4, 2), (6, 6, 3), (8, 8, 4)]
         assert sorted(res.astuples()) == truth
 
+    def test_multiple_positions(self, jitq_context):
+        input_1 = [(1, 2, 5), (1, 3, 80), (2, 4, 50), (3, 5, 75), (2, 6, 23)]
+        input_2 = [(1, 3, 33), (2, 6, 55), (8, 66, 77), (2, 33, 44)]
+
+        data1 = jitq_context.collection(input_1)
+        data2 = jitq_context.collection(input_2)
+        res = data1.join(data2, 2).collect()
+        truth = [(1, 3, 80, 33), (2, 6, 23, 55)]
+        assert sorted(res.astuples()) == truth
+
 
 class TestAntiJoin:
 
