@@ -1,0 +1,164 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 3,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 1,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                0
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.16.i = sitofp i64 %.2 to double\n  %.22.i = fmul fast double %.16.i, 5.000000e-01\n  %.29.i = fptosi double %.22.i to i64\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.29.i, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 2,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                1
+            ]
+        },
+        {
+            "id": 3,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 4,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                3
+            ]
+        },
+        {
+            "id": 5,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                2,
+                4
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.3, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 6,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                5
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 7,
+            "op": "reduce_by_key",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                6
+            ]
+        },
+        {
+            "id": 8,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                7
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 8,
+            "port": 0
+        }
+    ]
+}
