@@ -229,6 +229,9 @@ class RDD(abc.ABC):
     def topk(self, num_elements):
         return TopK(self.context, self, num_elements)
 
+    def sort(self):
+        return Sort(self.context, self)
+
     def zip(self, other):
         return Zip(self.context, self, other)
 
@@ -494,6 +497,21 @@ class TopK(UnaryRDD):
 
     def self_write_dag(self, dic):
         dic['num_elements'] = self.num_elements
+
+
+class Sort(UnaryRDD):
+    NAME = 'sort'
+
+    def __init__(self, context, parent):
+        super(Sort, self).__init__(context, parent)
+        self.output_type = self.parents[0].output_type
+
+    def self_hash(self):
+        hash_objects = [str(self.output_type)]
+        return hash("#".join(hash_objects))
+
+    def self_write_dag(self, dic):
+        pass
 
 
 class AntiJoin(BinaryRDD):

@@ -476,6 +476,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             return dag_->predecessor(op, 0)->tuple->type;
         }
 
+        auto operator()(const DAGSort *const op) const -> const Tuple * {
+            return dag_->predecessor(op)->tuple->type;
+        }
+
         auto operator()(const DAGTopK *const op) const -> const Tuple * {
             return dag_->predecessor(op)->tuple->type;
         }

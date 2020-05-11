@@ -38,6 +38,7 @@ class DAGRowScan;
 class DAGSplitColumnData;
 class DAGSplitRange;
 class DAGSplitRowData;
+class DAGSort;
 class DAGTopK;
 class DAGZip;
 
@@ -75,6 +76,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGSplitColumnData,                 //
         DAGSplitRange,                      //
         DAGSplitRowData,                    //
+        DAGSort,                            //
         DAGTopK,                            //
         DAGZip                              //
         >::type;

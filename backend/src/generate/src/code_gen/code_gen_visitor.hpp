@@ -68,6 +68,7 @@ public:
     void operator()(DAGSplitRange *op);
     void operator()(DAGSplitRowData *op);
     void operator()(DAGTopK *op);
+    void operator()(DAGSort *op);
     void operator()(DAGZip *op);
     void operator()(DAGOperator *op);
 

@@ -838,6 +838,30 @@ class TestTopK:
         assert list(res.astuples()) == truth
 
 
+class TestSort:
+
+    def test_scalar(self, jitq_context):
+        input_ = [5, 7, 12, 600, 4]
+        data = jitq_context.collection(input_)
+
+        res = data.sort().collect()
+        assert list(res.astuples()) == sorted(input_)
+
+    def test_tuple(self, jitq_context):
+        input_ = [(7, 5), (12, 7), (1, 12), (50, 600), (4, 5)]
+        data = jitq_context.collection(input_)
+
+        res = data.sort().collect()
+        assert list(res.astuples()) == sorted(input_)
+
+    def test_triple(self, jitq_context):
+        input_ = [(7, 5, 2), (7, 12, 7), (3, 1, 12), (40, 50, 600), (-1, 4, 5)]
+        data = jitq_context.collection(input_)
+
+        res = data.sort().collect()
+        assert list(res.astuples()) == sorted(input_)
+
+
 class TestCartesian:
 
     def test_count(self, jitq_context):
