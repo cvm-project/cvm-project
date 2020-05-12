@@ -847,6 +847,7 @@
                                 },
                                 {
                                     "id": 4,
+                                    "num_keys": 1,
                                     "op": "join",
                                     "output_type": [
                                         {
@@ -1193,6 +1194,7 @@
                     },
                     {
                         "id": 3,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {

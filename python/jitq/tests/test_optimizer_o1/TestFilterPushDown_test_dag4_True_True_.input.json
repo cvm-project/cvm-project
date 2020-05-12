@@ -71,6 +71,7 @@
         },
         {
             "id": 4,
+            "num_keys": 1,
             "op": "join",
             "output_type": [
                 {

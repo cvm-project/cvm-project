@@ -44,6 +44,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -179,6 +180,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -314,6 +316,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -449,6 +452,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -584,6 +588,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -719,6 +724,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -854,6 +860,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -989,6 +996,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -1124,6 +1132,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
@@ -1259,6 +1268,7 @@
                     },
                     {
                         "id": 1,
+                        "num_keys": 1,
                         "op": "join",
                         "output_type": [
                             {
