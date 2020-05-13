@@ -223,6 +223,9 @@ class RDD(abc.ABC):
     def antijoin(self, other):
         return AntiJoin(self.context, self, other)
 
+    def semijoin(self, other):
+        return SemiJoin(self.context, self, other)
+
     def cartesian(self, other):
         return Cartesian(self.context, self, other)
 
@@ -550,6 +553,47 @@ class AntiJoin(BinaryRDD):
         if str(left_type[0]) != str(right_type[0]):
             raise TypeError(
                 "AntiJoin keys must be of matching type.\n"
+                "  found left:    {0}\n"
+                "  found right:   {1}"
+                .format(left_type[0], right_type[0]))
+
+        # Special case: two scalar inputs produce a scalar output
+        if not isinstance(self.parents[0].output_type, types.Tuple) and \
+                not isinstance(self.parents[1].output_type, types.Tuple):
+            return self.parents[0].output_type
+
+        # Common case: concatenate tuples
+        key_type = left_type[0]
+        left_payload = left_type.types[1:]
+
+        return make_tuple((key_type,) + left_payload)
+
+    def self_write_dag(self, dic):
+        pass
+
+
+class SemiJoin(BinaryRDD):
+    NAME = 'semijoin'
+
+    """
+    the first element in a tuple is the key
+    """
+
+    def __init__(self, context, left, right):
+        super(SemiJoin, self).__init__(context, [left, right])
+        self.output_type = self.compute_output_type()
+
+    def compute_output_type(self):
+        left_type = self.parents[0].output_type
+        right_type = self.parents[1].output_type
+        if not isinstance(left_type, types.Tuple):
+            left_type = make_tuple([left_type])
+        if not isinstance(right_type, types.Tuple):
+            right_type = make_tuple([right_type])
+
+        if str(left_type[0]) != str(right_type[0]):
+            raise TypeError(
+                "SemiJoin keys must be of matching type.\n"
                 "  found left:    {0}\n"
                 "  found right:   {1}"
                 .format(left_type[0], right_type[0]))

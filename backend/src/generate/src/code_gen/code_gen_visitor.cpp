@@ -328,6 +328,27 @@ void CodeGenVisitor::operator()(DAGParquetScan *op) {
                       column_ids_expression, filesystem});
 }
 
+void CodeGenVisitor::operator()(DAGSemiJoin *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "SemiJoinOperator");
+
+    // Build key and value types
+    // TODO(sabir): This currently only works for keys of size 1
+    const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
+    auto key_Tuple = up1Type->ComputeHeadTuple();
+
+    auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
+
+    auto value_tuple1 = up1Type->ComputeTailTuple();
+    auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
+
+    // Build operator
+    std::vector<std::string> template_args = {key_type->name,
+                                              value_type1->name};
+
+    emitOperatorMake(var_name, "SemiJoinOperator", op, template_args);
+};
+
 void CodeGenVisitor::operator()(DAGSplitColumnData *const op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "SplitColumnDataOperator");

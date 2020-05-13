@@ -35,6 +35,7 @@ class DAGReduceByIndex;
 class DAGReduceByKey;
 class DAGReduceByKeyGrouped;
 class DAGRowScan;
+class DAGSemiJoin;
 class DAGSplitColumnData;
 class DAGSplitRange;
 class DAGSplitRowData;
@@ -73,6 +74,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGReduceByKey,                     //
         DAGReduceByKeyGrouped,              //
         DAGRowScan,                         //
+        DAGSemiJoin,                        //
         DAGSplitColumnData,                 //
         DAGSplitRange,                      //
         DAGSplitRowData,                    //

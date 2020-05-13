@@ -29,6 +29,7 @@
 #include "reduce_by_key.hpp"
 #include "reduce_by_key_grouped.hpp"
 #include "row_scan.hpp"
+#include "semijoin.hpp"
 #include "sort.hpp"
 #include "split_column_data.hpp"
 #include "split_range.hpp"
