@@ -214,7 +214,7 @@ cd /tmp/arrow/cpp/build && \
 CXX=clang++-9.0 CC=clang-9.0 \
     cmake \
         -DCMAKE_CXX_STANDARD=17 \
-        -DCMAKE_INSTALL_PREFIX=/tmp/arrow/dist \
+        -DCMAKE_INSTALL_PREFIX=/opt/arrow-0.14/ \
         -DCMAKE_INSTALL_LIBDIR=lib \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
         -DARROW_WITH_RAPIDJSON=ON \
@@ -231,13 +231,13 @@ CXX=clang++-9.0 CC=clang-9.0 \
         -DARROW_BUILD_TESTS=OFF \
         -DARROW_RPATH_ORIGIN=ON \
         .. && \
-make -j$(nproc) install && \
+make -j$(nproc) && \
+sudo make install && \
 cd /tmp/arrow/python && \
-PYARROW_WITH_PARQUET=1 ARROW_HOME=/tmp/arrow/dist \
+PYARROW_WITH_PARQUET=1 ARROW_HOME=/opt/arrow-0.14/ \
     python3 setup.py build_ext --bundle-arrow-cpp bdist_wheel && \
 sudo mkdir -p /opt/arrow-0.14/share && \
-sudo cp /tmp/arrow/python/dist/*.whl /opt/arrow-0.14/share &&\
-sudo cp -r /tmp/arrow/dist/* /opt/arrow-0.14/
+sudo cp /tmp/arrow/python/dist/*.whl /opt/arrow-0.14/share
 ```
 
 Make the following command executed in the shells you use for development,
