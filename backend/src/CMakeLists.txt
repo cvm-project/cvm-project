@@ -71,7 +71,6 @@ if(${LLVM_ASAN} AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 # Set up Boost
-set(Boost_NO_BOOST_CMAKE ON)
 find_package(Boost 1.64 REQUIRED COMPONENTS
         filesystem
         program_options
