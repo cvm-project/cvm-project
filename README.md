@@ -162,14 +162,15 @@ sudo apt install libgraphviz-dev
 ```bash
 sudo apt install python3-dev autotools-dev libicu-dev libbz2-dev
 cd /tmp/ && \
-wget https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz -O - \
+wget https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.tar.gz -O - \
     | tar -xz && \
-cd /tmp/boost_1_71_0 && \
+cd /tmp/boost_1_73_0 && \
 echo "using clang : 9.0 : $(which clang-9.0) ; " > tools/build/src/user-config.jam && \
 PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.' + str(sys.version_info.minor))")" && \
+export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$(python3 -c 'import sysconfig as s; print(s.get_path("include"))')" && \
 ./bootstrap.sh --with-python=$(which python3) && \
-./b2 --toolset=clang-9.0 --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.71.0 && \
-sudo ./b2 install --prefix=/opt/boost-1.71.0
+./b2 --toolset=clang-9.0 cxxflags=-fPIC --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.73.0 && \
+sudo ./b2 install --prefix=/opt/boost-1.73.0
 ```
 
 Make the following command executed in the shells you use for development,
