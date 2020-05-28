@@ -1,5 +1,6 @@
 #include "optimize/optimizer.hpp"
 
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -63,11 +64,14 @@ void Optimizer::Run(DAG *const dag) {
 #endif  // NDEBUG
     }
 
-    // Parallelize
-    if (config.value("/optimizations/parallelize/active", false)) {
+    // Run target-specific optimization passes
+    auto const target = config.value("/target", "singlecore");
+    if (target == "omp") {
         transformations.emplace_back("parallelize");
         transformations.emplace_back("parallelize_omp");
         transformations.emplace_back("type_inference");
+    } else if (target != "singlecore") {
+        throw std::invalid_argument("Unknown target: '" + target + "'");
     }
 
     // Replace GroupByKey with grouped variant

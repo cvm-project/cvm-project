@@ -55,16 +55,20 @@ auto main(int argc, char* argv[]) -> int {
     size_t opt_level = 0;
     bool verbose = false;
     std::vector<std::string> optimizations;
+    std::string target;
 
     po::options_description desc("Deserialize, optimize, and serialize a DAG");
     desc.add_options()                             //
             ("help", "Produce this help message")  //
+            ("target,T",
+             po::value<std::string>(&target)->default_value("singlecore"),
+             "Compile for target platform")  //
             ("optimization-level,O",
              po::value<size_t>(&opt_level)->default_value(0),
              "Optimization level")  //
             ("optimizations,t",
              po::value<std::vector<std::string>>(&optimizations),
-             "Optimization level")  //
+             "Enable optimization")  //
             ("input,i", po::value<std::string>(&input_file_name),
              "Path to input file")  //
             ("output,o", po::value<std::string>(&output_file_name),
@@ -102,6 +106,7 @@ auto main(int argc, char* argv[]) -> int {
     // Assemble backend configuration
     nlohmann::json conf_json;
     conf_json["/optimizer/optimization-level"] = opt_level;
+    conf_json["/optimizer/target"] = target;
 
     if (output_format != OutputFormat::kBin) {
         conf_json["/optimizer/optimizations/code_gen/active"] = false;

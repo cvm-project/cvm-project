@@ -84,9 +84,9 @@ OPTIMIZER_CONFIGS = {
     'o2': OptimizerConfig(           # Optimizer with '-O2'
         join(TEST_BASE_DIR, 'test_optimizer_o2'),
         ['-O2']),
-    'parallelize': OptimizerConfig(  # Optimizer with '-O2' and parallelization
-        join(TEST_BASE_DIR, 'test_optimizer_parallelize'),
-        ['-O2', '-tparallelize']),
+    'omp': OptimizerConfig(  # Optimizer with '-O2' and omp target
+        join(TEST_BASE_DIR, 'test_optimizer_omp'),
+        ['-O2', '-Tomp']),
 }
 
 

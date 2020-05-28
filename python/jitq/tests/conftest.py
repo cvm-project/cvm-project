@@ -12,8 +12,8 @@ from jitq.tests.helpers import str2bool
 
 def pytest_addoption(parser):
     parser.addoption(
-        '-P', '--parallelize', action='append', type=str2bool, default=[],
-        help='Run the tests with parallelization enabled.')
+        '-T', '--target', action='append', default=[],
+        help='Run the tests on target platform(s).')
     parser.addoption(
         '-F', '--filesystem', action='append', default=[],
         help='Select filesystem on which file-based test should run.')
@@ -30,11 +30,11 @@ def pytest_addoption(parser):
 
 
 def pytest_generate_tests(metafunc):
-    if 'parallelize' in metafunc.fixturenames:
-        parallelize = metafunc.config.option.parallelize or [True, False]
-        parallelize = list(set(parallelize))
-        metafunc.parametrize('parallelize',
-                             parallelize,
+    if 'target' in metafunc.fixturenames:
+        target = metafunc.config.option.target or ['singlecore', 'omp']
+        target = list(set(target))
+        metafunc.parametrize('target',
+                             target,
                              scope='session')
 
     if 'filesystem' in metafunc.fixturenames:
@@ -99,12 +99,10 @@ def generate_testcases(generate_testcases_enabled, request):
 
 
 @pytest.fixture
-def jitq_context(parallelize, generate_testcases):
+def jitq_context(target, generate_testcases):
     # pylint: disable=unused-argument  # needed as fixture
     return JitqContext(conf={
         'optimizer': {
-            'optimizations': {
-                'parallelize': {'active': parallelize},
-            },
+            'target': target,
         },
     })

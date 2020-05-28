@@ -87,7 +87,7 @@ cppcheck:
     - cd backend/build
     - make cppcheck
 
-python-tests-parallel:
+python-tests-omp:
   stage: test
   dependencies:
     - dbg-build
@@ -104,8 +104,8 @@ python-tests-parallel:
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_parallel_environment.py --parallelize true
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_operators.py --parallelize true
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_omp_environment.py --target omp
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_operators.py --target omp
 
 python-tests-asan:
   stage: test
@@ -123,7 +123,7 @@ python-tests-asan:
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest --ignore test_parallel_environment.py
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest --ignore test_omp_environment.py
 
 cpp-test:
   stage: test
