@@ -123,7 +123,7 @@ python-tests-asan:
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest
+    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest --ignore test_parallel_environment.py
 
 cpp-test:
   stage: test
