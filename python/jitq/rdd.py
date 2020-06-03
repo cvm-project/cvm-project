@@ -652,12 +652,34 @@ class ReduceByKey(UnaryRDD):
     def __init__(self, context, parent, func):
         super(ReduceByKey, self).__init__(context, parent)
         self.func = func
-        aggregate_type = make_tuple(self.parents[0].output_type.types[1:])
-        if len(aggregate_type) == 1:
-            aggregate_type = aggregate_type.types[0]
+        input_type = self.parents[0].output_type
+
+        if isinstance(input_type, types.Tuple):
+            child_types = input_type.types
+            aggregate_type = make_tuple(child_types[1:])
+            aggregate_tuple = aggregate_type
+
+        elif isinstance(input_type, types.Record):
+            child_types = input_type.dtype.fields
+            names = [t[0] for t in input_type.dtype.descr]
+            dtypes = [t[0] for t in input_type.dtype.fields.values()]
+
+            field_types = [numba.from_dtype(t) for t in dtypes]
+            aggregate_tuple = make_tuple(field_types[1:])
+
+            aggregate_type = make_record(aggregate_tuple, names[1:])
+
+        else:
+            assert False, "unexpected input type: {}".format(str(input_type))
+
+        if len(aggregate_tuple) == 1:
+            aggregate_type = aggregate_tuple.types[0]
+            aggregate_tuple = aggregate_tuple.types[0]
+
         self.llvm_ir, output_type = get_llvm_ir_and_output_type(
             func, [aggregate_type, aggregate_type])
-        if str(aggregate_type) != str(output_type):
+
+        if str(aggregate_tuple) != str(output_type):
             raise BaseException(
                 "Function given to reduce_by_key has the wrong return type:\n"
                 "  expected: {0}\n"
