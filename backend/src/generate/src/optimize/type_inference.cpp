@@ -30,7 +30,9 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
     public:
         explicit TypeInferenceVisitor(const DAG *const dag) : dag_(dag) {}
 
-        auto operator()(const DAGAntiJoin *const op) const -> const Tuple * {
+    private:
+        auto HandleAntiJoin(const DAGOperator *const op) const
+                -> const Tuple * {
             auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
             auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
 
@@ -62,6 +64,16 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             }
 
             return left_input_type;
+        }
+
+    public:
+        auto operator()(const DAGAntiJoin *const op) const -> const Tuple * {
+            return HandleAntiJoin(op);
+        }
+
+        auto operator()(const DAGAntiJoinPredicated *const op) const
+                -> const Tuple * {
+            return HandleAntiJoin(op);
         }
 
         auto operator()(const DAGAssertCorrectOpenNextClose *const op) const

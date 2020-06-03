@@ -220,8 +220,10 @@ class RDD(abc.ABC):
     def join(self, other, num_keys=1):
         return Join(self.context, self, other, num_keys)
 
-    def antijoin(self, other):
-        return AntiJoin(self.context, self, other)
+    def antijoin(self, other, predicate=None):
+        if not predicate:
+            return AntiJoin(self.context, self, other)
+        return AntiJoinPredicated(self.context, self, other, predicate)
 
     def semijoin(self, other):
         return SemiJoin(self.context, self, other)
@@ -570,6 +572,26 @@ class AntiJoin(BinaryRDD):
 
     def self_write_dag(self, dic):
         pass
+
+
+class AntiJoinPredicated(AntiJoin):
+    NAME = 'antijoin_predicated'
+
+    def __init__(self, context, left, right, func):
+        super(AntiJoinPredicated, self).__init__(context, left, right)
+        self.func = func
+        left_type = self.parents[0].output_type
+        right_type = self.parents[1].output_type
+        self.llvm_ir, return_type = get_llvm_ir_and_output_type(
+            self.func, [left_type, right_type])
+        if str(return_type) != "bool":
+            raise BaseException(
+                "Function given to filter has the wrong return type:\n"
+                "  expected: {0}\n"
+                "  found:    {1}".format("bool", return_type))
+
+    def self_write_dag(self, dic):
+        dic['func'] = self.llvm_ir
 
 
 class SemiJoin(BinaryRDD):

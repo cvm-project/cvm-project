@@ -8,6 +8,7 @@
 #include <boost/mpl/transform_view.hpp>
 
 class DAGAntiJoin;
+class DAGAntiJoinPredicated;
 class DAGAssertCorrectOpenNextClose;
 class DAGCartesian;
 class DAGColumnScan;
@@ -47,6 +48,7 @@ namespace dag {
 
 using AllOperatorTypes = boost::mpl::list<  //
         DAGAntiJoin,                        //
+        DAGAntiJoinPredicated,              //
         DAGAssertCorrectOpenNextClose,      //
         DAGCartesian,                       //
         DAGColumnScan,                      //

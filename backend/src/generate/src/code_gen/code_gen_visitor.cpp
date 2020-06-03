@@ -43,6 +43,37 @@ void CodeGenVisitor::operator()(DAGAntiJoin *op) {
     emitOperatorMake(var_name, "AntiJoinOperator", op, template_args);
 };
 
+void CodeGenVisitor::operator()(DAGAntiJoinPredicated *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "AntiJoinPredicatedOperator");
+
+    // Build key and value types
+    // TODO(sabir): This currently only works for keys of size 1
+    const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
+    const auto up2Type = dag_->predecessor(op, 1)->tuple->type;
+    auto key_Tuple = up1Type->ComputeHeadTuple();
+
+    auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
+
+    auto value_tuple1 = up1Type->ComputeTailTuple();
+    auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
+    auto value_tuple2 = up2Type->ComputeTailTuple();
+    auto value_type2 = EmitTupleStructDefinition(context_, value_tuple2);
+
+    // Build operator
+    std::vector<std::string> template_args = {key_type->name, value_type1->name,
+                                              value_type2->name};
+
+    auto input_type1 = operator_descs_[dag_->predecessor(op, 0)].return_type;
+    auto input_type2 = operator_descs_[dag_->predecessor(op, 1)].return_type;
+    const std::string functor_class =
+            GenerateLlvmFunctor(context_, op->name(), op->llvm_ir,
+                                {input_type1, input_type2}, "bool");
+
+    emitOperatorMake(var_name, "AntiJoinPredicatedOperator", op, template_args,
+                     {functor_class + "()"});
+};
+
 void CodeGenVisitor::operator()(DAGAssertCorrectOpenNextClose *op) {
     const std::string var_name = CodeGenVisitor::visit_common(
             op, "AssertCorrectOpenNextCloseOperator");
