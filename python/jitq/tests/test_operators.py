@@ -788,6 +788,22 @@ class TestReduceByKey:
         truth = [(0, 2, 4), (1, 3, 6)]
         assert sorted(data.astuples()) == sorted(truth)
 
+    def test_record1(self, jitq_context):
+        dtype = [('x', 'i8'), ('y', 'i8')]
+        input_ = np.array([(1, 2)], dtype=dtype)
+        res = jitq_context.collection(input_) \
+            .reduce_by_key(lambda i1, i2: i1 + i2) \
+            .collect()
+        assert [tuple(e) for e in input_] == res.astuplelist()
+
+    def test_record2(self, jitq_context):
+        dtype = [('x', 'i8'), ('y', 'i8'), ('z', 'i8')]
+        input_ = np.array([(1, 2, 3)], dtype=dtype)
+        res = jitq_context.collection(input_) \
+            .reduce_by_key(lambda r1, r2: (r1.y + r2.y, r1.z + r2.z)) \
+            .collect()
+        assert [tuple(e) for e in input_] == res.astuplelist()
+
     def test_grouped(self, jitq_context):
         input_ = [(0, 1), (1, 1), (1, 1), (0, 1), (1, 1)]
 
