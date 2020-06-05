@@ -742,6 +742,19 @@ class TestReduce:
                  sum(map(lambda t: t[1], input_)))
         assert res == truth
 
+    def test_record1(self, jitq_context):
+        dtype = [('x', 'i8')]
+        input_ = np.array([(40,), (2,)], dtype=dtype)
+        res = jitq_context.collection(input_).reduce(lambda i1, i2: i1 + i2)
+        assert res == 42
+
+    def test_record2(self, jitq_context):
+        dtype = [('x', 'i8'), ('y', 'i8')]
+        input_ = np.array([(40, 2), (2, 40)], dtype=dtype)
+        res = jitq_context.collection(input_) \
+            .reduce(lambda r1, r2: (r1.x + r2.x, r1.y + r2.y))
+        assert res == (42, 42)
+
     def test_reduce_empty(self, jitq_context):
         res = jitq_context.range_(0, 0).reduce(lambda i1, i2: i1 + i2)
         assert res is None
