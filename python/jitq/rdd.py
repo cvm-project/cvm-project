@@ -622,9 +622,26 @@ class Reduce(UnaryRDD):
     def __init__(self, context, parent, func):
         super(Reduce, self).__init__(context, parent)
         self.func = func
-        aggregate_type = self.parents[0].output_type
+        input_type = self.parents[0].output_type
+
+        if isinstance(input_type, types.Tuple):
+            aggregate_type = input_type
+
+        elif isinstance(input_type, types.Record):
+            dtypes = [t[0] for t in input_type.dtype.fields.values()]
+            field_types = [numba.from_dtype(t) for t in dtypes]
+            aggregate_type = make_tuple(field_types)
+
+        else:
+            assert str(input_type) in C_TYPE_MAP
+            aggregate_type = make_tuple([input_type])
+
+        if len(aggregate_type) == 1:
+            aggregate_type = aggregate_type.types[0]
+            input_type = aggregate_type
+
         self.llvm_ir, self.output_type = get_llvm_ir_and_output_type(
-            self.func, [aggregate_type, aggregate_type])
+            self.func, [input_type, input_type])
         if str(aggregate_type) != str(self.output_type):
             raise BaseException(
                 "Function given to reduce has the wrong return type:\n"
