@@ -62,6 +62,11 @@ class Q01(TpchJitqQuery):
     #     l_returnflag,
     #     l_linestatus
 
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.hb_shipdate = parse_date('1998-09-02')
+
     def load(self, database):
         lineitem_scan = database.scan('lineitem', {
             'l_quantity': (4, nb.int64),
@@ -70,7 +75,7 @@ class Q01(TpchJitqQuery):
             'l_tax': (7, nb.int64),
             'l_returnflag': (8, nb.int64),
             'l_linestatus': (9, nb.int64),
-            'l_shipdate': (10, nb.int64),
+            'l_shipdate': (10, nb.int64, [(0, self.hb_shipdate)]),
         })
 
         return {
@@ -78,10 +83,10 @@ class Q01(TpchJitqQuery):
         }
 
     def run(self, scans):
-        b_shipdate = parse_date('1998-09-02')
+        hb_shipdate = self.hb_shipdate
 
         return scans['lineitem'] \
-            .filter(lambda r: r.l_shipdate <= b_shipdate) \
+            .filter(lambda r: r.l_shipdate <= hb_shipdate) \
             .map(lambda r:
                  (r.l_returnflag * 2 + r.l_linestatus,
                   np.int64(r.l_quantity),
@@ -436,6 +441,12 @@ class Q04(TpchJitqQuery):
     # order by
     #         o_orderpriority;
 
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.lb_orderdate = parse_date('1993-07-01')
+        self.hb_orderdate = parse_date('1993-10-01')
+
     def load(self, database):
         lineitem_scan = database.scan('lineitem', {
             'l_orderkey': (0, nb.int64),
@@ -444,7 +455,8 @@ class Q04(TpchJitqQuery):
         })
         orders_scan = database.scan('orders', {
             'o_orderkey': (0, nb.int64),
-            'o_orderdate': (4, nb.int64),
+            'o_orderdate': (4, nb.int64,
+                            [(self.lb_orderdate, self.hb_orderdate)]),
             'o_orderpriority': (5, nb.int64),
         })
 
@@ -454,8 +466,8 @@ class Q04(TpchJitqQuery):
         }
 
     def run(self, scans):
-        lb_orderdate = parse_date('1993-07-01')
-        hb_orderdate = parse_date('1993-10-01')
+        lb_orderdate = self.lb_orderdate
+        hb_orderdate = self.hb_orderdate
 
         orders_scan = scans['orders'] \
             .filter(lambda r: lb_orderdate <= r.o_orderdate < hb_orderdate) \
@@ -620,12 +632,23 @@ class Q06(TpchJitqQuery):
     #     and l_discount between 0.06 - 0.01 and 0.06 + 0.01
     #     and l_quantity < 24
 
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.lb_shipdate = parse_date('1994-01-01')
+        self.hb_shipdate = parse_date('1995-01-01')
+        self.lb_discount = 5
+        self.hb_discount = 7
+        self.hb_quantity = 24
+
     def load(self, database):
         lineitem_scan = database.scan('lineitem', {
-            'l_quantity': (4, nb.int64),
+            'l_quantity': (4, nb.int64, [(0, self.hb_quantity)]),
             'l_extendedprice': (5, nb.int64),
-            'l_discount': (6, nb.int64),
-            'l_shipdate': (10, nb.int64),
+            'l_discount': (6, nb.int64,
+                           [(self.lb_discount, self.hb_discount)]),
+            'l_shipdate': (10, nb.int64,
+                           [(self.lb_shipdate, self.hb_shipdate)]),
         })
 
         return {
@@ -633,16 +656,17 @@ class Q06(TpchJitqQuery):
         }
 
     def run(self, scans):
-        lb_shipdate = parse_date('1994-01-01')
-        hb_shipdate = parse_date('1995-01-01')
+        lb_shipdate = self.lb_shipdate
+        hb_shipdate = self.hb_shipdate
+        lb_discount = self.lb_discount
+        hb_discount = self.hb_discount
+        hb_quantity = self.hb_quantity
 
         return scans['lineitem'] \
             .filter(lambda r:
-                    r.l_shipdate >= lb_shipdate and
-                    r.l_shipdate < hb_shipdate and
-                    r.l_discount >= 5 and
-                    r.l_discount <= 7 and
-                    r.l_quantity < 24
+                    lb_shipdate <= r.l_shipdate < hb_shipdate and
+                    lb_discount <= r.l_discount <= hb_discount and
+                    r.l_quantity < hb_quantity
                     ) \
             .map(lambda r: r.l_discount * r.l_extendedprice) \
             .reduce(lambda i1, i2: i1 + i2)
@@ -1249,13 +1273,23 @@ class Q12(TpchJitqQuery):
     # order by
     #     l_shipmode
 
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.lb_receiptdate = parse_date('1994-01-01')
+        self.hb_receiptdate = parse_date('1995-01-01')
+        self.shipmode1 = 2
+        self.shipmode2 = 5
+
     def load(self, database):
         lineitem_scan = database.scan('lineitem', {
             'l_orderkey': (0, nb.int64),
             'l_shipdate': (10, nb.int64),
             'l_commitdate': (11, nb.int64),
-            'l_receiptdate': (12, nb.int64),
-            'l_shipmode': (14, nb.int64),
+            'l_receiptdate': (12, nb.int64, [(self.lb_receiptdate,
+                                              self.hb_receiptdate)]),
+            'l_shipmode': (14, nb.int64, [(self.shipmode1, self.shipmode1),
+                                          (self.shipmode2, self.shipmode2)]),
         })
         orders_scan = database.scan('orders', {
             'o_orderkey': (0, nb.int64),
@@ -1268,12 +1302,15 @@ class Q12(TpchJitqQuery):
         }
 
     def run(self, scans):
-        lb_receiptdate = parse_date('1994-01-01')
-        hb_receiptdate = parse_date('1995-01-01')
+        lb_receiptdate = self.lb_receiptdate
+        hb_receiptdate = self.hb_receiptdate
+        shipmode1 = self.shipmode1
+        shipmode2 = self.shipmode2
 
         join = scans['lineitem'] \
             .filter(lambda r:
-                    r.l_shipmode in [2, 5] and
+                    (r.l_shipmode == shipmode1 or
+                     r.l_shipmode == shipmode2) and
                     r.l_shipdate < r.l_commitdate < r.l_receiptdate and
                     lb_receiptdate <= r.l_receiptdate < hb_receiptdate) \
             .map(lambda r: (r.l_orderkey, r.l_shipmode)) \
@@ -1316,12 +1353,19 @@ class Q14(TpchJitqQuery):
     #     and l_shipdate >= date '1995-09-01'
     #     and l_shipdate < date '1995-10-01'
 
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.lb_shipdate = parse_date('1995-09-01')
+        self.hb_shipdate = parse_date('1995-10-01')
+
     def load(self, database):
         lineitem_scan = database.scan('lineitem', {
-            'l_partkey': (1, nb.int64),
             'l_extendedprice': (5, nb.int64),
+            'l_partkey': (1, nb.int64),
             'l_discount': (6, nb.int64),
-            'l_shipdate': (10, nb.int64),
+            'l_shipdate': (10, nb.int64,
+                           [(self.lb_shipdate, self.hb_shipdate)]),
         })
         part_scan = database.scan('part', {
             'p_partkey': (0, nb.int64),
@@ -1334,8 +1378,8 @@ class Q14(TpchJitqQuery):
         }
 
     def run(self, scans):
-        lb_shipdate = parse_date('1995-09-01')
-        hb_shipdate = parse_date('1995-10-01')
+        lb_shipdate = self.lb_shipdate
+        hb_shipdate = self.hb_shipdate
 
         # like 'PROMO%' matches dictionary codes [75, 99]
 
@@ -1468,16 +1512,22 @@ class Q17(TpchJitqQuery):
     #             l_partkey = p_partkey
     #     );
 
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.brand = 23
+        self.container = 17
+
     def load(self, database):
         lineitem_scan = database.scan('lineitem', {
-            'l_partkey': (1, nb.int64),
             'l_quantity': (4, nb.int64),
             'l_extendedprice': (5, nb.int64),
+            'l_partkey': (1, nb.int64),
         })
         part_scan = database.scan('part', {
             'p_partkey': (0, nb.int64),
-            'p_brand': (3, nb.int64),
-            'p_container': (6, nb.int64),
+            'p_brand': (3, nb.int64, [(self.brand, self.brand)]),
+            'p_container': (6, nb.int64, [(self.container, self.container)]),
         })
 
         return {
@@ -1486,12 +1536,13 @@ class Q17(TpchJitqQuery):
         }
 
     def run(self, scans):
-        # MED BOX has dictionary value 25
+        brand = self.brand
+        container = self.container
 
         part_scan = scans['part'] \
             .filter(lambda r:
-                    r.p_brand == 23 and
-                    r.p_container == 17) \
+                    r.p_brand == brand and
+                    r.p_container == container) \
             .map(lambda r: (r.p_partkey,))
 
         lineitem_scan = scans['lineitem'] \
@@ -1710,22 +1761,41 @@ class Q19(TpchJitqQuery):
     #         and l_shipinstruct = 'DELIVER IN PERSON'
     #     )
 
+    def __init__(self, context):
+        super().__init__(context)
+
+        self.shipmode1 = 0
+        self.shipmode2 = 4
+        self.shipinstruct = 1
+        self.lb_quantity = 1
+        self.hb_quantity = 30
+        self.lb_brand = 12
+        self.hb_brand = 34
+        self.lb_size = 1
+        self.hb_size = 15
+        self.lb_container = 9
+        self.hb_container = 31
+
     def load(self, database):
         lineitem_scan = database.scan('lineitem', {
             'l_orderkey': (0, nb.int64),
             'l_partkey': (1, nb.int64),
-            'l_linenumber': (3, nb.int64),
-            'l_quantity': (4, nb.int64),
+            'l_quantity': (4, nb.int64,
+                           [(self.lb_quantity, self.hb_quantity)]),
             'l_extendedprice': (5, nb.int64),
+            'l_linenumber': (3, nb.int64),
             'l_discount': (6, nb.int64),
-            'l_shipinstruct': (13, nb.int64),
-            'l_shipmode': (14, nb.int64),
+            'l_shipinstruct': (13, nb.int64,
+                               [(self.shipinstruct, self.shipinstruct)]),
+            'l_shipmode': (14, nb.int64, [(self.shipmode1, self.shipmode1),
+                                          (self.shipmode2, self.shipmode2)]),
         })
         part_scan = database.scan('part', {
             'p_partkey': (0, nb.int64),
-            'p_brand': (3, nb.int64),
-            'p_size': (5, nb.int64),
-            'p_container': (6, nb.int64),
+            'p_brand': (3, nb.int64, [(self.lb_brand, self.hb_brand)]),
+            'p_size': (5, nb.int64, [(self.lb_size, self.hb_size)]),
+            'p_container': (6, nb.int64,
+                            [(self.lb_container, self.hb_container)]),
         })
 
         return {
@@ -1734,11 +1804,22 @@ class Q19(TpchJitqQuery):
         }
 
     def run(self, scans):
+        shipmode1 = self.shipmode1
+        shipmode2 = self.shipmode2
+        shipinstruct = self.shipinstruct
+        lb_quantity = self.lb_quantity
+        hb_quantity = self.hb_quantity
+        lb_size = self.lb_size
+        hb_size = self.hb_size
+        lb_container = self.lb_container
+        hb_container = self.hb_container
+
         lineitem_scan = scans['lineitem'] \
             .filter(lambda r:
-                    (r.l_shipmode == 0 or r.l_shipmode == 4) and
-                    r.l_shipinstruct == 1 and
-                    1 <= r.l_quantity <= 30) \
+                    (r.l_shipmode == shipmode1 or
+                     r.l_shipmode == shipmode2) and
+                    r.l_shipinstruct == shipinstruct and
+                    lb_quantity <= r.l_quantity <= hb_quantity) \
             .map(lambda r:
                  (r.l_partkey,
                   np.int64(r.l_extendedprice * (100 - r.l_discount)),
@@ -1752,8 +1833,8 @@ class Q19(TpchJitqQuery):
         part_scan = scans['part'] \
             .filter(lambda r:
                     r.p_brand in [12, 23, 34] and
-                    1 <= r.p_size <= 15 and
-                    9 <= r.p_container <= 31) \
+                    lb_size <= r.p_size <= hb_size and
+                    lb_container <= r.p_container <= hb_container) \
             .map(lambda r:
                  (r.p_partkey,
                   (4 if r.p_brand == 12 and (1 <= r.p_size <= 5) and
