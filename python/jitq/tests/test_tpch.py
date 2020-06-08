@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from jitq.tests.tpch.pandas import PandasCsv, PandasParquet
+from jitq.tests.tpch.parquet import Parquet
 from jitq.tests.tpch.queries import Q01, Q02, Q03, Q04, Q05, Q06, Q07, Q08, \
     Q10, Q11, Q12, Q14, Q15, Q17, Q18, Q19, Q21, Q22
 from jitq.utils import get_project_path
@@ -18,6 +19,7 @@ def tpch_data(tpch_input_path, tpch_input_format, tpch_scale, jitq_context):
     formats = {
         'pandas/csv': PandasCsv,
         'pandas/parquet': PandasParquet,
+        'parquet': Parquet,
     }
     loader = formats[tpch_input_format]
     database = loader(tpch_input_path, tpch_scale, jitq_context)

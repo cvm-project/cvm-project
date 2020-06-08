@@ -63,10 +63,15 @@ class Q01(TpchJitqQuery):
     #     l_linestatus
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_shipdate', 'l_discount', 'l_extendedprice', 'l_tax',
-            'l_quantity', 'l_returnflag', 'l_linestatus',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_quantity': (4, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_tax': (7, nb.int64),
+            'l_returnflag': (8, nb.int64),
+            'l_linestatus': (9, nb.int64),
+            'l_shipdate': (10, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -174,21 +179,33 @@ class Q02(TpchJitqQuery):
     # limit 100
 
     def load(self, database):
-        nation_scan = database.scan('nation', [
-            'n_nationkey', 'n_regionkey', 'n_name',
-        ])
-        part_scan = database.scan('part', [
-            'p_partkey', 'p_type', 'p_size', 'p_mfgr',
-        ])
-        partsupp_scan = database.scan('partsupp', [
-            'ps_partkey', 'ps_suppkey', 'ps_supplycost',
-        ])
-        region_scan = database.scan('region', [
-            'r_regionkey', 'r_name',
-        ])
-        supplier_scan = database.scan('supplier', [
-            's_suppkey', 's_nationkey', 's_acctbal', 's_phone', 's_name',
-        ])
+        nation_scan = database.scan('nation', {
+            'n_nationkey': (0, nb.int64),
+            'n_name': (1, nb.int64),
+            'n_regionkey': (2, nb.int64),
+        })
+        part_scan = database.scan('part', {
+            'p_partkey': (0, nb.int64),
+            'p_mfgr': (2, nb.int64),
+            'p_type': (4, nb.int64),
+            'p_size': (5, nb.int64),
+        })
+        partsupp_scan = database.scan('partsupp', {
+            'ps_partkey': (0, nb.int64),
+            'ps_suppkey': (1, nb.int64),
+            'ps_supplycost': (3, nb.int64),
+        })
+        region_scan = database.scan('region', {
+            'r_regionkey': (0, nb.int64),
+            'r_name': (1, nb.int64),
+        })
+        supplier_scan = database.scan('supplier', {
+            's_suppkey': (0, nb.int64),
+            's_name': (1, nb.int64),
+            's_nationkey': (3, nb.int64),
+            's_phone': (4, nb.int64),
+            's_acctbal': (5, nb.int64),
+        })
 
         return {
             'nation': nation_scan,
@@ -308,15 +325,22 @@ class Q03(TpchJitqQuery):
     # 		o_orderdate;
 
     def load(self, database):
-        customer_scan = database.scan('customer', [
-            'c_custkey', 'c_mktsegment',
-        ])
-        lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_extendedprice', 'l_discount', 'l_shipdate',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_custkey', 'o_orderkey', 'o_shippriority', 'o_orderdate',
-        ])
+        customer_scan = database.scan('customer', {
+            'c_custkey': (0, nb.int64),
+            'c_mktsegment': (6, nb.int64),
+        })
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_shipdate': (10, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_custkey': (1, nb.int64),
+            'o_orderdate': (4, nb.int64),
+            'o_shippriority': (7, nb.int64),
+        })
 
         return {
             'customer': customer_scan,
@@ -413,12 +437,16 @@ class Q04(TpchJitqQuery):
     #         o_orderpriority;
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_commitdate', 'l_receiptdate',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_orderpriority', 'o_orderdate',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_commitdate': (11, nb.int64),
+            'l_receiptdate': (12, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_orderdate': (4, nb.int64),
+            'o_orderpriority': (5, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -483,24 +511,34 @@ class Q05(TpchJitqQuery):
     #     revenue desc
 
     def load(self, database):
-        customer_scan = database.scan('customer', [
-            'c_custkey', 'c_nationkey',
-        ])
-        lineitem_scan = database.scan('lineitem', [
-            'l_suppkey', 'l_extendedprice', 'l_discount', 'l_orderkey',
-        ])
-        nation_scan = database.scan('nation', [
-            'n_regionkey', 'n_nationkey', 'n_name',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_custkey', 'o_orderkey', 'o_orderdate',
-        ])
-        region_scan = database.scan('region', [
-            'r_regionkey', 'r_name',
-        ])
-        supplier_scan = database.scan('supplier', [
-            's_suppkey', 's_nationkey',
-        ])
+        customer_scan = database.scan('customer', {
+            'c_custkey': (0, nb.int64),
+            'c_nationkey': (3, nb.int64),
+        })
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_suppkey': (2, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+        })
+        nation_scan = database.scan('nation', {
+            'n_nationkey': (0, nb.int64),
+            'n_name': (1, nb.int64),
+            'n_regionkey': (2, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_custkey': (1, nb.int64),
+            'o_orderdate': (4, nb.int64),
+        })
+        region_scan = database.scan('region', {
+            'r_regionkey': (0, nb.int64),
+            'r_name': (1, nb.int64),
+        })
+        supplier_scan = database.scan('supplier', {
+            's_suppkey': (0, nb.int64),
+            's_nationkey': (3, nb.int64),
+        })
 
         return {
             'customer': customer_scan,
@@ -583,9 +621,12 @@ class Q06(TpchJitqQuery):
     #     and l_quantity < 24
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_shipdate', 'l_discount', 'l_quantity', 'l_extendedprice',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_quantity': (4, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_shipdate': (10, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -652,22 +693,29 @@ class Q07(TpchJitqQuery):
     #     l_year
 
     def load(self, database):
-        customer_scan = database.scan('customer', [
-            'c_custkey', 'c_nationkey',
-        ])
-        lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_extendedprice', 'l_discount', 'l_suppkey',
-            'l_shipdate',
-        ])
-        nation_scan = database.scan('nation', [
-            'n_nationkey', 'n_name',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_custkey',
-        ])
-        supplier_scan = database.scan('supplier', [
-            's_suppkey', 's_nationkey',
-        ])
+        customer_scan = database.scan('customer', {
+            'c_custkey': (0, nb.int64),
+            'c_nationkey': (3, nb.int64),
+        })
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_suppkey': (2, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_shipdate': (10, nb.int64),
+        })
+        nation_scan = database.scan('nation', {
+            'n_nationkey': (0, nb.int64),
+            'n_name': (1, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_custkey': (1, nb.int64),
+        })
+        supplier_scan = database.scan('supplier', {
+            's_suppkey': (0, nb.int64),
+            's_nationkey': (3, nb.int64),
+        })
 
         return {
             'customer': customer_scan,
@@ -800,28 +848,39 @@ class Q08(TpchJitqQuery):
     #     o_year;
 
     def load(self, database):
-        customer_scan = database.scan('customer', [
-            'c_custkey', 'c_nationkey',
-        ])
-        lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_extendedprice', 'l_discount', 'l_suppkey',
-            'l_partkey',
-        ])
-        nation_scan = database.scan('nation', [
-            'n_nationkey', 'n_name', 'n_regionkey',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_custkey', 'o_orderdate',
-        ])
-        part_scan = database.scan('part', [
-            'p_partkey', 'p_type',
-        ])
-        region_scan = database.scan('region', [
-            'r_regionkey', 'r_name',
-        ])
-        supplier_scan = database.scan('supplier', [
-            's_suppkey', 's_nationkey',
-        ])
+        customer_scan = database.scan('customer', {
+            'c_custkey': (0, nb.int64),
+            'c_nationkey': (3, nb.int64),
+        })
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_partkey': (1, nb.int64),
+            'l_suppkey': (2, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+        })
+        nation_scan = database.scan('nation', {
+            'n_nationkey': (0, nb.int64),
+            'n_name': (1, nb.int64),
+            'n_regionkey': (2, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_custkey': (1, nb.int64),
+            'o_orderdate': (4, nb.int64),
+        })
+        part_scan = database.scan('part', {
+            'p_partkey': (0, nb.int64),
+            'p_type': (4, nb.int64),
+        })
+        region_scan = database.scan('region', {
+            'r_regionkey': (0, nb.int64),
+            'r_name': (1, nb.int64),
+        })
+        supplier_scan = database.scan('supplier', {
+            's_suppkey': (0, nb.int64),
+            's_nationkey': (3, nb.int64),
+        })
 
         return {
             'customer': customer_scan,
@@ -959,18 +1018,28 @@ class Q10(TpchJitqQuery):
     # limit 20
 
     def load(self, database):
-        customer_scan = database.scan('customer', [
-            'c_custkey', 'c_acctbal', 'c_nationkey', 'c_phone', 'c_name',
-        ])
-        nation_scan = database.scan('nation', [
-            'n_nationkey', 'n_name',
-        ])
-        lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_extendedprice', 'l_discount', 'l_returnflag',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_orderdate', 'o_custkey',
-        ])
+        customer_scan = database.scan('customer', {
+            'c_custkey': (0, nb.int64),
+            'c_name': (1, nb.int64),
+            'c_nationkey': (3, nb.int64),
+            'c_phone': (4, nb.int64),
+            'c_acctbal': (5, nb.int64),
+        })
+        nation_scan = database.scan('nation', {
+            'n_nationkey': (0, nb.int64),
+            'n_name': (1, nb.int64),
+        })
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_returnflag': (8, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_custkey': (1, nb.int64),
+            'o_orderdate': (4, nb.int64),
+        })
 
         return {
             'customer': customer_scan,
@@ -1081,15 +1150,21 @@ class Q11(TpchJitqQuery):
     #     "value" desc
 
     def load(self, database):
-        nation_scan = database.scan('nation', [
-            'n_nationkey', 'n_name',
-        ])
-        partsupp_scan = database.scan('partsupp', [
-            'ps_suppkey', 'ps_partkey', 'ps_supplycost', 'ps_availqty',
-        ])
-        supplier_scan = database.scan('supplier', [
-            's_suppkey', 's_nationkey',
-        ])
+        nation_scan = database.scan('nation', {
+            'n_nationkey': (0, nb.int64),
+            'n_name': (1, nb.int64),
+        })
+        partsupp_scan = database.scan('partsupp', {
+            'ps_partkey': (0, nb.int64),
+            'ps_suppkey': (1, nb.int64),
+            'ps_availqty': (2, nb.int64),
+            'ps_supplycost': (3, nb.int64),
+        })
+        supplier_scan = database.scan('supplier', {
+            's_suppkey': (0, nb.int64),
+            's_nationkey': (3, nb.int64),
+        })
+
         return {
             'nation': nation_scan,
             'partsupp': partsupp_scan,
@@ -1173,13 +1248,17 @@ class Q12(TpchJitqQuery):
         #     l_shipmode
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_commitdate', 'l_shipdate', 'l_receiptdate', 'l_shipmode',
-            'l_orderkey',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_orderpriority',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_shipdate': (10, nb.int64),
+            'l_commitdate': (11, nb.int64),
+            'l_receiptdate': (12, nb.int64),
+            'l_shipmode': (14, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_orderpriority': (5, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -1236,12 +1315,16 @@ class Q14(TpchJitqQuery):
     #     and l_shipdate < date '1995-10-01'
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_partkey', 'l_shipdate', 'l_discount', 'l_extendedprice',
-        ])
-        part_scan = database.scan('part', [
-            'p_partkey', 'p_type',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_partkey': (1, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_shipdate': (10, nb.int64),
+        })
+        part_scan = database.scan('part', {
+            'p_partkey': (0, nb.int64),
+            'p_type': (4, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -1308,12 +1391,17 @@ class Q15(TpchJitqQuery):
     #     s_suppkey
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_shipdate', 'l_discount', 'l_extendedprice', 'l_suppkey',
-        ])
-        supplier_scan = database.scan('supplier', [
-            's_suppkey', 's_name', 's_phone',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_suppkey': (2, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_shipdate': (10, nb.int64),
+        })
+        supplier_scan = database.scan('supplier', {
+            's_suppkey': (0, nb.int64),
+            's_name': (1, nb.int64),
+            's_phone': (4, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -1379,12 +1467,16 @@ class Q17(TpchJitqQuery):
     #     );
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_partkey', 'l_quantity', 'l_extendedprice',
-        ])
-        part_scan = database.scan('part', [
-            'p_partkey', 'p_container', 'p_brand',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_partkey': (1, nb.int64),
+            'l_quantity': (4, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+        })
+        part_scan = database.scan('part', {
+            'p_partkey': (0, nb.int64),
+            'p_brand': (3, nb.int64),
+            'p_container': (6, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -1482,15 +1574,20 @@ class Q18(TpchJitqQuery):
     # limit 100
 
     def load(self, database):
-        customer_scan = database.scan('customer', [
-            'c_custkey', 'c_name',
-        ])
-        lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_quantity',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_orderdate', 'o_totalprice', 'o_custkey',
-        ])
+        customer_scan = database.scan('customer', {
+            'c_custkey': (0, nb.int64),
+            'c_name': (1, nb.int64),
+        })
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_quantity': (4, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_custkey': (1, nb.int64),
+            'o_totalprice': (3, nb.int64),
+            'o_orderdate': (4, nb.int64),
+        })
 
         return {
             'customer': customer_scan,
@@ -1508,6 +1605,8 @@ class Q18(TpchJitqQuery):
                  (r.o_orderkey, r.o_orderdate, r.o_totalprice, r.o_custkey))
 
         lineitem_scan = lineitem \
+            .map(lambda r: (r.l_orderkey, np.int32(r.l_quantity)),
+                 names=['l_orderkey', 'l_quantity']) \
             .reduce_by_key(lambda i1, i2: (np.int32(i1 + i2))) \
             .filter(lambda r: r.l_quantity > 300) \
             .map(lambda r: (r.l_orderkey, r.l_quantity)) \
@@ -1610,14 +1709,22 @@ class Q19(TpchJitqQuery):
     #     )
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_linenumber',
-            'l_partkey', 'l_quantity', 'l_extendedprice',
-            'l_discount', 'l_shipinstruct', 'l_shipmode',
-        ])
-        part_scan = database.scan('part', [
-            'p_partkey', 'p_brand', 'p_size', 'p_container',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_partkey': (1, nb.int64),
+            'l_linenumber': (3, nb.int64),
+            'l_quantity': (4, nb.int64),
+            'l_extendedprice': (5, nb.int64),
+            'l_discount': (6, nb.int64),
+            'l_shipinstruct': (13, nb.int64),
+            'l_shipmode': (14, nb.int64),
+        })
+        part_scan = database.scan('part', {
+            'p_partkey': (0, nb.int64),
+            'p_brand': (3, nb.int64),
+            'p_size': (5, nb.int64),
+            'p_container': (6, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -1714,18 +1821,25 @@ class Q21(TpchJitqQuery):
     # limit 100
 
     def load(self, database):
-        lineitem_scan = database.scan('lineitem', [
-            'l_commitdate', 'l_receiptdate', 'l_orderkey', 'l_suppkey',
-        ])
-        nation_scan = database.scan('nation', [
-            'n_nationkey', 'n_name',
-        ])
-        orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_orderstatus',
-        ])
-        supplier_scan = database.scan('supplier', [
-            's_suppkey', 's_nationkey', 's_name',
-        ])
+        lineitem_scan = database.scan('lineitem', {
+            'l_orderkey': (0, nb.int64),
+            'l_suppkey': (2, nb.int64),
+            'l_commitdate': (11, nb.int64),
+            'l_receiptdate': (12, nb.int64),
+        })
+        nation_scan = database.scan('nation', {
+            'n_nationkey': (0, nb.int64),
+            'n_name': (1, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_orderkey': (0, nb.int64),
+            'o_orderstatus': (2, nb.int64),
+        })
+        supplier_scan = database.scan('supplier', {
+            's_suppkey': (0, nb.int64),
+            's_name': (1, nb.int64),
+            's_nationkey': (3, nb.int64),
+        })
 
         return {
             'lineitem': lineitem_scan,
@@ -1842,12 +1956,14 @@ class Q22(TpchJitqQuery):
     #     cntrycode
 
     def load(self, database):
-        customer_scan = database.scan('customer', [
-            'c_phone', 'c_acctbal', 'c_custkey'
-        ])
-        orders_scan = database.scan('orders', [
-            'o_custkey'
-        ])
+        customer_scan = database.scan('customer', {
+            'c_custkey': (0, nb.int64),
+            'c_phone': (4, nb.int64),
+            'c_acctbal': (5, nb.int64),
+        })
+        orders_scan = database.scan('orders', {
+            'o_custkey': (1, nb.int64),
+        })
 
         return {
             'customer': customer_scan,
