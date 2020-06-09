@@ -20,15 +20,19 @@ public:
                 container_.insert(tuple.value());
             }
         }
-        Tuple smallest = *container_.rbegin();
 
-        while (auto tuple = upstream_->next()) {
-            if (tuple.value().v0 > smallest.v0) {
-                container_.erase(--container_.end());
-                container_.insert(tuple.value());
-                smallest = *container_.rbegin();
+        if (!container_.empty()) {
+            Tuple smallest = *container_.rbegin();
+
+            while (auto tuple = upstream_->next()) {
+                if (tuple.value().v0 > smallest.v0) {
+                    container_.erase(--container_.end());
+                    container_.insert(tuple.value());
+                    smallest = *container_.rbegin();
+                }
             }
         }
+
         result_it_ = container_.begin();
     }
 
