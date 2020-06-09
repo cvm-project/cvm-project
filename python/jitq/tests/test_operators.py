@@ -894,6 +894,14 @@ class TestTopK:
 
         assert list(res.astuples()) == truth
 
+    def test_empty(self, jitq_context):
+        res = jitq_context.range_(0, 0).topk(2).count()
+        assert res == 0
+
+    def test_short(self, jitq_context):
+        res = jitq_context.range_(0, 3).topk(5).count()
+        assert res == 3
+
 
 class TestSort:
 
