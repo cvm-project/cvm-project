@@ -19,8 +19,12 @@ def parse_date(string):
     return int(timestamp)
 
 
-def parse_enum(string):
+def parse_name(string):
     return int(string.split('#')[1])
+
+
+def parse_phone(string):
+    return int(''.join([num for num in list(string) if num != '-']))
 
 
 class Pandas(abc.ABC):
@@ -73,13 +77,13 @@ class PandasCsv(Pandas):
     SCHEMA = {
         'customer': [
             {'col': 'c_custkey', 'type': int},
-            {'col': 'c_name', 'type': str},         # char
-            {'col': 'c_address', 'type': str},      # varchar
-            {'col': 'c_nationkey', 'type': int},    # (nunique: 25)
-            {'col': 'c_phone', 'type': str},        # char
-            {'col': 'c_acctbal', 'type': Decimal},  # decimal
-            {'col': 'c_mktsegment', 'type': str},   # char (nunique: 25)
-            {'col': 'c_comment', 'type': str},      # varchar
+            {'col': 'c_name', 'type': parse_name},    # char
+            {'col': 'c_address', 'type': str},        # varchar
+            {'col': 'c_nationkey', 'type': int},      # (nunique: 25)
+            {'col': 'c_phone', 'type': parse_phone},  # char
+            {'col': 'c_acctbal', 'type': Decimal},    # decimal
+            {'col': 'c_mktsegment', 'type': str},     # char (nunique: 25)
+            {'col': 'c_comment', 'type': str},        # varchar
         ],
         'lineitem': [
             {'col': 'l_orderkey', 'type': int},
@@ -119,8 +123,8 @@ class PandasCsv(Pandas):
         'part': [
             {'col': 'p_partkey', 'type': int},
             {'col': 'p_name', 'type': str},          # varchar
-            {'col': 'p_mfgr', 'type': parse_enum},   # char (nunique: 5)
-            {'col': 'p_brand', 'type': parse_enum},  # char (nunique: 25)
+            {'col': 'p_mfgr', 'type': parse_name},   # char (nunique: 5)
+            {'col': 'p_brand', 'type': parse_name},  # char (nunique: 25)
             {'col': 'p_type', 'type': str},          # varchar (nunique: 150)
             {'col': 'p_size', 'type': int},
             {'col': 'p_container', 'type': str},        # char (nunique: 40)
@@ -140,13 +144,13 @@ class PandasCsv(Pandas):
             {'col': 'r_comment', 'type': str},      # char (nunique: 5)
         ],
         'supplier': [
-            {'col': 's_suppkey', 'type': int},      #
-            {'col': 's_name', 'type': str},         # char
-            {'col': 's_address', 'type': str},      # varchar
-            {'col': 's_nationkey', 'type': int},    # (nunique: 25)
-            {'col': 's_phone', 'type': str},        # char
-            {'col': 's_acctbal', 'type': Decimal},  # decimal
-            {'col': 's_comment', 'type': str},      # varchar
+            {'col': 's_suppkey', 'type': int},
+            {'col': 's_name', 'type': parse_name},    # char
+            {'col': 's_address', 'type': str},        # varchar
+            {'col': 's_nationkey', 'type': int},      # (nunique: 25)
+            {'col': 's_phone', 'type': parse_phone},  # char
+            {'col': 's_acctbal', 'type': Decimal},    # decimal
+            {'col': 's_comment', 'type': str},        # varchar
         ],
     }
     DICTS = {
@@ -212,8 +216,9 @@ class PandasCsv(Pandas):
                 .astype(np.uint8)
 
         # Fixed-point numbers -------------------------------------------------
-        for col in ['c_acctbal', 'l_discount', 'l_tax', 'l_extendedprice',
-                    's_acctbal', 'o_totalprice', 'p_retailprice']:
+        for col in ['c_acctbal', 'l_discount', 'l_extendedprice', 'l_tax',
+                    'o_totalprice', 'p_retailprice', 'ps_supplycost',
+                    's_acctbal']:
             if not col in df.columns:
                 continue
             df[col] = (df[col] * 100).astype(int)
