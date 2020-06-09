@@ -5,7 +5,8 @@ import pandas as pd
 import pytest
 
 from jitq.tests.tpch.pandas import PandasCsv, PandasParquet
-from jitq.tests.tpch.queries import Q01, Q04, Q06, Q12, Q14, Q17, Q19
+from jitq.tests.tpch.queries import Q01, Q02, Q03, Q04, Q05, Q06, Q07, Q08, \
+    Q10, Q11, Q12, Q14, Q15, Q17, Q18, Q19, Q21, Q22
 from jitq.utils import get_project_path
 
 
@@ -31,7 +32,9 @@ def _upcast(df):
         df[column] = df[column].astype(np.int64)
 
 
-@pytest.mark.parametrize('tpch_query', [Q01, Q04, Q06, Q12, Q14, Q17, Q19])
+@pytest.mark.parametrize('tpch_query',
+                         [Q01, Q02, Q03, Q04, Q05, Q06, Q07, Q08, Q10,
+                          Q11, Q12, Q14, Q15, Q17, Q18, Q19, Q21, Q22])
 def test_tpch(jitq_context, tpch_data, tpch_query, tpch_print_result,
               tpch_scale, tpch_ref_path, write_outputs):
     # pylint: disable=redefined-outer-name  # That's how fixtures work
