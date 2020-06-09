@@ -708,17 +708,15 @@ class TestMap:
 
     def test_small_return_struct(self, jitq_context):
         # due to ABI {i4, i4} would be merged into i8 by clang if returned
-        # by value
-        # test that it does not happen
+        # by value test that it does not happen
         input_ = np.array([(1, 2)], dtype="i4,i4")
         res1 = jitq_context.collection(input_).map(lambda x: x).collect()
         assert [(1 == 2)], res1.astuplelist()
 
     def test_inlining(self, jitq_context):
         # due to ABI {f4, f4} turns into <f4, f4> if returned
-        # by value
-        # the test happens to execute successfully, but the inline test should
-        # fail
+        # by value the test happens to execute successfully, but the inline
+        # test should fail
         input_ = np.array([(3, 8)], dtype="f4,f4")
         res1 = jitq_context.collection(input_).map(lambda x: x).collect()
         assert [(3 == 8)], res1.astuplelist()
