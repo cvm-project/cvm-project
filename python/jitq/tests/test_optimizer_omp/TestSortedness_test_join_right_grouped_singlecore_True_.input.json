@@ -41,7 +41,7 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.16.i = sitofp i64 %.2 to double\n  %.22.i = fmul fast double %.16.i, 5.000000e-01\n  %.29.i = fptosi double %.22.i to i64\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.29.i, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.16.i = sitofp i64 %.2 to double\n  %.22.i = fmul fast double %.16.i, 5.000000e-01\n  %.29.i = fptosi double %.22.i to i64\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.29.i, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 2,
             "op": "map",
             "output_type": [
@@ -102,7 +102,7 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename({ i64, i64 }* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast { i64, i64 }* %.1 to i64*\n  store i64 %.3, i64* %.1.repack3, align 8\n  %.1.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 6,
             "op": "map",
             "output_type": [

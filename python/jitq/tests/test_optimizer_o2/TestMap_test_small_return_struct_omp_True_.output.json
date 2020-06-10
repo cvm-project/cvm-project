@@ -41,7 +41,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename({ i32, i32 }* nocapture %.1, i32 %.2, i32 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast { i32, i32 }* %.1 to i32*\n  store i32 %.2, i32* %.1.repack3, align 4\n  %.1.repack1 = getelementptr inbounds { i32, i32 }, { i32, i32 }* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 4\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32 }>, <{ i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 1,
                         "op": "map",
                         "output_type": [

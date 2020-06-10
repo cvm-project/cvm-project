@@ -51,7 +51,7 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename({ i64, double }* nocapture %.1, i64 %.2, double %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack4 = bitcast { i64, double }* %.1 to i64*\n  store i64 %.2, i64* %.1.repack4, align 8\n  %.1.repack1 = getelementptr inbounds { i64, double }, { i64, double }* %.1, i64 0, i32 1\n  store double %.3, double* %.1.repack1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(<{ i64, double }>* nocapture %.1, i64 %.2, double %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack4 = bitcast <{ i64, double }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack4, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, double }>, <{ i64, double }>* %.1, i64 0, i32 1\n  store double %.3, double* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 2,
             "op": "map",
             "output_type": [
