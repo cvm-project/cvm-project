@@ -41,7 +41,7 @@ class JITQCFunc(CFunc):
     Numba Cfunc wrapper that produces JITQ compatible LLVM IR
 
     Adjustments:
-    1) Return by pointer
+    1) Return by pointer to packed struct
     2) Tuple arguments are always unnested
     3) Arrays are passed as a tuple
     {dtype ptr, int64 size_1, ..., int64 size_num_dim}
@@ -63,10 +63,17 @@ class JITQCFunc(CFunc):
         module = library.create_ir_module(fndesc.unique_name)
         context = cres.target_context
 
+        # Compute LLVM types of fields input tuples
         ll_argtypes = [context.get_value_type(ty) for ty in flatten(sig.args)]
-        resptr = context.call_conv.get_return_type(sig.return_type)
+        ll_resptr = context.call_conv.get_return_type(sig.return_type)
 
-        ll_argtypes = [resptr] + ll_argtypes
+        # If result is a struct, make it a packed one
+        if isinstance(ll_resptr.pointee, ir.types.LiteralStructType):
+            ll_restype = ir.LiteralStructType(ll_resptr.pointee, True)
+            ll_resptr = ll_restype.as_pointer()
+
+        # Create function signature and stub for wrapper
+        ll_argtypes = [ll_resptr] + ll_argtypes
         ll_return_type = VoidType()
 
         wrapty = ir.FunctionType(ll_return_type, ll_argtypes)
@@ -74,15 +81,19 @@ class JITQCFunc(CFunc):
                                      fndesc.llvm_cfunc_wrapper_name)
         builder = ir.IRBuilder(wrapfn.append_basic_block('entry'))
 
-        # omit the first argument which is the res ptr
+        # Build the function body of the wrapper
         self._build_c_wrapper_jitq(context, builder, cres, wrapfn.args[1:],
                                    wrapfn.args[0])
+
+        # Finalize and compile
         library.add_ir_module(module)
         library.finalize()
 
         return cres
 
-    def _build_c_wrapper_jitq(self, context, builder, cres, c_args, retptr):
+    def _build_c_wrapper_jitq(self, context, builder, cres, args, retptr):
+        # pylint: disable=too-many-locals  # Doesn't make sense to split...
+        # Look up original function
         sig = self._sig
         context.get_python_api(builder)
 
@@ -90,11 +101,26 @@ class JITQCFunc(CFunc):
         function_ir = builder.module.add_function(
             fnty, cres.fndesc.llvm_func_name)
 
-        # sig.args and c_args should both be flatten
+        # Call original function and store result in 'out'
         sig.args = flatten(sig.args)
         _, out = context.call_conv.call_function(
-            builder, function_ir, sig.return_type, sig.args, c_args)
-        # the out must be written to the retptr
-        cast_retptr = builder.bitcast(retptr, ir.PointerType(out.type))
-        builder.store(out, cast_retptr)
+            builder, function_ir, sig.return_type, sig.args, args)
+
+        # Copy result into packed struct
+        ll_resty = retptr.type.pointee
+
+        if isinstance(ll_resty, ir.types.LiteralStructType):
+            # Copy struct element-wise to convert it to a packed one
+            ll_tmpptr = builder.alloca(ll_resty)
+            ll_res = builder.load(ll_tmpptr)
+            for i in range(len(ll_resty)):
+                val = builder.extract_value(out, i)
+                ll_res = builder.insert_value(ll_res, val, i)
+        else:
+            # Copy everything else as is
+            ll_res = out
+
+        # Copy packed struct into result pointer
+        cast_retptr = builder.bitcast(retptr, ir.PointerType(ll_res.type))
+        builder.store(ll_res, cast_retptr)
         builder.ret_void()
