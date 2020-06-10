@@ -292,10 +292,9 @@ class Q12(TpchJitqQuery):
                     r.l_shipmode in [2, 5] and
                     r.l_shipdate < r.l_commitdate < r.l_receiptdate and
                     lb_receiptdate < r.l_receiptdate < hb_receiptdate) \
-            .map(lambda r: (np.int64(r.l_orderkey), np.int64(r.l_shipmode))) \
+            .map(lambda r: (r.l_orderkey, r.l_shipmode)) \
             .join(orders_scan
-                  .map(lambda r: (np.int64(r.o_orderkey),
-                                  np.int64(r.o_orderpriority)))) \
+                  .map(lambda r: (r.o_orderkey, r.o_orderpriority))) \
             .alias(['l_orderkey', 'l_shipmode', 'o_orderpriority'])
 
         return join \
@@ -354,11 +353,10 @@ class Q14(TpchJitqQuery):
 
         join = lineitem_scan \
             .filter(lambda r: lb_shipdate <= r.l_shipdate < hb_shipdate) \
-            .map(lambda r: (np.int64(r.l_partkey),
+            .map(lambda r: (r.l_partkey,
                             r.l_extendedprice * (100 - r.l_discount))) \
-            .join(part_scan.map(lambda r: (np.int64(r.p_partkey), r.p_type))) \
+            .join(part_scan.map(lambda r: (r.p_partkey, r.p_type))) \
             .alias(['l_partkey', 'discounted_price', 'p_type'])
-        # XXX: partkey is converted to 64 bit to work around #75
 
         return join \
             .map(lambda r:
@@ -418,9 +416,8 @@ class Q17(TpchJitqQuery):
             .join(lineitem_scan
                   .map(lambda r:
                        (r.l_partkey, r.l_extendedprice, r.l_quantity))) \
-            .map(lambda t: (np.int64(t[0]), t[1], t[2])) \
+            .map(lambda t: (t[0], t[1], t[2])) \
             .alias(['p_partkey', 'l_extendedprice', 'l_quantity'])
-        # XXX: Why is this  ^^^^^^^^ cast needed?
 
         return interesting_lineitems \
             .map(lambda t: (t.p_partkey, np.int64(t.l_quantity), 1),
@@ -501,14 +498,13 @@ class Q19(TpchJitqQuery):
                     r.l_shipinstruct == 1 and
                     1 <= r.l_quantity <= 30) \
             .map(lambda r:
-                 (np.int64(r.l_partkey),
+                 (r.l_partkey,
                   np.int64(r.l_extendedprice * (100 - r.l_discount)),
                   (4 if (1 <= r.l_quantity <= 11) else 0) +
                   (2 if (10 <= r.l_quantity <= 20) else 0) +
                   (1 if (20 <= r.l_quantity <= 30) else 0)),
                  ['l_partkey', 'discounted_price', 'group']) \
-            .map(lambda r: (np.int64(r.l_partkey),
-                            (r.discounted_price << 3) + r.group),
+            .map(lambda r: (r.l_partkey, (r.discounted_price << 3) + r.group),
                  ['l_partkey', 'discounted_price_group'])
 
         part_scan = part_scan \
@@ -517,10 +513,10 @@ class Q19(TpchJitqQuery):
                     1 <= r.p_size <= 15 and
                     9 <= r.p_container <= 31) \
             .map(lambda r:
-                 (np.int64(r.p_partkey),
+                 (r.p_partkey,
                   (4 if r.p_brand == 12 and (1 <= r.p_size <= 5) and
                       np.int64(r.p_container) in [25, 27, 30, 31] else 0) +
-                  #   ^^^^^^^^ XXX: this cas is a work-around for #76
+                  #   ^^^^^^^^ XXX: this cast is a work-around for #76
                   (2 if r.p_brand == 23 and (1 <= r.p_size <= 10) and
                       np.int64(r.p_container) in [16, 17, 22, 23] else 0) +
                   (1 if r.p_brand == 34 and (1 <= r.p_size <= 15) and
