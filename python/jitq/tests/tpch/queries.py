@@ -117,22 +117,22 @@ class Q01(TpchJitqQuery):
 
 class Q04(TpchJitqQuery):
     # select
-    #         o_orderpriority,
-    #         count(*) as order_count
+    #     o_orderpriority,
+    #     count(*) as order_count
     # from
-    #         orders
+    #     orders
     # where
-    #         o_orderdate >= date '1993-07-01'
-    #         and o_orderdate < date '1993-07-01' + interval '3' month
-    #         and exists (
-    #                 select
-    #                         *
-    #                 from
-    #                         lineitem
-    #                 where
-    #                         l_orderkey = o_orderkey
-    #                         and l_commitdate < l_receiptdate
-    #         )
+    #     o_orderdate >= date '1993-07-01'
+    #     and o_orderdate < date '1993-07-01' + interval '3' month
+    #     and exists (
+    #         select
+    #             *
+    #         from
+    #             lineitem
+    #         where
+    #             l_orderkey = o_orderkey
+    #             and l_commitdate < l_receiptdate
+    #     )
     # group by
     #         o_orderpriority
     # order by
@@ -140,36 +140,38 @@ class Q04(TpchJitqQuery):
 
     def load(self, database):
         lineitem_scan = database.scan('lineitem', [
-            'l_orderkey', 'l_commitdate', 'l_receiptdate'
+            'l_orderkey', 'l_commitdate', 'l_receiptdate',
         ])
         orders_scan = database.scan('orders', [
-            'o_orderkey', 'o_orderpriority', 'o_orderdate'
+            'o_orderkey', 'o_orderpriority', 'o_orderdate',
         ])
 
-        return {'lineitem': lineitem_scan, 'orders': orders_scan}
+        return {
+            'lineitem': lineitem_scan,
+            'orders': orders_scan,
+        }
 
     def run(self, scans):
-        lineitem_scan = scans['lineitem']
-        orders_scan = scans['orders']
-
         lb_orderdate = parse_date('1993-07-01')
         hb_orderdate = parse_date('1993-10-01')
 
-        orders_scan = orders_scan \
+        orders_scan = scans['orders'] \
             .filter(lambda r: lb_orderdate <= r.o_orderdate < hb_orderdate) \
             .map(lambda r: (r.o_orderkey, r.o_orderpriority))
 
-        lineitem_scan = lineitem_scan \
+        lineitem_scan = scans['lineitem'] \
             .filter(lambda r: r.l_commitdate < r.l_receiptdate) \
-            .map(lambda r: (r.l_orderkey, np.int32(1))) \
+            .map(lambda r: (r.l_orderkey, np.int32(1)),
+                 names=['l_orderkey', 'dummy_for_distinct']) \
             .reduce_by_key(lambda i1, i2: np.int32(i1 + i2)) \
-            .map(lambda t: (t[0],))
+            .map(lambda t: t.l_orderkey)
 
         return orders_scan \
             .join(lineitem_scan) \
             .map(lambda t: (t[1], np.int32(1)),
                  ['o_orderpriority', 'order_count']) \
             .reduce_by_key(lambda i1, i2: np.int32(i1 + i2)) \
+            .sort() \
             .collect()
 
     def postprocess(self, res):
@@ -180,9 +182,7 @@ class Q04(TpchJitqQuery):
         df.o_orderpriority = df.o_orderpriority \
             .apply(lambda i: orderpriorities[i - 1])
 
-        df.sort_values(by=['o_orderpriority'], inplace=True)
-
-        return df.reset_index(drop=True)
+        return df
 
 
 class Q06(TpchJitqQuery):
