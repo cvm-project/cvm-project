@@ -360,22 +360,22 @@ class Q14(TpchJitqQuery):
 
 class Q17(TpchJitqQuery):
     # select
-    #         sum(l_extendedprice) / 7.0 as avg_yearly
+    #     sum(l_extendedprice) / 7.0 as avg_yearly
     # from
-    #         lineitem,
-    #         part
+    #     lineitem,
+    #     part
     # where
-    #         p_partkey = l_partkey
-    #         and p_brand = 'Brand#23'
-    #         and p_container = 'MED BOX'
-    #         and l_quantity < (
-    #                 select
-    #                         0.2 * avg(l_quantity)
-    #                 from
-    #                         lineitem
-    #                 where
-    #                         l_partkey = p_partkey
-    #         );
+    #     p_partkey = l_partkey
+    #     and p_brand = 'Brand#23'
+    #     and p_container = 'MED BOX'
+    #     and l_quantity < (
+    #         select
+    #             0.2 * avg(l_quantity)
+    #         from
+    #             lineitem
+    #         where
+    #             l_partkey = p_partkey
+    #     );
 
     def load(self, database):
         lineitem_scan = database.scan('lineitem', [
@@ -385,40 +385,58 @@ class Q17(TpchJitqQuery):
             'p_partkey', 'p_container', 'p_brand',
         ])
 
-        return {'lineitem': lineitem_scan, 'part': part_scan}
+        return {
+            'lineitem': lineitem_scan,
+            'part': part_scan,
+        }
 
     def run(self, scans):
-        lineitem_scan = scans['lineitem']
-        part_scan = scans['part']
-
         # MED BOX has dictionary value 25
 
-        part_scan = part_scan \
+        part_scan = scans['part'] \
             .filter(lambda r:
                     r.p_brand == 23 and
                     r.p_container == 17) \
-            .map(lambda r: r.p_partkey)
+            .map(lambda r: (r.p_partkey,))
 
+        lineitem_scan = scans['lineitem'] \
+            .map(lambda r:
+                 (r.l_partkey, r.l_extendedprice, r.l_quantity))
+
+        # Result fields: p_partkey (l_extendedprice[31-6]|l_quantity[5-0])
         interesting_lineitems = part_scan \
-            .join(lineitem_scan
-                  .map(lambda r:
-                       (r.l_partkey, r.l_extendedprice, r.l_quantity))) \
-            .map(lambda t: (t[0], t[1], t[2])) \
-            .alias(['p_partkey', 'l_extendedprice', 'l_quantity'])
+            .join(lineitem_scan) \
+            .alias(['l_partkey', 'l_extendedprice', 'l_quantity']) \
+            .map(lambda r:
+                 (r.l_partkey,
+                  (r.l_extendedprice << 6) +
+                  r.l_quantity),
+                 names=['l_partkey', 'extendedprice_quantity'])
 
         return interesting_lineitems \
-            .map(lambda t: (t.p_partkey, np.int64(t.l_quantity), 1),
-                 ['p_partkey', 'l_quantity', 'count']) \
-            .reduce_by_key(lambda t1, t2: (t1.l_quantity + t2.l_quantity,
-                                           t1.count + t2.count)) \
-            .map(lambda t: (t.p_partkey, t.l_quantity / t.count)) \
+            .map(lambda r:
+                 (r.l_partkey, r.extendedprice_quantity & 63, 1),
+                 names=['l_partkey', 'l_quantity', 'count']) \
+            .map(lambda r:
+                 (r.l_partkey, (r.l_quantity << 32) + 1),
+                 names=['l_partkey', 'quantity_count']) \
+            .reduce_by_key(lambda i1, i2: i1 + i2) \
+            .map(lambda r:
+                 (r.l_partkey,
+                  r.quantity_count >> 32,
+                  r.quantity_count & ((1 << 32) - 1)),
+                 names=['l_partkey', 'l_quantity', 'count']) \
+            .map(lambda r: (r.l_partkey, r.l_quantity / r.count)) \
             .join(interesting_lineitems
-                  .map(lambda r:
-                       (r.p_partkey, r.l_extendedprice, r.l_quantity))) \
-            .alias(['p_partkey', 'avg_qty',
-                    'l_extendedprice', 'l_quantity']) \
+                  .map(lambda r: (r.l_partkey, r.extendedprice_quantity))) \
+            .alias(['l_partkey', 'avg_qty', 'extendedprice_quantity']) \
+            .map(lambda r:
+                 (r.avg_qty,
+                  r.extendedprice_quantity & 63,
+                  r.extendedprice_quantity >> 6),
+                 names=['avg_qty', 'l_quantity', 'l_extendedprice']) \
             .filter(lambda r: r.l_quantity < 0.2 * r.avg_qty) \
-            .map(lambda r: np.int64(r.l_extendedprice)) \
+            .map(lambda r: r.l_extendedprice) \
             .reduce(lambda i1, i2: i1 + i2)
 
     def postprocess(self, res):
