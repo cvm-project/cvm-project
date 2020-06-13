@@ -305,18 +305,18 @@ class Q12(TpchJitqQuery):
 
 class Q14(TpchJitqQuery):
     # select
-    #         100.00 * sum(case
-    #                 when p_type like 'PROMO%'
-    #                         then l_extendedprice * (1 - l_discount)
-    #                 else 0
-    #         end) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
+    #     100.00 * sum(case
+    #         when p_type like 'PROMO%'
+    #         then l_extendedprice * (1 - l_discount)
+    #         else 0
+    #     end) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
     # from
-    #         lineitem,
-    #         part
+    #     lineitem,
+    #     part
     # where
-    #         l_partkey = p_partkey
-    #         and l_shipdate >= date '1995-09-01'
-    #         and l_shipdate < date '1995-10-01'
+    #     l_partkey = p_partkey
+    #     and l_shipdate >= date '1995-09-01'
+    #     and l_shipdate < date '1995-10-01'
 
     def load(self, database):
         lineitem_scan = database.scan('lineitem', [
@@ -326,30 +326,31 @@ class Q14(TpchJitqQuery):
             'p_partkey', 'p_type',
         ])
 
-        return {'lineitem': lineitem_scan, 'part': part_scan}
+        return {
+            'lineitem': lineitem_scan,
+            'part': part_scan,
+        }
 
     def run(self, scans):
-        lineitem_scan = scans['lineitem']
-        part_scan = scans['part']
-
         lb_shipdate = parse_date('1995-09-01')
         hb_shipdate = parse_date('1995-10-01')
 
         # like 'PROMO%' matches dictionary codes [75, 99]
 
-        join = lineitem_scan \
+        join = scans['lineitem'] \
             .filter(lambda r: lb_shipdate <= r.l_shipdate < hb_shipdate) \
             .map(lambda r: (r.l_partkey,
                             r.l_extendedprice * (100 - r.l_discount))) \
-            .join(part_scan.map(lambda r: (r.p_partkey, r.p_type))) \
-            .alias(['l_partkey', 'discounted_price', 'p_type'])
+            .join(scans['part']
+                  .map(lambda r: (r.p_partkey, r.p_type))) \
+            .alias(['l_partkey', 'revenue', 'p_type'])
 
         return join \
             .map(lambda r:
-                 (r.discounted_price,
-                  r.discounted_price if 75 <= r.p_type <= 99 else 0),
-                 ['discounted_price', 'promo_revenue']) \
-            .reduce(lambda r1, r2: (r1.discounted_price + r2.discounted_price,
+                 (r.revenue,
+                  r.revenue if 75 <= r.p_type <= 99 else 0),
+                 ['revenue', 'promo_revenue']) \
+            .reduce(lambda r1, r2: (r1.revenue + r2.revenue,
                                     r1.promo_revenue + r2.promo_revenue))
 
     def postprocess(self, res):
