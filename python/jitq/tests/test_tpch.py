@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -22,6 +23,14 @@ def tpch_data(tpch_input_path, tpch_input_format, tpch_scale, jitq_context):
     return database
 
 
+def _upcast(df):
+    for column in df.columns.values:
+        if df[column].dtype not in [np.uint8, np.int8, np.uint16, np.int16,
+                                    np.uint32, np.int32]:
+            continue
+        df[column] = df[column].astype(np.int64)
+
+
 @pytest.mark.parametrize('tpch_query', [Q01, Q04, Q06, Q12, Q14, Q17, Q19])
 def test_tpch(jitq_context, tpch_data, tpch_query, tpch_print_result,
               tpch_scale, tpch_ref_path, write_outputs):
@@ -36,6 +45,7 @@ def test_tpch(jitq_context, tpch_data, tpch_query, tpch_print_result,
 
     # Get postprocessed data frame
     res = query.postprocess(res).reset_index(drop=True)
+    _upcast(res)
 
     ref_filename = tpch_ref_path \
         .format(jitqpath=get_project_path(), sf=tpch_scale, q=class_name[1:])
@@ -50,6 +60,7 @@ def test_tpch(jitq_context, tpch_data, tpch_query, tpch_print_result,
 
     # Load reference result
     ref = pd.read_pickle(ref_filename).reset_index(drop=True)
+    _upcast(ref)
 
     # Test correctness
     pd.util.testing.assert_frame_equal(res, ref)
