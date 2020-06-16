@@ -227,33 +227,33 @@ class Q06(TpchJitqQuery):
 
 class Q12(TpchJitqQuery):
         # select
-        #         l_shipmode,
-        #         sum(case
-        #                 when o_orderpriority = '1-URGENT'
-        #                         or o_orderpriority = '2-HIGH'
-        #                         then 1
-        #                 else 0
-        #         end) as high_line_count,
-        #         sum(case
-        #                 when o_orderpriority <> '1-URGENT'
-        #                         and o_orderpriority <> '2-HIGH'
-        #                         then 1
-        #                 else 0
-        #         end) as low_line_count
+        #     l_shipmode,
+        #     sum(case
+        #         when o_orderpriority = '1-URGENT'
+        #             or o_orderpriority = '2-HIGH'
+        #             then 1
+        #         else 0
+        #     end) as high_line_count,
+        #     sum(case
+        #         when o_orderpriority <> '1-URGENT'
+        #             and o_orderpriority <> '2-HIGH'
+        #             then 1
+        #         else 0
+        #     end) as low_line_count
         # from
-        #         orders,
-        #         lineitem
+        #     orders,
+        #     lineitem
         # where
-        #         o_orderkey = l_orderkey
-        #         and l_shipmode in ('MAIL', 'SHIP')
-        #         and l_commitdate < l_receiptdate
-        #         and l_shipdate < l_commitdate
-        #         and l_receiptdate >= date '1994-01-01'
-        #         and l_receiptdate < date '1995-01-01'
+        #     o_orderkey = l_orderkey
+        #     and l_shipmode in ('MAIL', 'SHIP')
+        #     and l_commitdate < l_receiptdate
+        #     and l_shipdate < l_commitdate
+        #     and l_receiptdate >= date '1994-01-01'
+        #     and l_receiptdate < date '1995-01-01'
         # group by
-        #         l_shipmode
+        #     l_shipmode
         # order by
-        #         l_shipmode
+        #     l_shipmode
 
     def load(self, database):
         lineitem_scan = database.scan('lineitem', [
@@ -264,22 +264,22 @@ class Q12(TpchJitqQuery):
             'o_orderkey', 'o_orderpriority',
         ])
 
-        return {'lineitem': lineitem_scan, 'orders': orders_scan}
+        return {
+            'lineitem': lineitem_scan,
+            'orders': orders_scan,
+        }
 
     def run(self, scans):
-        lineitem_scan = scans['lineitem']
-        orders_scan = scans['orders']
-
         lb_receiptdate = parse_date('1994-01-01')
         hb_receiptdate = parse_date('1995-01-01')
 
-        join = lineitem_scan \
+        join = scans['lineitem'] \
             .filter(lambda r:
                     r.l_shipmode in [2, 5] and
                     r.l_shipdate < r.l_commitdate < r.l_receiptdate and
                     lb_receiptdate < r.l_receiptdate < hb_receiptdate) \
             .map(lambda r: (r.l_orderkey, r.l_shipmode)) \
-            .join(orders_scan
+            .join(scans['orders']
                   .map(lambda r: (r.o_orderkey, r.o_orderpriority))) \
             .alias(['l_orderkey', 'l_shipmode', 'o_orderpriority'])
 
