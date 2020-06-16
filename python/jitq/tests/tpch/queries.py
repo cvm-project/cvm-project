@@ -28,94 +28,82 @@ class TpchJitqQuery(ABC):
 
 class Q01(TpchJitqQuery):
     # select
-    #         l_returnflag,
-    #         l_linestatus,
-    #         sum(l_quantity) as sum_qty,
-    #         sum(l_extendedprice) as sum_base_price,
-    #         sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
-    #         sum(l_extendedprice * (1 - l_discount) * (1 + l_tax))
-    #                 as sum_charge,
-    #         avg(l_quantity) as avg_qty,
-    #         avg(l_extendedprice) as avg_price,
-    #         avg(l_discount) as avg_disc,
-    #         count(*) as count_order
+    #     l_returnflag,
+    #     l_linestatus,
+    #     sum(l_quantity) as sum_qty,
+    #     sum(l_extendedprice) as sum_base_price,
+    #     sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+    #     sum(l_extendedprice * (1 - l_discount) * (1 + l_tax))
+    #             as sum_charge,
+    #     avg(l_quantity) as avg_qty,
+    #     avg(l_extendedprice) as avg_price,
+    #     avg(l_discount) as avg_disc,
+    #     count(*) as count_order
     # from
-    #         lineitem
+    #     lineitem
     # where
-    #         l_shipdate <= date '1998-12-01' - interval '90' day
+    #     l_shipdate <= date '1998-12-01' - interval '90' day
     # group by
-    #         l_returnflag,
-    #         l_linestatus
+    #     l_returnflag,
+    #     l_linestatus
     # order by
-    #         l_returnflag,
-    #         l_linestatus
+    #     l_returnflag,
+    #     l_linestatus
 
     def load(self, database):
         lineitem_scan = database.scan('lineitem', [
             'l_shipdate', 'l_discount', 'l_extendedprice', 'l_tax',
-            'l_quantity', 'l_returnflag', 'l_linestatus'
+            'l_quantity', 'l_returnflag', 'l_linestatus',
         ])
 
-        return {'lineitem': lineitem_scan}
+        return {
+            'lineitem': lineitem_scan,
+        }
 
     def run(self, scans):
-        lineitem_scan = scans['lineitem']
-
         b_shipdate = parse_date('1998-09-02')
 
-        return lineitem_scan \
+        return scans['lineitem'] \
             .filter(lambda r: r.l_shipdate <= b_shipdate) \
-            .map(
-                lambda r:
-                (
-                    np.int64(r.l_returnflag * 2 + r.l_linestatus),
-                    np.int64(r.l_quantity),
-                    np.int64(r.l_extendedprice),
-                    np.int64(r.l_extendedprice * (100 - r.l_discount)),
-                    np.int64(r.l_extendedprice * (100 - r.l_discount) *
-                             (100 + r.l_tax)),
-                    np.int64(r.l_discount),
-                    np.int64(1),
-                )
-            ) \
-            .alias(['returnflag_linestatus', 'l_quantity', 'l_extendedprice',
-                    'discounted', 'disc_taxed', 'l_discount', 'count']) \
-            .reduce_by_key(
-                lambda r1, r2:
-                (
-                    r1.l_quantity + r2.l_quantity,
-                    r1.l_extendedprice + r2.l_extendedprice,
-                    r1.discounted + r2.discounted,
-                    r1.disc_taxed + r2.disc_taxed,
-                    r1.l_discount + r2.l_discount,
-                    r1.count + r2.count,  # for avgs
-                )
-            ) \
-            .map(
-                lambda r:
-                (
-                    r.returnflag_linestatus,
-                    r.l_quantity,
-                    r.l_extendedprice,
-                    r.discounted,
-                    r.disc_taxed,
-                    r.l_quantity / r.count,
-                    r.l_extendedprice / r.count,
-                    r.l_discount / r.count,
-                    r.count,
-                )
-            ) \
-            .alias(['returnflag_linestatus', 'sum_qty', 'sum_base_price',
-                    'sum_disc_price', 'sum_charge', 'avg_qty', 'avg_price',
-                    'avg_disc', 'count_order']) \
+            .map(lambda r:
+                 (r.l_returnflag * 2 + r.l_linestatus,
+                  np.int64(r.l_quantity),
+                  np.int64(r.l_extendedprice),
+                  r.l_extendedprice * (100 - r.l_discount),
+                  r.l_extendedprice * (100 - r.l_discount) *
+                  (100 + r.l_tax),
+                  np.int64(r.l_discount),
+                  1),
+                 names=['returnflag_linestatus', 'l_quantity',
+                        'l_extendedprice', 'discounted', 'disc_taxed',
+                        'l_discount', 'count']) \
+            .reduce_by_key(lambda r1, r2:
+                           (r1.l_quantity + r2.l_quantity,
+                            r1.l_extendedprice + r2.l_extendedprice,
+                            r1.discounted + r2.discounted,
+                            r1.disc_taxed + r2.disc_taxed,
+                            r1.l_discount + r2.l_discount,
+                            r1.count + r2.count)) \
+            .sort() \
+            .map(lambda r:
+                 (r.returnflag_linestatus >> 1,
+                  r.returnflag_linestatus & 1,
+                  r.l_quantity,
+                  r.l_extendedprice,
+                  r.discounted,
+                  r.disc_taxed,
+                  r.l_quantity / r.count,
+                  r.l_extendedprice / r.count,
+                  r.l_discount / r.count,
+                  r.count),
+                 names=['l_returnflag', 'l_linestatus', 'sum_qty',
+                        'sum_base_price', 'sum_disc_price', 'sum_charge',
+                        'avg_qty', 'avg_price', 'avg_disc', 'count_order']) \
             .collect()
 
     def postprocess(self, res):
         df = pd.DataFrame(res)
 
-        df.insert(0, 'l_returnflag', df.returnflag_linestatus // 2)
-        df.insert(1, 'l_linestatus', df.returnflag_linestatus % 2)
-        df.drop(['returnflag_linestatus'], axis=1, inplace=True)
         df.l_returnflag = df.l_returnflag.apply(
             lambda i: ['A', 'N', 'R'][i])
         df.l_linestatus = df.l_linestatus.apply(
@@ -123,8 +111,6 @@ class Q01(TpchJitqQuery):
         df.sum_base_price = df.sum_base_price.apply(Decimal) / 100
         df.sum_disc_price = df.sum_disc_price.apply(Decimal) / 100 / 100
         df.sum_charge = df.sum_charge.apply(Decimal) / 100 / 100 / 100
-
-        df.sort_values(by=['l_returnflag', 'l_linestatus'], inplace=True)
 
         return df
 
