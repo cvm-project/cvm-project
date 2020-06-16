@@ -187,29 +187,29 @@ class Q04(TpchJitqQuery):
 
 class Q06(TpchJitqQuery):
     # select
-    #         sum(l_extendedprice * l_discount) as revenue
+    #     sum(l_extendedprice * l_discount) as revenue
     # from
-    #         lineitem
+    #     lineitem
     # where
-    #         l_shipdate >= date '1994-01-01'
-    #         and l_shipdate < date '1995-01-01'
-    #         and l_discount between 0.06 - 0.01 and 0.06 + 0.01
-    #         and l_quantity < 24
+    #     l_shipdate >= date '1994-01-01'
+    #     and l_shipdate < date '1995-01-01'
+    #     and l_discount between 0.06 - 0.01 and 0.06 + 0.01
+    #     and l_quantity < 24
 
     def load(self, database):
         lineitem_scan = database.scan('lineitem', [
-            'l_shipdate', 'l_discount', 'l_quantity', 'l_extendedprice'
+            'l_shipdate', 'l_discount', 'l_quantity', 'l_extendedprice',
         ])
 
-        return {'lineitem': lineitem_scan}
+        return {
+            'lineitem': lineitem_scan,
+        }
 
     def run(self, scans):
-        lineitem_scan = scans['lineitem']
-
         lb_shipdate = parse_date('1994-01-01')
         hb_shipdate = parse_date('1995-01-01')
 
-        return lineitem_scan \
+        return scans['lineitem'] \
             .filter(lambda r:
                     r.l_shipdate >= lb_shipdate and
                     r.l_shipdate < hb_shipdate and
