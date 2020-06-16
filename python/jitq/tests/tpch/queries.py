@@ -450,54 +450,51 @@ class Q19(TpchJitqQuery):
     # from
     #     lineitem,
     #     part
-    # where
-    #     (
-    #             p_partkey = l_partkey
-    #             and p_brand = 'Brand#12'
-    #             and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
-    #             and p_size between 1 and 5
-    #             and l_quantity >= 1 and l_quantity <= 1 + 10
-    #             and l_shipmode in ('AIR', 'REG AIR')
-    #             and l_shipinstruct = 'DELIVER IN PERSON'
+    # where (
+    #         p_partkey = l_partkey
+    #         and p_brand = 'Brand#12'
+    #         and p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+    #         and p_size between 1 and 5
+    #         and l_quantity >= 1 and l_quantity <= 1 + 10
+    #         and l_shipmode in ('AIR', 'REG AIR')
+    #         and l_shipinstruct = 'DELIVER IN PERSON'
     #     )
-    #     or
-    #     (
-    #             p_partkey = l_partkey
-    #             and p_brand = 'Brand#23'
-    #             and p_container in ('MED BAG','MED BOX','MED PKG','MED PACK')
-    #             and p_size between 1 and 10
-    #             and l_quantity >= 10 and l_quantity <= 10 + 10
-    #             and l_shipmode in ('AIR', 'REG AIR')
-    #             and l_shipinstruct = 'DELIVER IN PERSON'
+    #     or (
+    #         p_partkey = l_partkey
+    #         and p_brand = 'Brand#23'
+    #         and p_container in ('MED BAG','MED BOX','MED PKG','MED PACK')
+    #         and p_size between 1 and 10
+    #         and l_quantity >= 10 and l_quantity <= 10 + 10
+    #         and l_shipmode in ('AIR', 'REG AIR')
+    #         and l_shipinstruct = 'DELIVER IN PERSON'
     #     )
-    #     or
-    #     (
-    #             p_partkey = l_partkey
-    #             and p_brand = 'Brand#34'
-    #             and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
-    #             and p_size between 1 and 15
-    #             and l_quantity >= 20 and l_quantity <= 20 + 10
-    #             and l_shipmode in ('AIR', 'REG AIR')
-    #             and l_shipinstruct = 'DELIVER IN PERSON'
+    #     or (
+    #         p_partkey = l_partkey
+    #         and p_brand = 'Brand#34'
+    #         and p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+    #         and p_size between 1 and 15
+    #         and l_quantity >= 20 and l_quantity <= 20 + 10
+    #         and l_shipmode in ('AIR', 'REG AIR')
+    #         and l_shipinstruct = 'DELIVER IN PERSON'
     #     )
 
     def load(self, database):
         lineitem_scan = database.scan('lineitem', [
             'l_orderkey', 'l_linenumber',
             'l_partkey', 'l_quantity', 'l_extendedprice',
-            'l_discount', 'l_shipinstruct', 'l_shipmode'
+            'l_discount', 'l_shipinstruct', 'l_shipmode',
         ])
         part_scan = database.scan('part', [
-            'p_partkey', 'p_brand', 'p_size', 'p_container'
+            'p_partkey', 'p_brand', 'p_size', 'p_container',
         ])
 
-        return {'lineitem': lineitem_scan, 'part': part_scan}
+        return {
+            'lineitem': lineitem_scan,
+            'part': part_scan,
+        }
 
     def run(self, scans):
-        lineitem_scan = scans['lineitem']
-        part_scan = scans['part']
-
-        lineitem_scan = lineitem_scan \
+        lineitem_scan = scans['lineitem'] \
             .filter(lambda r:
                     (r.l_shipmode == 0 or r.l_shipmode == 4) and
                     r.l_shipinstruct == 1 and
@@ -508,11 +505,11 @@ class Q19(TpchJitqQuery):
                   (4 if (1 <= r.l_quantity <= 11) else 0) +
                   (2 if (10 <= r.l_quantity <= 20) else 0) +
                   (1 if (20 <= r.l_quantity <= 30) else 0)),
-                 ['l_partkey', 'discounted_price', 'group']) \
-            .map(lambda r: (r.l_partkey, (r.discounted_price << 3) + r.group),
-                 ['l_partkey', 'discounted_price_group'])
+                 ['l_partkey', 'revenue', 'group']) \
+            .map(lambda r: (r.l_partkey, (r.revenue << 3) + r.group),
+                 ['l_partkey', 'revenue_group'])
 
-        part_scan = part_scan \
+        part_scan = scans['part'] \
             .filter(lambda r:
                     r.p_brand in [12, 23, 34] and
                     1 <= r.p_size <= 15 and
@@ -529,13 +526,13 @@ class Q19(TpchJitqQuery):
                  ['p_partkey', 'group']) \
             .filter(lambda r: r.group != 0)
 
-        # Result of join: (partkey, discounted_price | part_group, part_group)
+        # Result of join: (partkey, revenue | part_group, part_group)
         return lineitem_scan \
-            .map(lambda r: (r.l_partkey, r.discounted_price_group)) \
+            .map(lambda r: (r.l_partkey, r.revenue_group)) \
             .join(part_scan.map(lambda r: (r.p_partkey, r.group))) \
-            .alias(['l_partkey', 'discounted_price_lgroup', 'pgroup']) \
-            .filter(lambda r: r.discounted_price_lgroup & r.pgroup != 0) \
-            .map(lambda r: r.discounted_price_lgroup >> 3) \
+            .alias(['l_partkey', 'revenue_lgroup', 'pgroup']) \
+            .filter(lambda r: r.revenue_lgroup & r.pgroup != 0) \
+            .map(lambda r: r.revenue_lgroup >> 3) \
             .reduce(lambda i1, i2: i1 + i2)
 
     def postprocess(self, res):
