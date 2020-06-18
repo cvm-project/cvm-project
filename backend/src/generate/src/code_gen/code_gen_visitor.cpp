@@ -24,7 +24,7 @@ namespace code_gen::cpp {
 
 void CodeGenVisitor::operator()(DAGAntiJoin *op) {
     const std::string var_name =
-            CodeGenVisitor::visit_common(op, "JoinOperator");
+            CodeGenVisitor::visit_common(op, "AntiJoinOperator");
 
     // Build key and value types
     // TODO(sabir): This currently only works for keys of size 1

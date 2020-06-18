@@ -36,12 +36,12 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
             if (left_input_type->field_types.empty()) {
                 throw std::invalid_argument(
-                        "Left join input cannot be empty tuple");
+                        "Left anti-join input cannot be empty tuple");
             }
 
             if (right_input_type->field_types.empty()) {
                 throw std::invalid_argument(
-                        "Right join input cannot be empty tuple");
+                        "Right anti-join input cannot be empty tuple");
             }
 
             auto const left_key_type = left_input_type->field_types[0];
@@ -50,13 +50,15 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             if (dynamic_cast<const dag::type::Atomic *>(left_key_type) ==
                 nullptr) {
                 throw std::invalid_argument(
-                        "First field of left input of Join must be Atomic");
+                        "First field of left input of anti-join must be "
+                        "Atomic");
             }
 
             if (dynamic_cast<const dag::type::Atomic *>(right_key_type) ==
                 nullptr) {
                 throw std::invalid_argument(
-                        "First field of right input of Join must be Atomic");
+                        "First field of right input of anti-join must be "
+                        "Atomic");
             }
 
             return left_input_type;
