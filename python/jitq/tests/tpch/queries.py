@@ -161,13 +161,10 @@ class Q04(TpchJitqQuery):
 
         lineitem_scan = scans['lineitem'] \
             .filter(lambda r: r.l_commitdate < r.l_receiptdate) \
-            .map(lambda r: (r.l_orderkey, np.int32(1)),
-                 names=['l_orderkey', 'dummy_for_distinct']) \
-            .reduce_by_key(lambda i1, i2: np.int32(i1 + i2)) \
             .map(lambda t: t.l_orderkey)
 
         return orders_scan \
-            .join(lineitem_scan) \
+            .semijoin(lineitem_scan) \
             .map(lambda t: (t[1], np.int32(1)),
                  ['o_orderpriority', 'order_count']) \
             .reduce_by_key(lambda i1, i2: np.int32(i1 + i2)) \
