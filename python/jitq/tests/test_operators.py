@@ -525,7 +525,7 @@ class TestAntiJoin:
 
         with pytest.raises(TypeError):
             jitq_context.collection(input_1) \
-                .join(jitq_context.collection(input_2))
+                .antijoin(jitq_context.collection(input_2))
 
     def test_overlap(self, jitq_context):
         input_1 = [(r, r * 10) for r in range(10)]
