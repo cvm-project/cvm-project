@@ -595,6 +595,14 @@ class TestAntiJoin:
         assert sorted(res.astuples()) == truth
 
 
+class TestAntiJoinPredicated:
+    def test_predicate(self, jitq_context):
+        data1 = jitq_context.collection([(1, 1), (2, 2), (3, 3)])
+        data2 = jitq_context.collection([(1, 0), (2, 2), (2, 3)])
+        res = data1.antijoin(data2, lambda r1, r2: r1[1] == r2[1]).collect()
+        assert sorted(res.astuples()) == [(1, 1), (3, 3)]
+
+
 class TestSemiJoin:
 
     def test_scalars(self, jitq_context):
