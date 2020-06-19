@@ -12,6 +12,7 @@ variables:
       --color=yes -vs
       --log-cli-level INFO
       --log-format="%(asctime)s.%(msecs)03d  %(levelname)-8s %(module)s:%(funcName)s:%(lineno)-5d   %(message)s"
+  PYTEST_ASAN_CMD: /usr/bin/time -v catchsegv $CI_PROJECT_DIR/tools/run_with_asan.sh python3 -u -m pytest
   GTEST_COLOR: "1"
   PYTHONPATH: $CI_PROJECT_DIR:$CI_PROJECT_DIR/backend/build
   JITQPATH: $CI_PROJECT_DIR
@@ -104,8 +105,8 @@ python-tests-omp:
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_omp_environment.py --target omp
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest test_operators.py --target omp
+    - $PYTEST_ASAN_CMD test_omp_environment.py --target omp
+    - $PYTEST_ASAN_CMD test_operators.py --target omp
 
 python-tests-asan:
   stage: test
@@ -123,7 +124,11 @@ python-tests-asan:
     - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
-    - /usr/bin/time -v catchsegv $JITQPATH/tools/run_with_asan.sh python3 -u -m pytest --ignore test_omp_environment.py
+    - $PYTEST_ASAN_CMD test_cli_runner.py
+    - $PYTEST_ASAN_CMD test_inlining.py
+    - $PYTEST_ASAN_CMD test_operators.py
+    - $PYTEST_ASAN_CMD test_optimizer.py
+    - $PYTEST_ASAN_CMD test_tpch.py
 
 cpp-test:
   stage: test
