@@ -128,7 +128,8 @@ python-tests-asan:
     - $PYTEST_ASAN_CMD test_inlining.py
     - $PYTEST_ASAN_CMD test_operators.py
     - $PYTEST_ASAN_CMD test_optimizer.py
-    - $PYTEST_ASAN_CMD test_tpch.py
+    - $PYTEST_ASAN_CMD test_tpch.py --target singlecore
+    - $PYTEST_ASAN_CMD test_tpch.py --target singlecore --tpch_input_format parquet
 
 cpp-test:
   stage: test
