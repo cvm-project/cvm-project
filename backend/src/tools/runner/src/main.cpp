@@ -45,6 +45,10 @@ auto main(int argc, char *argv[]) -> int {
     std::ifstream input_file(input_file_name);
     std::ofstream output_file(output_file_name);
 
+    assert(dag_file.is_open());
+    assert(input_file_name.empty() or input_file.is_open());
+    assert(output_file_name.empty() or output_file.is_open());
+
     std::istream &input = input_file_name.empty() ? std::cin : input_file;
     std::ostream &output = output_file_name.empty() ? std::cout : output_file;
 
