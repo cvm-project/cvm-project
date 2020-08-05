@@ -392,7 +392,7 @@ void DAG::set_input(DAGOperator *const op, const int operator_input_port) {
 }
 
 void DAG::set_input(const int dag_input_port, const FlowTip &input) {
-    inputs_.erase(dag_input_port);
+    reset_input(dag_input_port);
     add_input(dag_input_port, input);
 }
 
@@ -409,6 +409,10 @@ void DAG::add_input(const int dag_input_port, const FlowTip &input) {
 void DAG::add_input(const int dag_input_port, DAGOperator *const op,
                     int const operator_input_port) {
     add_input(dag_input_port, {op, operator_input_port});
+}
+
+void DAG::reset_input(const int dag_input_port) {
+    inputs_.erase(dag_input_port);
 }
 
 void DAG::reset_inputs() { inputs_.clear(); }

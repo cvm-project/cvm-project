@@ -283,6 +283,7 @@ public:
     void add_input(int dag_input_port, const FlowTip &input);
     void add_input(int dag_input_port, DAGOperator *op,
                    int operator_input_port = 0);
+    void reset_input(int dag_input_port);
     void reset_inputs();
 
     [[nodiscard]] auto out_degree() const -> size_t;
