@@ -1151,6 +1151,12 @@ class TestZip:
         truth = [(0, 0), (1, 1), (2, 2)]
         assert sorted(res.astuples()) == sorted(truth)
 
+    def test_types(self, jitq_context):
+        input1 = jitq_context.range_(0, 0)
+        input2 = jitq_context.range_(0, 0).map(lambda i: 0.0)
+        res = input1.zip(input2).collect()
+        assert sorted(res.astuples()) == []
+
 
 class TestCache:
 
