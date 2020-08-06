@@ -537,7 +537,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGZip *const op) const -> const Tuple * {
             std::vector<const FieldType *> output_field_types;
-            for (auto const f : dag_->in_flows(op)) {
+            for (size_t i = 0; i < op->num_in_ports(); i++) {
+                auto const f = dag_->in_flow(op, i);
                 boost::copy(f.source.op->tuple->type->field_types,
                             std::back_inserter(output_field_types));
             }
