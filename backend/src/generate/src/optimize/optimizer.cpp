@@ -42,12 +42,18 @@ void Optimizer::Run(DAG *const dag) {
 
     // Verify tuple types
     transformations.emplace_back("type_check");
+#ifndef DEBUG
+    transformations.emplace_back("verify");
+#endif  // DEBUG
 
     // Materialize results that are consumed multiple times
     if (config.value("/optimizations/materialize-multiple-reads/active",
                      false)) {
         transformations.emplace_back("materialize_multiple_reads");
         transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
     }
 
     // Move around filters
@@ -56,11 +62,13 @@ void Optimizer::Run(DAG *const dag) {
         transformations.emplace_back("attribute_id_tracking");
 #ifndef DEBUG
         transformations.emplace_back("type_check");
+        transformations.emplace_back("verify");
 #endif  // DEBUG
 
         transformations.emplace_back("simple_predicate_move_around");
 #ifndef DEBUG
         transformations.emplace_back("type_check");
+        transformations.emplace_back("verify");
 #endif  // DEBUG
     }
 
@@ -70,6 +78,9 @@ void Optimizer::Run(DAG *const dag) {
         transformations.emplace_back("parallelize");
         transformations.emplace_back("parallelize_omp");
         transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
     } else if (target != "singlecore") {
         throw std::invalid_argument("Unknown target: '" + target + "'");
     }
@@ -79,16 +90,19 @@ void Optimizer::Run(DAG *const dag) {
         transformations.emplace_back("attribute_id_tracking");
 #ifndef DEBUG
         transformations.emplace_back("type_check");
+        transformations.emplace_back("verify");
 #endif  // DEBUG
 
         transformations.emplace_back("determine_sortedness");
 #ifndef DEBUG
         transformations.emplace_back("type_check");
+        transformations.emplace_back("verify");
 #endif  // DEBUG
 
         transformations.emplace_back("grouped_reduce_by_key");
 #ifndef DEBUG
         transformations.emplace_back("type_check");
+        transformations.emplace_back("verify");
 #endif  // DEBUG
     }
 
@@ -102,6 +116,9 @@ void Optimizer::Run(DAG *const dag) {
         transformations.emplace_back("create_pipelines");
         transformations.emplace_back("type_inference");
         transformations.emplace_back("determine_sortedness");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
     }
 
     // Assert that operators implement Open-Next-Close interface correctly
@@ -109,11 +126,17 @@ void Optimizer::Run(DAG *const dag) {
                      false)) {
         transformations.emplace_back("assert_correct_open_next_close");
         transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
     }
 
     // Make ID and order canonical
     if (config.value("/optimizations/canonicalize/active", false)) {
         transformations.emplace_back("canonicalize");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
     }
 
     // Just-in-Time compilation
@@ -121,6 +144,9 @@ void Optimizer::Run(DAG *const dag) {
         transformations.emplace_back("code_gen");
         transformations.emplace_back("type_inference");
         transformations.emplace_back("canonicalize");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
     }
 
     if (verbose) {

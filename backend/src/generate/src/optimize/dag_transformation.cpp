@@ -17,6 +17,7 @@
 #include "parallelize_omp.hpp"
 #include "simple_predicate_move_around.hpp"
 #include "type_inference.hpp"
+#include "verify.hpp"
 
 namespace optimize {
 
@@ -41,6 +42,7 @@ void LoadDagTransformations() {
     RegisterDefault(std::make_unique<ParallelizeOmp>());
     RegisterDefault(std::make_unique<SimplePredicateMoveAround>());
     RegisterDefault(std::make_unique<TypeInference>());
+    RegisterDefault(std::make_unique<Verify>());
     RegisterDefault(std::make_unique<AddAlwaysInline>());
     Register("type_check", std::make_unique<TypeInference>(true));
 
