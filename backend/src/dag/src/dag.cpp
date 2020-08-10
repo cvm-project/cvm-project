@@ -482,16 +482,20 @@ auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
             op = op_ptr.get();
             ::from_json(it, *op_ptr);
             dag->AddOperator(op_ptr.release(), op->id);
+            auto const [_, has_inserted] = operators.emplace(op->id, op);
+            assert(has_inserted);
         }
-        operators.emplace(op->id, op);
 
         if (it.count("inner_dag") > 0) {
             std::unique_ptr<DAG> inner_dag = it["inner_dag"];
             dag->set_inner_dag(op, inner_dag.release());
         }
 
-        predecessors.emplace(op,
-                             it.at("predecessors").get<std::vector<size_t>>());
+        {
+            std::vector<size_t> flow_tips = it.at("predecessors");
+            auto const [_, has_inserted] = predecessors.emplace(op, flow_tips);
+            assert(has_inserted);
+        }
     }
 
     for (const auto &op_val : operators) {
