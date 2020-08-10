@@ -209,10 +209,10 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
             // Store port info of output ports
             for (size_t i = 0; i < op->num_out_ports(); i++) {
                 // Take information from the output operator of the inner DAG
-                auto const output_op = inner_dag->output().op;
+                auto const output = inner_dag->output(i);
                 auto const port_info_it =
-                        output_port_labels.at(output_op).find(i);
-                assert(port_info_it != output_port_labels.at(output_op).end());
+                        output_port_labels.at(output.op).find(output.port);
+                assert(port_info_it != output_port_labels.at(output.op).end());
                 output_port_labels[op].emplace(i, port_info_it->second);
             }
         }
