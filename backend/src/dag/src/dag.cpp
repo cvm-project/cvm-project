@@ -467,12 +467,23 @@ auto DAG::last_operator_id() const -> size_t {
     return 0;
 }
 
+struct FlowTipHelper {
+    size_t op_id;
+    int port;
+};
+
+// NOLINTNEXTLINE(google-runtime-references)
+void from_json(const nlohmann::json &json, FlowTipHelper &flow_tip) {
+    flow_tip.op_id = json.at("op");
+    flow_tip.port = json.at("port");
+}
+
 auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         const nlohmann::json &json) -> std::unique_ptr<DAG> {
     std::unique_ptr<DAG> dag(new DAG);
 
     std::map<size_t, DAGOperator *> operators;
-    std::unordered_map<DAGOperator *, std::vector<size_t>> predecessors;
+    std::unordered_map<DAGOperator *, std::vector<FlowTipHelper>> predecessors;
 
     for (auto &it : json.at("operators")) {
         std::string op_name = it.at("op");
@@ -492,7 +503,7 @@ auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         }
 
         {
-            std::vector<size_t> flow_tips = it.at("predecessors");
+            std::vector<FlowTipHelper> flow_tips = it.at("predecessors");
             auto const [_, has_inserted] = predecessors.emplace(op, flow_tips);
             assert(has_inserted);
         }
@@ -502,9 +513,9 @@ auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         DAGOperator *const op = op_val.second;
         auto const preds = predecessors.at(op);
         for (size_t i = 0; i < preds.size(); i++) {
-            auto const pred_id = preds.at(i);
-            auto predecessor = operators.at(pred_id);
-            dag->AddFlow(predecessor, op, i);
+            auto const pred = preds.at(i);
+            auto const pred_op = operators.at(pred.op_id);
+            dag->AddFlow(pred_op, pred.port, op, i);
         }
     }
 
@@ -538,7 +549,9 @@ void to_json(nlohmann::json &json, const DAG *const dag) {
         // Add predecessors
         auto jpreds = nlohmann::json::array();
         for (size_t i = 0; i < op->num_in_ports(); i++) {
-            jpreds.push_back(dag->predecessor(op, i)->id);
+            auto const in_flow = dag->in_flow(op, i);
+            jpreds.push_back({{"op", in_flow.source.op->id},
+                              {"port", in_flow.source.port}});
         }
         jop.emplace("predecessors", jpreds);
 

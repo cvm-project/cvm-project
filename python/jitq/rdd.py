@@ -103,8 +103,9 @@ class RDD(abc.ABC):
                 "Expected valid nested tuple type."
 
             op_dict['id'] = len(op_dicts)
-            op_dict['predecessors'] = [
-                op_dicts[str(p)]['id'] for p in operator.parents]
+            op_dict['predecessors'] = \
+                [{'op': op_dicts[str(p)]['id'], 'port': 0}
+                 for p in operator.parents]
             op_dict['op'] = operator.NAME
             op_dict['output_type'] = make_flat_tuple(operator.output_type)
             op_dicts[str(operator)] = op_dict
