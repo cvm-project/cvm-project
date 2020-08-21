@@ -15,6 +15,7 @@
 #include "ensure_single_tuple.hpp"
 #include "exchange.hpp"
 #include "exchange_s3.hpp"
+#include "exchange_tcp.hpp"
 #include "expand_pattern.hpp"
 #include "filter.hpp"
 #include "group_by.hpp"

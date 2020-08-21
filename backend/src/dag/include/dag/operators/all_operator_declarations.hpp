@@ -21,6 +21,7 @@ class DAGConstantTuple;
 class DAGEnsureSingleTuple;
 class DAGExchange;
 class DAGExchangeS3;
+class DAGExchangeTcp;
 class DAGExpandPattern;
 class DAGFilter;
 class DAGGroupBy;
@@ -70,6 +71,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGEnsureSingleTuple,               //
         DAGExchange,                        //
         DAGExchangeS3,                      //
+        DAGExchangeTcp,                     //
         DAGExpandPattern,                   //
         DAGFilter,                          //
         DAGGroupBy,                         //

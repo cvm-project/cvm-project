@@ -235,6 +235,35 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                                      Atomic::MakeAtomic("long")});
         }
 
+        auto operator()(const DAGExchangeTcp *const op) const -> const Tuple * {
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
+            auto const &input_fields = input_type->field_types;
+
+            if (input_fields.size() <= 1) {
+                throw std::invalid_argument(
+                        "Input of ExchangeLambda must have at least two "
+                        "fields.");
+            }
+
+            const auto *const partition_id_type = input_fields.at(0);
+            if (partition_id_type != Atomic::MakeAtomic("long")) {
+                throw std::invalid_argument(
+                        "First field of ExchangeLambda must be 'long'");
+            }
+
+            std::vector<const FieldType *> output_fields(
+                    input_fields.begin() + 1, input_fields.end());
+
+            for (const auto *const type : output_fields) {
+                if (dynamic_cast<const Array *>(type) == nullptr) {
+                    throw std::invalid_argument(
+                            "Tail fields of ExchangeLambda must be arrays");
+                }
+            }
+
+            return Tuple::MakeTuple(output_fields);
+        }
+
         auto operator()(const DAGGroupBy *const op) const -> const Tuple * {
             const auto *const input_type = dag_->predecessor(op)->tuple->type;
             const auto *const partition_id_type = input_type->field_types[0];

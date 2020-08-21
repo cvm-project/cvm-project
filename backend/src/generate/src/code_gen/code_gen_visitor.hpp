@@ -62,6 +62,7 @@ public:
     void operator()(DAGRange *op);
     void operator()(DAGEnsureSingleTuple *op);
     void operator()(DAGExchangeS3 *op);
+    void operator()(DAGExchangeTcp *op);
     void operator()(DAGExpandPattern *op);
     void operator()(DAGFilter *op);
     void operator()(DAGJoin *op);

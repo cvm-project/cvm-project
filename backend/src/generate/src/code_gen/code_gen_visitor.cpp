@@ -333,6 +333,22 @@ void CodeGenVisitor::operator()(DAGExchangeS3 *op) {
                      {exchange_id, num_levels, level_num});
 }
 
+void CodeGenVisitor::operator()(DAGExchangeTcp *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "ExchangeTcpOperator");
+
+    GenerateTupleToValue(context_, dag_->predecessor(op)->tuple->type);
+    GenerateValueToTuple(context_, op->tuple->type);
+
+    static const std::hash<std::string> Hash;
+    auto const exchange_id = std::to_string(Hash(var_name)) + "U";
+    auto const num_levels = std::to_string(op->num_levels);
+    auto const level_num = std::to_string(op->level_num);
+
+    emitOperatorMake(var_name, "ExchangeTcpOperator", op, {},
+                     {exchange_id, num_levels, level_num});
+}
+
 void CodeGenVisitor::operator()(DAGExpandPattern *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ExpandPatternOperator");

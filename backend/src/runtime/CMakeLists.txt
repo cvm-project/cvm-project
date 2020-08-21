@@ -7,9 +7,11 @@ set(RUNTIME_SOURCE_FILES
         src/filesystem/filesystem.cpp
         src/memory/shared_pointer.cpp
         src/memory/values.cpp
+        src/net/tcp/exchange_service.cpp
         src/operators/arrow_helpers.cpp
         src/operators/arrow_table_scan.cpp
         src/operators/exchange_s3.cpp
+        src/operators/exchange_tcp.cpp
         src/operators/expand_pattern.cpp
         src/operators/concurrent_execute_lambda.cpp
         src/operators/concurrent_execute_process.cpp
