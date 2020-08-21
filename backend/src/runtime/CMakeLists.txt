@@ -1,5 +1,8 @@
 set(RUNTIME_SOURCE_FILES
         src/execute_plan.cpp
+        src/fibers/trace.cpp
+        src/fibers/asio/round_robin.cpp
+        src/fibers/asio/yield.cpp
         src/filesystem/file.cpp
         src/filesystem/filesystem.cpp
         src/memory/shared_pointer.cpp
@@ -55,6 +58,7 @@ target_link_libraries(runtime
         utils
     PRIVATE
         Boost::boost
+        Boost::fiber
         pybind11::embed
     )
 

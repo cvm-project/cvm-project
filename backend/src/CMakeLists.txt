@@ -82,6 +82,8 @@ endif()
 
 # Set up Boost
 find_package(Boost 1.76 REQUIRED COMPONENTS
+        context
+        fiber
         filesystem
         program_options
         stacktrace_basic
@@ -90,6 +92,7 @@ find_package(Boost 1.76 REQUIRED COMPONENTS
 set(_BOOST_COMPILE_DEFINITIONS
         "BOOST_MPL_LIMIT_LIST_SIZE=50"
         "BOOST_MPL_CFG_NO_PREPROCESSED_HEADERS"
+        "BOOST_FIBERS_SPINLOCK_TTAS_ADAPTIVE_FUTEX"
     )
 set_target_properties(Boost::boost PROPERTIES
     INTERFACE_COMPILE_DEFINITIONS "${_BOOST_COMPILE_DEFINITIONS}"
