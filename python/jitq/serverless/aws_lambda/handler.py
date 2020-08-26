@@ -236,9 +236,21 @@ class Handler:
         env['HOME'] = str(Path.home())
         env.update(self.runner_env_vars)
 
+        # Compute remaining time
+        timeout = 20
+        try:
+            timeout = self.context.get_remaining_time_in_millis() / 1000.0 - 1
+        except BaseException:
+            pass
+        timeout = str(timeout) + 's'
+
+        logging.info('Running runner with timeout of %s.', timeout)
+
+        # Run
         try:
             result = subprocess \
-                .run(['catchsegv', runner, '--dag', dag_file_path],
+                .run(['timeout', timeout, 'catchsegv',
+                      runner, '--dag', dag_file_path],
                      env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                      input=self.input.encode('utf-8'), check=True)
             output = result.stdout.decode('utf-8')
