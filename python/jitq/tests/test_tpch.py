@@ -15,14 +15,16 @@ pd.options.display.float_format = '{:.10g}'.format
 
 
 @pytest.fixture
-def tpch_data(tpch_input_path, tpch_input_format, tpch_scale, jitq_context):
+def tpch_data(tpch_input_path, tpch_input_format, tpch_num_partitions,
+              tpch_scale, jitq_context):
     formats = {
         'pandas/csv': PandasCsv,
         'pandas/parquet': PandasParquet,
         'parquet': Parquet,
     }
     loader = formats[tpch_input_format]
-    database = loader(tpch_input_path, tpch_scale, jitq_context)
+    database = loader(tpch_input_path, tpch_num_partitions, tpch_scale,
+                      jitq_context)
     return database
 
 

@@ -186,11 +186,14 @@ class PandasCsv(Pandas):
         'r_name': ['AFRICA', 'AMERICA', 'ASIA', 'EUROPE', 'MIDDLE EAST'],
     }
 
-    def __init__(self, input_path, scale_factor, jitq_context):
+    def __init__(self, input_path, num_partitions, scale_factor, jitq_context):
         super(PandasCsv, self).__init__(jitq_context)
 
         self.input_path = input_path
         self.scale_factor = scale_factor
+
+        assert num_partitions == 1, \
+            "Multiple partitions not supported in pandas."
 
     def _do_load(self, table_name):
         # Load from CSV -------------------------------------------------------
@@ -230,11 +233,13 @@ class PandasParquet(Pandas):
     TABLES = ['customer', 'lineitem', 'nation', 'orders', 'part', 'partsupp',
               'region', 'supplier']
 
-    def __init__(self, input_path, scale_factor, jitq_context):
+    def __init__(self, input_path, num_partitions, scale_factor, jitq_context):
         super(PandasParquet, self).__init__(jitq_context)
 
         self.input_path = input_path
         self.scale_factor = scale_factor
+
+        assert num_partitions == 1
 
     def _do_load(self, table_name):
         filename = self.input_path.format(

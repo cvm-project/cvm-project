@@ -38,6 +38,9 @@ def pytest_addoption(parser):
                 '{format}-{sf}/{table}.{format}',
         help='Format string for path to input files.')
     parser.addoption(
+        '--tpch_num_partitions', action='store', default=1, type=int,
+        help='Number of files in partitioned input relations.')
+    parser.addoption(
         '--tpch_ref_path', action='store',
         default='{jitqpath}/python/jitq/tests/tpch/ref-{sf}/Q{q}.ref.pkl',
         help='Format string for path to reference result.')
@@ -100,6 +103,12 @@ def pytest_generate_tests(metafunc):
         tpch_input_path = [metafunc.config.option.tpch_input_path]
         metafunc.parametrize('tpch_input_path',
                              tpch_input_path,
+                             scope='session')
+
+    if 'tpch_num_partitions' in metafunc.fixturenames:
+        tpch_num_partitions = [metafunc.config.option.tpch_num_partitions]
+        metafunc.parametrize('tpch_num_partitions',
+                             tpch_num_partitions,
                              scope='session')
 
     if 'tpch_ref_path' in metafunc.fixturenames:
