@@ -266,8 +266,8 @@ class Handler:
             raise RuntimeError(
                 'Runner failed. '
                 'Output on stdout:\n{}\nOutput on stderr:\n{}'.format(
-                    '\n'.join(output.splitlines()[:100]),
-                    '\n'.join(errors.splitlines()[:100]))) from ex
+                    '\n'.join(output.splitlines()[-100:]),
+                    '\n'.join(errors.splitlines()[-100:]))) from ex
 
         logging.info('Worker %d has run the plan. Result: %s',
                      self.worker_id, output)
