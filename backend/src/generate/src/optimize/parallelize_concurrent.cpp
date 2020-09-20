@@ -26,10 +26,11 @@ auto IsParallizationSeed(DAGOperator *const op) -> bool {
             DAGCartesian,           //
             DAGExpandPattern,       //
             DAGJoin,                //
-            DAGSemiJoin,            //
             DAGRange,               //
             DAGReduce,              //
-            DAGReduceByKey          //
+            DAGReduceByKey,         //
+            DAGSemiJoin,            //
+            DAGTopK                 //
             >(op);
 }
 
@@ -41,10 +42,11 @@ class HandleSeedOperatorVisitor
                              DAGCartesian,           //
                              DAGExpandPattern,       //
                              DAGJoin,                //
-                             DAGSemiJoin,            //
                              DAGRange,               //
                              DAGReduce,              //
-                             DAGReduceByKey          //
+                             DAGReduceByKey,         //
+                             DAGSemiJoin,            //
+                             DAGTopK                 //
                              >::type,
                      DAGConcurrentExecute *> {
 public:
@@ -322,6 +324,37 @@ public:
         inner_dag->AddOperator(post_red_op_ptr.release());
         inner_dag->AddFlow(exchange_op, post_red_op);
         inner_dag->set_output(post_red_op);
+
+        return pop;
+    }
+
+    auto operator()(DAGTopK *const op) -> DAGConcurrentExecute * {
+        auto const pred_op = dag_->predecessor(op, 0);
+        auto const in_flow = dag_->in_flow(op, 0);
+
+        // Create parallelize operator
+        auto const pop = new DAGConcurrentExecute();
+        dag_->AddOperator(pop);
+        dag_->set_inner_dag(pop, new DAG());
+        auto const inner_dag = dag_->inner_dag(pop);
+
+        // Populate parallel inner DAG
+        auto const param_op = new DAGParameterLookup();
+        inner_dag->AddOperator(param_op);
+        inner_dag->set_input(param_op);
+
+        auto inner_topk_op_ptr = std::make_unique<DAGTopK>();
+        auto const inner_topk_op = inner_topk_op_ptr.get();
+        inner_topk_op->num_elements = op->num_elements;
+
+        inner_dag->AddOperator(inner_topk_op_ptr.release());
+        inner_dag->AddFlow(param_op, inner_topk_op);
+        inner_dag->set_output(inner_topk_op);
+
+        // Fix up outer DAG
+        dag_->RemoveFlow(in_flow);
+        dag_->AddFlow(pred_op, pop);
+        dag_->AddFlow(pop, op);
 
         return pop;
     }
