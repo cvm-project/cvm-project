@@ -28,7 +28,7 @@ fi
 # Push commits one by one, starting with the oldest
 for ((i=${#COMMITS[@]}-1; i>=0; i--))
 do
-    if $(git push $FORCE origin ${COMMITS[$i]}:refs/heads/${BRANCH})
+    if git push $FORCE origin ${COMMITS[$i]}:refs/heads/${BRANCH}
     then
         echo "pushed ${COMMITS[$i]}"
     else
