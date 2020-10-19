@@ -54,14 +54,14 @@ void Optimizer::Run(DAG *const dag) {
     if (config.value("/optimizations/simple-predicate-move-around/active",
                      false)) {
         transformations.emplace_back("attribute_id_tracking");
-#ifndef NDEBUG
+#ifndef DEBUG
         transformations.emplace_back("type_check");
-#endif  // NDEBUG
+#endif  // DEBUG
 
         transformations.emplace_back("simple_predicate_move_around");
-#ifndef NDEBUG
+#ifndef DEBUG
         transformations.emplace_back("type_check");
-#endif  // NDEBUG
+#endif  // DEBUG
     }
 
     // Run target-specific optimization passes
@@ -77,19 +77,19 @@ void Optimizer::Run(DAG *const dag) {
     // Replace GroupByKey with grouped variant
     if (config.value("/optimizations/grouped-reduce-by-key/active", false)) {
         transformations.emplace_back("attribute_id_tracking");
-#ifndef NDEBUG
+#ifndef DEBUG
         transformations.emplace_back("type_check");
-#endif  // NDEBUG
+#endif  // DEBUG
 
         transformations.emplace_back("determine_sortedness");
-#ifndef NDEBUG
+#ifndef DEBUG
         transformations.emplace_back("type_check");
-#endif  // NDEBUG
+#endif  // DEBUG
 
         transformations.emplace_back("grouped_reduce_by_key");
-#ifndef NDEBUG
+#ifndef DEBUG
         transformations.emplace_back("type_check");
-#endif  // NDEBUG
+#endif  // DEBUG
     }
 
     // Add alwaysinline attribute to UDFs
