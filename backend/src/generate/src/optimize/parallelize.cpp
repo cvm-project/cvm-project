@@ -115,9 +115,9 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
             if (dag->out_degree(op) != 1) break;
             if (IsInstanceOf<DAGFilter,       //
                              DAGMap,          //
-                             DAGPartition,    //
                              DAGParquetScan,  //
                              DAGColumnScan>(dag->successor(op))) {
+                assert(dag->in_degree(op) == 1);
                 const auto other_op = dag->successor(op);
                 const auto next_op = dag->successor(other_op);
 
@@ -183,9 +183,20 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 auto const part_op = new DAGPartition();
                 inner_dag->AddOperator(part_op);
 
+                // Create degree-of-parallelism operator
+                auto const dop_op = new DAGConstantTuple();
+                inner_dag->AddOperator(dop_op);
+                dop_op->values.emplace_back("$DOP");
+                dop_op->tuple =
+                        jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                                dag::type::Tuple::MakeTuple(
+                                        {dag::type::Atomic::MakeAtomic(
+                                                "long")}));
+
                 // End this parallel operator
                 inner_dag->AddFlow(inner_dag->output().op, pre_reduction_op);
-                inner_dag->AddFlow(pre_reduction_op, part_op);
+                inner_dag->AddFlow(pre_reduction_op, part_op, 0);
+                inner_dag->AddFlow(dop_op, part_op, 1);
                 inner_dag->set_output(part_op);
 
                 // GroupBy operator after the first parallel map
@@ -236,6 +247,33 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 parallelize_operators.push(next_pop);
 
                 break;
+            }
+            if (IsInstanceOf<DAGPartition>(dag->successor(op))) {
+                const auto partition_op = dag->successor(op);
+
+                const auto partition_in_flow = dag->out_flow(op);
+                assert(partition_in_flow.target.port == 0);
+                const auto fanout_in_flow = dag->in_flow(partition_op, 1);
+                const auto out_flow = dag->out_flow(partition_op);
+
+                const auto dop_op = fanout_in_flow.source.op;
+
+                // Outer flows
+                dag->RemoveFlow(partition_in_flow);
+                dag->RemoveFlow(fanout_in_flow);
+                dag->RemoveFlow(out_flow);
+                dag->AddFlow(op, out_flow.target);
+
+                // Move partition into parallel operator and connect
+                dag->MoveOperator(inner_dag, partition_op);
+                dag->MoveOperator(inner_dag, dop_op);
+
+                inner_dag->AddFlow(inner_dag->output(), partition_op, 0);
+                inner_dag->AddFlow(dop_op, partition_op, 1);
+
+                inner_dag->set_output(partition_op);
+
+                continue;
             }
             if (IsInstanceOf<DAGExpandPattern>(dag->successor(op))) {
                 const auto pattern_op = dag->successor(op);
@@ -319,8 +357,19 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 auto const this_part_op = new DAGPartition();
                 inner_dag->AddOperator(this_part_op);
 
+                // Create degree-of-parallelism operator
+                auto const this_dop_op = new DAGConstantTuple();
+                inner_dag->AddOperator(this_dop_op);
+                this_dop_op->values.emplace_back("$DOP");
+                this_dop_op->tuple =
+                        jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                                dag::type::Tuple::MakeTuple(
+                                        {dag::type::Atomic::MakeAtomic(
+                                                "long")}));
+
                 // End this side's parallel map of the input
-                inner_dag->AddFlow(inner_dag->output().op, this_part_op);
+                inner_dag->AddFlow(inner_dag->output().op, this_part_op, 0);
+                inner_dag->AddFlow(this_dop_op, this_part_op, 1);
                 inner_dag->set_output(this_part_op);
 
                 // GroupBy operator after this side's parallel map
@@ -332,6 +381,16 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 // Partition other side's input by join key
                 auto const other_part_op = new DAGPartition();
                 dag->AddOperator(other_part_op);
+
+                // Create degree-of-parallelism operator
+                auto const other_dop_op = new DAGConstantTuple();
+                dag->AddOperator(other_dop_op);
+                other_dop_op->values.emplace_back("$DOP");
+                other_dop_op->tuple =
+                        jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                                dag::type::Tuple::MakeTuple(
+                                        {dag::type::Atomic::MakeAtomic(
+                                                "long")}));
 
                 // GroupBy operator after other side's partitioning
                 auto const other_grouping_op = new DAGGroupBy();
@@ -347,7 +406,8 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 dag->AddFlow(this_grouping_op, join_op, this_in_port);
 
                 dag->AddFlow(other_in_flow.source.op, other_in_flow.source.port,
-                             other_part_op);
+                             other_part_op, 0);
+                dag->AddFlow(other_dop_op, other_part_op, 1);
                 dag->AddFlow(other_part_op, other_grouping_op);
                 dag->AddFlow(other_grouping_op, join_op, other_in_port);
 

@@ -13,6 +13,7 @@ add_library(dag SHARED
         src/operators/operator.cpp
         src/operators/pipeline.cpp
         src/operators/parquet_scan.cpp
+        src/operators/partition.cpp
         src/operators/projection.cpp
         src/operators/reduce_by_index.cpp
         src/operators/row_scan.cpp

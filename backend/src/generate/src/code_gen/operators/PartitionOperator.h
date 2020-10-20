@@ -8,9 +8,11 @@
 #include "Utils.h"
 #include "runtime/jit/memory/free_ref_counter.hpp"
 #include "runtime/jit/memory/shared_pointer.hpp"
+#include "runtime/jit/operators/murmur_hash2.hpp"
 #include "runtime/jit/operators/optional.hpp"
 
-template <class Upstream, class Tuple>
+template <class MainUpstream, class ConfUpstream, class Tuple,
+          const size_t kSeed>
 class PartitionOperator {
 public:
     using InnerArray = decltype(std::declval<Tuple>().v1);
@@ -19,15 +21,23 @@ public:
 
     static constexpr size_t kBlockCapacity = 4096;
 
-    PartitionOperator(Upstream *const upstream, const size_t num_partitions)
-        : upstream_(upstream), num_partitions_(num_partitions) {}
+    PartitionOperator(MainUpstream *const main_upstream,
+                      ConfUpstream *const conf_upstream)
+        : main_upstream_(main_upstream), conf_upstream_(conf_upstream) {}
 
     INLINE void open() {
-        upstream_->open();
+        // Get fanout from upstream
+        conf_upstream_->open();
+        fanout_ = conf_upstream_->next().value().v0;
+        assert(!conf_upstream_->next());
+        conf_upstream_->close();
+
+        // Partition data from main upstream
+        main_upstream_->open();
 
         partitions_.clear();
 
-        std::vector<InnerArray> current_partition_blocks(num_partitions_);
+        std::vector<InnerArray> current_partition_blocks(fanout_);
         for (auto &b : current_partition_blocks) {
             b.data = runtime::memory::SharedPointer<InnerTuple>(
                     new runtime::memory::FreeRefCounter<InnerTuple>(
@@ -38,10 +48,12 @@ public:
             b.offsets[0] = 0;
         }
 
-        while (auto const ret = upstream_->next()) {
+        while (auto const ret = main_upstream_->next()) {
             const auto input_tuple = ret.value();
-            const long idx =
-                    std::hash<long>()(input_tuple.v0) % num_partitions_;
+            const long idx = runtime::operators::MurmurHash2::Hash(
+                                     &input_tuple.v0,
+                                     sizeof(decltype(input_tuple.v0)), kSeed) %
+                             fanout_;
             auto &current_block = current_partition_blocks[idx];
             if (current_block.outer_shape[0] >= kBlockCapacity) {
                 current_block.shape[0] = current_block.outer_shape[0];
@@ -71,7 +83,7 @@ public:
 
         output_it_ = partitions_.begin();
 
-        upstream_->close();
+        main_upstream_->close();
     }
 
     INLINE Optional<Tuple> next() {
@@ -82,16 +94,20 @@ public:
     INLINE void close() {}
 
 private:
-    Upstream *const upstream_;
-    const size_t num_partitions_;
+    MainUpstream *const main_upstream_;
+    ConfUpstream *const conf_upstream_;
+    size_t fanout_;
     std::list<Tuple> partitions_;
     typename std::list<Tuple>::iterator output_it_;
 };
 
-template <class Tuple, class Upstream>
-PartitionOperator<Upstream, Tuple> makePartitionOperator(
-        Upstream *const upstream, const size_t num_partitions) {
-    return PartitionOperator<Upstream, Tuple>(upstream, num_partitions);
+template <class Tuple, const size_t kSeed, class MainUpstream,
+          class ConfUpstream>
+PartitionOperator<MainUpstream, ConfUpstream, Tuple, kSeed>
+makePartitionOperator(MainUpstream *const main_upstream,
+                      ConfUpstream *const conf_upstream) {
+    return PartitionOperator<MainUpstream, ConfUpstream, Tuple, kSeed>(
+            main_upstream, conf_upstream);
 };
 
 #endif  // CODE_GEN_OPERATORS_PARTITION_OPERATOR_H

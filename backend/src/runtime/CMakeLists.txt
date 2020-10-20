@@ -7,6 +7,7 @@ set(RUNTIME_SOURCE_FILES
         src/operators/arrow_helpers.cpp
         src/operators/expand_pattern.cpp
         src/operators/materialize_parquet_impl.cpp
+        src/operators/murmur_hash2.cpp
         src/operators/parquet_scan_impl.cpp
         src/operators/value_to_record_batch.cpp
         src/trace.cpp

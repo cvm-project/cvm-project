@@ -411,7 +411,17 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGPartition *const op) const -> const Tuple * {
-            auto const element_type = dag_->predecessor(op)->tuple->type;
+            auto const conf_input_type = dag_->predecessor(op, 1)->tuple->type;
+            auto const single_long_type =
+                    Tuple::MakeTuple({Atomic::MakeAtomic("long")});
+
+            if (conf_input_type != single_long_type) {
+                throw std::invalid_argument(
+                        "Input of Partition must be single long, found: " +
+                        conf_input_type->to_string());
+            }
+
+            auto const element_type = dag_->predecessor(op, 0)->tuple->type;
 
             return Tuple::MakeTuple(
                     {Atomic::MakeAtomic("long"),
