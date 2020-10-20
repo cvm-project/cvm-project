@@ -81,6 +81,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             return dag_->predecessor(op)->tuple->type;
         }
 
+        auto operator()(const DAGBroadcast *const op) const -> const Tuple * {
+            return dag_->predecessor(op)->tuple->type;
+        }
+
         auto operator()(const DAGCartesian *const op) const -> const Tuple * {
             auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
             auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
@@ -168,6 +172,13 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             return Tuple::MakeTuple(field_types);
         }
 
+        auto operator()(const DAGConcurrentExecute *const op) const
+                -> const Tuple * {
+            assert(dag_->has_inner_dag(op));
+            auto const inner_dag = dag_->inner_dag(op);
+            return inner_dag->output().op->tuple->type;
+        }
+
         auto operator()(const DAGConstantTuple *const op) const
                 -> const Tuple * {
             return op->tuple->type;
@@ -175,6 +186,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGEnsureSingleTuple *const op) const
                 -> const Tuple * {
+            return dag_->predecessor(op)->tuple->type;
+        }
+
+        auto operator()(const DAGExchange *const op) const -> const Tuple * {
             return dag_->predecessor(op)->tuple->type;
         }
 
@@ -559,6 +574,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                 boost::copy(f.source.op->tuple->type->field_types,
                             std::back_inserter(output_field_types));
             }
+
             return Tuple::MakeTuple(output_field_types);
         }
 

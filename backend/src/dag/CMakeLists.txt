@@ -5,6 +5,7 @@ add_library(dag SHARED
         src/collection/array.cpp
         src/collection/tuple.cpp
         src/operators/column_scan.cpp
+        src/operators/concurrent_execute.cpp
         src/operators/constant_tuple.cpp
         src/operators/compiled_pipeline.cpp
         src/operators/join.cpp

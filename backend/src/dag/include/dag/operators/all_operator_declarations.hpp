@@ -10,11 +10,14 @@
 class DAGAntiJoin;
 class DAGAntiJoinPredicated;
 class DAGAssertCorrectOpenNextClose;
+class DAGBroadcast;
 class DAGCartesian;
 class DAGColumnScan;
 class DAGCompiledPipeline;
+class DAGConcurrentExecute;
 class DAGConstantTuple;
 class DAGEnsureSingleTuple;
+class DAGExchange;
 class DAGExpandPattern;
 class DAGFilter;
 class DAGGroupBy;
@@ -50,11 +53,14 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGAntiJoin,                        //
         DAGAntiJoinPredicated,              //
         DAGAssertCorrectOpenNextClose,      //
+        DAGBroadcast,                       //
         DAGCartesian,                       //
         DAGColumnScan,                      //
         DAGCompiledPipeline,                //
+        DAGConcurrentExecute,               //
         DAGConstantTuple,                   //
         DAGEnsureSingleTuple,               //
+        DAGExchange,                        //
         DAGExpandPattern,                   //
         DAGFilter,                          //
         DAGGroupBy,                         //

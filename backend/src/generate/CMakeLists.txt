@@ -17,6 +17,7 @@ add_library(generate SHARED
         src/optimize/materialize_multiple_reads.cpp
         src/optimize/optimizer.cpp
         src/optimize/parallelize.cpp
+        src/optimize/parallelize_concurrent.cpp
         src/optimize/parallelize_omp.cpp
         src/optimize/type_inference.cpp
         src/optimize/grouped_reduce_by_key.cpp
