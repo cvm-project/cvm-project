@@ -41,6 +41,7 @@ public:
     void operator()(DAGAntiJoin *op);
     void operator()(DAGAntiJoinPredicated *op);
     void operator()(DAGAssertCorrectOpenNextClose *op);
+    void operator()(DAGConcurrentExecuteProcess *op);
     void operator()(DAGConstantTuple *op);
     void operator()(DAGColumnScan *op);
     void operator()(DAGGroupBy *op);

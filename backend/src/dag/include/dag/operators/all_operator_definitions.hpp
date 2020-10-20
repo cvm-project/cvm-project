@@ -9,6 +9,7 @@
 #include "column_scan.hpp"
 #include "compiled_pipeline.hpp"
 #include "concurrent_execute.hpp"
+#include "concurrent_execute_process.hpp"
 #include "constant_tuple.hpp"
 #include "ensure_single_tuple.hpp"
 #include "exchange.hpp"

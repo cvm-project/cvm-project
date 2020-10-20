@@ -179,6 +179,26 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             return inner_dag->output().op->tuple->type;
         }
 
+        auto operator()(const DAGConcurrentExecuteProcess *const op) const
+                -> const Tuple * {
+            auto const input_type = dag_->predecessor(op, 0)->tuple->type;
+
+            for (auto const &field_type : input_type->field_types) {
+                auto const array_type =
+                        dynamic_cast<const dag::type::Array *>(field_type);
+                if (array_type != nullptr) {
+                    throw std::invalid_argument(
+                            "Input of ConcurrentExecuteProcess cannot contain "
+                            "Arrays, found: " +
+                            input_type->to_string());
+                }
+            }
+
+            assert(dag_->has_inner_dag(op));
+            auto const inner_dag = dag_->inner_dag(op);
+            return inner_dag->output().op->tuple->type;
+        }
+
         auto operator()(const DAGConstantTuple *const op) const
                 -> const Tuple * {
             return op->tuple->type;
