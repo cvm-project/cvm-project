@@ -7,6 +7,7 @@
 
 #include "dag/dag.hpp"
 #include "dag/operators/concurrent_execute.hpp"
+#include "dag/operators/concurrent_execute_process.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
 #include "optimize/optimizer.hpp"
@@ -18,8 +19,9 @@ namespace optimize {
 
 class CompileInnerPlanVisitor
     : public Visitor<CompileInnerPlanVisitor, const DAGOperator,
-                     boost::mpl::list<             //
-                             DAGConcurrentExecute  //
+                     boost::mpl::list<                    //
+                             DAGConcurrentExecute,        //
+                             DAGConcurrentExecuteProcess  //
                              >::type> {
 public:
     CompileInnerPlanVisitor(DAG *const dag, std::string config)
@@ -34,6 +36,9 @@ private:
 
 public:
     void operator()(const DAGConcurrentExecute *const op) {
+        HandleOperator(op);
+    }
+    void operator()(const DAGConcurrentExecuteProcess *const op) {
         HandleOperator(op);
     }
 
