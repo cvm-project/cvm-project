@@ -180,6 +180,8 @@ def jitq_context(target, generate_testcases, monkeypatch, request):
     elif target == 'lambda':
         # Make sure test stack is set up
         request.getfixturevalue('jitq_aws_stack')
+        if 'JITQ_LAMBDA_NUM_WORKERS' not in os.environ:
+            monkeypatch.setenv('JITQ_LAMBDA_NUM_WORKERS', '2')
 
     return JitqContext(conf={
         'optimizer': {

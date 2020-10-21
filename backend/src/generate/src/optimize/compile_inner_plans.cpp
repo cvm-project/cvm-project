@@ -7,7 +7,9 @@
 
 #include "dag/dag.hpp"
 #include "dag/operators/concurrent_execute.hpp"
+#include "dag/operators/concurrent_execute_lambda.hpp"
 #include "dag/operators/concurrent_execute_process.hpp"
+#include "dag/operators/operator.hpp"
 #include "dag/utils/apply_visitor.hpp"
 #include "dag/utils/type_traits.hpp"
 #include "optimize/optimizer.hpp"
@@ -21,6 +23,7 @@ class CompileInnerPlanVisitor
     : public Visitor<CompileInnerPlanVisitor, const DAGOperator,
                      boost::mpl::list<                    //
                              DAGConcurrentExecute,        //
+                             DAGConcurrentExecuteLambda,  //
                              DAGConcurrentExecuteProcess  //
                              >::type> {
 public:
@@ -39,6 +42,9 @@ public:
         HandleOperator(op);
     }
     void operator()(const DAGConcurrentExecuteProcess *const op) {
+        HandleOperator(op);
+    }
+    void operator()(const DAGConcurrentExecuteLambda *const op) {
         HandleOperator(op);
     }
 

@@ -18,6 +18,7 @@
 #include "parallelize.hpp"
 #include "parallelize_concurrent.hpp"
 #include "parallelize_concurrent_single_inout.hpp"
+#include "parallelize_lambda.hpp"
 #include "parallelize_omp.hpp"
 #include "parallelize_process.hpp"
 #include "simple_predicate_move_around.hpp"
@@ -48,6 +49,7 @@ void LoadDagTransformations() {
     RegisterDefault(std::make_unique<Parallelize>());
     RegisterDefault(std::make_unique<ParallelizeConcurrent>());
     RegisterDefault(std::make_unique<ParallelizeConcurrentSingleInout>());
+    RegisterDefault(std::make_unique<ParallelizeLambda>());
     RegisterDefault(std::make_unique<ParallelizeOmp>());
     RegisterDefault(std::make_unique<ParallelizeProcess>());
     RegisterDefault(std::make_unique<SimplePredicateMoveAround>());

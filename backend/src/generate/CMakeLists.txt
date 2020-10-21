@@ -21,6 +21,7 @@ add_library(generate SHARED
         src/optimize/parallelize.cpp
         src/optimize/parallelize_concurrent.cpp
         src/optimize/parallelize_concurrent_single_inout.cpp
+        src/optimize/parallelize_lambda.cpp
         src/optimize/parallelize_omp.cpp
         src/optimize/parallelize_process.cpp
         src/optimize/type_inference.cpp

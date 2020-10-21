@@ -146,6 +146,36 @@ void Optimizer::Run(DAG *const dag) {
 #ifndef DEBUG
         transformations.emplace_back("verify");
 #endif  // DEBUG
+    } else if (target == "lambda") {
+        transformations.emplace_back("parallelize_concurrent");
+        transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
+
+        transformations.emplace_back("parallelize_concurrent_single_inout");
+        transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
+
+        transformations.emplace_back("exchange_s3");
+        transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
+
+        transformations.emplace_back("parallelize_lambda");
+        transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
+
+        transformations.emplace_back("compile_inner_plans");
+        transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
     } else if (target != "singlecore") {
         throw std::invalid_argument("Unknown target: '" + target + "'");
     }

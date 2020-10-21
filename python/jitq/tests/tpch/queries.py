@@ -653,7 +653,7 @@ class Q06(TpchJitqQuery):
 
 
 class Q07(TpchJitqQuery):
-    XFAIL = {'target': ['process']}
+    XFAIL = {'target': ['process', 'lambda']}
 
     # select
     #     supp_nation,

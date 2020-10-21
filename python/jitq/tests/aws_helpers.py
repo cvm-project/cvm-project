@@ -149,8 +149,9 @@ def mock_boto3_client(service_name, *args, **kwargs):
         # Return hard-coded stack description
         stubber = botocore.stub.Stubber(client)
         expected_params = {'StackName': botocore.stub.ANY}
-        stubber.add_response('describe_stacks', JITQ_MOCK_STACK,
-                             expected_params)
+        for _ in range(2):
+            stubber.add_response('describe_stacks', JITQ_MOCK_STACK,
+                                 expected_params)
         stubber.activate()
     return client
 
