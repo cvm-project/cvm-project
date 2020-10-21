@@ -10,6 +10,7 @@ add_library(generate SHARED
         src/optimize/attribute_id_tracking.cpp
         src/optimize/canonicalize.cpp
         src/optimize/composite_transformation.cpp
+        src/optimize/compile_inner_plans.cpp
         src/optimize/create_pipelines.cpp
         src/optimize/dag_transformation.cpp
         src/optimize/determine_sortedness.cpp

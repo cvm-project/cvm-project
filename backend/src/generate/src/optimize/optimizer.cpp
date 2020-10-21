@@ -1,5 +1,6 @@
 #include "optimize/optimizer.hpp"
 
+#include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -34,6 +35,36 @@ void Optimizer::Run(DAG *const dag) {
         config.emplace("/optimizations/grouped-reduce-by-key/active", true);
         config.emplace("/optimizations/simple-predicate-move-around/active",
                        true);
+    }
+
+    // Configure optimizer for nested plans
+    {
+        // Start with top-level config
+        auto nested_config = config.unflatten();
+
+        // Remove config for compilation of inner plans
+        nested_config["optimizations"].erase("compile_inner_plans");
+
+        // Make sure the inner level compiles for singlecore target
+        nested_config["target"] = "singlecore";
+
+        // Overwrite any configuration set explicitly for inner level
+        nested_config = nested_config.flatten();
+        auto const explicit_nested_config =
+                config.unflatten()["optimizations"]["compile_inner_plans"];
+        nested_config.update(explicit_nested_config.flatten());
+        nested_config = nested_config.unflatten();
+
+        // Set configuration of top-level compile_inner_plans rule
+        config.update(nlohmann::json::object(
+                              {{"optimizations",
+                                {{"compile_inner_plans", nested_config}}}})
+                              .flatten());
+    }
+
+    if (verbose) {
+        std::cout << "Using the following configuration:" << std::endl;
+        std::cout << config.dump(4) << std::endl;
     }
 
     // Assemble transformation pipeline
