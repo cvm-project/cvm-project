@@ -129,6 +129,14 @@ void Optimizer::Run(DAG *const dag) {
         transformations.emplace_back("verify");
 #endif  // DEBUG
 
+        if (config.value("/optimizations/two-level-exchange/active", false)) {
+            transformations.emplace_back("two_level_exchange");
+            transformations.emplace_back("type_inference");
+#ifndef DEBUG
+            transformations.emplace_back("verify");
+#endif  // DEBUG
+        }
+
         transformations.emplace_back("exchange_s3");
         transformations.emplace_back("type_inference");
 #ifndef DEBUG
@@ -158,6 +166,14 @@ void Optimizer::Run(DAG *const dag) {
 #ifndef DEBUG
         transformations.emplace_back("verify");
 #endif  // DEBUG
+
+        if (config.value("/optimizations/two-level-exchange/active", false)) {
+            transformations.emplace_back("two_level_exchange");
+            transformations.emplace_back("type_inference");
+#ifndef DEBUG
+            transformations.emplace_back("verify");
+#endif  // DEBUG
+        }
 
         transformations.emplace_back("exchange_s3");
         transformations.emplace_back("type_inference");
