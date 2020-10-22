@@ -76,6 +76,11 @@ void Optimizer::Run(DAG *const dag) {
     auto const target = config.value("/target", "singlecore");
     if (target == "omp") {
         transformations.emplace_back("parallelize");
+        transformations.emplace_back("type_inference");
+#ifndef DEBUG
+        transformations.emplace_back("verify");
+#endif  // DEBUG
+
         transformations.emplace_back("parallelize_omp");
         transformations.emplace_back("type_inference");
 #ifndef DEBUG
