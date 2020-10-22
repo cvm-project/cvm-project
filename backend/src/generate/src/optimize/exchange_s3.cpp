@@ -28,14 +28,32 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
         assert(pop != nullptr);
         auto const pop_inner_dag = dag->inner_dag(pop);
 
+        // Replace each DAGExchange with a DAGPartitionedExchange of one level
         std::vector<DAGExchange *> exchange_operators;
         for (auto const op : pop_inner_dag->operators()) {
             if (IsInstanceOf<DAGExchange>(op)) {
                 exchange_operators.push_back(dynamic_cast<DAGExchange *>(op));
             }
         }
-
         for (auto const op : exchange_operators) {
+            auto const new_op = new DAGPartitionedExchange();
+            new_op->tuple = op->tuple;
+            pop_inner_dag->ReplaceOperator(op, new_op);
+            new_op->num_levels = 1;
+            new_op->level_num = 0;
+        }
+
+        // Replace each DAGPartitionedExchange with a sequence including a
+        // DAGExchangeS3 operator
+        std::vector<DAGPartitionedExchange *> partitioned_exchange_operators;
+        for (auto const op : pop_inner_dag->operators()) {
+            if (IsInstanceOf<DAGPartitionedExchange>(op)) {
+                partitioned_exchange_operators.push_back(
+                        dynamic_cast<DAGPartitionedExchange *>(op));
+            }
+        }
+
+        for (auto const op : partitioned_exchange_operators) {
             auto const dag = pop_inner_dag;
             auto const in_flow = dag->in_flow(op);
             auto const out_flow = dag->out_flow(op);
@@ -47,8 +65,22 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
             // Create degree-of-parallelism operator
             auto const part_dop_op = new DAGConstantTuple();
             dag->AddOperator(part_dop_op);
+            part_dop_op->values.emplace_back(std::to_string(op->num_levels));
+            part_dop_op->values.emplace_back(std::to_string(op->level_num));
             part_dop_op->values.emplace_back("$DOP");
+            part_dop_op->values.emplace_back("$WID");
             part_dop_op->tuple =
+                    jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                            dag::type::Tuple::MakeTuple(
+                                    {dag::type::Atomic::MakeAtomic("long"),
+                                     dag::type::Atomic::MakeAtomic("long"),
+                                     dag::type::Atomic::MakeAtomic("long"),
+                                     dag::type::Atomic::MakeAtomic("long")}));
+
+            auto const map_op = new DAGMapCpp();
+            dag->AddOperator(map_op);
+            map_op->function_name = "runtime::operators::ComputeGroupSizeTuple";
+            map_op->tuple =
                     jbcoe::make_polymorphic_value<dag::collection::Tuple>(
                             dag::type::Tuple::MakeTuple(
                                     {dag::type::Atomic::MakeAtomic("long")}));
@@ -64,6 +96,8 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
 
             auto const exchange_op = new DAGExchangeS3();
             dag->AddOperator(exchange_op);
+            exchange_op->num_levels = op->num_levels;
+            exchange_op->level_num = op->level_num;
 
             // Create degree-of-parallelism operator
             auto const exchange_dop_op = new DAGConstantTuple();
@@ -116,7 +150,8 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
             dag->RemoveOperator(op);
 
             dag->AddFlow(in_flow.source, partition_op, 0);
-            dag->AddFlow(part_dop_op, partition_op, 1);
+            dag->AddFlow(part_dop_op, map_op);
+            dag->AddFlow(map_op, partition_op, 1);
             dag->AddFlow(partition_op, group_by_op);
             dag->AddFlow(group_by_op, nested_map_op);
             dag->AddFlow(nested_map_op, row_scan_op);
