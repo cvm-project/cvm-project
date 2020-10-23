@@ -29,7 +29,7 @@ services:
     alias: s3server.local
 
 default:
-  image: ingomuellernet/buildenv-jitq:2020-01-12
+  image: ingomuellernet/buildenv-jitq:2020-10-24
 
 format-cpp:
   stage: build
