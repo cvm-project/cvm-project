@@ -21,10 +21,13 @@ void CreatePipelines::Run(DAG *const dag,
                           const std::string & /*config*/) const {
     std::vector<DAGOperator *> pipeline_drivers;
 
-    // Collect pipeline drivers: specific operator types and operators with
-    // multiple consumers
+    // Collect pipeline drivers: specific operator types (called pipeline
+    // drivers) and operators with multiple consumers. Skip over pipeline
+    // drivers that are followed by another pipeline driver.
     dag::utils::ApplyInReverseTopologicalOrder(dag, [&](DAGOperator *const op) {
-        if (dag->out_degree(op) > 1 || IsPipelineDriver(op)) {
+        if (dag->out_degree(op) > 1 ||
+            (IsPipelineDriver(op) && !(dag->out_degree(op) == 1 &&
+                                       IsPipelineDriver(dag->successor(op))))) {
             pipeline_drivers.push_back(op);
         }
     });
