@@ -18,19 +18,19 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 6,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 6,
+                        "op": 7,
                         "op_port": 0
                     }
                 ],
                 "operators": [
                     {
                         "id": 0,
-                        "op": "materialize_row_vector",
+                        "op": "ensure_single_tuple",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -54,8 +54,33 @@
                         ]
                     },
                     {
-                        "add_index": false,
                         "id": 1,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "float"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 2,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 2,
                         "op": "column_scan",
                         "output_type": [
                             {
@@ -67,7 +92,7 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 2,
+                                "op": 3,
                                 "port": 0
                             }
                         ]
@@ -94,7 +119,7 @@
                             }
                         ],
                         "filesystem": "file",
-                        "id": 2,
+                        "id": 3,
                         "op": "parquet_scan",
                         "output_type": [
                             {
@@ -120,13 +145,13 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 3,
+                                "op": 4,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 3,
+                        "id": 4,
                         "op": "expand_pattern",
                         "output_type": [
                             {
@@ -135,17 +160,17 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 5,
+                                "op": 6,
                                 "port": 0
                             },
                             {
-                                "op": 4,
+                                "op": 5,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 4,
+                        "id": 5,
                         "op": "range_source",
                         "output_type": [
                             {
@@ -154,13 +179,13 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 6,
+                                "op": 7,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 5,
+                        "id": 6,
                         "op": "parameter_lookup",
                         "output_type": [
                             {
@@ -170,7 +195,7 @@
                         "predecessors": []
                     },
                     {
-                        "id": 6,
+                        "id": 7,
                         "op": "parameter_lookup",
                         "output_type": [
                             {

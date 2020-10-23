@@ -261,11 +261,33 @@
                     "port": 0
                 }
             ]
+        },
+        {
+            "id": 13,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 12,
+                    "port": 0
+                }
+            ]
         }
     ],
     "outputs": [
         {
-            "op": 12,
+            "op": 13,
             "port": 0
         }
     ]

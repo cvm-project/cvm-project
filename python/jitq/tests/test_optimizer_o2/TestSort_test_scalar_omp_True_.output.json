@@ -13,14 +13,14 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 3,
+                        "op": 4,
                         "op_port": 0
                     }
                 ],
                 "operators": [
                     {
                         "id": 0,
-                        "op": "materialize_row_vector",
+                        "op": "ensure_single_tuple",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -42,10 +42,17 @@
                     },
                     {
                         "id": 1,
-                        "op": "sort",
+                        "op": "materialize_row_vector",
                         "output_type": [
                             {
-                                "type": "long"
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
                             }
                         ],
                         "predecessors": [
@@ -56,9 +63,8 @@
                         ]
                     },
                     {
-                        "add_index": false,
                         "id": 2,
-                        "op": "row_scan",
+                        "op": "sort",
                         "output_type": [
                             {
                                 "type": "long"
@@ -72,7 +78,23 @@
                         ]
                     },
                     {
+                        "add_index": false,
                         "id": 3,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 4,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 4,
                         "op": "parameter_lookup",
                         "output_type": [
                             {

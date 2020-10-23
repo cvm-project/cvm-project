@@ -160,11 +160,36 @@
                     "port": 0
                 }
             ]
+        },
+        {
+            "id": 8,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 7,
+                    "port": 0
+                }
+            ]
         }
     ],
     "outputs": [
         {
-            "op": 7,
+            "op": 8,
             "port": 0
         }
     ]

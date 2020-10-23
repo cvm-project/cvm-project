@@ -18,19 +18,19 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 6,
+                        "op": 7,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 7,
+                        "op": 8,
                         "op_port": 0
                     }
                 ],
                 "operators": [
                     {
                         "id": 0,
-                        "op": "materialize_row_vector",
+                        "op": "ensure_single_tuple",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -55,6 +55,31 @@
                     },
                     {
                         "id": 1,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 2,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
                         "op": "semijoin",
                         "output_type": [
                             {
@@ -66,28 +91,9 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 2,
-                                "port": 0
-                            },
-                            {
                                 "op": 3,
                                 "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "add_index": false,
-                        "id": 2,
-                        "op": "row_scan",
-                        "output_type": [
-                            {
-                                "type": "long"
                             },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
                             {
                                 "op": 4,
                                 "port": 0
@@ -99,9 +105,6 @@
                         "id": 3,
                         "op": "row_scan",
                         "output_type": [
-                            {
-                                "type": "long"
-                            },
                             {
                                 "type": "long"
                             },
@@ -122,17 +125,13 @@
                         "op": "row_scan",
                         "output_type": [
                             {
-                                "layout": "C",
-                                "num_dimensions": 1,
-                                "tuple_type": [
-                                    {
-                                        "type": "long"
-                                    },
-                                    {
-                                        "type": "long"
-                                    }
-                                ],
-                                "type": "array"
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
                             }
                         ],
                         "predecessors": [
@@ -156,9 +155,6 @@
                                     },
                                     {
                                         "type": "long"
-                                    },
-                                    {
-                                        "type": "long"
                                     }
                                 ],
                                 "type": "array"
@@ -172,7 +168,36 @@
                         ]
                     },
                     {
+                        "add_index": false,
                         "id": 6,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 8,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 7,
                         "op": "parameter_lookup",
                         "output_type": [
                             {
@@ -199,7 +224,7 @@
                         "predecessors": []
                     },
                     {
-                        "id": 7,
+                        "id": 8,
                         "op": "parameter_lookup",
                         "output_type": [
                             {

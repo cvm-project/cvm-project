@@ -13,14 +13,14 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 4,
+                        "op": 5,
                         "op_port": 0
                     }
                 ],
                 "operators": [
                     {
                         "id": 0,
-                        "op": "materialize_row_vector",
+                        "op": "ensure_single_tuple",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -45,14 +45,20 @@
                     },
                     {
                         "id": 1,
-                        "num_elements": 2,
-                        "op": "topk",
+                        "op": "materialize_row_vector",
                         "output_type": [
                             {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
                             }
                         ],
                         "predecessors": [
@@ -63,9 +69,9 @@
                         ]
                     },
                     {
-                        "add_index": false,
                         "id": 2,
-                        "op": "row_scan",
+                        "num_elements": 2,
+                        "op": "topk",
                         "output_type": [
                             {
                                 "type": "long"
@@ -87,6 +93,25 @@
                         "op": "row_scan",
                         "output_type": [
                             {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 4,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 4,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
                                 "layout": "C",
                                 "num_dimensions": 1,
                                 "tuple_type": [
@@ -102,13 +127,13 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 4,
+                                "op": 5,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 4,
+                        "id": 5,
                         "op": "parameter_lookup",
                         "output_type": [
                             {

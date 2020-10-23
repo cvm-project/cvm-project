@@ -18,12 +18,12 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 6,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 6,
+                        "op": 7,
                         "op_port": 0
                     }
                 ],
@@ -42,14 +42,14 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 3,
+                                "op": 4,
                                 "port": 0
                             }
                         ]
                     },
                     {
                         "id": 1,
-                        "op": "materialize_row_vector",
+                        "op": "ensure_single_tuple",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -77,6 +77,34 @@
                     },
                     {
                         "id": 2,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 3,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 3,
                         "num_keys": 1,
                         "op": "join",
                         "output_type": [
@@ -95,25 +123,6 @@
                                 "op": 0,
                                 "port": 0
                             },
-                            {
-                                "op": 4,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "add_index": false,
-                        "id": 3,
-                        "op": "row_scan",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
                             {
                                 "op": 5,
                                 "port": 0
@@ -140,7 +149,26 @@
                         ]
                     },
                     {
+                        "add_index": false,
                         "id": 5,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 7,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 6,
                         "op": "parameter_lookup",
                         "output_type": [
                             {
@@ -160,7 +188,7 @@
                         "predecessors": []
                     },
                     {
-                        "id": 6,
+                        "id": 7,
                         "op": "parameter_lookup",
                         "output_type": [
                             {

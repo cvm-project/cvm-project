@@ -13,19 +13,19 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 5,
+                        "op": 6,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 6,
+                        "op": 7,
                         "op_port": 0
                     }
                 ],
                 "operators": [
                     {
                         "id": 0,
-                        "op": "materialize_row_vector",
+                        "op": "ensure_single_tuple",
                         "output_type": [
                             {
                                 "layout": "C",
@@ -50,6 +50,31 @@
                     },
                     {
                         "id": 1,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 2,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
                         "op": "cartesian",
                         "output_type": [
                             {
@@ -61,35 +86,19 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 3,
+                                "op": 4,
                                 "port": 0
                             },
                             {
-                                "op": 2,
+                                "op": 3,
                                 "port": 0
                             }
                         ]
                     },
                     {
                         "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2) #0 {\nentry:\n  %.26.i = icmp eq i64 %.2, 0\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.26.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
-                        "id": 2,
-                        "op": "filter",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 4,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "add_index": false,
                         "id": 3,
-                        "op": "row_scan",
+                        "op": "filter",
                         "output_type": [
                             {
                                 "type": "long"
@@ -119,7 +128,23 @@
                         ]
                     },
                     {
+                        "add_index": false,
                         "id": 5,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 7,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 6,
                         "op": "parameter_lookup",
                         "output_type": [
                             {
@@ -136,7 +161,7 @@
                         "predecessors": []
                     },
                     {
-                        "id": 6,
+                        "id": 7,
                         "op": "parameter_lookup",
                         "output_type": [
                             {
