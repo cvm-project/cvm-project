@@ -182,7 +182,7 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.73.0
 
 9. Apache Arrow
 
-Run the following outside your `venv`.
+Run the following outside your `venv` (but with the same version of Python).
 
 (Note: The patch fixes a problem mentioned [here](https://issues.apache.org/jira/browse/ARROW-5960). Maybe it will be addressed in a future verison.)
 
@@ -214,6 +214,7 @@ mkdir -p /tmp/arrow/cpp/build && \
 cd /tmp/arrow/cpp/build && \
 CXX=clang++-9.0 CC=clang-9.0 \
     cmake \
+        -DPYTHON_EXECUTABLE=$(which python3) \
         -DCMAKE_CXX_STANDARD=17 \
         -DCMAKE_INSTALL_PREFIX=/opt/arrow-0.14/ \
         -DCMAKE_INSTALL_LIBDIR=lib \
