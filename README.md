@@ -177,7 +177,7 @@ Make the following command executed in the shells you use for development,
 for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
-export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.71.0
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.73.0
 ```
 
 9. Apache Arrow
