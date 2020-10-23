@@ -6,6 +6,7 @@ namespace dag::utils {
 
 auto IsPipelineDriver(DAGOperator *const op) -> bool {
     return IsInstanceOf<              //
+            DAGMaterializeParquet,    //
             DAGMaterializeRowVector,  //
             DAGEnsureSingleTuple,     //
             DAGGroupBy,               //
@@ -23,6 +24,7 @@ auto IsPipelinePredecessor(DAGOperator *const op) -> bool {
 
 auto IsSingleTupleProducer(DAGOperator *const op) -> bool {
     return IsInstanceOf<              //
+            DAGMaterializeParquet,    //
             DAGMaterializeRowVector,  //
             DAGEnsureSingleTuple,     //
             DAGReduce                 //
