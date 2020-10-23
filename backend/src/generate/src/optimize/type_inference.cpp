@@ -369,6 +369,23 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGParquetScan *const op) const -> const Tuple * {
+            auto const input_type = dag_->predecessor(op)->tuple->type;
+
+            if (input_type->field_types.size() != 1) {
+                throw std::invalid_argument(
+                        "Input of ParquetScan operator must have a single "
+                        "field");
+            }
+
+            auto const atomic_type =
+                    dynamic_cast<const Atomic *>(input_type->field_types[0]);
+
+            if (atomic_type == nullptr || atomic_type->type != "std::string") {
+                throw std::invalid_argument(
+                        "Input of ParquetScan must be string, found: " +
+                        input_type->to_string());
+            }
+
             return op->tuple->type;
         }
 
