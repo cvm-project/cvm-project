@@ -242,7 +242,9 @@ class RDD(abc.ABC):
         return Zip(self.context, self, other)
 
     def collect(self):
-        return MaterializeRowVector(self.context, self).execute_dag()
+        return EnsureSingleTuple(self.context,
+                                 MaterializeRowVector(self.context, self)) \
+            .execute_dag()
 
     def to_parquet(self, filename, column_names, conf=None):
         conf = conf or {}
