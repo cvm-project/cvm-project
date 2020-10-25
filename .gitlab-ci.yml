@@ -99,7 +99,6 @@ python-tests-omp:
     # Deactivate LSan, as somehow it doesn't work inside docker and with several OpenMP threads
     ASAN_OPTIONS: detect_leaks=0
   before_script:
-    - apt-get update && apt-get install -y time
     - pip3 install -r requirements.txt
     - echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
@@ -118,7 +117,6 @@ python-tests-asan:
     OMP_NUM_THREADS: 1
     ASAN_OPTIONS: detect_leaks=1
   before_script:
-    - apt-get update && apt-get install -y graphviz time
     - pip3 install -r requirements.txt
     - echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
@@ -138,7 +136,6 @@ cpp-test:
   tags:
     - ptrace
   before_script:
-    - apt-get update && apt-get install -y time
   variables:
     # Unlike the test executables are compiled with ASAN, so no need to pre-load
     ASAN_LIBRARY_PATH: ""
