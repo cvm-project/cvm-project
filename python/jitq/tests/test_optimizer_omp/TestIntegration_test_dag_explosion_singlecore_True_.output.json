@@ -1291,7 +1291,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -1317,13 +1333,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -1342,26 +1358,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -1379,11 +1384,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -1582,7 +1600,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -1608,13 +1642,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -1633,26 +1667,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -1670,11 +1693,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -3073,7 +3109,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -3099,13 +3151,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -3124,26 +3176,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -3161,11 +3202,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -3364,7 +3418,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -3390,13 +3460,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -3415,26 +3485,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -3452,11 +3511,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -4855,7 +4927,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -4881,13 +4969,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -4906,26 +4994,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -4943,11 +5020,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -5146,7 +5236,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -5172,13 +5278,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -5197,26 +5303,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -5234,11 +5329,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -6637,7 +6745,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -6663,13 +6787,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -6688,26 +6812,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -6725,11 +6838,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -6928,7 +7054,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -6954,13 +7096,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -6979,26 +7121,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -7016,11 +7147,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -8419,7 +8563,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -8445,13 +8605,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -8470,26 +8630,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -8507,11 +8656,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -8710,7 +8872,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -8736,13 +8914,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -8761,26 +8939,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -8798,11 +8965,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -10201,7 +10381,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -10227,13 +10423,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -10252,26 +10448,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -10289,11 +10474,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -10492,7 +10690,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -10518,13 +10732,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -10543,26 +10757,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -10580,11 +10783,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -11983,7 +12199,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -12009,13 +12241,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -12034,26 +12266,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -12071,11 +12292,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -12274,7 +12508,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -12300,13 +12550,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -12325,26 +12575,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -12362,11 +12601,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -13765,7 +14017,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -13791,13 +14059,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -13816,26 +14084,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -13853,11 +14110,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -14056,7 +14326,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -14082,13 +14368,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -14107,26 +14393,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -14144,11 +14419,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -15547,7 +15835,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -15573,13 +15877,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -15598,26 +15902,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -15635,11 +15928,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -15838,7 +16144,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -15864,13 +16186,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -15889,26 +16211,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -15926,11 +16237,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -17329,7 +17653,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -17355,13 +17695,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -17380,26 +17720,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -17417,11 +17746,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
@@ -17620,7 +17962,23 @@
                             ],
                             "operators": [
                                 {
+                                    "add_index": false,
                                     "id": 0,
+                                    "op": "row_scan",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
                                     "op": "materialize_row_vector",
                                     "output_type": [
                                         {
@@ -17646,13 +18004,13 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 1,
+                                            "op": 2,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 1,
+                                    "id": 2,
                                     "op": "partition",
                                     "output_type": [
                                         {
@@ -17671,26 +18029,15 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 2,
+                                            "op": 0,
                                             "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "add_index": false,
-                                    "id": 2,
-                                    "op": "row_scan",
-                                    "output_type": [
+                                        },
                                         {
-                                            "type": "long"
+                                            "op": 4,
+                                            "port": 0
                                         }
                                     ],
-                                    "predecessors": [
-                                        {
-                                            "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
+                                    "seed": 0
                                 },
                                 {
                                     "id": 3,
@@ -17708,11 +18055,24 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 4,
+                                    "op": "constant_tuple",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [],
+                                    "values": [
+                                        "omp_get_num_threads()"
+                                    ]
                                 }
                             ],
                             "outputs": [
                                 {
-                                    "op": 0,
+                                    "op": 1,
                                     "port": 0
                                 }
                             ]
