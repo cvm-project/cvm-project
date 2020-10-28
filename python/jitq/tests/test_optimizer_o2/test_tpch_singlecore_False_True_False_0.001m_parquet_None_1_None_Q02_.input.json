@@ -12,42 +12,42 @@
         },
         {
             "dag_port": 2,
-            "op": 9,
+            "op": 11,
             "op_port": 0
         },
         {
             "dag_port": 3,
-            "op": 10,
+            "op": 12,
             "op_port": 0
         },
         {
             "dag_port": 4,
-            "op": 18,
+            "op": 22,
             "op_port": 0
         },
         {
             "dag_port": 5,
-            "op": 19,
+            "op": 23,
             "op_port": 0
         },
         {
             "dag_port": 6,
-            "op": 29,
+            "op": 35,
             "op_port": 0
         },
         {
             "dag_port": 7,
-            "op": 30,
+            "op": 36,
             "op_port": 0
         },
         {
             "dag_port": 8,
-            "op": 40,
+            "op": 48,
             "op_port": 0
         },
         {
             "dag_port": 9,
-            "op": 41,
+            "op": 49,
             "op_port": 0
         }
     ],
@@ -113,6 +113,55 @@
             ]
         },
         {
+            "id": 4,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 5,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 3,
+                    "port": 0
+                },
+                {
+                    "op": 4,
+                    "port": 0
+                }
+            ]
+        },
+        {
             "columns": [
                 {
                     "idx": 0,
@@ -132,7 +181,7 @@
                 }
             ],
             "filesystem": "file",
-            "id": 4,
+            "id": 6,
             "op": "parquet_scan",
             "output_type": [
                 {
@@ -178,65 +227,15 @@
             ],
             "predecessors": [
                 {
-                    "op": 3,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "add_index": false,
-            "id": 5,
-            "op": "column_scan",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 4,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 6,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
                     "op": 5,
                     "port": 0
                 }
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.21.i = icmp eq i64 %.5, 15\n  br i1 %.21.i, label %B10.else.if.i, label %\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2448E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29.exit\"\n\nB10.else.if.i:                                    ; preds = %entry\n  %.63.i = srem i64 %.4, 5\n  %.65.i = icmp slt i64 %.63.i, 0\n  %.74.i = add nsw i64 %.63.i, 5\n  %.55.0.i = select i1 %.65.i, i64 %.74.i, i64 %.63.i\n  %.96.i = icmp eq i64 %.55.0.i, 0\n  br label %\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2448E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29.exit\"\n\n\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2448E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29.exit\": ; preds = %entry, %B10.else.if.i\n  %\"$phi22.1.0.i\" = phi i1 [ %.96.i, %B10.else.if.i ], [ false, %entry ]\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %\"$phi22.1.0.i\", i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "add_index": false,
             "id": 7,
-            "op": "filter",
+            "op": "column_scan",
             "output_type": [
                 {
                     "type": "long"
@@ -259,10 +258,16 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 8,
             "op": "map",
             "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
                 {
                     "type": "long"
                 },
@@ -278,7 +283,51 @@
             ]
         },
         {
+            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.21.i = icmp eq i64 %.5, 15\n  br i1 %.21.i, label %B10.else.if.i, label %\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2448E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29.exit\"\n\nB10.else.if.i:                                    ; preds = %entry\n  %.63.i = srem i64 %.4, 5\n  %.65.i = icmp slt i64 %.63.i, 0\n  %.74.i = add nsw i64 %.63.i, 5\n  %.55.0.i = select i1 %.65.i, i64 %.74.i, i64 %.63.i\n  %.96.i = icmp eq i64 %.55.0.i, 0\n  br label %\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2448E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29.exit\"\n\n\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2448E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29.exit\": ; preds = %entry, %B10.else.if.i\n  %\"$phi22.1.0.i\" = phi i1 [ %.96.i, %B10.else.if.i ], [ false, %entry ]\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %\"$phi22.1.0.i\", i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 9,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 8,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 10,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 9,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 11,
             "op": "parameter_lookup",
             "output_type": [
                 {
@@ -288,7 +337,7 @@
             "predecessors": []
         },
         {
-            "id": 10,
+            "id": 12,
             "op": "parameter_lookup",
             "output_type": [
                 {
@@ -304,7 +353,7 @@
             "predecessors": []
         },
         {
-            "id": 11,
+            "id": 13,
             "op": "range_source",
             "output_type": [
                 {
@@ -313,13 +362,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 10,
+                    "op": 12,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 12,
+            "id": 14,
             "op": "expand_pattern",
             "output_type": [
                 {
@@ -328,11 +377,60 @@
             ],
             "predecessors": [
                 {
-                    "op": 9,
+                    "op": 11,
                     "port": 0
                 },
                 {
-                    "op": 11,
+                    "op": 13,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 15,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 16,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 14,
+                    "port": 0
+                },
+                {
+                    "op": 15,
                     "port": 0
                 }
             ]
@@ -349,7 +447,7 @@
                 }
             ],
             "filesystem": "file",
-            "id": 13,
+            "id": 17,
             "op": "parquet_scan",
             "output_type": [
                 {
@@ -375,14 +473,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 12,
+                    "op": 16,
                     "port": 0
                 }
             ]
         },
         {
             "add_index": false,
-            "id": 14,
+            "id": 18,
             "op": "column_scan",
             "output_type": [
                 {
@@ -394,14 +492,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 13,
+                    "op": 17,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 15,
+            "id": 19,
             "op": "map",
             "output_type": [
                 {
@@ -413,76 +511,19 @@
             ],
             "predecessors": [
                 {
-                    "op": 14,
+                    "op": 18,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.21.i = icmp eq i64 %.3, 3\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.21.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 16,
+            "id": 20,
             "op": "filter",
             "output_type": [
                 {
                     "type": "long"
                 },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 15,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 17,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 16,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "id": 18,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "type": "std::string"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "id": 19,
-            "op": "parameter_lookup",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": []
-        },
-        {
-            "id": 20,
-            "op": "range_source",
-            "output_type": [
                 {
                     "type": "long"
                 }
@@ -495,7 +536,64 @@
             ]
         },
         {
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 21,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 20,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 22,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 23,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 24,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 23,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 25,
             "op": "expand_pattern",
             "output_type": [
                 {
@@ -504,11 +602,60 @@
             ],
             "predecessors": [
                 {
-                    "op": 18,
+                    "op": 22,
                     "port": 0
                 },
                 {
-                    "op": 20,
+                    "op": 24,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 26,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 27,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 25,
+                    "port": 0
+                },
+                {
+                    "op": 26,
                     "port": 0
                 }
             ]
@@ -529,7 +676,7 @@
                 }
             ],
             "filesystem": "file",
-            "id": 22,
+            "id": 28,
             "op": "parquet_scan",
             "output_type": [
                 {
@@ -565,14 +712,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 21,
+                    "op": 27,
                     "port": 0
                 }
             ]
         },
         {
             "add_index": false,
-            "id": 23,
+            "id": 29,
             "op": "column_scan",
             "output_type": [
                 {
@@ -587,14 +734,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 22,
+                    "op": 28,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 24,
+            "id": 30,
             "op": "map",
             "output_type": [
                 {
@@ -609,14 +756,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 23,
+                    "op": 29,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.4, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.3, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 25,
+            "id": 31,
             "op": "map",
             "output_type": [
                 {
@@ -631,13 +778,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 24,
+                    "op": 30,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 26,
+            "id": 32,
             "num_keys": 1,
             "op": "join",
             "output_type": [
@@ -653,18 +800,18 @@
             ],
             "predecessors": [
                 {
-                    "op": 17,
+                    "op": 21,
                     "port": 0
                 },
                 {
-                    "op": 25,
+                    "op": 31,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 27,
+            "id": 33,
             "op": "map",
             "output_type": [
                 {
@@ -679,14 +826,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 26,
+                    "op": 32,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.4, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 28,
+            "id": 34,
             "op": "map",
             "output_type": [
                 {
@@ -698,13 +845,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 27,
+                    "op": 33,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 29,
+            "id": 35,
             "op": "parameter_lookup",
             "output_type": [
                 {
@@ -714,7 +861,7 @@
             "predecessors": []
         },
         {
-            "id": 30,
+            "id": 36,
             "op": "parameter_lookup",
             "output_type": [
                 {
@@ -730,7 +877,7 @@
             "predecessors": []
         },
         {
-            "id": 31,
+            "id": 37,
             "op": "range_source",
             "output_type": [
                 {
@@ -739,13 +886,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 30,
+                    "op": 36,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 32,
+            "id": 38,
             "op": "expand_pattern",
             "output_type": [
                 {
@@ -754,11 +901,60 @@
             ],
             "predecessors": [
                 {
-                    "op": 29,
+                    "op": 35,
                     "port": 0
                 },
                 {
-                    "op": 31,
+                    "op": 37,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 39,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 40,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 38,
+                    "port": 0
+                },
+                {
+                    "op": 39,
                     "port": 0
                 }
             ]
@@ -787,7 +983,7 @@
                 }
             ],
             "filesystem": "file",
-            "id": 33,
+            "id": 41,
             "op": "parquet_scan",
             "output_type": [
                 {
@@ -843,14 +1039,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 32,
+                    "op": 40,
                     "port": 0
                 }
             ]
         },
         {
             "add_index": false,
-            "id": 34,
+            "id": 42,
             "op": "column_scan",
             "output_type": [
                 {
@@ -871,16 +1067,75 @@
             ],
             "predecessors": [
                 {
-                    "op": 33,
+                    "op": 41,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6) local_unnamed_addr #0 {\nentry:\n  %.1.repack9 = bitcast <{ i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack9, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 35,
+            "id": 43,
             "op": "map",
             "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 42,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6) local_unnamed_addr #0 {\nentry:\n  %.1.repack9 = bitcast <{ i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.4, i64* %.1.repack9, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.6, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.3, i64* %.1.repack7, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 44,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 43,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 45,
+            "num_keys": 1,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
                 {
                     "type": "long"
                 },
@@ -901,75 +1156,16 @@
                 {
                     "op": 34,
                     "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6) local_unnamed_addr #0 {\nentry:\n  %.1.repack9 = bitcast <{ i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.4, i64* %.1.repack9, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.6, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.3, i64* %.1.repack7, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 36,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
                 },
                 {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 35,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "id": 37,
-            "num_keys": 1,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 28,
-                    "port": 0
-                },
-                {
-                    "op": 36,
+                    "op": 44,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7) local_unnamed_addr #0 {\nentry:\n  %.1.repack11 = bitcast <{ i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack11, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 38,
+            "id": 46,
             "op": "map",
             "output_type": [
                 {
@@ -993,14 +1189,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 37,
+                    "op": 45,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7) local_unnamed_addr #0 {\nentry:\n  %.1.repack9 = bitcast <{ i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.4, i64* %.1.repack9, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.5, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.6, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.7, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.3, i64* %.1.repack7, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 39,
+            "id": 47,
             "op": "map",
             "output_type": [
                 {
@@ -1021,13 +1217,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 38,
+                    "op": 46,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 40,
+            "id": 48,
             "op": "parameter_lookup",
             "output_type": [
                 {
@@ -1037,7 +1233,7 @@
             "predecessors": []
         },
         {
-            "id": 41,
+            "id": 49,
             "op": "parameter_lookup",
             "output_type": [
                 {
@@ -1053,7 +1249,7 @@
             "predecessors": []
         },
         {
-            "id": 42,
+            "id": 50,
             "op": "range_source",
             "output_type": [
                 {
@@ -1062,13 +1258,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 41,
+                    "op": 49,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 43,
+            "id": 51,
             "op": "expand_pattern",
             "output_type": [
                 {
@@ -1077,11 +1273,60 @@
             ],
             "predecessors": [
                 {
-                    "op": 40,
+                    "op": 48,
                     "port": 0
                 },
                 {
-                    "op": 42,
+                    "op": 50,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 52,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 53,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 51,
+                    "port": 0
+                },
+                {
+                    "op": 52,
                     "port": 0
                 }
             ]
@@ -1102,7 +1347,7 @@
                 }
             ],
             "filesystem": "file",
-            "id": 44,
+            "id": 54,
             "op": "parquet_scan",
             "output_type": [
                 {
@@ -1138,322 +1383,19 @@
             ],
             "predecessors": [
                 {
-                    "op": 43,
+                    "op": 53,
                     "port": 0
                 }
             ]
         },
         {
             "add_index": false,
-            "id": 45,
+            "id": 55,
             "op": "column_scan",
             "output_type": [
                 {
                     "type": "long"
                 },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 44,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 46,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 45,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 47,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 46,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "id": 48,
-            "num_keys": 1,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 39,
-                    "port": 0
-                },
-                {
-                    "op": 47,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack13 = bitcast <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack13, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 49,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 48,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack13 = bitcast <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.7, i64* %.1.repack13, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.8, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.3, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.4, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.5, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.6, i64* %.1.repack11, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 50,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 49,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "id": 51,
-            "num_keys": 1,
-            "op": "join",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 8,
-                    "port": 0
-                },
-                {
-                    "op": 50,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9) local_unnamed_addr #0 {\nentry:\n  %.1.repack15 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack15, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 52,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 51,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9) local_unnamed_addr #0 {\nentry:\n  %.1.repack15 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack15, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 53,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 52,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.4, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 54,
-            "op": "map",
-            "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                }
-            ],
-            "predecessors": [
-                {
-                    "op": 50,
-                    "port": 0
-                }
-            ]
-        },
-        {
-            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = icmp slt i64 %.2, %.3\n  %spec.select = select i1 %.14.i, i64 %.2, i64 %.3\n  store i64 %spec.select, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 55,
-            "op": "reduce_by_key",
-            "output_type": [
                 {
                     "type": "long"
                 },
@@ -1469,28 +1411,10 @@
             ]
         },
         {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 56,
-            "num_keys": 1,
-            "op": "join",
+            "op": "map",
             "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
                 {
                     "type": "long"
                 },
@@ -1503,38 +1427,16 @@
             ],
             "predecessors": [
                 {
-                    "op": 53,
-                    "port": 0
-                },
-                {
                     "op": 55,
                     "port": 0
                 }
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %.1.repack17 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack17, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  %.1.repack15 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 8\n  store i64 %.10, i64* %.1.repack15, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 57,
             "op": "map",
             "output_type": [
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
-                {
-                    "type": "long"
-                },
                 {
                     "type": "long"
                 },
@@ -1553,8 +1455,351 @@
             ]
         },
         {
-            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %.30.i = icmp eq i64 %.5, %.10\n  %.26 = bitcast i8* %.1 to i1*\n  store i1 %.30.i, i1* %.26, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
             "id": 58,
+            "num_keys": 1,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 47,
+                    "port": 0
+                },
+                {
+                    "op": 57,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack13 = bitcast <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack13, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 59,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 58,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack13 = bitcast <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.7, i64* %.1.repack13, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.8, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.3, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.4, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.5, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.6, i64* %.1.repack11, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 60,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 59,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 61,
+            "num_keys": 1,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 10,
+                    "port": 0
+                },
+                {
+                    "op": 60,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9) local_unnamed_addr #0 {\nentry:\n  %.1.repack15 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack15, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 62,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 61,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9) local_unnamed_addr #0 {\nentry:\n  %.1.repack15 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack15, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 63,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 62,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.4, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 64,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 60,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = icmp slt i64 %.2, %.3\n  %spec.select = select i1 %.14.i, i64 %.2, i64 %.3\n  store i64 %spec.select, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 65,
+            "op": "reduce_by_key",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 64,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 66,
+            "num_keys": 1,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 63,
+                    "port": 0
+                },
+                {
+                    "op": 65,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %.1.repack17 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack17, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  %.1.repack15 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 8\n  store i64 %.10, i64* %.1.repack15, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 67,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 66,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %.30.i = icmp eq i64 %.5, %.10\n  %.26 = bitcast i8* %.1 to i1*\n  store i1 %.30.i, i1* %.26, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 68,
             "op": "filter",
             "output_type": [
                 {
@@ -1587,14 +1832,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 57,
+                    "op": 67,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %const = bitcast i64 4363686772736 to i64\n  %0 = shl i64 %.6, 42\n  %.40.i = shl i64 %.9, 35\n  %.51.i = and i64 %.40.i, %const\n  %.88.i = and i64 %.2, 262143\n  %1 = or i64 %0, %.88.i\n  %.26.i = or i64 %1, %.51.i\n  %const_mat = add i64 %const, 262143\n  %.109.i = xor i64 %.26.i, %const_mat\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.109.i, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.7, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.8, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 59,
+            "id": 69,
             "op": "map",
             "output_type": [
                 {
@@ -1612,13 +1857,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 58,
+                    "op": 68,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 60,
+            "id": 70,
             "num_elements": 100,
             "op": "topk",
             "output_type": [
@@ -1637,14 +1882,14 @@
             ],
             "predecessors": [
                 {
-                    "op": 59,
+                    "op": 69,
                     "port": 0
                 }
             ]
         },
         {
             "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.21.i = ashr i64 %.2, 42\n  %.40.i = xor i64 %.2, -1\n  %0 = lshr i64 %.40.i, 35\n  %.64.i = and i64 %0, 127\n  %.89.i = and i64 %.40.i, 262143\n  %.1.repack11 = bitcast <{ i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.21.i, i64* %.1.repack11, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.5, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.64.i, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.89.i, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.3, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.4, i64* %.1.repack9, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
-            "id": 61,
+            "id": 71,
             "op": "map",
             "output_type": [
                 {
@@ -1668,13 +1913,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 60,
+                    "op": 70,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 62,
+            "id": 72,
             "op": "materialize_row_vector",
             "output_type": [
                 {
@@ -1705,13 +1950,13 @@
             ],
             "predecessors": [
                 {
-                    "op": 61,
+                    "op": 71,
                     "port": 0
                 }
             ]
         },
         {
-            "id": 63,
+            "id": 73,
             "op": "ensure_single_tuple",
             "output_type": [
                 {
@@ -1742,7 +1987,7 @@
             ],
             "predecessors": [
                 {
-                    "op": 62,
+                    "op": 72,
                     "port": 0
                 }
             ]
@@ -1750,7 +1995,7 @@
     ],
     "outputs": [
         {
-            "op": 63,
+            "op": 73,
             "port": 0
         }
     ]

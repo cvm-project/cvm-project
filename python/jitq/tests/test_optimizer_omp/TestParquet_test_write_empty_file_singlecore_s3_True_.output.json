@@ -364,6 +364,15 @@
                         "output_type": [
                             {
                                 "type": "std::string"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
                             }
                         ],
                         "predecessors": [
@@ -383,6 +392,15 @@
                         "output_type": [
                             {
                                 "type": "std::string"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
                             }
                         ],
                         "predecessors": [
@@ -446,6 +464,15 @@
             "output_type": [
                 {
                     "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
                 }
             ],
             "predecessors": [

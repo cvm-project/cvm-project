@@ -38,38 +38,140 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 34,
-                        "op_port": 0
-                    },
-                    {
-                        "dag_port": 1,
-                        "op": 35,
-                        "op_port": 0
-                    },
-                    {
-                        "dag_port": 2,
-                        "op": 36,
-                        "op_port": 0
-                    },
-                    {
-                        "dag_port": 3,
                         "op": 37,
                         "op_port": 0
                     },
                     {
-                        "dag_port": 4,
+                        "dag_port": 1,
                         "op": 38,
                         "op_port": 0
                     },
                     {
+                        "dag_port": 2,
+                        "op": 40,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 3,
+                        "op": 41,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 4,
+                        "op": 43,
+                        "op_port": 0
+                    },
+                    {
                         "dag_port": 5,
-                        "op": 39,
+                        "op": 44,
                         "op_port": 0
                     }
                 ],
                 "operators": [
                     {
                         "id": 0,
+                        "op": "expand_pattern",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 37,
+                                "port": 0
+                            },
+                            {
+                                "op": 3,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "expand_pattern",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 40,
+                                "port": 0
+                            },
+                            {
+                                "op": 4,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "op": "expand_pattern",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 43,
+                                "port": 0
+                            },
+                            {
+                                "op": 5,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 3,
+                        "op": "range_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 38,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "range_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 41,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 5,
+                        "op": "range_source",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 44,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 6,
                         "op": "ensure_single_tuple",
                         "output_type": [
                             {
@@ -94,13 +196,13 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 1,
+                                "op": 7,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 1,
+                        "id": 7,
                         "op": "materialize_row_vector",
                         "output_type": [
                             {
@@ -125,145 +227,13 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 2,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.25.i = ashr i64 %.2, 16\n  %.43.i = and i64 %.2, 65535\n  %.82.i = mul nuw nsw i64 %.43.i, 86400\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.25.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.82.i, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.4, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 2,
-                        "op": "map",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 3,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "id": 3,
-                        "num_elements": 10,
-                        "op": "topk",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 4,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.21.i = shl i64 %.5, 16\n  %.36.i = add nsw i64 %.21.i, %.4\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.36.i, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.3, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 4,
-                        "op": "map",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 5,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.19.i = and i64 %.2, 4294967295\n  %0 = lshr i64 %.2, 32\n  %.50.i = and i64 %0, 7\n  %.68.i = ashr i64 %.2, 35\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.19.i, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.50.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.68.i, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.3, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 5,
-                        "op": "map",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 6,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 6,
-                        "op": "reduce_by_key",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 7,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.34.i = sdiv i64 %.3, 86400\n  %.35.i = srem i64 %.3, 86400\n  %.35.lobit.i = ashr i64 %.35.i, 63\n  %.25.0.i = add nsw i64 %.35.lobit.i, %.34.i\n  %.68.i = shl i64 %.25.0.i, 35\n  %.86.i = shl i64 %.4, 32\n  %.96.i = add i64 %.86.i, %.2\n  %.111.i = add i64 %.96.i, %.68.i\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.111.i, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.5, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 7,
-                        "op": "map",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
                                 "op": 8,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.25.i = ashr i64 %.2, 16\n  %.43.i = and i64 %.2, 65535\n  %.82.i = mul nuw nsw i64 %.43.i, 86400\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.25.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.82.i, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.4, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 8,
                         "op": "map",
                         "output_type": [
@@ -289,12 +259,9 @@
                     },
                     {
                         "id": 9,
-                        "num_keys": 1,
-                        "op": "join",
+                        "num_elements": 10,
+                        "op": "topk",
                         "output_type": [
-                            {
-                                "type": "long"
-                            },
                             {
                                 "type": "long"
                             },
@@ -309,15 +276,11 @@
                             {
                                 "op": 10,
                                 "port": 0
-                            },
-                            {
-                                "op": 15,
-                                "port": 0
                             }
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.4, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.5, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.21.i = shl i64 %.5, 16\n  %.36.i = add nsw i64 %.21.i, %.4\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.36.i, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.3, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 10,
                         "op": "map",
                         "output_type": [
@@ -339,7 +302,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.19.i = and i64 %.2, 4294967295\n  %0 = lshr i64 %.2, 32\n  %.50.i = and i64 %0, 7\n  %.68.i = ashr i64 %.2, 35\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.19.i, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.50.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.68.i, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.3, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 11,
                         "op": "map",
                         "output_type": [
@@ -364,16 +327,10 @@
                         ]
                     },
                     {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 12,
-                        "num_keys": 1,
-                        "op": "join",
+                        "op": "reduce_by_key",
                         "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
                             {
                                 "type": "long"
                             },
@@ -385,7 +342,22 @@
                             {
                                 "op": 13,
                                 "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.34.i = sdiv i64 %.3, 86400\n  %.35.i = srem i64 %.3, 86400\n  %.35.lobit.i = ashr i64 %.35.i, 63\n  %.25.0.i = add nsw i64 %.35.lobit.i, %.34.i\n  %.68.i = shl i64 %.25.0.i, 35\n  %.86.i = shl i64 %.4, 32\n  %.96.i = add i64 %.86.i, %.2\n  %.111.i = add i64 %.96.i, %.68.i\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.111.i, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.5, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 13,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
                             },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
                             {
                                 "op": 14,
                                 "port": 0
@@ -393,23 +365,7 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 13,
-                        "op": "map",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 16,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 14,
                         "op": "map",
                         "output_type": [
@@ -428,16 +384,22 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 17,
+                                "op": 15,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.50.i = sub nsw i64 100, %.4\n  %.60.i = mul nsw i64 %.50.i, %.3\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.60.i, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 15,
-                        "op": "map",
+                        "num_keys": 1,
+                        "op": "join",
                         "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
                             {
                                 "type": "long"
                             },
@@ -447,13 +409,17 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 18,
+                                "op": 16,
+                                "port": 0
+                            },
+                            {
+                                "op": 21,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.4, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.5, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 16,
                         "op": "map",
                         "output_type": [
@@ -462,11 +428,14 @@
                             },
                             {
                                 "type": "long"
+                            },
+                            {
+                                "type": "long"
                             }
                         ],
                         "predecessors": [
                             {
-                                "op": 19,
+                                "op": 17,
                                 "port": 0
                             }
                         ]
@@ -491,15 +460,15 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 20,
+                                "op": 18,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 18,
-                        "op": "map",
+                        "num_keys": 1,
+                        "op": "join",
                         "output_type": [
                             {
                                 "type": "long"
@@ -516,19 +485,20 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 21,
+                                "op": 19,
+                                "port": 0
+                            },
+                            {
+                                "op": 20,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.21.i = icmp eq i64 %.3, 1\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.21.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 19,
-                        "op": "filter",
+                        "op": "map",
                         "output_type": [
-                            {
-                                "type": "long"
-                            },
                             {
                                 "type": "long"
                             }
@@ -541,9 +511,9 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) #0 {\nentry:\n  %.23.i = icmp slt i64 %.4, 795225600\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.23.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 20,
-                        "op": "filter",
+                        "op": "map",
                         "output_type": [
                             {
                                 "type": "long"
@@ -566,16 +536,10 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) #0 {\nentry:\n  %.23.i = icmp sgt i64 %.5, 795225600\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.23.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.50.i = sub nsw i64 100, %.4\n  %.60.i = mul nsw i64 %.50.i, %.3\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.60.i, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 21,
-                        "op": "filter",
+                        "op": "map",
                         "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
                             {
                                 "type": "long"
                             },
@@ -591,9 +555,9 @@
                         ]
                     },
                     {
-                        "add_index": false,
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 22,
-                        "op": "column_scan",
+                        "op": "map",
                         "output_type": [
                             {
                                 "type": "long"
@@ -610,9 +574,9 @@
                         ]
                     },
                     {
-                        "add_index": false,
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 23,
-                        "op": "column_scan",
+                        "op": "map",
                         "output_type": [
                             {
                                 "type": "long"
@@ -635,9 +599,9 @@
                         ]
                     },
                     {
-                        "add_index": false,
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                         "id": 24,
-                        "op": "column_scan",
+                        "op": "map",
                         "output_type": [
                             {
                                 "type": "long"
@@ -660,6 +624,144 @@
                         ]
                     },
                     {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3) #0 {\nentry:\n  %.21.i = icmp eq i64 %.3, 1\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.21.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "id": 25,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 28,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) #0 {\nentry:\n  %.23.i = icmp slt i64 %.4, 795225600\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.23.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "id": 26,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 29,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) #0 {\nentry:\n  %.23.i = icmp sgt i64 %.5, 795225600\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %.23.i, i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "id": 27,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 30,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 28,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 31,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 29,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 32,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 30,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 33,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
                         "columns": [
                             {
                                 "idx": 0,
@@ -671,7 +773,7 @@
                             }
                         ],
                         "filesystem": "file",
-                        "id": 25,
+                        "id": 31,
                         "op": "parquet_scan",
                         "output_type": [
                             {
@@ -697,7 +799,7 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 28,
+                                "op": 34,
                                 "port": 0
                             }
                         ]
@@ -722,7 +824,7 @@
                             }
                         ],
                         "filesystem": "file",
-                        "id": 26,
+                        "id": 32,
                         "op": "parquet_scan",
                         "output_type": [
                             {
@@ -768,7 +870,7 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 29,
+                                "op": 35,
                                 "port": 0
                             }
                         ]
@@ -793,7 +895,7 @@
                             }
                         ],
                         "filesystem": "file",
-                        "id": 27,
+                        "id": 33,
                         "op": "parquet_scan",
                         "output_type": [
                             {
@@ -839,107 +941,33 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 30,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "id": 28,
-                        "op": "expand_pattern",
-                        "output_type": [
-                            {
-                                "type": "std::string"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 34,
-                                "port": 0
-                            },
-                            {
-                                "op": 31,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "id": 29,
-                        "op": "expand_pattern",
-                        "output_type": [
-                            {
-                                "type": "std::string"
-                            }
-                        ],
-                        "predecessors": [
-                            {
                                 "op": 36,
                                 "port": 0
-                            },
-                            {
-                                "op": 32,
-                                "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 30,
-                        "op": "expand_pattern",
+                        "id": 34,
+                        "op": "cartesian",
                         "output_type": [
                             {
                                 "type": "std::string"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 38,
-                                "port": 0
                             },
                             {
-                                "op": 33,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "id": 31,
-                        "op": "range_source",
-                        "output_type": [
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
                             {
                                 "type": "long"
                             }
                         ],
                         "predecessors": [
                             {
-                                "op": 35,
+                                "op": 0,
                                 "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "id": 32,
-                        "op": "range_source",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 37,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "id": 33,
-                        "op": "range_source",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
+                            },
                             {
                                 "op": 39,
                                 "port": 0
@@ -947,19 +975,12 @@
                         ]
                     },
                     {
-                        "id": 34,
-                        "op": "parameter_lookup",
+                        "id": 35,
+                        "op": "cartesian",
                         "output_type": [
                             {
                                 "type": "std::string"
-                            }
-                        ],
-                        "predecessors": []
-                    },
-                    {
-                        "id": 35,
-                        "op": "parameter_lookup",
-                        "output_type": [
+                            },
                             {
                                 "type": "long"
                             },
@@ -970,30 +991,51 @@
                                 "type": "long"
                             }
                         ],
-                        "predecessors": []
+                        "predecessors": [
+                            {
+                                "op": 1,
+                                "port": 0
+                            },
+                            {
+                                "op": 42,
+                                "port": 0
+                            }
+                        ]
                     },
                     {
                         "id": 36,
-                        "op": "parameter_lookup",
+                        "op": "cartesian",
                         "output_type": [
                             {
                                 "type": "std::string"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
                             }
                         ],
-                        "predecessors": []
+                        "predecessors": [
+                            {
+                                "op": 2,
+                                "port": 0
+                            },
+                            {
+                                "op": 45,
+                                "port": 0
+                            }
+                        ]
                     },
                     {
                         "id": 37,
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
+                                "type": "std::string"
                             }
                         ],
                         "predecessors": []
@@ -1003,13 +1045,50 @@
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "type": "std::string"
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
                             }
                         ],
                         "predecessors": []
                     },
                     {
                         "id": 39,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "0",
+                            "1",
+                            "1"
+                        ]
+                    },
+                    {
+                        "id": 40,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 41,
                         "op": "parameter_lookup",
                         "output_type": [
                             {
@@ -1023,11 +1102,79 @@
                             }
                         ],
                         "predecessors": []
+                    },
+                    {
+                        "id": 42,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "0",
+                            "1",
+                            "1"
+                        ]
+                    },
+                    {
+                        "id": 43,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 44,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 45,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "0",
+                            "1",
+                            "1"
+                        ]
                     }
                 ],
                 "outputs": [
                     {
-                        "op": 0,
+                        "op": 6,
                         "port": 0
                     }
                 ]
