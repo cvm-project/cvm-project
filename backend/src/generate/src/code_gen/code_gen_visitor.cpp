@@ -143,6 +143,8 @@ void CodeGenVisitor::operator()(DAGMaterializeParquet *op) {
             CodeGenVisitor::visit_common(op, "MaterializeParquetOperator");
 
     GenerateValueToTuple(context_, op->tuple->type);
+    GenerateTupleToValue(context_, dag_->predecessor(op, 0)->tuple->type);
+    GenerateTupleToValue(context_, dag_->predecessor(op, 1)->tuple->type);
 
     std::vector<std::string> column_names;
     for (auto const &n : op->column_names) {
