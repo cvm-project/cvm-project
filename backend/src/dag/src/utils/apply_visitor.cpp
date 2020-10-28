@@ -109,6 +109,7 @@ void ApplyInReverseTopologicalOrderRecursively(
 void ApplyInReverseTopologicalOrderRecursively(
         const DAG *dag, const RecursiveConstDagVisitor &on_entry_visitor,
         const RecursiveConstDagVisitor &on_exit_visitor) {
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)  // false positive?
     ApplyInTopologicalOrderImpl<true, true>(dag, on_entry_visitor,
                                             on_exit_visitor);
 }
