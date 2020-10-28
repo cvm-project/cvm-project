@@ -589,7 +589,7 @@ class AntiJoinPredicated(AntiJoin):
             self.func, [left_type, right_type])
         if str(return_type) != "bool":
             raise BaseException(
-                "Function given to filter has the wrong return type:\n"
+                "Function given to anti-join has the wrong return type:\n"
                 "  expected: {0}\n"
                 "  found:    {1}".format("bool", return_type))
 
