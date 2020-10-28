@@ -7,7 +7,7 @@ variables:
   AWS_ACCESS_KEY_ID: 'xxx'
   AWS_SECRET_ACCESS_KEY: 'xxxxxxxx'
   AWS_DEFAULT_REGION: 'minio-test-region'
-  AWS_S3_ENDPOINT: 'http://s3server:9000'
+  AWS_S3_ENDPOINT: 'http://s3server.local:9000'
   PYTEST_ADDOPTS: >-
       --color=yes -vs
       --log-cli-level INFO
@@ -26,7 +26,7 @@ variables:
 services:
   - name: minio/minio:RELEASE.2019-06-01T03-46-14Z
     command: ["server", "/data"]
-    alias: s3server
+    alias: s3server.local
 
 default:
   image: ingomuellernet/buildenv-jitq:2020-01-12
