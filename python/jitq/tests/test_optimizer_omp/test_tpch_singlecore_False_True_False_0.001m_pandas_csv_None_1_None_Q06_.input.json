@@ -1,0 +1,161 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "add_index": false,
+            "id": 1,
+            "op": "column_scan",
+            "output_type": [
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 0,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5) local_unnamed_addr #0 {\nentry:\n  %arg.r.3.off.i = add i32 %.5, -757382400\n  %0 = icmp ult i32 %arg.r.3.off.i, 31536000\n  %.75.i = icmp sgt i32 %.4, 4\n  %or.cond1.i = and i1 %.75.i, %0\n  br i1 %or.cond1.i, label %B30.i, label %\"_ZN4jitq5tests4tpch7queries3Q063run12$3clocals$3e18$3clambda$3e$24134E50Record$28int32$2c$20int32$2c$20int32$2c$20int32$29.exit\"\n\nB30.i:                                            ; preds = %entry\n  %.101.i = icmp slt i32 %.4, 8\n  %.129.i = icmp slt i32 %.2, 24\n  %spec.select.i = and i1 %.129.i, %.101.i\n  br label %\"_ZN4jitq5tests4tpch7queries3Q063run12$3clocals$3e18$3clambda$3e$24134E50Record$28int32$2c$20int32$2c$20int32$2c$20int32$29.exit\"\n\n\"_ZN4jitq5tests4tpch7queries3Q063run12$3clocals$3e18$3clambda$3e$24134E50Record$28int32$2c$20int32$2c$20int32$2c$20int32$29.exit\": ; preds = %entry, %B30.i\n  %\"$phi48.1.0.i\" = phi i1 [ false, %entry ], [ %spec.select.i, %B30.i ]\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %\"$phi48.1.0.i\", i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 2,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                },
+                {
+                    "type": "int"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 1,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5) local_unnamed_addr #0 {\nentry:\n  %.25.i = sext i32 %.4 to i64\n  %.26.i = sext i32 %.3 to i64\n  %.27.i = mul nsw i64 %.25.i, %.26.i\n  store i64 %.27.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 3,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 2,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 4,
+            "op": "reduce",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 3,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 4,
+                    "port": 0
+                }
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 5,
+            "port": 0
+        }
+    ]
+}

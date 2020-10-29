@@ -1,0 +1,1749 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 2,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 3,
+            "op_port": 0
+        },
+        {
+            "dag_port": 2,
+            "op": 4,
+            "op_port": 0
+        },
+        {
+            "dag_port": 3,
+            "op": 5,
+            "op_port": 0
+        },
+        {
+            "dag_port": 4,
+            "op": 6,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 18,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 19,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 2,
+                        "op": 20,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32 }>, <{ i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 0,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 2,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i32* nocapture %.1, i32 %.2, i32 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = icmp slt i32 %.2, %.3\n  %spec.select = select i1 %.14.i, i32 %.2, i32 %.3\n  store i32 %spec.select, i32* %.1, align 4\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 1,
+                        "op": "reduce_by_key",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 3,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i8* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5) local_unnamed_addr #0 {\nentry:\n  %.22.i = icmp eq i32 %.5, 15\n  br i1 %.22.i, label %B10.i, label %\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2436E50Record$28int32$2c$20int32$2c$20int32$2c$20int32$29.exit\"\n\nB10.i:                                            ; preds = %entry\n  %.50.i = sext i32 %.4 to i64\n  %.65.i = srem i64 %.50.i, 5\n  %.67.i = icmp slt i64 %.65.i, 0\n  %.76.i = add nsw i64 %.65.i, 5\n  %.57.0.i = select i1 %.67.i, i64 %.76.i, i64 %.65.i\n  %.98.i = icmp eq i64 %.57.0.i, 0\n  br label %\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2436E50Record$28int32$2c$20int32$2c$20int32$2c$20int32$29.exit\"\n\n\"_ZN4jitq5tests4tpch7queries3Q023run12$3clocals$3e17$3clambda$3e$2436E50Record$28int32$2c$20int32$2c$20int32$2c$20int32$29.exit\": ; preds = %B10.i, %entry\n  %\"$phi22.1.0.i\" = phi i1 [ %.98.i, %B10.i ], [ false, %entry ]\n  %.21 = bitcast i8* %.1 to i1*\n  store i1 %\"$phi22.1.0.i\", i1* %.21, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 2,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 15,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i64 %.6, i32 %.7, i32 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32 }>, <{ i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.4, i32* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 3,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 17,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "op": "ensure_single_tuple",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 5,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 5,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 6,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i32, i64, i64, i32, i64 }>* nocapture %.1, i64 %.2, i32 %.3, i64 %.4, i32 %.5) local_unnamed_addr #0 {\nentry:\n  %.21.i = ashr i64 %.2, 42\n  %.40.i = xor i64 %.2, -1\n  %0 = lshr i64 %.40.i, 35\n  %.64.i = and i64 %0, 127\n  %.89.i = and i64 %.40.i, 262143\n  %.1.repack11 = bitcast <{ i64, i32, i64, i64, i32, i64 }>* %.1 to i64*\n  store i64 %.21.i, i64* %.1.repack11, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i32, i64, i64, i32, i64 }>, <{ i64, i32, i64, i64, i32, i64 }>* %.1, i64 0, i32 1\n  store i32 %.5, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i32, i64, i64, i32, i64 }>, <{ i64, i32, i64, i64, i32, i64 }>* %.1, i64 0, i32 2\n  store i64 %.64.i, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i32, i64, i64, i32, i64 }>, <{ i64, i32, i64, i64, i32, i64 }>* %.1, i64 0, i32 3\n  store i64 %.89.i, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i32, i64, i64, i32, i64 }>, <{ i64, i32, i64, i64, i32, i64 }>* %.1, i64 0, i32 4\n  store i32 %.3, i32* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i32, i64, i64, i32, i64 }>, <{ i64, i32, i64, i64, i32, i64 }>* %.1, i64 0, i32 5\n  store i64 %.4, i64* %.1.repack9, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 6,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 7,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "num_elements": 100,
+                        "op": "topk",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 8,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i32, i64, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i32 %.6, i64 %.7, i32 %.8, i32 %.9, i32 %.10) local_unnamed_addr #0 {\nentry:\n  %.261.i = zext i32 %.6 to i64\n  %.27.i = shl i64 %.261.i, 42\n  %.41.i = and i32 %.9, 127\n  %0 = xor i32 %.41.i, 127\n  %.53.i = zext i32 %0 to i64\n  %.66.i = shl nuw nsw i64 %.53.i, 35\n  %.90.i = and i32 %.2, 262143\n  %1 = xor i32 %.90.i, 262143\n  %.102.i = zext i32 %1 to i64\n  %.76.i = or i64 %.27.i, %.102.i\n  %.112.i = or i64 %.76.i, %.66.i\n  %.1.repack7 = bitcast <{ i64, i32, i64, i32 }>* %.1 to i64*\n  store i64 %.112.i, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i32, i64, i32 }>, <{ i64, i32, i64, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i32, i64, i32 }>, <{ i64, i32, i64, i32 }>* %.1, i64 0, i32 2\n  store i64 %.7, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i32, i64, i32 }>, <{ i64, i32, i64, i32 }>* %.1, i64 0, i32 3\n  store i32 %.8, i32* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 8,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 9,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i32 %.6, i64 %.7, i32 %.8, i32 %.9, i32 %.10) local_unnamed_addr #0 {\nentry:\n  %.1.repack17 = bitcast <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack17, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 2\n  store i32 %.4, i32* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 3\n  store i32 %.5, i32* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 4\n  store i32 %.6, i32* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 6\n  store i32 %.8, i32* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 7\n  store i32 %.9, i32* %.1.repack13, align 1\n  %.1.repack15 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32, i32 }>* %.1, i64 0, i32 8\n  store i32 %.10, i32* %.1.repack15, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 9,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 10,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i32 %.6, i64 %.7, i32 %.8, i32 %.9, i32 %.10) #0 {\nentry:\n  %.30.i = icmp eq i32 %.5, %.10\n  %.26 = bitcast i8* %.1 to i1*\n  store i1 %.30.i, i1* %.26, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                        "id": 10,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 11,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 11,
+                        "num_keys": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 12,
+                                "port": 0
+                            },
+                            {
+                                "op": 1,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32, i32, i32, i64, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i32 %.6, i64 %.7, i32 %.8, i32 %.9) local_unnamed_addr #0 {\nentry:\n  %.1.repack15 = bitcast <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack15, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 2\n  store i32 %.4, i32* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 3\n  store i32 %.5, i32* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 4\n  store i32 %.6, i32* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 6\n  store i32 %.8, i32* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 7\n  store i32 %.9, i32* %.1.repack13, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 12,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 13,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32, i32, i32, i64, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i32 %.6, i64 %.7, i32 %.8, i32 %.9) local_unnamed_addr #0 {\nentry:\n  %.1.repack15 = bitcast <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack15, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 2\n  store i32 %.4, i32* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 3\n  store i32 %.5, i32* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 4\n  store i32 %.6, i32* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 6\n  store i32 %.8, i32* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i32, i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 7\n  store i32 %.9, i32* %.1.repack13, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 13,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 14,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 14,
+                        "num_keys": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 0,
+                                "port": 0
+                            },
+                            {
+                                "op": 16,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 15,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 18,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 16,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 19,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 17,
+                        "op": "row_scan",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 20,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 18,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 19,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 20,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 4,
+                        "port": 0
+                    }
+                ]
+            },
+            "num_inputs": 3,
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 2,
+                    "port": 0
+                },
+                {
+                    "op": 1,
+                    "port": 0
+                },
+                {
+                    "op": 1,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 19,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 20,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 2,
+                        "op": 21,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 3,
+                        "op": 22,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i32* nocapture %.1, i32 %.2, i32 %.3) local_unnamed_addr #0 {\nentry:\n  store i32 %.2, i32* %.1, align 4\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 0,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 11,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "materialize_row_vector",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "long"
+                                    },
+                                    {
+                                        "type": "int"
+                                    },
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 2,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32, i32, i64, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i64 %.4, i32 %.5, i32 %.6, i32 %.7, i32 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack13 = bitcast <{ i32, i32, i32, i32, i64, i32, i32 }>* %.1 to i32*\n  store i32 %.7, i32* %.1.repack13, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.2, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 2\n  store i32 %.8, i32* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 3\n  store i32 %.3, i32* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 4\n  store i64 %.4, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 5\n  store i32 %.5, i32* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32, i32 }>, <{ i32, i32, i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 6\n  store i32 %.6, i32* %.1.repack11, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 2,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 3,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i64, i32, i32, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i64 %.4, i32 %.5, i32 %.6, i32 %.7, i32 %.8) local_unnamed_addr #0 {\nentry:\n  %.1.repack13 = bitcast <{ i32, i32, i64, i32, i32, i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack13, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i64, i32, i32, i32, i32 }>, <{ i32, i32, i64, i32, i32, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i64, i32, i32, i32, i32 }>, <{ i32, i32, i64, i32, i32, i32, i32 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i64, i32, i32, i32, i32 }>, <{ i32, i32, i64, i32, i32, i32, i32 }>* %.1, i64 0, i32 3\n  store i32 %.5, i32* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i64, i32, i32, i32, i32 }>, <{ i32, i32, i64, i32, i32, i32, i32 }>* %.1, i64 0, i32 4\n  store i32 %.6, i32* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i32, i32, i64, i32, i32, i32, i32 }>, <{ i32, i32, i64, i32, i32, i32, i32 }>* %.1, i64 0, i32 5\n  store i32 %.7, i32* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i32, i32, i64, i32, i32, i32, i32 }>, <{ i32, i32, i64, i32, i32, i32, i32 }>* %.1, i64 0, i32 6\n  store i32 %.8, i32* %.1.repack11, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 3,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 4,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 4,
+                        "num_keys": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 5,
+                                "port": 0
+                            },
+                            {
+                                "op": 14,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i64, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i64 %.6, i32 %.7) local_unnamed_addr #0 {\nentry:\n  %.1.repack9 = bitcast <{ i32, i32, i64, i32, i32 }>* %.1 to i32*\n  store i32 %.4, i32* %.1.repack9, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i64, i32, i32 }>, <{ i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.5, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i64, i32, i32 }>, <{ i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 2\n  store i64 %.6, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i64, i32, i32 }>, <{ i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 3\n  store i32 %.7, i32* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i64, i32, i32 }>, <{ i32, i32, i64, i32, i32 }>* %.1, i64 0, i32 4\n  store i32 %.3, i32* %.1.repack7, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 5,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 6,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32, i32, i64, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i32 %.5, i64 %.6, i32 %.7) local_unnamed_addr #0 {\nentry:\n  %.1.repack11 = bitcast <{ i32, i32, i32, i32, i64, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack11, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 2\n  store i32 %.4, i32* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 3\n  store i32 %.5, i32* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i32, i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 5\n  store i32 %.7, i32* %.1.repack9, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 6,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 7,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "num_keys": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 8,
+                                "port": 0
+                            },
+                            {
+                                "op": 13,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i32, i32 }>* %.1 to i32*\n  store i32 %.3, i32* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32 }>, <{ i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.4, i32* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 8,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 9,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i32, i32, i32 }>* %.1 to i32*\n  store i32 %.2, i32* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32 }>, <{ i32, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.3, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32 }>, <{ i32, i32, i32 }>* %.1, i64 0, i32 2\n  store i32 %.4, i32* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 9,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 10,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 10,
+                        "num_keys": 1,
+                        "op": "join",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 0,
+                                "port": 0
+                            },
+                            {
+                                "op": 12,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i8* nocapture %.1, i32 %.2, i32 %.3) local_unnamed_addr #0 {\nentry:\n  %.22.i = icmp eq i32 %.3, 3\n  %.19 = bitcast i8* %.1 to i1*\n  store i1 %.22.i, i1* %.19, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 11,
+                        "op": "filter",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 15,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i32, i32, i32 }>* %.1 to i32*\n  store i32 %.4, i32* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32 }>, <{ i32, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.2, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32 }>, <{ i32, i32, i32 }>* %.1, i64 0, i32 2\n  store i32 %.3, i32* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 12,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 16,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32, i64, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4, i64 %.5, i32 %.6) local_unnamed_addr #0 {\nentry:\n  %.1.repack9 = bitcast <{ i32, i32, i32, i64, i32 }>* %.1 to i32*\n  store i32 %.4, i32* %.1.repack9, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 1\n  store i32 %.2, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 2\n  store i32 %.6, i32* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i32, i32, i32, i64, i32 }>, <{ i32, i32, i32, i64, i32 }>* %.1, i64 0, i32 4\n  store i32 %.3, i32* %.1.repack7, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 13,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 17,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i32, i32, i32 }>* nocapture %.1, i32 %.2, i32 %.3, i32 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i32, i32, i32 }>* %.1 to i32*\n  store i32 %.3, i32* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i32, i32, i32 }>, <{ i32, i32, i32 }>* %.1, i64 0, i32 1\n  store i32 %.2, i32* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i32, i32, i32 }>, <{ i32, i32, i32 }>* %.1, i64 0, i32 2\n  store i32 %.4, i32* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "id": 14,
+                        "op": "map",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 18,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 15,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 19,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 16,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 20,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 17,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 21,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 18,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "int"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 22,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 19,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 20,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 21,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 22,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            },
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "int"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 1,
+                        "port": 0
+                    }
+                ]
+            },
+            "num_inputs": 4,
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "int"
+                        },
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 3,
+                    "port": 0
+                },
+                {
+                    "op": 4,
+                    "port": 0
+                },
+                {
+                    "op": 5,
+                    "port": 0
+                },
+                {
+                    "op": 6,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 3,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 4,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 5,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 6,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "int"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": []
+        }
+    ],
+    "outputs": [
+        {
+            "op": 0,
+            "port": 0
+        }
+    ]
+}
