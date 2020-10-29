@@ -87,6 +87,9 @@ OPTIMIZER_CONFIGS = {
     'omp': OptimizerConfig(  # Optimizer with '-O2' and omp target
         join(TEST_BASE_DIR, 'test_optimizer_omp'),
         ['-O2', '-Tomp']),
+    'process': OptimizerConfig(  # Optimizer with '-O2' and process target
+        join(TEST_BASE_DIR, 'test_optimizer_process'),
+        ['-O2', '-Tprocess']),
 }
 
 
