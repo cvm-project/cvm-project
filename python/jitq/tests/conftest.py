@@ -143,10 +143,18 @@ def generate_testcases(generate_testcases_enabled, request):
         pytest.xfail('No DAG produced')
 
     # Compute file name to parser test case
-    class_name = request.node.getparent(pytest.Class).name
-    function_name = request.node.getparent(pytest.Function).name
-    filename_base = '_'.join([class_name, function_name]) \
-        .translate(str.maketrans("[]-", "___"))
+    filename_parts = []
+
+    test_class = request.node.getparent(pytest.Class)
+    if test_class:
+        filename_parts.append(test_class.name)
+
+    test_function = request.node.getparent(pytest.Function)
+    if test_function:
+        filename_parts.append(test_function.name)
+
+    filename_base = '_'.join(filename_parts) \
+        .translate(str.maketrans("/{}[]-", "______"))
 
     # Read generated DAG and write it for each class
     for config in OPTIMIZER_CONFIGS.values():
