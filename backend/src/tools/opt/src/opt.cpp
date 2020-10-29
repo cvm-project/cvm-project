@@ -105,18 +105,18 @@ auto main(int argc, char* argv[]) -> int {
 
     // Assemble backend configuration
     nlohmann::json conf_json;
-    conf_json["/optimizer/optimization-level"] = opt_level;
-    conf_json["/optimizer/target"] = target;
+    conf_json["/optimization-level"] = opt_level;
+    conf_json["/target"] = target;
 
     if (output_format != OutputFormat::kBin) {
-        conf_json["/optimizer/optimizations/code_gen/active"] = false;
+        conf_json["/optimizations/code_gen/active"] = false;
     }
 
     for (auto const& opt : optimizations) {
-        conf_json["/optimizer/optimizations/" + opt + "/active"] = true;
+        conf_json["/optimizations/" + opt + "/active"] = true;
     }
 
-    conf_json["/optimizer/verbose"] = verbose;
+    conf_json["/verbose"] = verbose;
 
     // Run the optimizer
     optimize::Optimizer opt(conf_json.unflatten().dump());

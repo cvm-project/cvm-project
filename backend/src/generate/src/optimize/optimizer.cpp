@@ -16,9 +16,8 @@ Optimizer::Optimizer(std::string config) : config_(std::move(config)) {
 }
 
 void Optimizer::Run(DAG *const dag) {
-    auto config = nlohmann::json::parse(config_)
-                          .value("optimizer", nlohmann::json::object())
-                          .flatten();
+    auto config = nlohmann::json::parse(config_).flatten();
+
     const bool verbose = config.value("/verbose", false);
 
     // Activate passes according to optimization level
