@@ -93,6 +93,16 @@ cppcheck:
     - cd backend/build
     - make cppcheck
 
+inlining-test:
+  stage: test
+  dependencies:
+    - rel-build
+  tags:
+    - ptrace
+  script:
+    - cd python/jitq/tests
+    - $PYTEST_ASAN_CMD test_inlining.py
+
 python-tests-omp:
   stage: test
   dependencies:
@@ -120,7 +130,6 @@ python-tests-asan:
   script:
     - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_cli_runner.py
-    - $PYTEST_ASAN_CMD test_inlining.py
     - $PYTEST_ASAN_CMD test_operators.py
     - $PYTEST_ASAN_CMD test_optimizer.py
     - $PYTEST_ASAN_CMD test_tpch.py --target singlecore
