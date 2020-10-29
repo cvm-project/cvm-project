@@ -17,6 +17,10 @@ pd.options.display.float_format = '{:.10g}'.format
 @pytest.fixture
 def tpch_data(tpch_input_path, tpch_input_format, tpch_num_partitions,
               tpch_scale, jitq_context):
+    # Default path for input data
+    tpch_input_path = tpch_input_path or \
+        '{jitqpath}/python/jitq/tests/tpch/{format}-{sf}/{table}.{format}'
+
     formats = {
         'pandas/csv': PandasCsv,
         'pandas/parquet': PandasParquet,
@@ -42,6 +46,10 @@ def _upcast(df):
 def test_tpch(jitq_context, tpch_data, tpch_query, tpch_print_result,
               tpch_scale, tpch_ref_path, write_outputs):
     # pylint: disable=redefined-outer-name  # That's how fixtures work
+
+    # Default path for reference result
+    tpch_ref_path = tpch_ref_path or \
+        '{jitqpath}/python/jitq/tests/tpch/ref-{sf}/Q{q}.ref.pkl'
 
     class_name = tpch_query.__name__
 

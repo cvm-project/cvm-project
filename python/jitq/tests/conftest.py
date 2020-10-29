@@ -34,15 +34,12 @@ def pytest_addoption(parser):
         help='Input format of TPC-H data.')
     parser.addoption(
         '--tpch_input_path', action='store',
-        default='{jitqpath}/python/jitq/tests/tpch/'
-                '{format}-{sf}/{table}.{format}',
         help='Format string for path to input files.')
     parser.addoption(
         '--tpch_num_partitions', action='store', default=1, type=int,
         help='Number of files in partitioned input relations.')
     parser.addoption(
         '--tpch_ref_path', action='store',
-        default='{jitqpath}/python/jitq/tests/tpch/ref-{sf}/Q{q}.ref.pkl',
         help='Format string for path to reference result.')
     parser.addoption(
         '--write_outputs', action='store_true',
