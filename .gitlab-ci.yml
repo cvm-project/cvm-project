@@ -30,6 +30,13 @@ services:
 
 default:
   image: ingomuellernet/buildenv-jitq:2020-10-24
+  before_script:
+    - pip3 install -r requirements.txt
+    - >-
+        echo -e
+        "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib"
+        > backend/src/generate/src/code_gen/Makefile.local
+    - cp jitq_config.ci.json jitq_config.json
 
 format-cpp:
   stage: build
@@ -40,8 +47,6 @@ format-cpp:
 
 format-python:
   stage: build
-  before_script:
-    - pip3 install -r requirements.txt
   script:
     - tools/check_format_python.sh
     - tools/check_pylint.sh
@@ -98,10 +103,6 @@ python-tests-omp:
     OMP_NUM_THREADS: 8
     # Deactivate LSan, as somehow it doesn't work inside docker and with several OpenMP threads
     ASAN_OPTIONS: detect_leaks=0
-  before_script:
-    - pip3 install -r requirements.txt
-    - echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" > backend/src/generate/src/code_gen/Makefile.local
-    - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_omp_environment.py --target omp
@@ -116,10 +117,6 @@ python-tests-asan:
   variables:
     OMP_NUM_THREADS: 1
     ASAN_OPTIONS: detect_leaks=1
-  before_script:
-    - pip3 install -r requirements.txt
-    - echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" > backend/src/generate/src/code_gen/Makefile.local
-    - cp jitq_config.ci.json jitq_config.json
   script:
     - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_cli_runner.py
@@ -135,9 +132,8 @@ cpp-test:
     - dbg-build
   tags:
     - ptrace
-  before_script:
   variables:
-    # Unlike the test executables are compiled with ASAN, so no need to pre-load
+    # Unlike the python tests, these test executables are compiled with ASAN, so no need to pre-load
     ASAN_LIBRARY_PATH: ""
   script:
     - cd backend/build
