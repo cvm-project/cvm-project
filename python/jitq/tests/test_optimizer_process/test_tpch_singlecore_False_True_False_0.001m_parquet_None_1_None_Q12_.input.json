@@ -1,0 +1,686 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 1,
+            "op_port": 0
+        },
+        {
+            "dag_port": 2,
+            "op": 11,
+            "op_port": 0
+        },
+        {
+            "dag_port": 3,
+            "op": 12,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 1,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "op": "expand_pattern",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 0,
+                    "port": 0
+                },
+                {
+                    "op": 2,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 5,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 3,
+                    "port": 0
+                },
+                {
+                    "op": 4,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "idx": 0,
+                    "ranges": []
+                },
+                {
+                    "idx": 10,
+                    "ranges": []
+                },
+                {
+                    "idx": 11,
+                    "ranges": []
+                },
+                {
+                    "idx": 12,
+                    "ranges": []
+                },
+                {
+                    "idx": 14,
+                    "ranges": []
+                }
+            ],
+            "filesystem": "file",
+            "id": 6,
+            "op": "parquet_scan",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 5,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 7,
+            "op": "column_scan",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 6,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6) local_unnamed_addr #0 {\nentry:\n  %.1.repack9 = bitcast <{ i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack9, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 8,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 7,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6) local_unnamed_addr #0 {\nentry:\n  switch i64 %.6, label %\"_ZN4jitq5tests4tpch7queries3Q123run12$3clocals$3e18$3clambda$3e$24378E61Record$28int64$2c$20int64$2c$20int64$2c$20int64$2c$20int64$29.exit\" [\n    i64 5, label %B10.i\n    i64 2, label %B10.i\n  ]\n\nB10.i:                                            ; preds = %entry, %entry\n  %.70.i = icmp slt i64 %.3, %.4\n  %.105.i = icmp slt i64 %.4, %.5\n  %\"$phi38.1.0.i\" = and i1 %.70.i, %.105.i\n  %.5.off = add i64 %.5, -757382400\n  %0 = icmp ult i64 %.5.off, 31536000\n  %1 = and i1 %0, %\"$phi38.1.0.i\"\n  br label %\"_ZN4jitq5tests4tpch7queries3Q123run12$3clocals$3e18$3clambda$3e$24378E61Record$28int64$2c$20int64$2c$20int64$2c$20int64$2c$20int64$29.exit\"\n\n\"_ZN4jitq5tests4tpch7queries3Q123run12$3clocals$3e18$3clambda$3e$24378E61Record$28int64$2c$20int64$2c$20int64$2c$20int64$2c$20int64$29.exit\": ; preds = %B10.i, %entry\n  %.8.0 = phi i1 [ false, %entry ], [ %1, %B10.i ]\n  %.22 = bitcast i8* %.1 to i1*\n  store i1 %.8.0, i1* %.22, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 9,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 8,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.6, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 10,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 9,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 11,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 12,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 13,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 12,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 14,
+            "op": "expand_pattern",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 11,
+                    "port": 0
+                },
+                {
+                    "op": 13,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 15,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 16,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 14,
+                    "port": 0
+                },
+                {
+                    "op": 15,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "idx": 0,
+                    "ranges": []
+                },
+                {
+                    "idx": 5,
+                    "ranges": []
+                }
+            ],
+            "filesystem": "file",
+            "id": 17,
+            "op": "parquet_scan",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 16,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 18,
+            "op": "column_scan",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 17,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 19,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 18,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 20,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 19,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 21,
+            "num_keys": 1,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 10,
+                    "port": 0
+                },
+                {
+                    "op": 20,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 22,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 21,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %0 = add i64 %.4, -1\n  %1 = icmp ult i64 %0, 2\n  %spec.select.i = zext i1 %1 to i64\n  %not..i = xor i1 %1, true\n  %spec.select19.i = zext i1 %not..i to i64\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %spec.select.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %spec.select19.i, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 23,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 22,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "define void @cfuncnotuniquename(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #0 {\nentry:\n  %.26.i = add nsw i64 %.4, %.2\n  %.50.i = add nsw i64 %.5, %.3\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.26.i, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.50.i, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 24,
+            "op": "reduce_by_key",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 23,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 25,
+            "op": "materialize_row_vector",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 24,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 26,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        },
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 25,
+                    "port": 0
+                }
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 26,
+            "port": 0
+        }
+    ]
+}
