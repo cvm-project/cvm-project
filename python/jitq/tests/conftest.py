@@ -8,6 +8,7 @@ import pytest
 from jitq.jitq_context import JitqContext
 from jitq.tests.filesystem import FILESYSTEMS, filesystem_instance
 from jitq.tests.helpers import str2bool
+from jitq.tests.aws_helpers import create_s3_bucket
 
 
 def pytest_addoption(parser):
@@ -163,8 +164,16 @@ def generate_testcases(generate_testcases_enabled, request):
 
 
 @pytest.fixture
-def jitq_context(target, generate_testcases):
+def jitq_context(target, generate_testcases, monkeypatch):
     # pylint: disable=unused-argument  # needed as fixture
+    if target == 'process':
+        monkeypatch.setenv("JITQ_PROCESS_NUM_WORKERS", "2")
+        if 'JITQ_EXCHANGE_S3_BUCKET_NAME' not in os.environ:
+            s3_bucket_name = 'jitqlambdarunnerbucket'
+            monkeypatch.setenv('JITQ_EXCHANGE_S3_BUCKET_NAME',
+                               s3_bucket_name)
+            create_s3_bucket(s3_bucket_name, 'jitq/')
+
     return JitqContext(conf={
         'optimizer': {
             'target': target,

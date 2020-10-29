@@ -43,7 +43,7 @@ def _upcast(df):
 @pytest.mark.parametrize('tpch_query',
                          [Q01, Q02, Q03, Q04, Q05, Q06, Q07, Q08, Q10,
                           Q11, Q12, Q14, Q15, Q17, Q18, Q19, Q21, Q22])
-def test_tpch(jitq_context, tpch_data, tpch_query, tpch_print_result,
+def test_tpch(jitq_context, target, tpch_data, tpch_query, tpch_print_result,
               tpch_scale, tpch_ref_path, write_outputs):
     # pylint: disable=redefined-outer-name  # That's how fixtures work
 
@@ -52,6 +52,13 @@ def test_tpch(jitq_context, tpch_data, tpch_query, tpch_print_result,
         '{jitqpath}/python/jitq/tests/tpch/ref-{sf}/Q{q}.ref.pkl'
 
     class_name = tpch_query.__name__
+
+    # Handle expected failures
+    if hasattr(tpch_query, 'XFAIL'):
+        xfail = tpch_query.XFAIL
+        if 'target' in xfail and target in xfail['target']:
+            pytest.xfail('Query {} not supported on target {}.'
+                         .format(class_name, target))
 
     # Load data and run query
     query = tpch_query(jitq_context)

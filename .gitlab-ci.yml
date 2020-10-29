@@ -132,8 +132,21 @@ python-tests-asan:
     - $PYTEST_ASAN_CMD test_cli_runner.py
     - $PYTEST_ASAN_CMD test_operators.py
     - $PYTEST_ASAN_CMD test_optimizer.py
+
+tpch-tests-asan:
+  stage: test
+  dependencies:
+    - dbg-build
+  tags:
+    - ptrace
+  variables:
+    OMP_NUM_THREADS: 1
+    ASAN_OPTIONS: detect_leaks=1
+  script:
+    - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_tpch.py --target singlecore
     - $PYTEST_ASAN_CMD test_tpch.py --target singlecore --tpch_input_format parquet
+    - $PYTEST_ASAN_CMD test_tpch.py --target process    --tpch_input_format parquet
 
 cpp-test:
   stage: test

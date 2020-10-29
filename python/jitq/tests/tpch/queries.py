@@ -653,6 +653,8 @@ class Q06(TpchJitqQuery):
 
 
 class Q07(TpchJitqQuery):
+    XFAIL = {'target': ['process']}
+
     # select
     #     supp_nation,
     #     cust_nation,
