@@ -1,0 +1,19 @@
+version: "3.3"
+
+services:
+  webhookd:
+    build: webhookd/docker
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/output
+      - ./webhookd/scripts:/var/opt/webhookd/scripts
+    command: ["webhookd", "--scripts=/var/opt/webhookd/scripts"]
+    env_file: .env
+  web:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./data:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/user.conf

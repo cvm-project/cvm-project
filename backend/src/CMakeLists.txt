@@ -5,6 +5,7 @@ enable_testing()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../3rdparty/cmake/")
 
 set(WITH_LLVM_ASAN OFF CACHE BOOL "Enable compilation with LLVM address, undefined, and leak sanitizer.")
+set(WITH_LLVM_COVERAGE OFF CACHE BOOL "Enable compilation with LLVM code coverage instrumentation.")
 
 include (ReleaseAsDefault)
 include (ExternalProject)
@@ -68,6 +69,15 @@ if(${WITH_LLVM_ASAN} AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(LLVM_ASAN_FLAGS "-fno-omit-frame-pointer -fsanitize=address,undefined -fno-sanitize=vptr")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${LLVM_ASAN_FLAGS}")
     set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} ${LLVM_ASAN_FLAGS}")
+endif()
+
+# Set up code coverage
+if(${WITH_LLVM_COVERAGE} AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    message(STATUS "Enabling LLVM's code coverage instrumentation.")
+    add_compile_definitions("WITH_LLVM_COVERAGE")
+    set(LLVM_COVERAGE_FLAGS "--coverage")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${LLVM_COVERAGE_FLAGS}")
+    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} ${LLVM_COVERAGE_FLAGS}")
 endif()
 
 # Set up Boost

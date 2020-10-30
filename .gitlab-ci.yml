@@ -37,6 +37,8 @@ default:
         "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib"
         > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
+  after_script:
+    - $JITQPATH/tools/create_coverage_summary.sh coverage.$CI_JOB_NAME.json
 
 format-cpp:
   stage: build
@@ -74,6 +76,7 @@ dbg-build:
         -DCMAKE_BUILD_TYPE=Debug
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         -DWITH_LLVM_ASAN=ON
+        $(if [[ $CI_COMMIT_BRANCH == *'-coverage' || $CI_COMMIT_BRANCH == 'master' ]]; then echo -n -DWITH_LLVM_COVERAGE=ON; fi)
     - make
   artifacts:
     paths:
@@ -121,6 +124,9 @@ python-tests-omp:
     - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_omp_environment.py --target omp
     - $PYTEST_ASAN_CMD test_operators.py --target omp
+  artifacts:
+    paths:
+      - "coverage.*.json"
 
 .tests-asan:
   stage: test
@@ -131,6 +137,9 @@ python-tests-omp:
   variables:
     OMP_NUM_THREADS: 1
     ASAN_OPTIONS: detect_leaks=1
+  artifacts:
+    paths:
+      - "coverage.*.json"
 
 python-tests-asan:
   extends: .tests-asan
@@ -170,3 +179,27 @@ cpp-test:
   script:
     - cd backend/build
     - /usr/bin/time -v catchsegv ../../tools/run_with_asan.sh ctest -V
+  artifacts:
+    paths:
+      - "coverage.*.json"
+
+code-coverage:
+  stage: deploy
+  only:
+    - /.*-coverage/
+    - master
+  dependencies:
+    - cpp-test
+    - python-tests-asan
+    - python-tests-omp
+    - operator-tests-asan
+    - optimizer-tests-asan
+    - tpch-tests-asan
+  script:
+    - $JITQPATH/tools/create_coverage_report.sh $JITQPATH/coverage.*.json
+  artifacts:
+    paths:
+      - coverage*
+    reports:
+      cobertura:
+        - coverage/coverage.xml

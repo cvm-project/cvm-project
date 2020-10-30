@@ -1,5 +1,8 @@
 ## JITQ - Just-In-Time Query Compilation
 
+[![pipeline status](https://gitlab.inf.ethz.ch/OU-SYSTEMS/jitq/badges/master/pipeline.svg)](https://gitlab.inf.ethz.ch/OU-SYSTEMS/jitq/-/commits/master)
+[![coverage report](https://gitlab.inf.ethz.ch/OU-SYSTEMS/jitq/badges/master/coverage.svg)](https://gitlab.inf.ethz.ch/OU-SYSTEMS/jitq/-/commits/master)
+
 JITQ is a dataflow framework featuring just-in-time compilation and query optimization in presence of user-defined functions.
 
 ## Installation
