@@ -362,7 +362,7 @@ are pre-setup.
 To compile, add the following flag to `cmake` and recompile:
 
 ```bash
-cmake <...> -DLLVM_ASAN=ON
+cmake <...> -DWITH_LLVM_ASAN=ON
 ```
 
 Then, set up the following environment variables:

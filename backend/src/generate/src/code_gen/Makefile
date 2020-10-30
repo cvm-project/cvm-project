@@ -34,8 +34,8 @@ else
     LIB = libexecute.opt.so
 endif
 
-LLVM_ASAN ?= 0
-ifeq ($(LLVM_ASAN), 1)
+WITH_LLVM_ASAN ?= 0
+ifeq ($(WITH_LLVM_ASAN), 1)
     CXXFLAGS += -fsanitize=address,undefined -fno-sanitize=vptr,alignment
     LDFLAGS += -fsanitize=address,undefined -fno-sanitize=vptr,alignment
 endif

@@ -129,10 +129,10 @@ auto GenerateCode(DAG *const dag, const std::string &config)
     auto const debug_flag =
             std::string("DEBUG=") + (do_debug_build ? "1" : "0");
 
-#if defined(LLVM_ASAN)
-    auto const asan_flag = "LLVM_ASAN=1";
+#if defined(WITH_LLVM_ASAN)
+    auto const asan_flag = "WITH_LLVM_ASAN=1";
 #else
-    auto const asan_flag = "LLVM_ASAN=0";
+    auto const asan_flag = "WITH_LLVM_ASAN=0";
 #endif
 
     boost::process::ipstream make_std_out;

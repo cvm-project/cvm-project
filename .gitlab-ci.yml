@@ -71,7 +71,7 @@ dbg-build:
         cmake ../src
         -DCMAKE_BUILD_TYPE=Debug
         -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-        -DLLVM_ASAN=ON
+        -DWITH_LLVM_ASAN=ON
     - make
   artifacts:
     paths:
