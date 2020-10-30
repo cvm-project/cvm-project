@@ -1,8 +1,9 @@
 import os
 
-import boto3
-import botocore
 import pytest
+
+from jitq.tests.aws_helpers import create_s3_bucket
+from jitq.aws_helpers import make_boto3_client
 
 
 class Filesystem:
@@ -31,28 +32,11 @@ class S3Filesystem(Filesystem):
     def __init__(self, *args, s3_bucket_name, **kwargs):
         super(S3Filesystem, self).__init__(*args, **kwargs)
 
+        self._s3_client = make_boto3_client('s3')
         self._s3_bucket = s3_bucket_name
         self.remotedir = 's3://' + s3_bucket_name + '/'
 
-        s3_config = {
-            'use_ssl': False,
-            'verify': False,
-        }
-        if 'AWS_S3_ENDPOINT' in os.environ:
-            s3_config['endpoint_url'] = os.environ['AWS_S3_ENDPOINT']
-
-        self._s3_client = boto3.client('s3', **s3_config)
-
-        try:
-            self._s3_client.create_bucket(
-                Bucket=self._s3_bucket,
-                CreateBucketConfiguration={
-                    'LocationConstraint': boto3.session.Session().region_name,
-                },
-            )
-        except botocore.exceptions.ClientError as ex:
-            if ex.response['Error']['Code'] != 'BucketAlreadyOwnedByYou':
-                raise ex
+        create_s3_bucket(s3_bucket_name, 'jitq-filesystem-test/')
 
     def copy_from_remote(self, filename):
         self._s3_client.download_file(
