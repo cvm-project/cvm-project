@@ -286,6 +286,7 @@ void ToDotFile(const DAG *dag, FILE *outfile) {
 
     Agraph_t *const g = agopen("g", Agdirected, &AgDefaultDisc);
     agsafeset(g, "compound", "true", "true");
+    agsafeset(g, "splines", "curved", "curved");
 
     // Store which (GV) node and port label an edge should end at for a given
     // operator and port
