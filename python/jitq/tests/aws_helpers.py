@@ -13,7 +13,6 @@ def create_s3_bucket(bucket_name, prefix):
 
     resource = make_boto3_resource('s3')
     bucket = resource.Bucket(bucket_name)
-    client = make_boto3_client('s3')
 
     # Create local components of stack
     logger.info('Creating S3 bucket "%s"', bucket.name)
@@ -27,6 +26,15 @@ def create_s3_bucket(bucket_name, prefix):
         if ex.response['Error']['Code'] != 'BucketAlreadyOwnedByYou':
             raise ex
         logger.info('Bucket already existed')
+        clean_s3_bucket(bucket_name, prefix)
+
+
+def clean_s3_bucket(bucket_name, prefix):
+    logger = logging.getLogger(__name__)
+
+    resource = make_boto3_resource('s3')
+    bucket = resource.Bucket(bucket_name)
+    client = make_boto3_client('s3')
 
     # Clean up bucket from previous runs
     logger.info('Deleting files of previous runs...')
