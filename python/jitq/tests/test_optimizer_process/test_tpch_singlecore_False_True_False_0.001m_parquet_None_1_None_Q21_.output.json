@@ -48,42 +48,42 @@
                 "inputs": [
                     {
                         "dag_port": 0,
-                        "op": 16,
+                        "op": 14,
                         "op_port": 0
                     },
                     {
                         "dag_port": 1,
-                        "op": 18,
+                        "op": 16,
                         "op_port": 0
                     },
                     {
                         "dag_port": 2,
-                        "op": 20,
+                        "op": 18,
                         "op_port": 0
                     },
                     {
                         "dag_port": 3,
-                        "op": 22,
+                        "op": 20,
                         "op_port": 0
                     },
                     {
                         "dag_port": 4,
-                        "op": 24,
+                        "op": 22,
                         "op_port": 0
                     },
                     {
                         "dag_port": 5,
-                        "op": 25,
+                        "op": 23,
                         "op_port": 0
                     },
                     {
                         "dag_port": 6,
-                        "op": 26,
+                        "op": 24,
                         "op_port": 0
                     },
                     {
                         "dag_port": 7,
-                        "op": 27,
+                        "op": 25,
                         "op_port": 0
                     }
                 ],
@@ -165,6 +165,31 @@
                         ],
                         "predecessors": [
                             {
+                                "op": 14,
+                                "port": 0
+                            },
+                            {
+                                "op": 15,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 2,
+                        "op": "split_range",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
                                 "op": 16,
                                 "port": 0
                             },
@@ -175,7 +200,7 @@
                         ]
                     },
                     {
-                        "id": 2,
+                        "id": 3,
                         "op": "split_range",
                         "output_type": [
                             {
@@ -200,7 +225,7 @@
                         ]
                     },
                     {
-                        "id": 3,
+                        "id": 4,
                         "op": "split_range",
                         "output_type": [
                             {
@@ -220,31 +245,6 @@
                             },
                             {
                                 "op": 21,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "id": 4,
-                        "op": "split_range",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 22,
-                                "port": 0
-                            },
-                            {
-                                "op": 23,
                                 "port": 0
                             }
                         ]
@@ -335,9 +335,9 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %0 = shl i64 %.3, 32\n  %.35.i = and i64 %.2, 4294967295\n  %.19.i = or i64 %0, %.35.i\n  %.56.i = xor i64 %.19.i, 4294967295\n  store i64 %.56.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                        "add_index": false,
                         "id": 9,
-                        "op": "map",
+                        "op": "column_scan",
                         "output_type": [
                             {
                                 "type": "long"
@@ -351,56 +351,14 @@
                         ]
                     },
                     {
-                        "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
-                        "id": 10,
-                        "op": "reduce_by_key",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 11,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
-                        "add_index": false,
-                        "id": 11,
-                        "op": "column_scan",
-                        "output_type": [
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            }
-                        ],
-                        "predecessors": [
-                            {
-                                "op": 12,
-                                "port": 0
-                            }
-                        ]
-                    },
-                    {
                         "columns": [
                             {
                                 "idx": 0,
                                 "ranges": []
-                            },
-                            {
-                                "idx": 1,
-                                "ranges": []
                             }
                         ],
                         "filesystem": "file",
-                        "id": 12,
+                        "id": 10,
                         "op": "parquet_scan",
                         "output_type": [
                             {
@@ -412,34 +370,19 @@
                                     }
                                 ],
                                 "type": "array"
-                            },
-                            {
-                                "layout": "C",
-                                "num_dimensions": 1,
-                                "tuple_type": [
-                                    {
-                                        "type": "long"
-                                    }
-                                ],
-                                "type": "array"
                             }
                         ],
                         "predecessors": [
                             {
-                                "op": 13,
+                                "op": 11,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 13,
+                        "id": 11,
                         "inner_dag": {
                             "inputs": [
-                                {
-                                    "dag_port": 0,
-                                    "op": 16,
-                                    "op_port": 0
-                                },
                                 {
                                     "dag_port": 0,
                                     "op": 17,
@@ -473,6 +416,11 @@
                                 {
                                     "dag_port": 0,
                                     "op": 23,
+                                    "op_port": 0
+                                },
+                                {
+                                    "dag_port": 0,
+                                    "op": 24,
                                     "op_port": 0
                                 }
                             ],
@@ -1117,7 +1065,7 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 15,
+                                            "op": 16,
                                             "port": 0
                                         }
                                     ]
@@ -1370,13 +1318,768 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 15,
+                                            "op": 16,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
                                     "id": 4,
+                                    "inner_dag": {
+                                        "inputs": [
+                                            {
+                                                "dag_port": 0,
+                                                "op": 12,
+                                                "op_port": 0
+                                            }
+                                        ],
+                                        "operators": [
+                                            {
+                                                "add_index": false,
+                                                "id": 0,
+                                                "op": "row_scan",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 1,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 1,
+                                                "inner_dag": {
+                                                    "inputs": [
+                                                        {
+                                                            "dag_port": 0,
+                                                            "op": 7,
+                                                            "op_port": 0
+                                                        },
+                                                        {
+                                                            "dag_port": 0,
+                                                            "op": 8,
+                                                            "op_port": 0
+                                                        }
+                                                    ],
+                                                    "operators": [
+                                                        {
+                                                            "id": 0,
+                                                            "op": "materialize_row_vector",
+                                                            "output_type": [
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "type": "long"
+                                                                        },
+                                                                        {
+                                                                            "layout": "C",
+                                                                            "num_dimensions": 1,
+                                                                            "tuple_type": [
+                                                                                {
+                                                                                    "type": "long"
+                                                                                }
+                                                                            ],
+                                                                            "type": "array"
+                                                                        },
+                                                                        {
+                                                                            "layout": "C",
+                                                                            "num_dimensions": 1,
+                                                                            "tuple_type": [
+                                                                                {
+                                                                                    "type": "long"
+                                                                                }
+                                                                            ],
+                                                                            "type": "array"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                }
+                                                            ],
+                                                            "predecessors": [
+                                                                {
+                                                                    "op": 1,
+                                                                    "port": 0
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "id": 1,
+                                                            "op": "cartesian",
+                                                            "output_type": [
+                                                                {
+                                                                    "type": "long"
+                                                                },
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "type": "long"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                },
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "type": "long"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                }
+                                                            ],
+                                                            "predecessors": [
+                                                                {
+                                                                    "op": 5,
+                                                                    "port": 0
+                                                                },
+                                                                {
+                                                                    "op": 2,
+                                                                    "port": 0
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "id": 2,
+                                                            "op": "materialize_column_chunks",
+                                                            "output_type": [
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "type": "long"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                },
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "type": "long"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                }
+                                                            ],
+                                                            "predecessors": [
+                                                                {
+                                                                    "op": 3,
+                                                                    "port": 0
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "add_index": false,
+                                                            "id": 3,
+                                                            "op": "row_scan",
+                                                            "output_type": [
+                                                                {
+                                                                    "type": "long"
+                                                                },
+                                                                {
+                                                                    "type": "long"
+                                                                }
+                                                            ],
+                                                            "predecessors": [
+                                                                {
+                                                                    "op": 4,
+                                                                    "port": 0
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "add_index": false,
+                                                            "id": 4,
+                                                            "op": "row_scan",
+                                                            "output_type": [
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "type": "long"
+                                                                        },
+                                                                        {
+                                                                            "type": "long"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                }
+                                                            ],
+                                                            "predecessors": [
+                                                                {
+                                                                    "op": 6,
+                                                                    "port": 0
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "id": 5,
+                                                            "op": "projection",
+                                                            "output_type": [
+                                                                {
+                                                                    "type": "long"
+                                                                }
+                                                            ],
+                                                            "positions": [
+                                                                0
+                                                            ],
+                                                            "predecessors": [
+                                                                {
+                                                                    "op": 7,
+                                                                    "port": 0
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "id": 6,
+                                                            "op": "projection",
+                                                            "output_type": [
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "layout": "C",
+                                                                            "num_dimensions": 1,
+                                                                            "tuple_type": [
+                                                                                {
+                                                                                    "type": "long"
+                                                                                },
+                                                                                {
+                                                                                    "type": "long"
+                                                                                }
+                                                                            ],
+                                                                            "type": "array"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                }
+                                                            ],
+                                                            "positions": [
+                                                                1
+                                                            ],
+                                                            "predecessors": [
+                                                                {
+                                                                    "op": 8,
+                                                                    "port": 0
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "id": 7,
+                                                            "op": "parameter_lookup",
+                                                            "output_type": [
+                                                                {
+                                                                    "type": "long"
+                                                                },
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "layout": "C",
+                                                                            "num_dimensions": 1,
+                                                                            "tuple_type": [
+                                                                                {
+                                                                                    "type": "long"
+                                                                                },
+                                                                                {
+                                                                                    "type": "long"
+                                                                                }
+                                                                            ],
+                                                                            "type": "array"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                }
+                                                            ],
+                                                            "predecessors": []
+                                                        },
+                                                        {
+                                                            "id": 8,
+                                                            "op": "parameter_lookup",
+                                                            "output_type": [
+                                                                {
+                                                                    "type": "long"
+                                                                },
+                                                                {
+                                                                    "layout": "C",
+                                                                    "num_dimensions": 1,
+                                                                    "tuple_type": [
+                                                                        {
+                                                                            "layout": "C",
+                                                                            "num_dimensions": 1,
+                                                                            "tuple_type": [
+                                                                                {
+                                                                                    "type": "long"
+                                                                                },
+                                                                                {
+                                                                                    "type": "long"
+                                                                                }
+                                                                            ],
+                                                                            "type": "array"
+                                                                        }
+                                                                    ],
+                                                                    "type": "array"
+                                                                }
+                                                            ],
+                                                            "predecessors": []
+                                                        }
+                                                    ],
+                                                    "outputs": [
+                                                        {
+                                                            "op": 0,
+                                                            "port": 0
+                                                        }
+                                                    ]
+                                                },
+                                                "op": "nested_map",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            },
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "type": "long"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
+                                                            },
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "type": "long"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 2,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "add_index": false,
+                                                "id": 2,
+                                                "op": "row_scan",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "type": "long"
+                                                                    },
+                                                                    {
+                                                                        "type": "long"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 12,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 3,
+                                                "op": "expand_pattern",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 15,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 16,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "column_names": [
+                                                    "v0"
+                                                ],
+                                                "id": 4,
+                                                "op": "materialize_parquet_file",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 5,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 3,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 5,
+                                                "op": "materialize_column_chunks",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 6,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 6,
+                                                "num_elements": 100,
+                                                "op": "topk",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 7,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %0 = shl i64 %.3, 32\n  %.35.i = and i64 %.2, 4294967295\n  %.19.i = or i64 %0, %.35.i\n  %.56.i = xor i64 %.19.i, 4294967295\n  store i64 %.56.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                                                "id": 7,
+                                                "op": "map",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 8,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                                                "id": 8,
+                                                "op": "reduce_by_key",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 9,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "add_index": false,
+                                                "id": 9,
+                                                "op": "column_scan",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 10,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "idx": 0,
+                                                        "ranges": []
+                                                    },
+                                                    {
+                                                        "idx": 1,
+                                                        "ranges": []
+                                                    }
+                                                ],
+                                                "filesystem": "s3",
+                                                "id": 10,
+                                                "op": "parquet_scan",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 11,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 11,
+                                                "op": "exchange_s3",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 0,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 13,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 14,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 12,
+                                                "op": "parameter_lookup",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            },
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "layout": "C",
+                                                                        "num_dimensions": 1,
+                                                                        "tuple_type": [
+                                                                            {
+                                                                                "type": "long"
+                                                                            },
+                                                                            {
+                                                                                "type": "long"
+                                                                            }
+                                                                        ],
+                                                                        "type": "array"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": []
+                                            },
+                                            {
+                                                "id": 13,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "static_cast<long>(   runtime::operators::process_num_workers())"
+                                                ]
+                                            },
+                                            {
+                                                "id": 14,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "static_cast<long>(   runtime::operators::process_worker_id())"
+                                                ]
+                                            },
+                                            {
+                                                "id": 15,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "R\"STRING(   {       \"filename\" : \"/tmp/jitq-query-result-%1$d.parquet\",       \"filesystem\" : \"file\"   })STRING\""
+                                                ]
+                                            },
+                                            {
+                                                "id": 16,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "static_cast<long>(   runtime::operators::process_worker_id())"
+                                                ]
+                                            }
+                                        ],
+                                        "outputs": [
+                                            {
+                                                "op": 4,
+                                                "port": 0
+                                            }
+                                        ]
+                                    },
+                                    "num_inputs": 1,
+                                    "op": "pipeline",
+                                    "output_type": [
+                                        {
+                                            "type": "std::string"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 5,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 5,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -2207,58 +2910,7 @@
                                             },
                                             {
                                                 "id": 6,
-                                                "op": "expand_pattern",
-                                                "output_type": [
-                                                    {
-                                                        "type": "std::string"
-                                                    }
-                                                ],
-                                                "predecessors": [
-                                                    {
-                                                        "op": 25,
-                                                        "port": 0
-                                                    },
-                                                    {
-                                                        "op": 26,
-                                                        "port": 0
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "column_names": [
-                                                    "v0",
-                                                    "v1"
-                                                ],
-                                                "id": 7,
-                                                "op": "materialize_parquet_file",
-                                                "output_type": [
-                                                    {
-                                                        "type": "std::string"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    }
-                                                ],
-                                                "predecessors": [
-                                                    {
-                                                        "op": 8,
-                                                        "port": 0
-                                                    },
-                                                    {
-                                                        "op": 6,
-                                                        "port": 0
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "id": 8,
-                                                "op": "materialize_column_chunks",
+                                                "op": "materialize_row_vector",
                                                 "output_type": [
                                                     {
                                                         "layout": "C",
@@ -2266,14 +2918,87 @@
                                                         "tuple_type": [
                                                             {
                                                                 "type": "long"
+                                                            },
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "layout": "C",
+                                                                        "num_dimensions": 1,
+                                                                        "tuple_type": [
+                                                                            {
+                                                                                "type": "long"
+                                                                            },
+                                                                            {
+                                                                                "type": "long"
+                                                                            }
+                                                                        ],
+                                                                        "type": "array"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
                                                             }
                                                         ],
                                                         "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 7,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 7,
+                                                "op": "groupby",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
                                                     },
                                                     {
                                                         "layout": "C",
                                                         "num_dimensions": 1,
                                                         "tuple_type": [
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "type": "long"
+                                                                    },
+                                                                    {
+                                                                        "type": "long"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 8,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 8,
+                                                "op": "partition",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            },
                                                             {
                                                                 "type": "long"
                                                             }
@@ -2285,8 +3010,13 @@
                                                     {
                                                         "op": 9,
                                                         "port": 0
+                                                    },
+                                                    {
+                                                        "op": 25,
+                                                        "port": 0
                                                     }
-                                                ]
+                                                ],
+                                                "seed": 0
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
@@ -2692,31 +3422,18 @@
                                                 "op": "constant_tuple",
                                                 "output_type": [
                                                     {
-                                                        "type": "std::string"
-                                                    }
-                                                ],
-                                                "predecessors": [],
-                                                "values": [
-                                                    "R\"STRING(   {       \"filename\" : \"/tmp/jitq-query-result-%1$d.parquet\",       \"filesystem\" : \"file\"   })STRING\""
-                                                ]
-                                            },
-                                            {
-                                                "id": 26,
-                                                "op": "constant_tuple",
-                                                "output_type": [
-                                                    {
                                                         "type": "long"
                                                     }
                                                 ],
                                                 "predecessors": [],
                                                 "values": [
-                                                    "static_cast<long>(   runtime::operators::process_worker_id())"
+                                                    "static_cast<long>(   runtime::operators::process_num_workers())"
                                                 ]
                                             }
                                         ],
                                         "outputs": [
                                             {
-                                                "op": 7,
+                                                "op": 6,
                                                 "port": 0
                                             }
                                         ]
@@ -2725,31 +3442,49 @@
                                     "op": "pipeline",
                                     "output_type": [
                                         {
-                                            "type": "std::string"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
+                                            "layout": "C",
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
+                                                {
+                                                    "type": "long"
+                                                },
+                                                {
+                                                    "layout": "C",
+                                                    "num_dimensions": 1,
+                                                    "tuple_type": [
+                                                        {
+                                                            "layout": "C",
+                                                            "num_dimensions": 1,
+                                                            "tuple_type": [
+                                                                {
+                                                                    "type": "long"
+                                                                },
+                                                                {
+                                                                    "type": "long"
+                                                                }
+                                                            ],
+                                                            "type": "array"
+                                                        }
+                                                    ],
+                                                    "type": "array"
+                                                }
+                                            ],
+                                            "type": "array"
                                         }
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 6,
+                                            "op": 7,
                                             "port": 0
                                         },
                                         {
-                                            "op": 5,
+                                            "op": 6,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 5,
+                                    "id": 6,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -4230,251 +4965,11 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 7,
+                                            "op": 8,
                                             "port": 0
                                         },
                                         {
                                             "op": 3,
-                                            "port": 0
-                                        }
-                                    ]
-                                },
-                                {
-                                    "id": 6,
-                                    "inner_dag": {
-                                        "inputs": [
-                                            {
-                                                "dag_port": 0,
-                                                "op": 4,
-                                                "op_port": 0
-                                            }
-                                        ],
-                                        "operators": [
-                                            {
-                                                "add_index": false,
-                                                "id": 0,
-                                                "op": "row_scan",
-                                                "output_type": [
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    }
-                                                ],
-                                                "predecessors": [
-                                                    {
-                                                        "op": 4,
-                                                        "port": 0
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "id": 1,
-                                                "op": "materialize_row_vector",
-                                                "output_type": [
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            },
-                                                            {
-                                                                "layout": "C",
-                                                                "num_dimensions": 1,
-                                                                "tuple_type": [
-                                                                    {
-                                                                        "layout": "C",
-                                                                        "num_dimensions": 1,
-                                                                        "tuple_type": [
-                                                                            {
-                                                                                "type": "long"
-                                                                            },
-                                                                            {
-                                                                                "type": "long"
-                                                                            },
-                                                                            {
-                                                                                "type": "long"
-                                                                            }
-                                                                        ],
-                                                                        "type": "array"
-                                                                    }
-                                                                ],
-                                                                "type": "array"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    }
-                                                ],
-                                                "predecessors": [
-                                                    {
-                                                        "op": 2,
-                                                        "port": 0
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "id": 2,
-                                                "op": "groupby",
-                                                "output_type": [
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "layout": "C",
-                                                                "num_dimensions": 1,
-                                                                "tuple_type": [
-                                                                    {
-                                                                        "type": "long"
-                                                                    },
-                                                                    {
-                                                                        "type": "long"
-                                                                    },
-                                                                    {
-                                                                        "type": "long"
-                                                                    }
-                                                                ],
-                                                                "type": "array"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    }
-                                                ],
-                                                "predecessors": [
-                                                    {
-                                                        "op": 3,
-                                                        "port": 0
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "id": 3,
-                                                "op": "partition",
-                                                "output_type": [
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            },
-                                                            {
-                                                                "type": "long"
-                                                            },
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    }
-                                                ],
-                                                "predecessors": [
-                                                    {
-                                                        "op": 0,
-                                                        "port": 0
-                                                    },
-                                                    {
-                                                        "op": 5,
-                                                        "port": 0
-                                                    }
-                                                ],
-                                                "seed": 0
-                                            },
-                                            {
-                                                "id": 4,
-                                                "op": "parameter_lookup",
-                                                "output_type": [
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            },
-                                                            {
-                                                                "type": "long"
-                                                            },
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    }
-                                                ],
-                                                "predecessors": []
-                                            },
-                                            {
-                                                "id": 5,
-                                                "op": "constant_tuple",
-                                                "output_type": [
-                                                    {
-                                                        "type": "long"
-                                                    }
-                                                ],
-                                                "predecessors": [],
-                                                "values": [
-                                                    "static_cast<long>(   runtime::operators::process_num_workers())"
-                                                ]
-                                            }
-                                        ],
-                                        "outputs": [
-                                            {
-                                                "op": 1,
-                                                "port": 0
-                                            }
-                                        ]
-                                    },
-                                    "num_inputs": 1,
-                                    "op": "pipeline",
-                                    "output_type": [
-                                        {
-                                            "layout": "C",
-                                            "num_dimensions": 1,
-                                            "tuple_type": [
-                                                {
-                                                    "type": "long"
-                                                },
-                                                {
-                                                    "layout": "C",
-                                                    "num_dimensions": 1,
-                                                    "tuple_type": [
-                                                        {
-                                                            "layout": "C",
-                                                            "num_dimensions": 1,
-                                                            "tuple_type": [
-                                                                {
-                                                                    "type": "long"
-                                                                },
-                                                                {
-                                                                    "type": "long"
-                                                                },
-                                                                {
-                                                                    "type": "long"
-                                                                }
-                                                            ],
-                                                            "type": "array"
-                                                        }
-                                                    ],
-                                                    "type": "array"
-                                                }
-                                            ],
-                                            "type": "array"
-                                        }
-                                    ],
-                                    "predecessors": [
-                                        {
-                                            "op": 8,
                                             "port": 0
                                         }
                                     ]
@@ -4714,13 +5209,253 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 8,
+                                            "op": 9,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
                                     "id": 8,
+                                    "inner_dag": {
+                                        "inputs": [
+                                            {
+                                                "dag_port": 0,
+                                                "op": 4,
+                                                "op_port": 0
+                                            }
+                                        ],
+                                        "operators": [
+                                            {
+                                                "add_index": false,
+                                                "id": 0,
+                                                "op": "row_scan",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 4,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 1,
+                                                "op": "materialize_row_vector",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            },
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "layout": "C",
+                                                                        "num_dimensions": 1,
+                                                                        "tuple_type": [
+                                                                            {
+                                                                                "type": "long"
+                                                                            },
+                                                                            {
+                                                                                "type": "long"
+                                                                            },
+                                                                            {
+                                                                                "type": "long"
+                                                                            }
+                                                                        ],
+                                                                        "type": "array"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 2,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 2,
+                                                "op": "groupby",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "layout": "C",
+                                                                "num_dimensions": 1,
+                                                                "tuple_type": [
+                                                                    {
+                                                                        "type": "long"
+                                                                    },
+                                                                    {
+                                                                        "type": "long"
+                                                                    },
+                                                                    {
+                                                                        "type": "long"
+                                                                    }
+                                                                ],
+                                                                "type": "array"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 3,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 3,
+                                                "op": "partition",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            },
+                                                            {
+                                                                "type": "long"
+                                                            },
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 0,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 5,
+                                                        "port": 0
+                                                    }
+                                                ],
+                                                "seed": 0
+                                            },
+                                            {
+                                                "id": 4,
+                                                "op": "parameter_lookup",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            },
+                                                            {
+                                                                "type": "long"
+                                                            },
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": []
+                                            },
+                                            {
+                                                "id": 5,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "static_cast<long>(   runtime::operators::process_num_workers())"
+                                                ]
+                                            }
+                                        ],
+                                        "outputs": [
+                                            {
+                                                "op": 1,
+                                                "port": 0
+                                            }
+                                        ]
+                                    },
+                                    "num_inputs": 1,
+                                    "op": "pipeline",
+                                    "output_type": [
+                                        {
+                                            "layout": "C",
+                                            "num_dimensions": 1,
+                                            "tuple_type": [
+                                                {
+                                                    "type": "long"
+                                                },
+                                                {
+                                                    "layout": "C",
+                                                    "num_dimensions": 1,
+                                                    "tuple_type": [
+                                                        {
+                                                            "layout": "C",
+                                                            "num_dimensions": 1,
+                                                            "tuple_type": [
+                                                                {
+                                                                    "type": "long"
+                                                                },
+                                                                {
+                                                                    "type": "long"
+                                                                },
+                                                                {
+                                                                    "type": "long"
+                                                                }
+                                                            ],
+                                                            "type": "array"
+                                                        }
+                                                    ],
+                                                    "type": "array"
+                                                }
+                                            ],
+                                            "type": "array"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 9,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 9,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -6079,7 +6814,7 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 9,
+                                            "op": 10,
                                             "port": 0
                                         },
                                         {
@@ -6089,7 +6824,7 @@
                                     ]
                                 },
                                 {
-                                    "id": 9,
+                                    "id": 10,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -7481,17 +8216,17 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 10,
+                                            "op": 11,
                                             "port": 0
                                         },
                                         {
-                                            "op": 14,
+                                            "op": 15,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 10,
+                                    "id": 11,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -8883,7 +9618,7 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 11,
+                                            "op": 12,
                                             "port": 0
                                         },
                                         {
@@ -8893,7 +9628,7 @@
                                     ]
                                 },
                                 {
-                                    "id": 11,
+                                    "id": 12,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -10270,17 +11005,17 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 12,
+                                            "op": 13,
                                             "port": 0
                                         },
                                         {
-                                            "op": 13,
+                                            "op": 14,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 12,
+                                    "id": 13,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -10803,17 +11538,17 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 16,
+                                            "op": 17,
                                             "port": 0
                                         },
                                         {
-                                            "op": 17,
+                                            "op": 18,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 13,
+                                    "id": 14,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -11367,17 +12102,17 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 18,
+                                            "op": 19,
                                             "port": 0
                                         },
                                         {
-                                            "op": 19,
+                                            "op": 20,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 14,
+                                    "id": 15,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -11900,17 +12635,17 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 20,
+                                            "op": 21,
                                             "port": 0
                                         },
                                         {
-                                            "op": 21,
+                                            "op": 22,
                                             "port": 0
                                         }
                                     ]
                                 },
                                 {
-                                    "id": 15,
+                                    "id": 16,
                                     "inner_dag": {
                                         "inputs": [
                                             {
@@ -12347,69 +13082,14 @@
                                     ],
                                     "predecessors": [
                                         {
-                                            "op": 22,
+                                            "op": 23,
                                             "port": 0
                                         },
                                         {
-                                            "op": 23,
+                                            "op": 24,
                                             "port": 0
                                         }
                                     ]
-                                },
-                                {
-                                    "id": 16,
-                                    "op": "parameter_lookup",
-                                    "output_type": [
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "long"
-                                        },
-                                        {
-                                            "type": "std::string"
-                                        },
-                                        {
-                                            "type": "std::string"
-                                        },
-                                        {
-                                            "type": "std::string"
-                                        },
-                                        {
-                                            "type": "std::string"
-                                        }
-                                    ],
-                                    "predecessors": []
                                 },
                                 {
                                     "id": 17,
@@ -12795,6 +13475,61 @@
                                         }
                                     ],
                                     "predecessors": []
+                                },
+                                {
+                                    "id": 24,
+                                    "op": "parameter_lookup",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "std::string"
+                                        },
+                                        {
+                                            "type": "std::string"
+                                        },
+                                        {
+                                            "type": "std::string"
+                                        },
+                                        {
+                                            "type": "std::string"
+                                        }
+                                    ],
+                                    "predecessors": []
                                 }
                             ],
                             "outputs": [
@@ -12821,13 +13556,13 @@
                         ],
                         "predecessors": [
                             {
-                                "op": 14,
+                                "op": 12,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 14,
+                        "id": 12,
                         "op": "cartesian",
                         "output_type": [
                             {
@@ -12885,13 +13620,13 @@
                                 "port": 0
                             },
                             {
-                                "op": 15,
+                                "op": 13,
                                 "port": 0
                             }
                         ]
                     },
                     {
-                        "id": 15,
+                        "id": 13,
                         "num_inputs": 4,
                         "op": "zip",
                         "output_type": [
@@ -12910,21 +13645,50 @@
                         ],
                         "predecessors": [
                             {
+                                "op": 22,
+                                "port": 0
+                            },
+                            {
+                                "op": 23,
+                                "port": 0
+                            },
+                            {
                                 "op": 24,
                                 "port": 0
                             },
                             {
                                 "op": 25,
                                 "port": 0
-                            },
-                            {
-                                "op": 26,
-                                "port": 0
-                            },
-                            {
-                                "op": 27,
-                                "port": 0
                             }
+                        ]
+                    },
+                    {
+                        "id": 14,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 15,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "static_cast<long>(   runtime::operators::process_num_workers())"
                         ]
                     },
                     {
@@ -13019,29 +13783,20 @@
                         "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
-                            },
-                            {
-                                "type": "long"
+                                "type": "std::string"
                             }
                         ],
                         "predecessors": []
                     },
                     {
                         "id": 23,
-                        "op": "constant_tuple",
+                        "op": "parameter_lookup",
                         "output_type": [
                             {
-                                "type": "long"
+                                "type": "std::string"
                             }
                         ],
-                        "predecessors": [],
-                        "values": [
-                            "static_cast<long>(   runtime::operators::process_num_workers())"
-                        ]
+                        "predecessors": []
                     },
                     {
                         "id": 24,
@@ -13055,26 +13810,6 @@
                     },
                     {
                         "id": 25,
-                        "op": "parameter_lookup",
-                        "output_type": [
-                            {
-                                "type": "std::string"
-                            }
-                        ],
-                        "predecessors": []
-                    },
-                    {
-                        "id": 26,
-                        "op": "parameter_lookup",
-                        "output_type": [
-                            {
-                                "type": "std::string"
-                            }
-                        ],
-                        "predecessors": []
-                    },
-                    {
-                        "id": 27,
                         "op": "parameter_lookup",
                         "output_type": [
                             {

@@ -1361,12 +1361,12 @@
                                         "inputs": [
                                             {
                                                 "dag_port": 0,
-                                                "op": 19,
+                                                "op": 20,
                                                 "op_port": 0
                                             },
                                             {
                                                 "dag_port": 1,
-                                                "op": 22,
+                                                "op": 23,
                                                 "op_port": 0
                                             }
                                         ],
@@ -2552,7 +2552,7 @@
                                                 ],
                                                 "predecessors": [
                                                     {
-                                                        "op": 19,
+                                                        "op": 20,
                                                         "port": 0
                                                     }
                                                 ]
@@ -2588,7 +2588,7 @@
                                                 ],
                                                 "predecessors": [
                                                     {
-                                                        "op": 22,
+                                                        "op": 23,
                                                         "port": 0
                                                     }
                                                 ]
@@ -2603,11 +2603,11 @@
                                                 ],
                                                 "predecessors": [
                                                     {
-                                                        "op": 25,
+                                                        "op": 26,
                                                         "port": 0
                                                     },
                                                     {
-                                                        "op": 26,
+                                                        "op": 27,
                                                         "port": 0
                                                     }
                                                 ]
@@ -2699,9 +2699,9 @@
                                                 ]
                                             },
                                             {
-                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %const = bitcast i64 4363686772736 to i64\n  %0 = shl i64 %.6, 42\n  %.40.i = shl i64 %.9, 35\n  %.51.i = and i64 %.40.i, %const\n  %.88.i = and i64 %.2, 262143\n  %1 = or i64 %0, %.88.i\n  %.26.i = or i64 %1, %.51.i\n  %const_mat = add i64 %const, 262143\n  %.109.i = xor i64 %.26.i, %const_mat\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.109.i, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.7, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.8, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                                                 "id": 9,
-                                                "op": "map",
+                                                "num_elements": 100,
+                                                "op": "topk",
                                                 "output_type": [
                                                     {
                                                         "type": "long"
@@ -2724,25 +2724,10 @@
                                                 ]
                                             },
                                             {
-                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %.1.repack17 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack17, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  %.1.repack15 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 8\n  store i64 %.10, i64* %.1.repack15, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %const = bitcast i64 4363686772736 to i64\n  %0 = shl i64 %.6, 42\n  %.40.i = shl i64 %.9, 35\n  %.51.i = and i64 %.40.i, %const\n  %.88.i = and i64 %.2, 262143\n  %1 = or i64 %0, %.88.i\n  %.26.i = or i64 %1, %.51.i\n  %const_mat = add i64 %const, 262143\n  %.109.i = xor i64 %.26.i, %const_mat\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.109.i, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.7, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.8, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                                                 "id": 10,
                                                 "op": "map",
                                                 "output_type": [
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
                                                     {
                                                         "type": "long"
                                                     },
@@ -2764,9 +2749,9 @@
                                                 ]
                                             },
                                             {
-                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) #0 {\nentry:\n  %.30.i = icmp eq i64 %.5, %.10\n  %.26 = bitcast i8* %.1 to i1*\n  store i1 %.30.i, i1* %.26, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline norecurse nounwind\ndefine void @cfuncnotuniquename(<{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) local_unnamed_addr #0 {\nentry:\n  %.1.repack17 = bitcast <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack17, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  %.1.repack7 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 4\n  store i64 %.6, i64* %.1.repack7, align 1\n  %.1.repack9 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 5\n  store i64 %.7, i64* %.1.repack9, align 1\n  %.1.repack11 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 6\n  store i64 %.8, i64* %.1.repack11, align 1\n  %.1.repack13 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 7\n  store i64 %.9, i64* %.1.repack13, align 1\n  %.1.repack15 = getelementptr inbounds <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>, <{ i64, i64, i64, i64, i64, i64, i64, i64, i64 }>* %.1, i64 0, i32 8\n  store i64 %.10, i64* %.1.repack15, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline norecurse nounwind }\n",
                                                 "id": 11,
-                                                "op": "filter",
+                                                "op": "map",
                                                 "output_type": [
                                                     {
                                                         "type": "long"
@@ -2804,9 +2789,9 @@
                                                 ]
                                             },
                                             {
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"id\"\n\n; Function Attrs: alwaysinline\ndefine void @cfuncnotuniquename(i8* %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5, i64 %.6, i64 %.7, i64 %.8, i64 %.9, i64 %.10) #0 {\nentry:\n  %.30.i = icmp eq i64 %.5, %.10\n  %.26 = bitcast i8* %.1 to i1*\n  store i1 %.30.i, i1* %.26, align 1\n  ret void\n}\n\nattributes #0 = { alwaysinline }\n",
                                                 "id": 12,
-                                                "num_keys": 1,
-                                                "op": "join",
+                                                "op": "filter",
                                                 "output_type": [
                                                     {
                                                         "type": "long"
@@ -2840,18 +2825,17 @@
                                                     {
                                                         "op": 13,
                                                         "port": 0
-                                                    },
-                                                    {
-                                                        "op": 14,
-                                                        "port": 0
                                                     }
                                                 ]
                                             },
                                             {
-                                                "add_index": false,
                                                 "id": 13,
-                                                "op": "column_scan",
+                                                "num_keys": 1,
+                                                "op": "join",
                                                 "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
                                                     {
                                                         "type": "long"
                                                     },
@@ -2878,6 +2862,10 @@
                                                     }
                                                 ],
                                                 "predecessors": [
+                                                    {
+                                                        "op": 14,
+                                                        "port": 0
+                                                    },
                                                     {
                                                         "op": 15,
                                                         "port": 0
@@ -2894,11 +2882,48 @@
                                                     },
                                                     {
                                                         "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
                                                     }
                                                 ],
                                                 "predecessors": [
                                                     {
                                                         "op": 16,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "add_index": false,
+                                                "id": 15,
+                                                "op": "column_scan",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 17,
                                                         "port": 0
                                                     }
                                                 ]
@@ -2939,112 +2964,69 @@
                                                     }
                                                 ],
                                                 "filesystem": "s3",
-                                                "id": 15,
-                                                "op": "parquet_scan",
-                                                "output_type": [
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    },
-                                                    {
-                                                        "layout": "C",
-                                                        "num_dimensions": 1,
-                                                        "tuple_type": [
-                                                            {
-                                                                "type": "long"
-                                                            }
-                                                        ],
-                                                        "type": "array"
-                                                    }
-                                                ],
-                                                "predecessors": [
-                                                    {
-                                                        "op": 17,
-                                                        "port": 0
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                "columns": [
-                                                    {
-                                                        "idx": 0,
-                                                        "ranges": []
-                                                    },
-                                                    {
-                                                        "idx": 1,
-                                                        "ranges": []
-                                                    }
-                                                ],
-                                                "filesystem": "s3",
                                                 "id": 16,
                                                 "op": "parquet_scan",
                                                 "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
                                                     {
                                                         "layout": "C",
                                                         "num_dimensions": 1,
@@ -3074,33 +3056,44 @@
                                                 ]
                                             },
                                             {
+                                                "columns": [
+                                                    {
+                                                        "idx": 0,
+                                                        "ranges": []
+                                                    },
+                                                    {
+                                                        "idx": 1,
+                                                        "ranges": []
+                                                    }
+                                                ],
+                                                "filesystem": "s3",
                                                 "id": 17,
-                                                "op": "exchange_s3",
+                                                "op": "parquet_scan",
                                                 "output_type": [
                                                     {
-                                                        "type": "std::string"
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
                                                     },
                                                     {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
-                                                    },
-                                                    {
-                                                        "type": "long"
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
                                                     }
                                                 ],
                                                 "predecessors": [
                                                     {
-                                                        "op": 0,
-                                                        "port": 0
-                                                    },
-                                                    {
-                                                        "op": 20,
-                                                        "port": 0
-                                                    },
-                                                    {
-                                                        "op": 21,
+                                                        "op": 19,
                                                         "port": 0
                                                     }
                                                 ]
@@ -3124,21 +3117,53 @@
                                                 ],
                                                 "predecessors": [
                                                     {
-                                                        "op": 1,
+                                                        "op": 0,
                                                         "port": 0
                                                     },
                                                     {
-                                                        "op": 23,
+                                                        "op": 21,
                                                         "port": 0
                                                     },
                                                     {
-                                                        "op": 24,
+                                                        "op": 22,
                                                         "port": 0
                                                     }
                                                 ]
                                             },
                                             {
                                                 "id": 19,
+                                                "op": "exchange_s3",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 1,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 24,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 25,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 20,
                                                 "op": "parameter_lookup",
                                                 "output_type": [
                                                     {
@@ -3191,19 +3216,6 @@
                                                     }
                                                 ],
                                                 "predecessors": []
-                                            },
-                                            {
-                                                "id": 20,
-                                                "op": "constant_tuple",
-                                                "output_type": [
-                                                    {
-                                                        "type": "long"
-                                                    }
-                                                ],
-                                                "predecessors": [],
-                                                "values": [
-                                                    "static_cast<long>(   runtime::operators::process_num_workers())"
-                                                ]
                                             },
                                             {
                                                 "id": 21,
@@ -3215,11 +3227,24 @@
                                                 ],
                                                 "predecessors": [],
                                                 "values": [
-                                                    "static_cast<long>(   runtime::operators::process_worker_id())"
+                                                    "static_cast<long>(   runtime::operators::process_num_workers())"
                                                 ]
                                             },
                                             {
                                                 "id": 22,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "static_cast<long>(   runtime::operators::process_worker_id())"
+                                                ]
+                                            },
+                                            {
+                                                "id": 23,
                                                 "op": "parameter_lookup",
                                                 "output_type": [
                                                     {
@@ -3256,7 +3281,7 @@
                                                 "predecessors": []
                                             },
                                             {
-                                                "id": 23,
+                                                "id": 24,
                                                 "op": "constant_tuple",
                                                 "output_type": [
                                                     {
@@ -3269,7 +3294,7 @@
                                                 ]
                                             },
                                             {
-                                                "id": 24,
+                                                "id": 25,
                                                 "op": "constant_tuple",
                                                 "output_type": [
                                                     {
@@ -3282,7 +3307,7 @@
                                                 ]
                                             },
                                             {
-                                                "id": 25,
+                                                "id": 26,
                                                 "op": "constant_tuple",
                                                 "output_type": [
                                                     {
@@ -3295,7 +3320,7 @@
                                                 ]
                                             },
                                             {
-                                                "id": 26,
+                                                "id": 27,
                                                 "op": "constant_tuple",
                                                 "output_type": [
                                                     {
