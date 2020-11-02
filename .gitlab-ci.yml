@@ -60,6 +60,8 @@ rel-build:
   artifacts:
     paths:
       - backend/build/*
+    exclude:
+      - backend/build/**/*.o
 
 dbg-build:
   stage: build
@@ -76,6 +78,8 @@ dbg-build:
   artifacts:
     paths:
       - backend/build/*
+    exclude:
+      - backend/build/**/*.o
 
 clang-tidy:
   stage: test
