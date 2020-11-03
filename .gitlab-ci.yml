@@ -122,7 +122,7 @@ python-tests-omp:
     - $PYTEST_ASAN_CMD test_omp_environment.py --target omp
     - $PYTEST_ASAN_CMD test_operators.py --target omp
 
-python-tests-asan:
+.tests-asan:
   stage: test
   dependencies:
     - dbg-build
@@ -131,21 +131,27 @@ python-tests-asan:
   variables:
     OMP_NUM_THREADS: 1
     ASAN_OPTIONS: detect_leaks=1
+
+python-tests-asan:
+  extends: .tests-asan
   script:
     - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_cli_runner.py
+
+operator-tests-asan:
+  extends: .tests-asan
+  script:
+    - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_operators.py
+
+optimizer-tests-asan:
+  extends: .tests-asan
+  script:
+    - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_optimizer.py
 
 tpch-tests-asan:
-  stage: test
-  dependencies:
-    - dbg-build
-  tags:
-    - ptrace
-  variables:
-    OMP_NUM_THREADS: 1
-    ASAN_OPTIONS: detect_leaks=1
+  extends: .tests-asan
   script:
     - cd python/jitq/tests
     - $PYTEST_ASAN_CMD test_tpch.py --target singlecore
