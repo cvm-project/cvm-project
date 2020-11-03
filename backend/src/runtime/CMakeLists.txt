@@ -59,4 +59,6 @@ target_link_libraries(runtime_tests
         googletest::gtest_main
         runtime
     )
-gtest_discover_tests(runtime_tests)
+gtest_discover_tests(runtime_tests
+        DISCOVERY_TIMEOUT 10
+    )
