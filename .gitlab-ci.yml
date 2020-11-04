@@ -14,7 +14,7 @@ variables:
       --log-format="%(asctime)s.%(msecs)03d  %(levelname)-8s %(module)s:%(funcName)s:%(lineno)-5d   %(message)s"
   PYTEST_ASAN_CMD: /usr/bin/time -v catchsegv $CI_PROJECT_DIR/tools/run_with_asan.sh python3 -u -m pytest
   GTEST_COLOR: "1"
-  PYTHONPATH: $CI_PROJECT_DIR:$CI_PROJECT_DIR/backend/build
+  PYTHONPATH: $CI_PROJECT_DIR/python:$CI_PROJECT_DIR/backend/build
   JITQPATH: $CI_PROJECT_DIR
   LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-9.0.0/lib
   ASAN_SYMBOLIZER_PATH: /opt/clang+llvm-9.0.0/bin/llvm-symbolizer
