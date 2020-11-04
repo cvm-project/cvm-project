@@ -169,6 +169,7 @@ tpch-tests-asan:
     - $PYTEST_ASAN_CMD test_tpch.py --target singlecore
     - $PYTEST_ASAN_CMD test_tpch.py --target singlecore --tpch_input_format parquet
     - $PYTEST_ASAN_CMD test_tpch.py --target process    --tpch_input_format parquet
+    - $PYTEST_ASAN_CMD test_tpch.py --target lambda     --tpch_input_format parquet
 
 cpp-test:
   stage: test
