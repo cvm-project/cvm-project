@@ -7,6 +7,7 @@
 #include <string>
 #include <thread>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 #include <arrow/record_batch.h>
@@ -29,6 +30,15 @@
 #include "runtime/jit/values/value.hpp"
 
 namespace runtime::operators {
+
+// NOLINTNEXTLINE(google-runtime-int)
+auto ComputeGroupSizeTuple(const std::tuple<long, long, long, long> &config)
+        // NOLINTNEXTLINE(google-runtime-int)
+        -> std::tuple<long> {
+    return ExchangeS3Operator::ComputeGroupSize(
+            std::get<0>(config), std::get<1>(config), std::get<2>(config),
+            std::get<3>(config));
+}
 
 auto MakeExchangeS3Operator(std::unique_ptr<ValueOperator> &&main_upstream,
                             std::unique_ptr<ValueOperator> &&dop_upstream,

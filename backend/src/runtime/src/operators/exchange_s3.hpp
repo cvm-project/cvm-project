@@ -39,6 +39,13 @@ public:
           num_levels_(num_levels),
           level_num_(level_num) {}
 
+    static auto ComputeGroupMembers(size_t num_levels, size_t level_num,
+                                    size_t num_workers, size_t worker_id)
+            -> std::vector<size_t>;
+    static auto ComputeGroupSize(size_t num_levels, size_t level_num,
+                                 size_t num_workers, size_t worker_id)
+            -> size_t;
+
     void open() override;
     auto next() -> std::shared_ptr<values::Value> override;
     void close() override { main_upstream_->close(); }
@@ -48,12 +55,6 @@ private:
 
     static auto LookupQueryId() -> size_t;
     static auto LookupBucketName() -> std::string;
-    static auto ComputeGroupMembers(size_t num_levels, size_t level_num,
-                                    size_t num_workers, size_t worker_id)
-            -> std::vector<size_t>;
-    static auto ComputeGroupSize(size_t num_levels, size_t level_num,
-                                 size_t num_workers, size_t worker_id)
-            -> size_t;
 
     // cppcheck-suppress unusedPrivateFunction  // false positive
     void ConsumeUpstream();

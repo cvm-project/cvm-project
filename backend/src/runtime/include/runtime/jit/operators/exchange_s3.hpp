@@ -3,12 +3,18 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "runtime/jit/operators/value_operator.hpp"
 
 namespace runtime {
 namespace operators {
+
+// NOLINTNEXTLINE(google-runtime-int)
+auto ComputeGroupSizeTuple(
+        // NOLINTNEXTLINE(google-runtime-int)
+        const std::tuple<long, long, long, long> &config) -> std::tuple<long>;
 
 auto MakeExchangeS3Operator(std::unique_ptr<ValueOperator> &&main_upstream,
                             std::unique_ptr<ValueOperator> &&dop_upstream,
