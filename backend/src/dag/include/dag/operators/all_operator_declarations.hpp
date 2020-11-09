@@ -26,6 +26,7 @@ class DAGFilter;
 class DAGGroupBy;
 class DAGJoin;
 class DAGMap;
+class DAGMapCpp;
 class DAGMaterializeColumnChunks;
 class DAGMaterializeParquet;
 class DAGMaterializeRowVector;
@@ -74,6 +75,7 @@ using AllOperatorTypes = boost::mpl::list<  //
         DAGGroupBy,                         //
         DAGJoin,                            //
         DAGMap,                             //
+        DAGMapCpp,                          //
         DAGMaterializeColumnChunks,         //
         DAGMaterializeParquet,              //
         DAGMaterializeRowVector,            //

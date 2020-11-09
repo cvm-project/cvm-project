@@ -39,6 +39,11 @@ auto GenerateExecuteValues(DAG *dag, Context *context) -> std::string;
 
 auto GenerateExecutePipelines(Context *context, DAG *dag) -> std::string;
 
+auto GenerateCppFunctor(Context *context, const std::string &func_name_prefix,
+                        const std::string &callee_func_name,
+                        const std::vector<const StructDef *> &input_types)
+        -> std::string;
+
 auto GenerateLlvmFunctor(Context *context, const std::string &func_name_prefix,
                          const std::string &llvm_ir,
                          const std::vector<const StructDef *> &input_types,

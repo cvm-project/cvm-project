@@ -20,6 +20,7 @@
 #include "group_by.hpp"
 #include "join.hpp"
 #include "map.hpp"
+#include "map_cpp.hpp"
 #include "materialize_column_chunks.hpp"
 #include "materialize_parquet.hpp"
 #include "materialize_row_vector.hpp"

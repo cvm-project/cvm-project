@@ -333,6 +333,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             return op->tuple->type;
         }
 
+        auto operator()(const DAGMapCpp *const op) const -> const Tuple * {
+            return op->tuple->type;
+        }
+
         auto operator()(const DAGMaterializeColumnChunks *const op) const
                 -> const Tuple * {
             auto const input_type = dag_->predecessor(op)->tuple->type;

@@ -528,6 +528,52 @@ auto GenerateExecutePipelines(Context *const context, DAG *const dag)
     return func_name;
 }
 
+auto GenerateCppFunctor(Context *context, const std::string &func_name_prefix,
+                        const std::string &callee_func_name,
+                        const std::vector<const StructDef *> &input_types)
+        -> std::string {
+    // Generate symbol names
+    const auto class_name =
+            context->GenerateSymbolName(func_name_prefix + "_functor");
+
+    // Prepare functor defintion
+    std::vector<std::string> input_args;
+    std::vector<std::string> conversion_statements;
+    std::vector<std::string> call_args;
+    for (size_t i = 0; i < input_types.size(); i++) {
+        auto const &input_type = input_types.at(i);
+
+        // Each input tuple is one argument of the functor
+        const auto input_var_name = "t" + std::to_string(i);
+        input_args.emplace_back(input_type->name + " " + input_var_name);
+
+        // Statement for converting to std::tuple
+        const auto statement =
+                (boost::format("auto const st%1% = TupleToStdTuple(t%1%);") % i)
+                        .str();
+        conversion_statements.emplace_back(statement);
+
+        // Usage of this std::tuple for function call
+        call_args.emplace_back("st" + std::to_string(i));
+    }
+
+    // Emit functor definition
+    context->definitions() <<  //
+            format("class %s {"
+                   "public:"
+                   "    auto operator()(%s) {"
+                   "        %s"
+                   "        auto const res = %s(%s);"
+                   "        return StdTupleToTuple(res);"
+                   "    }"
+                   "};") %
+                    class_name % join(input_args, ",") %
+                    join(conversion_statements, "") % callee_func_name %
+                    join(call_args, ",");
+
+    return class_name;
+}
+
 auto GenerateLlvmFunctor(Context *const context,
                          const std::string &func_name_prefix,
                          const std::string &llvm_ir,

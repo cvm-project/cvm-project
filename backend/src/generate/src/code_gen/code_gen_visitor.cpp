@@ -179,6 +179,17 @@ void CodeGenVisitor::operator()(DAGMap *op) {
     emitOperatorMake(var_name, "MapOperator", op, {}, {functor_class + "()"});
 }
 
+void CodeGenVisitor::operator()(DAGMapCpp *op) {
+    const std::string var_name =
+            CodeGenVisitor::visit_common(op, "MapOperator");
+
+    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
+    const std::string functor_class = GenerateCppFunctor(
+            context_, op->name(), op->function_name, {input_type});
+
+    emitOperatorMake(var_name, "MapOperator", op, {}, {functor_class + "()"});
+}
+
 void CodeGenVisitor::operator()(DAGMaterializeColumnChunks *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MaterializeColumnChunksOperator");

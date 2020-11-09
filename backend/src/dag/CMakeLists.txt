@@ -9,6 +9,7 @@ add_library(dag SHARED
         src/operators/constant_tuple.cpp
         src/operators/compiled_pipeline.cpp
         src/operators/join.cpp
+        src/operators/map_cpp.cpp
         src/operators/materialize_parquet.cpp
         src/operators/operator.cpp
         src/operators/pipeline.cpp
