@@ -13,7 +13,10 @@
 #   cppcoreguidelines-avoid-c-arrays: alias for modernize-avoid-c-arrays, which is active
 #   hipp-avoid-c-arrays: alias for modernize-avoid-c-arrays, which is active
 #   llvm-include-order: this is LLVM specific; for us, LLVM is just another library
-Checks: '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-hicpp-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp,-fuchsia-*,-hicpp-no-array-decay,-cert-msc32-c,-cert-msc51-cpp,-hicpp-vararg,-bugprone-exception-escape,-cppcoreguidelines-owning-memory,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-avoid-c-arrays,-hicpp-avoid-c-arrays,-llvm-include-order'
+#   llvmlibc-*: those are meant for llvmlibc and don't apply for any other project
+#   misc-no-recursion: we need recursion in code to support the structural recursion of our IR
+#   performance-no-automatic-move: XXX
+Checks: '*,-llvm-header-guard,-cppcoreguidelines-no-malloc,-hicpp-no-malloc,-cppcoreguidelines-pro-*,-cert-err60-cpp,-fuchsia-*,-hicpp-no-array-decay,-cert-msc32-c,-cert-msc51-cpp,-hicpp-vararg,-bugprone-exception-escape,-cppcoreguidelines-owning-memory,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-avoid-c-arrays,-hicpp-avoid-c-arrays,-llvm-include-order,-llvmlibc-*,-misc-no-recursion,-performance-no-automatic-move'
 WarningsAsErrors: '*'
 CheckOptions:
   - key: hicpp-braces-around-statements.ShortStatementLines
