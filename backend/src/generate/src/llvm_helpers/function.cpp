@@ -5,6 +5,7 @@
 
 #include <boost/mpl/list.hpp>
 #include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/Instructions.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
 #include <llvm/Transforms/Utils/Cloning.h>
@@ -84,7 +85,7 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
                     if (instr->getOpcode() == llvm::Instruction::Store) {
                         // the store target uniquely identifies this instruction
                         ret_instruction_ids_.push_back(
-                                instr->getOperand(1)->getName());
+                                instr->getOperand(1)->getName().str());
                     }
                 }
             }
