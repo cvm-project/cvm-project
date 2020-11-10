@@ -17,7 +17,7 @@ struct AwsApiHandle {
     AwsApiHandle(const AwsApiHandle&) = delete;
     AwsApiHandle(AwsApiHandle&&) = delete;
     auto operator=(const AwsApiHandle&) -> AwsApiHandle& = delete;
-    auto operator=(AwsApiHandle &&) -> AwsApiHandle& = delete;
+    auto operator=(AwsApiHandle&&) -> AwsApiHandle& = delete;
 
     ~AwsApiHandle() { Aws::ShutdownAPI(options_); }
 

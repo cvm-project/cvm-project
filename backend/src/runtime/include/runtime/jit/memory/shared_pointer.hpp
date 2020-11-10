@@ -138,7 +138,7 @@ public:
      */
 
     [[nodiscard]] auto get() const -> T* { return pointer_; }
-    auto operator-> () const -> T* { return pointer_; }
+    auto operator->() const -> T* { return pointer_; }
     auto operator*() const -> T& { return *pointer_; }
     auto operator[](const std::size_t idx) const -> T& { return pointer_[idx]; }
 

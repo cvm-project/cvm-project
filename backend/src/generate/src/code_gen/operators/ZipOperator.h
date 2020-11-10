@@ -12,7 +12,7 @@ class ZipOperator {
     using IndexSequence = std::make_index_sequence<sizeof...(Upstreams)>;
 
 public:
-    ZipOperator(Upstreams *... upstreams) : upstreams_(upstreams...){};
+    ZipOperator(Upstreams *...upstreams) : upstreams_(upstreams...){};
 
     template <std::size_t... I>
     void CloseUpstreams(std::index_sequence<I...>) {
@@ -52,7 +52,7 @@ private:
 
 template <class Tuple, class... Upstreams>
 ZipOperator<Tuple, Upstreams...> INLINE
-makeZipOperator(Upstreams *... upstreams) {
+makeZipOperator(Upstreams *...upstreams) {
     return ZipOperator<Tuple, Upstreams...>(upstreams...);
 };
 
