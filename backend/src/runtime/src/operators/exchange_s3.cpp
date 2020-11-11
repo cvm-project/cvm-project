@@ -21,6 +21,7 @@
 #include "aws/s3.hpp"
 #include "filesystem/filesystem.hpp"
 #include "operators/arrow_helpers.hpp"
+#include "runtime/jit/operators/exchange_s3.hpp"
 #include "runtime/jit/values/atomics.hpp"
 #include "runtime/jit/values/json_parsing.hpp"
 #include "runtime/jit/values/none.hpp"

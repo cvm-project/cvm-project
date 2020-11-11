@@ -10,12 +10,12 @@
 namespace runtime {
 namespace operators {
 
-std::unique_ptr<ValueOperator> MakeExchangeS3Operator(
-        std::unique_ptr<ValueOperator> &&main_upstream,
-        std::unique_ptr<ValueOperator> &&dop_upstream,
-        std::unique_ptr<ValueOperator> &&wid_upstream,
-        std::vector<std::string> column_types, const size_t exchange_id,
-        const size_t num_levels, const size_t level_num);
+auto MakeExchangeS3Operator(std::unique_ptr<ValueOperator> &&main_upstream,
+                            std::unique_ptr<ValueOperator> &&dop_upstream,
+                            std::unique_ptr<ValueOperator> &&wid_upstream,
+                            std::vector<std::string> column_types,
+                            size_t exchange_id, size_t num_levels,
+                            size_t level_num) -> std::unique_ptr<ValueOperator>;
 
 }  // namespace operators
 }  // namespace runtime
