@@ -12,13 +12,20 @@ endif
 ifeq ($(CXXFORMAT),)
     CXXFORMAT := cat
 endif
+ifeq ($(LLVMLINK),)
+    LLVMLINK := llvm-link
+endif
+ifeq ($(LLVMOPT),)
+    LLVMOPT := opt
+endif
 
 BACKEND_DIR = $(realpath $(SCRIPT_DIR)/../../../../)
 
 # Set flags
 INC = -I$(SCRIPT_DIR)/operators -I$(BACKEND_DIR)/src/runtime/include
-CXXFLAGS = -fPIC -flto -std=c++17 -fopenmp -D_GLIBCXX_USE_CXX11_ABI
-LDFLAGS = -fuse-ld=gold -flto -L$(BACKEND_DIR)/build -Wl,-rpath=$(BACKEND_DIR)/build -lruntime -fopenmp
+CXXFLAGS = -fPIC -std=c++17 -fopenmp -D_GLIBCXX_USE_CXX11_ABI
+LDFLAGS = -fPIC -L$(BACKEND_DIR)/build -Wl,-rpath=$(BACKEND_DIR)/build -lruntime -fopenmp
+OPTFLAGS =
 
 ifdef LIBOMPDIR
     LDFLAGS += -L$(LIBOMPDIR)
@@ -28,21 +35,21 @@ DEBUG ?= 0
 ifeq ($(DEBUG), 1)
     CXXFLAGS += -g3 -DDEBUG
     LDFLAGS += -g
+    OPTFLAGS +=
     LIB = libexecute.dbg.so
 else
     CXXFLAGS += -DNDEBUG -O3 -ffast-math -march=native -mtune=native
+    OPTFLAGS += -O3 -ffast-math -march=native
     LIB = libexecute.opt.so
 endif
 
 WITH_LLVM_ASAN ?= 0
 ifeq ($(WITH_LLVM_ASAN), 1)
     CXXFLAGS += -fsanitize=address,undefined -fno-sanitize=vptr,alignment
-    LDFLAGS += -fsanitize=address,undefined -fno-sanitize=vptr,alignment
 endif
 
 # Set inputs
 UDF_SOURCES = $(wildcard llvm_funcs/*.ll)
-UDF_OBJECTS = $(UDF_SOURCES:.ll=.o)
 
 MAINHEADER = $(SCRIPT_DIR)/operators/AllHeaders.h
 OPERATOR_HEADERS = $(filter-out $(MAINHEADER),$(wildcard $(SCRIPT_DIR)/operators/*.h))
@@ -65,11 +72,11 @@ execute.opt.cpp: execute.cpp
 execute.dbg.cpp: execute.cpp
 	$(CXXFORMAT) $< > $@
 
-execute.opt.o: execute.opt.cpp $(GCHEADER)
-	$(CXX) -c $< -o $@ $(CXXFLAGS) $(INC) -include-pch $(GCHEADER)
+execute.opt.bc: execute.opt.cpp $(GCHEADER)
+	$(CXX) -c $< -o $@ $(CXXFLAGS) -emit-llvm $(INC) -include-pch $(GCHEADER)
 
-execute.dbg.o: execute.dbg.cpp $(MAINHEADER)
-	$(CXX) -c $< -o $@ $(CXXFLAGS) $(INC)
+execute.dbg.bc: execute.dbg.cpp $(MAINHEADER)
+	$(CXX) -c $< -o $@ $(CXXFLAGS) -emit-llvm $(INC)
 
 $(GCHEADER): $(MAINHEADER)
 	$(CXX) $(CXXFLAGS) $(INC) -x c++-header $< -o $@
@@ -77,7 +84,15 @@ $(GCHEADER): $(MAINHEADER)
 $(MAINHEADER): $(HEADERS)
 	$(GENHEADER) $@ $^
 
-libexecute.%.so: $(UDF_OBJECTS) execute.%.o
+libexecute.opt.linked.bc: $(UDF_SOURCES) execute.opt.bc
+libexecute.dbg.linked.bc: $(UDF_SOURCES) execute.dbg.bc
+libexecute.%.linked.bc:
+	$(LLVMLINK) $^ -o $@
+
+libexecute.%.bc: libexecute.%.linked.bc
+	$(LLVMOPT) $(OPTFLAGS) $^ -o $@
+
+libexecute.%.so: libexecute.%.bc
 	 $(CXX) $^ -o $@ -shared $(LDFLAGS)
 
 execute.s: $(LIB)

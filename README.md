@@ -107,34 +107,6 @@ for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-11.0.0
 ```
 
-7. Gold linker
-
-```bash
-sudo apt install binutils-dev ninja-build
-```
-
-Download and build with ninja:
-
-```bash
-cd /tmp/ && \
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/llvm-11.0.0.src.tar.xz && \
-tar -xf llvm-11.0.0.src.tar.xz && \
-mkdir /tmp/llvm-11.0.0.src/build && \
-cd /tmp/llvm-11.0.0.src/build && \
-CXX=clang++-11.0 CC=clang-11.0 cmake -G Ninja ../ \
-    -DLLVM_BINUTILS_INCDIR=/usr/include \
-    -DLLVM_TARGETS_TO_BUILD=X86 \
-    -DCMAKE_BUILD_TYPE=MinSizeRel \
-    -DLLVM_OPTIMIZED_TABLEGEN=ON && \
-ninja LLVMgold
-```
-
-Copy the gold linker:
-
-```bash
-sudo cp /tmp/llvm-11.0.0.src/build/lib/LLVMgold.so /opt/clang+llvm-11.0.0/lib
-```
-
 8. cppcheck
 
 ```bash

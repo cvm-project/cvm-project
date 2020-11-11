@@ -39,9 +39,14 @@ default:
   before_script:
     - pip3 install -r requirements.txt
     - >-
-        echo -e
-        "CC=clang-11.0\nCXX=clang++-11.0\nCXXFORMAT=clang-format-11.0\nLIBOMPDIR=/opt/clang+llvm-11.0.0/lib"
-        > backend/src/generate/src/code_gen/Makefile.local
+        (
+            echo "CC=clang-11.0"
+            echo "CXX=clang++-11.0"
+            echo "CXXFORMAT=clang-format-11.0"
+            echo "LLVMLINK=llvm-link-11.0"
+            echo "LLVMOPT=opt-11.0"
+            echo "LIBOMPDIR=/opt/clang+llvm-11.0.0/lib"
+        ) > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
   after_script:
     - $JITQPATH/tools/create_coverage_summary.sh coverage.$CI_JOB_NAME.json
