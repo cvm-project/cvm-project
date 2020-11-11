@@ -1,0 +1,111 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 1,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 0,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'TestFilter.test_complex_udf.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests14test_operators10TestFilter16test_complex_udf12$3clocals$3e17$3clambda$3e$2491Ex\" = common local_unnamed_addr global i8* null\n@\"_ZN08NumbaEnv5numba7targets7listobj6in_seq12$3clocals$3e22seq_contains_impl$2490E8UniTupleIxLi9EEx\" = common local_unnamed_addr global i8* null\n@.const.picklebuf.d5e2bb1213a13d7bb20e30b520f3fa46efd73dc01a56ed6c9415066d999f048f = internal constant { i8*, i32 } { i8* getelementptr inbounds ([70 x i8], [70 x i8]* @.const.pickledata.ef65ef2ad13383077d0a7c7d179e6a3ee7de6e8e5e6b4a86505ee877abffc773, i32 0, i32 0), i32 70 }\n@.const.pickledata.ef65ef2ad13383077d0a7c7d179e6a3ee7de6e8e5e6b4a86505ee877abffc773 = internal constant [70 x i8] c\"\\80\\04\\95;\\00\\00\\00\\00\\00\\00\\00\\8C\\08builtins\\94\\8C\\0AIndexError\\94\\93\\94\\8C\\18tuple index out of range\\94\\85\\94N\\87\\94.\"\n@\"switch.table.cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\" = private unnamed_addr constant [9 x i64] [i64 1, i64 3, i64 4, i64 7, i64 11, i64 12, i64 13, i64 17, i64 19]\n\n; Function Attrs: norecurse nounwind\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i8* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture %excinfo, i64 %arg.i) local_unnamed_addr #0 {\nentry:\n  br label %B6.i\n\nB6.i:                                             ; preds = %switch.lookup, %entry\n  %lsr.iv = phi i64 [ %lsr.iv.next, %switch.lookup ], [ 0, %entry ]\n  %.33.0.i = phi i64 [ 0, %entry ], [ %.94.i, %switch.lookup ]\n  %.66.i = icmp ult i64 %.33.0.i, 9\n  br i1 %.66.i, label %B6.if.i, label %B0.endif\n\nswitch.lookup:                                    ; preds = %B6.if.i\n  %0 = ashr exact i64 %lsr.iv, 1\n  %switch.gep = getelementptr inbounds [9 x i64], [9 x i64]* @\"switch.table.cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\", i64 0, i64 %0\n  %switch.load = load i64, i64* %switch.gep, align 8\n  %.94.i = add nuw nsw i64 %.33.0.i, 1\n  %.153.i = icmp eq i64 %switch.load, %arg.i\n  %lsr.iv.next = add nuw nsw i64 %lsr.iv, 2\n  br i1 %.153.i, label %B0.endif, label %B6.i\n\nB6.if.i:                                          ; preds = %B6.i\n  %trunc.i = trunc i64 %.33.0.i to i63\n  %1 = icmp ult i63 %trunc.i, 9\n  br i1 %1, label %switch.lookup, label %B0.if\n\nB0.if:                                            ; preds = %B6.if.i\n  %2 = bitcast { i8*, i32 }** %excinfo to i64*\n  store i64 ptrtoint ({ i8*, i32 }* @.const.picklebuf.d5e2bb1213a13d7bb20e30b520f3fa46efd73dc01a56ed6c9415066d999f048f to i64), i64* %2, align 8\n  ret i32 1\n\nB0.endif:                                         ; preds = %switch.lookup, %B6.i\n  %.13.0.ph = phi i8 [ 0, %B6.i ], [ 1, %switch.lookup ]\n  store i8 %.13.0.ph, i8* %retptr, align 1\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i8* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  br label %B6.i.i\n\nB6.i.i:                                           ; preds = %switch.lookup, %entry\n  %lsr.iv = phi i64 [ %lsr.iv.next, %switch.lookup ], [ 0, %entry ]\n  %.33.0.i.i = phi i64 [ 0, %entry ], [ %.94.i.i, %switch.lookup ]\n  %.66.i.i = icmp ult i64 %.33.0.i.i, 9\n  %trunc.i.i = trunc i64 %.33.0.i.i to i63\n  %0 = icmp ult i63 %trunc.i.i, 9\n  %or.cond = and i1 %.66.i.i, %0\n  br i1 %or.cond, label %switch.lookup, label %\"notuniquename218303dba31a092a63fd8a50e54f2c15.exit\"\n\nswitch.lookup:                                    ; preds = %B6.i.i\n  %1 = ashr exact i64 %lsr.iv, 1\n  %switch.gep = getelementptr inbounds [9 x i64], [9 x i64]* @\"switch.table.cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\", i64 0, i64 %1\n  %switch.load = load i64, i64* %switch.gep, align 8\n  %.94.i.i = add nuw nsw i64 %.33.0.i.i, 1\n  %.153.i.i = icmp eq i64 %switch.load, %.2\n  %lsr.iv.next = add nuw nsw i64 %lsr.iv, 2\n  br i1 %.153.i.i, label %\"notuniquename218303dba31a092a63fd8a50e54f2c15.exit\", label %B6.i.i\n\n\"notuniquename218303dba31a092a63fd8a50e54f2c15.exit\": ; preds = %B6.i.i, %switch.lookup\n  %.4.0 = phi i1 [ false, %B6.i.i ], [ true, %switch.lookup ]\n  %.18 = bitcast i8* %.1 to i1*\n  store i1 %.4.0, i1* %.18, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 2,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 1,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.count.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5count12$3clocals$3e17$3clambda$3e$2493Ex\" = common local_unnamed_addr global i8* null\n@\"_ZN08NumbaEnv5numba7targets7listobj6in_seq12$3clocals$3e22seq_contains_impl$2490E8UniTupleIxLi9EEx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.t) local_unnamed_addr #0 {\nentry:\n  store i64 1, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  store i64 1, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 3,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 2,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.count.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5count12$3clocals$3e17$3clambda$3e$2495Exx\" = common local_unnamed_addr global i8* null\n@\"_ZN08NumbaEnv5numba7targets7listobj6in_seq12$3clocals$3e22seq_contains_impl$2490E8UniTupleIxLi9EEx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.t1, i64 %arg.t2) local_unnamed_addr #0 {\nentry:\n  %.14 = add nsw i64 %arg.t2, %arg.t1\n  store i64 %.14, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 4,
+            "op": "reduce",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 3,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 4,
+                    "port": 0
+                }
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 5,
+            "port": 0
+        }
+    ]
+}

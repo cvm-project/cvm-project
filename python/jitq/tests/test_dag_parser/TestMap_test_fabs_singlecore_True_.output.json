@@ -1,0 +1,111 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 1,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 0,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'TestMap.test_fabs.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests14test_operators7TestMap9test_fabs12$3clocals$3e18$3clambda$3e$24105Ex\" = common local_unnamed_addr global i8* null\n@\"_ZN08NumbaEnv5numba7targets7listobj6in_seq12$3clocals$3e22seq_contains_impl$2490E8UniTupleIxLi9EEx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: nounwind\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(double* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.i) local_unnamed_addr #0 {\nentry:\n  %.16 = sitofp i64 %arg.i to double\n  %.26 = tail call fast double @llvm.fabs.f64(double %.16)\n  store double %.26, double* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: nounwind readnone speculatable\ndeclare double @llvm.fabs.f64(double) #1\n\n; Function Attrs: nounwind\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(double* nocapture %.1, i64 %.2) local_unnamed_addr #0 {\nentry:\n  %.16.i = sitofp i64 %.2 to double\n  %.26.i = tail call fast double @llvm.fabs.f64(double %.16.i) #0\n  store double %.26.i, double* %.1, align 8\n  ret void\n}\n\n; Function Attrs: nounwind\ndeclare void @llvm.stackprotector(i8*, i8**) #0\n\nattributes #0 = { nounwind }\nattributes #1 = { nounwind readnone speculatable }\n",
+            "id": 2,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "double"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 1,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.count.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5count12$3clocals$3e18$3clambda$3e$24107Ed\" = common local_unnamed_addr global i8* null\n@\"_ZN08NumbaEnv5numba7targets7listobj6in_seq12$3clocals$3e22seq_contains_impl$2490E8UniTupleIxLi9EEx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, double %arg.t) local_unnamed_addr #0 {\nentry:\n  store i64 1, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* nocapture %.1, double %.2) local_unnamed_addr #0 {\nentry:\n  store i64 1, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 3,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 2,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.count.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5count12$3clocals$3e18$3clambda$3e$24109Exx\" = common local_unnamed_addr global i8* null\n@\"_ZN08NumbaEnv5numba7targets7listobj6in_seq12$3clocals$3e22seq_contains_impl$2490E8UniTupleIxLi9EEx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.t1, i64 %arg.t2) local_unnamed_addr #0 {\nentry:\n  %.14 = add nsw i64 %arg.t2, %arg.t1\n  store i64 %.14, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind }\n",
+            "id": 4,
+            "op": "reduce",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 3,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 4,
+                    "port": 0
+                }
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 5,
+            "port": 0
+        }
+    ]
+}
