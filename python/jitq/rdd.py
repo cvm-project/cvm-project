@@ -35,8 +35,7 @@ def get_llvm_ir_and_output_type(func, arg_types=None, opts=None):
         arg_types = []
     func = ast_optimize(func, opts_)
 
-    dec_func = numba.njit(
-        tuple(arg_types), fastmath=FAST_MATH, parallel=True)(func)
+    dec_func = numba.njit(tuple(arg_types), fastmath=FAST_MATH)(func)
 
     output_type = dec_func.nopython_signatures[0].return_type
     output_type = replace_unituple(output_type)
