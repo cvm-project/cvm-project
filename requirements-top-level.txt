@@ -8,10 +8,10 @@ jsonmerge
 matplotlib
 numpy
 numba==0.48.0
-pandas
+pandas<1.0.0
 psutil
 pylint
 pyspark
 pytest
+scikit-learn<0.22
 scipy
-sklearn
