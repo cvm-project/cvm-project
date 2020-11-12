@@ -13,13 +13,22 @@ which contains the commands used to set up and run compilation and tests for eve
 as well as the [Dockerfile](https://hub.docker.com/r/ingomuellernet/buildenv/dockerfile/)
 which is used to run the CI tests.
 
-0. Git submodules
+1. `JITQPATH`
+
+For the installation and during development, make sure the following variable is set (from inside the git repository):
 
 ```bash
+export JITQPATH=$(git rev-parse --show-toplevel)
+```
+
+2. Git submodules
+
+```bash
+cd $JITQPATH
 git submodule update --recursive --init
 ```
 
-1. Python requirements
+3. Python requirements
 
 Install necessary system packages.
 
@@ -27,18 +36,20 @@ Install necessary system packages.
 sudo apt install python3 python3-pip python3-dev python3-setuptools
 ```
 
-Create a virtualenv and activate it
+Create a virtualenv and activate it:
+
 ```bash
 python3 -m venv <name_of_the_virtual_environment>
 source <name_of_the_virtual_environment>/bin/activate
 ```
 
-Install the requirements
+Install the requirements:
+
 ```bash
-pip3 install -r requirements.txt
+pip3 install -r $JITQPATH/requirements.txt
 ```
 
-2. Dev requirements
+4. Dev requirements
 
 ```bash
 sudo apt install build-essential \
@@ -53,7 +64,7 @@ sudo apt install build-essential \
         xz-utils
 ```
 
-3. CMake
+5. CMake
 
 Uninstall CMake if necessary:
 
@@ -74,7 +85,7 @@ do \
 done
 ```
 
-4. Clang + LLVM
+6. Clang + LLVM
 
 Download and add links:
 
@@ -96,7 +107,7 @@ for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-9.0.0
 ```
 
-5. Gold linker
+7. Gold linker
 
 ```bash
 sudo apt install binutils-dev ninja-build
@@ -118,13 +129,13 @@ CXX=clang++-9.0 CC=clang-9.0 cmake -G Ninja ../ \
 ninja LLVMgold
 ```
 
-Copy goldlinker:
+Copy the gold linker:
 
 ```bash
 sudo cp /tmp/llvm-9.0.0.src/build/lib/LLVMgold.so /opt/clang+llvm-9.0.0/lib
 ```
 
-6. cppcheck
+8. cppcheck
 
 ```bash
 sudo apt install build-essential \
@@ -154,13 +165,13 @@ for bin in /opt/cppcheck-1.88/bin/cppcheck-1.88; do \
 done
 ```
 
-7. GraphViz
+9. GraphViz
 
 ```bash
 sudo apt install libgraphviz-dev
 ```
 
-8. Boost
+10. Boost
 
 ```bash
 sudo apt install python3-dev autotools-dev libicu-dev libbz2-dev
@@ -183,7 +194,7 @@ for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.73.0
 ```
 
-9. Apache Arrow
+11. Apache Arrow
 
 Run the following outside your `venv` (but with the same version of Python).
 
@@ -295,7 +306,7 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/aws-sdk-cpp-1.7
 
 ```bash
 # Run in the root folder of the project
-export JITQPATH=$PWD
+export JITQPATH=$(git rev-parse --show-toplevel)
 export PYTHONPATH=$JITQPATH/python:$JITQPATH/backend/build
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-9.0.0/lib
 ```
@@ -312,7 +323,8 @@ CXX=clang++-9.0 CC=clang-9.0 cmake ../src/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" > ../src/generate/src/code_gen/Makefile.local
+echo -e "CC=clang-9.0\nCXX=clang++-9.0\nCXXFORMAT=clang-format-9.0\nLIBOMPDIR=/opt/clang+llvm-9.0.0/lib" \
+    > $JITQPATH/backend/src/generate/src/code_gen/Makefile.local
 ```
 
 3. Build (after every change to the backend):
