@@ -1757,12 +1757,11 @@ class Q19(TpchJitqQuery):
             .map(lambda r:
                  (r.p_partkey,
                   (4 if r.p_brand == 12 and (1 <= r.p_size <= 5) and
-                      np.int64(r.p_container) in [25, 27, 30, 31] else 0) +
-                  #   ^^^^^^^^ XXX: this cast is a work-around for #76
+                      r.p_container in [25, 27, 30, 31] else 0) +
                   (2 if r.p_brand == 23 and (1 <= r.p_size <= 10) and
-                      np.int64(r.p_container) in [16, 17, 22, 23] else 0) +
+                      r.p_container in [16, 17, 22, 23] else 0) +
                   (1 if r.p_brand == 34 and (1 <= r.p_size <= 15) and
-                      np.int64(r.p_container) in [9, 11, 14, 15] else 0)),
+                      r.p_container in [9, 11, 14, 15] else 0)),
                  ['p_partkey', 'group']) \
             .filter(lambda r: r.group != 0)
 
