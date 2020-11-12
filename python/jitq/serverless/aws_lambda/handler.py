@@ -14,8 +14,8 @@ import traceback
 import boto3
 import botocore
 
-# pylint: disable=no-name-in-module  # pylint doesn't know how this script is
-#                                    # run (with this path in the Python path)
+# pylint: disable=import-error  # pylint doesn't know how this script is
+#                               # run (with this path in the Python path)
 from utils import compute_config_from_endpoint
 
 

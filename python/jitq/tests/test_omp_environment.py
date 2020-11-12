@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
+import sys
+
+import psutil
+import pytest
+
 
 def test_num_threads(jitq_context):
-    import psutil
 
     # Run some job; this should spawn threads, if possible
     jitq_context.range_(0, 10).collect()
@@ -14,6 +18,4 @@ def test_num_threads(jitq_context):
 
 
 if __name__ == '__main__':
-    import sys
-    import pytest
     pytest.main(sys.argv)

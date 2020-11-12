@@ -30,7 +30,7 @@ class Filesystem:
 
 class S3Filesystem(Filesystem):
     def __init__(self, *args, s3_bucket_name, **kwargs):
-        super(S3Filesystem, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._s3_client = make_boto3_client('s3')
         self._s3_bucket = s3_bucket_name

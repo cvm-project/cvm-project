@@ -277,7 +277,7 @@ class RDD(abc.ABC):
 
 class SourceRDD(RDD):
     def __init__(self, context):
-        super(SourceRDD, self).__init__(context, [])
+        super().__init__(context, [])
 
     @abc.abstractmethod
     def self_write_dag(self, dic):
@@ -286,7 +286,7 @@ class SourceRDD(RDD):
 
 class UnaryRDD(RDD):
     def __init__(self, context, parent):
-        super(UnaryRDD, self).__init__(context, [parent])
+        super().__init__(context, [parent])
 
     @abc.abstractmethod
     def self_write_dag(self, dic):
@@ -295,7 +295,7 @@ class UnaryRDD(RDD):
 
 class BinaryRDD(RDD):
     def __init__(self, context, parents):
-        super(BinaryRDD, self).__init__(context, parents)
+        super().__init__(context, parents)
         assert len(parents) == 2
 
     @abc.abstractmethod
@@ -312,7 +312,7 @@ class NaryRDD(RDD):
 
 class PipeRDD(UnaryRDD):
     def __init__(self, context, parent, func):
-        super(PipeRDD, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.func = func
 
     @abc.abstractmethod
@@ -329,7 +329,7 @@ class EnsureSingleTuple(UnaryRDD):
     NAME = 'ensure_single_tuple'
 
     def __init__(self, context, parent):
-        super(EnsureSingleTuple, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.output_type = self.parents[0].output_type
 
     def self_write_dag(self, dic):
@@ -340,7 +340,7 @@ class Map(PipeRDD):
     NAME = 'map'
 
     def __init__(self, context, parent, func, names):
-        super(Map, self).__init__(context, parent, func)
+        super().__init__(context, parent, func)
         self.llvm_ir, self.output_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
         if names is not None:
@@ -361,7 +361,7 @@ class MaterializeRowVector(UnaryRDD):
         # XXX: This is necessary because MaterializeRowVectors are constructed
         #      on the fly for every call to collect and for a cached RDD,
         #      self_write_dag is not executed.
-        super(MaterializeRowVector, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.__compute_output_type()
 
     def self_write_dag(self, dic):
@@ -381,7 +381,7 @@ class MaterializeColumnVector(UnaryRDD):
     NAME = 'materialize_column_chunks'
 
     def __init__(self, context, parent):
-        super(MaterializeColumnVector, self).__init__(context, parent)
+        super().__init__(context, parent)
 
         input_type = self.parents[0].output_type
 
@@ -399,7 +399,7 @@ class MaterializeParquetFile(BinaryRDD):
     NAME = 'materialize_parquet_file'
 
     def __init__(self, context, parents, column_names):
-        super(MaterializeParquetFile, self).__init__(context, parents)
+        super().__init__(context, parents)
 
         self.column_names = column_names
         self.output_type = make_tuple([types.unicode_type] + [types.int64] * 3)
@@ -418,7 +418,7 @@ class Filter(PipeRDD):
     NAME = 'filter'
 
     def __init__(self, context, parent, func):
-        super(Filter, self).__init__(context, parent, func)
+        super().__init__(context, parent, func)
         self.llvm_ir, return_type = get_llvm_ir_and_output_type(
             self.func, [self.parents[0].output_type])
         if str(return_type) != "bool":
@@ -436,7 +436,7 @@ class FlatMap(PipeRDD):
     NAME = 'flat_map'
 
     def __init__(self, context, parent, func):
-        super(FlatMap, self).__init__(context, parent, func)
+        super().__init__(context, parent, func)
         self.llvm_ir, self.output_type = get_llvm_ir_for_generator(self.func)
 
     def self_write_dag(self, dic):
@@ -451,7 +451,7 @@ class Join(BinaryRDD):
     """
 
     def __init__(self, context, left, right, num_keys):
-        super(Join, self).__init__(context, [left, right])
+        super().__init__(context, [left, right])
         self.num_keys = num_keys
         if self.num_keys <= 0:
             raise TypeError(
@@ -503,7 +503,7 @@ class TopK(UnaryRDD):
     NAME = 'topk'
 
     def __init__(self, context, parent, num_elements):
-        super(TopK, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.output_type = self.parents[0].output_type
         self.num_elements = num_elements
         if self.num_elements <= 0:
@@ -524,7 +524,7 @@ class Sort(UnaryRDD):
     NAME = 'sort'
 
     def __init__(self, context, parent):
-        super(Sort, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.output_type = self.parents[0].output_type
 
     def self_hash(self):
@@ -543,7 +543,7 @@ class AntiJoin(BinaryRDD):
     """
 
     def __init__(self, context, left, right):
-        super(AntiJoin, self).__init__(context, [left, right])
+        super().__init__(context, [left, right])
         self.output_type = self.compute_output_type()
 
     def compute_output_type(self):
@@ -580,7 +580,7 @@ class AntiJoinPredicated(AntiJoin):
     NAME = 'antijoin_predicated'
 
     def __init__(self, context, left, right, func):
-        super(AntiJoinPredicated, self).__init__(context, left, right)
+        super().__init__(context, left, right)
         self.func = func
         left_type = self.parents[0].output_type
         right_type = self.parents[1].output_type
@@ -604,7 +604,7 @@ class SemiJoin(BinaryRDD):
     """
 
     def __init__(self, context, left, right):
-        super(SemiJoin, self).__init__(context, [left, right])
+        super().__init__(context, [left, right])
         self.output_type = self.compute_output_type()
 
     def compute_output_type(self):
@@ -641,7 +641,7 @@ class Cartesian(BinaryRDD):
     NAME = 'cartesian'
 
     def __init__(self, context, left, right):
-        super(Cartesian, self).__init__(context, [left, right])
+        super().__init__(context, [left, right])
         self.output_type = self.compute_output_type()
 
     def compute_output_type(self):
@@ -661,7 +661,7 @@ class Zip(BinaryRDD):
     NAME = 'zip'
 
     def __init__(self, context, *args):
-        super(Zip, self).__init__(context, list(args))
+        super().__init__(context, list(args))
         self.output_type = self.compute_output_type()
 
     def compute_output_type(self):
@@ -688,7 +688,7 @@ class Reduce(UnaryRDD):
     """
 
     def __init__(self, context, parent, func):
-        super(Reduce, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.func = func
         input_type = self.parents[0].output_type
 
@@ -735,7 +735,7 @@ class ReduceByKey(UnaryRDD):
     """
 
     def __init__(self, context, parent, func):
-        super(ReduceByKey, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.func = func
         input_type = self.parents[0].output_type
 
@@ -790,7 +790,7 @@ class ReduceByIndex(UnaryRDD):
     """
 
     def __init__(self, context, parent, func, min_idx, max_idx):
-        super(ReduceByIndex, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.func = func
         self.min_idx = min_idx
         self.max_idx = max_idx
@@ -824,7 +824,7 @@ class CSVSource(SourceRDD):
 
     def __init__(self, context, path, delimiter=",",
                  dtype=None, add_index=False):
-        super(CSVSource, self).__init__(context)
+        super().__init__(context)
         self.path = path
         self.dtype = dtype
         self.add_index = add_index
@@ -851,7 +851,7 @@ class ConstantTuple(SourceRDD):
     NAME = 'constant_tuple'
 
     def __init__(self, context, values):
-        super(ConstantTuple, self).__init__(context)
+        super().__init__(context)
         self.values = [str(v) for v in values]
         self.output_type = item_typeof(values)
 
@@ -866,7 +866,7 @@ class ParameterLookup(SourceRDD):
     NAME = 'parameter_lookup'
 
     def __init__(self, context, output_type, value, data=None):
-        super(ParameterLookup, self).__init__(context)
+        super().__init__(context)
 
         self.output_type = output_type
         self.input_value = value
@@ -959,7 +959,7 @@ class ColumnScan(UnaryRDD):
         return (parent, field_names)
 
     def __init__(self, context, parent, add_index, column_names=None):
-        super(ColumnScan, self).__init__(context, parent)
+        super().__init__(context, parent)
 
         self.add_index = add_index
 
@@ -1046,7 +1046,7 @@ class RowScan(UnaryRDD):
 
     def __init__(self, context, parent, add_index):
         # Construct parameter lookup as parent
-        super(RowScan, self).__init__(context, parent)
+        super().__init__(context, parent)
 
         assert isinstance(parent.output_type, types.Array)
         self.output_type = parent.output_type.dtype
@@ -1078,7 +1078,7 @@ class Range(UnaryRDD):
 
         parent = ParameterLookup(context, parent_output_type, value)
 
-        super(Range, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.output_type = parent.output_type[0]
 
     def self_write_dag(self, dic):
@@ -1089,7 +1089,7 @@ class GeneratorSource(SourceRDD):
     NAME = 'generator_source'
 
     def __init__(self, context, func):
-        super(GeneratorSource, self).__init__(context)
+        super().__init__(context)
         self.func = func
         self.llvm_ir, self.output_type = get_llvm_ir_for_generator(self.func)
 
@@ -1112,7 +1112,7 @@ class ExpandPattern(BinaryRDD):
         }
         parent1 = ParameterLookup(context, types.string, input_value)
         parent2 = Range(context, pattern_range[0], pattern_range[1], 1)
-        super(ExpandPattern, self).__init__(context, [parent1, parent2])
+        super().__init__(context, [parent1, parent2])
         self.output_type = types.string
 
     def self_write_dag(self, dic):
@@ -1123,7 +1123,7 @@ class ParquetScan(UnaryRDD):
     NAME = 'parquet_scan'
 
     def __init__(self, context, parent, columns, filesystem):
-        super(ParquetScan, self).__init__(context, parent)
+        super().__init__(context, parent)
         self.columns = []
         column_types = []
         for col in columns:

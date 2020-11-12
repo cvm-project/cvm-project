@@ -7,9 +7,11 @@ import pytest
 
 from jitq.jitq_context import JitqContext
 from jitq.tests.filesystem import FILESYSTEMS, filesystem_instance
-from jitq.tests.helpers import str2bool
+from jitq.tests.helpers import str2bool, format_json
+from jitq.tests.test_optimizer import OPTIMIZER_CONFIGS
 from jitq.tests.aws_helpers import create_s3_bucket, jitq_aws_stack, \
     jitq_aws_stack_name, serverless_stack_type
+from jitq.utils import get_project_path
 
 
 def pytest_addoption(parser):
@@ -125,10 +127,6 @@ def generate_testcases(generate_testcases_enabled, request):
     if not generate_testcases_enabled:
         yield
         return
-
-    from jitq.utils import get_project_path
-    from jitq.tests.test_optimizer import OPTIMIZER_CONFIGS
-    from jitq.tests.helpers import format_json
 
     dag_filename = os.path.join(get_project_path(), 'dag.json')
 

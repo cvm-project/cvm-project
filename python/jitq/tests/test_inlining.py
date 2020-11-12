@@ -63,9 +63,8 @@ def make_test_func(test_name):
         for file_name in files:
             file_name = join(LIB_PATH, file_name)
             print("checking inlining in file " + file_name)
-            result = subprocess.run(
-                ['objdump', '-D', file_name], stdout=subprocess.PIPE)
-            file_content = str(result.stdout)
+            file_content = subprocess.check_output(
+                ['objdump', '-D', file_name], universal_newlines=True)
             pattern = re.compile(".*call.*_llvm_.*")
             for line in file_content.split("\\n"):
                 assert not pattern.match(line), \

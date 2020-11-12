@@ -7,8 +7,11 @@
 from functools import reduce
 from itertools import groupby
 from io import StringIO
+from json import loads
 from operator import itemgetter
+import sys
 
+from cffi import FFI
 import numpy as np
 from numpy.testing import assert_array_equal
 import numba
@@ -89,11 +92,9 @@ class TestCollection:
         assert res1.astuplelist() == res2.astuplelist()
 
         # Find out data pointer of first result
-        from json import loads
         res1_ptr = loads(res1.handle.string)[0]['fields'][0]['data']
 
         # Find out data pointer of `col`
-        from cffi import FFI
         ffi = FFI()
         col_ptr = col.parents[0].data.__array_interface__['data'][0]
         col_ptr = int(ffi.cast("uintptr_t", ffi.cast("void*", col_ptr)))
@@ -1425,5 +1426,4 @@ class TestIntegration:
 
 
 if __name__ == '__main__':
-    import sys
     pytest.main(sys.argv)

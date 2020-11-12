@@ -4,6 +4,8 @@
 
 # pylint: disable=import-error
 #         This saves us building the backend to do the Python format check
+# pylint: disable=no-name-in-module
+#         pylint seems unable to see the functions of our native module
 # pylint: disable=unused-import
 #         The imported symbols are used by other modules
 from jitq_backend import \

@@ -187,7 +187,7 @@ class PandasCsv(Pandas):
     }
 
     def __init__(self, input_path, num_partitions, scale_factor, jitq_context):
-        super(PandasCsv, self).__init__(jitq_context)
+        super().__init__(jitq_context)
 
         self.input_path = input_path
         self.scale_factor = scale_factor
@@ -234,7 +234,7 @@ class PandasParquet(Pandas):
               'region', 'supplier']
 
     def __init__(self, input_path, num_partitions, scale_factor, jitq_context):
-        super(PandasParquet, self).__init__(jitq_context)
+        super().__init__(jitq_context)
 
         self.input_path = input_path
         self.scale_factor = scale_factor

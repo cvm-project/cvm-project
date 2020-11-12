@@ -15,8 +15,10 @@ def main():
 
     with mock.patch('botocore.client.BaseClient._make_api_call',
                     new=mock_make_api_call_process):
-        # pylint: disable=no-member
+        # pylint: disable=import-error
         #         pylint doesn't know about modified sys.path
+        # pylint: disable=import-outside-toplevel
+        #         this needs to happen after modifying sys.path
         import handler
 
         event = json.load(sys.stdin)

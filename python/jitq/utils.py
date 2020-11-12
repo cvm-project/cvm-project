@@ -233,7 +233,7 @@ def get_project_path():
     except KeyError:
         error_print(
             "JITQPATH is not defined, set it to your jitq installation path")
-        exit(1)
+        sys.exit(1)
     return path
 
 

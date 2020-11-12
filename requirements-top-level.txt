@@ -2,7 +2,7 @@ autopep8
 boto3
 botocore
 cffi
-dask
+dask<2
 gcovr
 jsonmerge
 matplotlib
