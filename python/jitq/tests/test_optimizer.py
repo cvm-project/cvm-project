@@ -90,6 +90,9 @@ OPTIMIZER_CONFIGS = {
     'process': OptimizerConfig(  # Optimizer with '-O2' and process target
         join(TEST_BASE_DIR, 'test_optimizer_process'),
         ['-O2', '-Tprocess']),
+    'lambda': OptimizerConfig(  # Optimizer with '-O2' and lambda target
+        join(TEST_BASE_DIR, 'test_optimizer_lambda'),
+        ['-O2', '-Tlambda', '-ttwo-level-exchange']),
 }
 
 
