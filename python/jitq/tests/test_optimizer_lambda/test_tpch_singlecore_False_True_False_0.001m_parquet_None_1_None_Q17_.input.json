@@ -1,0 +1,838 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 0,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 1,
+            "op_port": 0
+        },
+        {
+            "dag_port": 2,
+            "op": 11,
+            "op_port": 0
+        },
+        {
+            "dag_port": 3,
+            "op": 12,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 1,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "op": "expand_pattern",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 0,
+                    "port": 0
+                },
+                {
+                    "op": 2,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 5,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 3,
+                    "port": 0
+                },
+                {
+                    "op": 4,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "idx": 0,
+                    "ranges": []
+                },
+                {
+                    "idx": 3,
+                    "ranges": []
+                },
+                {
+                    "idx": 6,
+                    "ranges": []
+                }
+            ],
+            "filesystem": "file",
+            "id": 6,
+            "op": "parquet_scan",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 5,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 7,
+            "op": "column_scan",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 6,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.alias.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5alias12$3clocals$3e18$3clambda$3e$24432E5TupleIxxxE\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.x.0, i64 %arg.x.1, i64 %arg.x.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.x.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.x.1, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.x.2, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 8,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 7,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24434E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i8* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %.20 = icmp eq i64 %arg.r.1, 23\n  %.48 = icmp eq i64 %arg.r.2, 17\n  %spec.select = and i1 %.20, %.48\n  %.73 = zext i1 %spec.select to i8\n  store i8 %.73, i8* %retptr, align 1\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i8* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.20.i = icmp eq i64 %.3, 23\n  %.48.i = icmp eq i64 %.4, 17\n  %not..23 = and i1 %.20.i, %.48.i\n  %.30 = bitcast i8* %.1 to i1*\n  store i1 %not..23, i1* %.30, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 9,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 8,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24436E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %0 = bitcast { i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %0, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %0 = bitcast <{ i64 }>* %.1 to i64*\n  store i64 %.2, i64* %0, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 10,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 9,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 11,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 12,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 13,
+            "op": "range_source",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 12,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 14,
+            "op": "expand_pattern",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 11,
+                    "port": 0
+                },
+                {
+                    "op": 13,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 15,
+            "op": "constant_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [],
+            "values": [
+                "0",
+                "1",
+                "1"
+            ]
+        },
+        {
+            "id": 16,
+            "op": "cartesian",
+            "output_type": [
+                {
+                    "type": "std::string"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 14,
+                    "port": 0
+                },
+                {
+                    "op": 15,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "idx": 1,
+                    "ranges": []
+                },
+                {
+                    "idx": 4,
+                    "ranges": []
+                },
+                {
+                    "idx": 5,
+                    "ranges": []
+                }
+            ],
+            "filesystem": "file",
+            "id": 17,
+            "op": "parquet_scan",
+            "output_type": [
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                },
+                {
+                    "layout": "C",
+                    "num_dimensions": 1,
+                    "tuple_type": [
+                        {
+                            "type": "long"
+                        }
+                    ],
+                    "type": "array"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 16,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "add_index": false,
+            "id": 18,
+            "op": "column_scan",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 17,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.alias.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5alias12$3clocals$3e18$3clambda$3e$24430E5TupleIxxxE\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.x.0, i64 %arg.x.1, i64 %arg.x.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.x.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.x.1, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.x.2, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 19,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 18,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24438E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.r.2, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.r.1, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.4, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.3, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 20,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 19,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 21,
+            "num_keys": 1,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 10,
+                    "port": 0
+                },
+                {
+                    "op": 20,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.alias.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5alias12$3clocals$3e18$3clambda$3e$24440E5TupleIxxxE\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.x.0, i64 %arg.x.1, i64 %arg.x.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.x.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.x.1, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.x.2, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 22,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 21,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24442E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %.25 = shl i64 %arg.r.1, 6\n  %.42 = add nsw i64 %.25, %arg.r.2\n  %retptr.repack3 = bitcast { i64, i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack3, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %.42, i64* %retptr.repack1, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.25.i = shl i64 %.3, 6\n  %.42.i = add nsw i64 %.25.i, %.4\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.42.i, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 23,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 22,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24444E28Record$28int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1) local_unnamed_addr #0 {\nentry:\n  %.26 = and i64 %arg.r.1, 63\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %.26, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 1, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.26.i = and i64 %.3, 63\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.26.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 1, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 24,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 23,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24446E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %.27 = shl i64 %arg.r.1, 32\n  %.40 = or i64 %.27, 1\n  %retptr.repack3 = bitcast { i64, i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack3, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %.40, i64* %retptr.repack1, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.27.i = shl i64 %.3, 32\n  %.40.i = or i64 %.27.i, 1\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.40.i, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 25,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 24,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24448Exx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.i1, i64 %arg.i2) local_unnamed_addr #0 {\nentry:\n  %.14 = add nsw i64 %arg.i2, %arg.i1\n  store i64 %.14, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 26,
+            "op": "reduce_by_key",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 25,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24450E28Record$28int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1) local_unnamed_addr #0 {\nentry:\n  %.24 = ashr i64 %arg.r.1, 32\n  %.44 = and i64 %arg.r.1, 4294967295\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %.24, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %.44, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.24.i = ashr i64 %.3, 32\n  %.44.i = and i64 %.3, 4294967295\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.24.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.44.i, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 27,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 26,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24452E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n@.const.picklebuf.9671d5790635c75b6a5ae33194300790fc7eb85db0bf48800dbcfa13ea73a21f = internal constant { i8*, i32 } { i8* getelementptr inbounds ([69 x i8], [69 x i8]* @.const.pickledata.d209c67b55a867fd3f2b84e6d6e889530bedaf914192356457488cd68c61bd61, i32 0, i32 0), i32 69 }\n@.const.pickledata.d209c67b55a867fd3f2b84e6d6e889530bedaf914192356457488cd68c61bd61 = internal constant [69 x i8] c\"\\80\\04\\95:\\00\\00\\00\\00\\00\\00\\00\\8C\\08builtins\\94\\8C\\11ZeroDivisionError\\94\\93\\94\\8C\\10division by zero\\94\\85\\94N\\87\\94.\"\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, double }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %.31 = icmp eq i64 %arg.r.2, 0\n  br i1 %.31, label %B0.if, label %B0.endif, !prof !0\n\nB0.if:                                            ; preds = %entry\n  store { i8*, i32 }* @.const.picklebuf.9671d5790635c75b6a5ae33194300790fc7eb85db0bf48800dbcfa13ea73a21f, { i8*, i32 }** %excinfo, align 8\n  ret i32 1\n\nB0.endif:                                         ; preds = %entry\n  %.30 = sitofp i64 %arg.r.2 to double\n  %.29 = sitofp i64 %arg.r.1 to double\n  %.40 = fdiv fast double %.29, %.30\n  %retptr.repack3 = bitcast { i64, double }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack3, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, double }, { i64, double }* %retptr, i64 0, i32 1\n  store double %.40, double* %retptr.repack1, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, double }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.31.i = icmp eq i64 %.4, 0\n  br i1 %.31.i, label %\"notuniquename218303dba31a092a63fd8a50e54f2c15.exit\", label %B0.endif.i, !prof !0\n\nB0.endif.i:                                       ; preds = %entry\n  %.30.i = sitofp i64 %.4 to double\n  %.29.i = sitofp i64 %.3 to double\n  %.40.i = fdiv fast double %.29.i, %.30.i\n  %0 = bitcast double %.40.i to i64\n  br label %\"notuniquename218303dba31a092a63fd8a50e54f2c15.exit\"\n\n\"notuniquename218303dba31a092a63fd8a50e54f2c15.exit\": ; preds = %entry, %B0.endif.i\n  %.6.sroa.4.0 = phi i64 [ %0, %B0.endif.i ], [ 0, %entry ]\n  %.6.sroa.0.0 = phi i64 [ %.2, %B0.endif.i ], [ 0, %entry ]\n  %.1.repack4 = bitcast <{ i64, double }>* %.1 to i64*\n  store i64 %.6.sroa.0.0, i64* %.1.repack4, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, double }>, <{ i64, double }>* %.1, i64 0, i32 1\n  %1 = bitcast double* %.1.repack1 to i64*\n  store i64 %.6.sroa.4.0, i64* %1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n\n!0 = !{!\"branch_weights\", i32 1, i32 99}\n",
+            "id": 28,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "double"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 27,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24454E28Record$28int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1) local_unnamed_addr #0 {\nentry:\n  %retptr.repack3 = bitcast { i64, i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack3, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.r.1, i64* %retptr.repack1, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 29,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 23,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 30,
+            "num_keys": 1,
+            "op": "join",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "double"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 28,
+                    "port": 0
+                },
+                {
+                    "op": 29,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'RDD.alias.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5alias12$3clocals$3e18$3clambda$3e$24456E5TupleIxdxE\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ i64, double, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.x.0, double %arg.x.1, i64 %arg.x.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, double, i64 }* %retptr to i64*\n  store i64 %arg.x.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, double, i64 }, { i64, double, i64 }* %retptr, i64 0, i32 1\n  store double %arg.x.1, double* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, double, i64 }, { i64, double, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.x.2, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ i64, double, i64 }>* nocapture %.1, i64 %.2, double %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.1.repack6 = bitcast <{ i64, double, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack6, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, double, i64 }>, <{ i64, double, i64 }>* %.1, i64 0, i32 1\n  store double %.3, double* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, double, i64 }>, <{ i64, double, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 31,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "double"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 30,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24458E41Record$28int64$2c$20float64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"({ double, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, double %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %.25 = and i64 %arg.r.2, 63\n  %.45 = ashr i64 %arg.r.2, 6\n  %retptr.repack5 = bitcast { double, i64, i64 }* %retptr to double*\n  store double %arg.r.1, double* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { double, i64, i64 }, { double, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %.25, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { double, i64, i64 }, { double, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %.45, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(<{ double, i64, i64 }>* nocapture %.1, i64 %.2, double %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.25.i = and i64 %.4, 63\n  %.45.i = ashr i64 %.4, 6\n  %0 = bitcast <{ double, i64, i64 }>* %.1 to double*\n  store double %.3, double* %0, align 1\n  %.1.repack1 = getelementptr inbounds <{ double, i64, i64 }>, <{ double, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.25.i, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ double, i64, i64 }>, <{ double, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.45.i, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 32,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "double"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 31,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24460E41Record$28float64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i8* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, double %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %.27 = fmul fast double %arg.r.0, 2.000000e-01\n  %.37 = sitofp i64 %arg.r.1 to double\n  %.38 = fcmp fast ogt double %.27, %.37\n  %.53 = zext i1 %.38 to i8\n  store i8 %.53, i8* %retptr, align 1\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i8* nocapture %.1, double %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  %.27.i = fmul fast double %.2, 2.000000e-01\n  %.37.i = sitofp i64 %.3 to double\n  %.38.i = fcmp fast ogt double %.27.i, %.37.i\n  %.30 = bitcast i8* %.1 to i1*\n  store i1 %.38.i, i1* %.30, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 33,
+            "op": "filter",
+            "output_type": [
+                {
+                    "type": "double"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 32,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24462E41Record$28float64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, double %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  store i64 %arg.r.2, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* nocapture %.1, double %.2, i64 %.3, i64 %.4) local_unnamed_addr #0 {\nentry:\n  store i64 %.4, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 34,
+            "op": "map",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 33,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "func": "; ModuleID = 'Q17.run.<locals>.<lambda>'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q173run12$3clocals$3e18$3clambda$3e$24464Exx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @\"notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.i1, i64 %arg.i2) local_unnamed_addr #0 {\nentry:\n  %.14 = add nsw i64 %arg.i2, %arg.i1\n  store i64 %.14, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: norecurse nounwind writeonly\ndefine void @\"cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15\"(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #0 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\n",
+            "id": 35,
+            "op": "reduce",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 34,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 36,
+            "op": "ensure_single_tuple",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 35,
+                    "port": 0
+                }
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "op": 36,
+            "port": 0
+        }
+    ]
+}
