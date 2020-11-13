@@ -92,7 +92,7 @@ private:
         // Casting away constness of 'this' is OK: QualifiedConcreteVisitor is
         // const if 'this' was const on the original call to 'Visit', hence,
         // 'concrete_visitor' is const again.
-        auto const concrete_visitor =  //
+        auto *const concrete_visitor =  //
                 boost::polymorphic_pointer_downcast<QualifiedConcreteVisitor>(
                         const_cast<typename std::remove_const<ThisType>::type
                                            *>(this));
@@ -131,7 +131,7 @@ private:
                     typename std::add_const<T>::type,
                     typename std::remove_const<T>::type>::type;
 
-            auto t_ptr = dynamic_cast<ConstQualifiedT *>(visitable);
+            auto *t_ptr = dynamic_cast<ConstQualifiedT *>(visitable);
             if (t_ptr) {
                 assert(!*has_called);
                 *has_called = true;

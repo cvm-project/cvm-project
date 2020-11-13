@@ -12,9 +12,10 @@ namespace dag::collection {
 Tuple::Tuple(const type::Tuple *type) {
     this->type = type;
     for (size_t i = 0; i < type->field_types.size(); i++) {
-        auto const field_type = type->field_types.at(i);
+        const auto *const field_type = type->field_types.at(i);
 
-        auto const array_type = dynamic_cast<const type::Array *>(field_type);
+        const auto *const array_type =
+                dynamic_cast<const type::Array *>(field_type);
         if (array_type != nullptr) {
             this->fields.push_back(std::make_unique<Array>(array_type, i));
         } else {

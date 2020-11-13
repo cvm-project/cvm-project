@@ -43,7 +43,7 @@ auto Tuple::ComputeTailTuple(size_t head_size) const -> const Tuple * {
 
 auto Tuple::to_string() const -> std::string {
     std::vector<std::string> item_strings;
-    for (auto t : this->field_types) {
+    for (const auto *t : this->field_types) {
         item_strings.push_back(t->to_string());
     }
     return "[" + boost::join(item_strings, ",") + "]";

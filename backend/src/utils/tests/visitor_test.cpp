@@ -251,7 +251,7 @@ TEST(VisitorTest, ConstVisitorConstVisitableVoidReturning) {  // NOLINT
 TEST(VisitorTest, NonConstVisitableIntReturning) {  // NOLINT
     NonConstVisitableIntReturningVisitor v;
     std::unique_ptr<Visitable> visitable_ptr;
-    int i;
+    int i = 0;
 
     ResetCounters();
     visitable_ptr = std::make_unique<A>(0);
@@ -291,7 +291,7 @@ TEST(VisitorTest, NonConstVisitableIntReturning) {  // NOLINT
 TEST(VisitorTest, ConstVisitableIntReturning) {  // NOLINT
     ConstVisitableIntReturningVisitor v;
     std::unique_ptr<const Visitable> visitable_ptr;
-    int i;
+    int i = 0;
 
     ResetCounters();
     visitable_ptr = std::make_unique<A>(0);

@@ -30,11 +30,11 @@ void ApplyInTopologicalOrderImpl(DAG *const dag,
         boost::reverse(operators);
     }
 
-    for (auto const op : operators) {
+    for (auto *const op : operators) {
         on_entry_visitor(op, dag);
         if (kDoRecursion) {
             if (dag->has_inner_dag(op)) {
-                auto const inner_dag = dag->inner_dag(op);
+                auto *const inner_dag = dag->inner_dag(op);
                 ApplyInTopologicalOrderImpl<kReverseGraph, kDoRecursion>(
                         inner_dag, on_entry_visitor, on_exit_visitor);
             }

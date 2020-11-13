@@ -16,12 +16,12 @@ std::unordered_map<int*, std::unique_ptr<int>> pointers;
 
 struct TestRefCounter : public RefCounter {  // NOLINT
     explicit TestRefCounter(void* const pointer) : RefCounter(pointer) {
-        auto const int_ptr = reinterpret_cast<int*>(pointer);
+        auto* const int_ptr = reinterpret_cast<int*>(pointer);
         pointers.emplace(int_ptr, int_ptr);
     }
 
     ~TestRefCounter() override {
-        auto const int_ptr = reinterpret_cast<int*>(pointer());
+        auto* const int_ptr = reinterpret_cast<int*>(pointer());
         EXPECT_EQ(pointers.count(int_ptr), 1);
         pointers.erase(int_ptr);
     }
@@ -331,7 +331,7 @@ TEST(SharedPointerTest, ThreadedMove) {  // NOLINT
     static constexpr size_t kNumIterations = 10000;
 
     int* const int_ptr = new int(42);
-    const auto rc = new TestRefCounter(int_ptr);
+    auto* const rc = new TestRefCounter(int_ptr);
     SharedPointer<int> ptr1(rc);
 
     int64_t min = 5;  // NOLINT(readability-magic-numbers)

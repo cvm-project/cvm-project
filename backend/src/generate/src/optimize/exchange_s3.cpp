@@ -22,21 +22,21 @@ using dag::utils::IsInstanceOf;
 namespace optimize {
 
 void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
-    for (auto const pop_candidate : dag->operators()) {
+    for (auto *const pop_candidate : dag->operators()) {
         if (!IsInstanceOf<DAGConcurrentExecute>(pop_candidate)) continue;
-        auto const pop = dynamic_cast<DAGConcurrentExecute *>(pop_candidate);
+        auto *const pop = dynamic_cast<DAGConcurrentExecute *>(pop_candidate);
         assert(pop != nullptr);
-        auto const pop_inner_dag = dag->inner_dag(pop);
+        auto *const pop_inner_dag = dag->inner_dag(pop);
 
         // Replace each DAGExchange with a DAGPartitionedExchange of one level
         std::vector<DAGExchange *> exchange_operators;
-        for (auto const op : pop_inner_dag->operators()) {
+        for (auto *const op : pop_inner_dag->operators()) {
             if (IsInstanceOf<DAGExchange>(op)) {
                 exchange_operators.push_back(dynamic_cast<DAGExchange *>(op));
             }
         }
-        for (auto const op : exchange_operators) {
-            auto const new_op = new DAGPartitionedExchange();
+        for (auto *const op : exchange_operators) {
+            auto *const new_op = new DAGPartitionedExchange();
             new_op->tuple = op->tuple;
             pop_inner_dag->ReplaceOperator(op, new_op);
             new_op->num_levels = 1;
@@ -46,24 +46,24 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
         // Replace each DAGPartitionedExchange with a sequence including a
         // DAGExchangeS3 operator
         std::vector<DAGPartitionedExchange *> partitioned_exchange_operators;
-        for (auto const op : pop_inner_dag->operators()) {
+        for (auto *const op : pop_inner_dag->operators()) {
             if (IsInstanceOf<DAGPartitionedExchange>(op)) {
                 partitioned_exchange_operators.push_back(
                         dynamic_cast<DAGPartitionedExchange *>(op));
             }
         }
 
-        for (auto const op : partitioned_exchange_operators) {
-            auto const dag = pop_inner_dag;
+        for (auto *const op : partitioned_exchange_operators) {
+            auto *const dag = pop_inner_dag;
             auto const in_flow = dag->in_flow(op);
             auto const out_flow = dag->out_flow(op);
 
             // Create new operators in outer DAG
-            auto const partition_op = new DAGPartition();
+            auto *const partition_op = new DAGPartition();
             dag->AddOperator(partition_op);
 
             // Create degree-of-parallelism operator
-            auto const part_dop_op = new DAGConstantTuple();
+            auto *const part_dop_op = new DAGConstantTuple();
             dag->AddOperator(part_dop_op);
             part_dop_op->values.emplace_back(std::to_string(op->num_levels));
             part_dop_op->values.emplace_back(std::to_string(op->level_num));
@@ -77,7 +77,7 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
                                      dag::type::Atomic::MakeAtomic("long"),
                                      dag::type::Atomic::MakeAtomic("long")}));
 
-            auto const map_op = new DAGMapCpp();
+            auto *const map_op = new DAGMapCpp();
             dag->AddOperator(map_op);
             map_op->function_name = "runtime::operators::ComputeGroupSizeTuple";
             map_op->tuple =
@@ -85,22 +85,22 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
                             dag::type::Tuple::MakeTuple(
                                     {dag::type::Atomic::MakeAtomic("long")}));
 
-            auto const group_by_op = new DAGGroupBy();
+            auto *const group_by_op = new DAGGroupBy();
             dag->AddOperator(group_by_op);
 
-            auto const nested_map_op = new DAGNestedMap();
+            auto *const nested_map_op = new DAGNestedMap();
             dag->AddOperator(nested_map_op);
 
-            auto const row_scan_op = new DAGRowScan();
+            auto *const row_scan_op = new DAGRowScan();
             dag->AddOperator(row_scan_op);
 
-            auto const exchange_op = new DAGExchangeS3();
+            auto *const exchange_op = new DAGExchangeS3();
             dag->AddOperator(exchange_op);
             exchange_op->num_levels = op->num_levels;
             exchange_op->level_num = op->level_num;
 
             // Create degree-of-parallelism operator
-            auto const exchange_dop_op = new DAGConstantTuple();
+            auto *const exchange_dop_op = new DAGConstantTuple();
             dag->AddOperator(exchange_dop_op);
             exchange_dop_op->values.emplace_back("$DOP");
             exchange_dop_op->tuple =
@@ -109,7 +109,7 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
                                     {dag::type::Atomic::MakeAtomic("long")}));
 
             // Create worker-ID operator
-            auto const exchange_wid_op = new DAGConstantTuple();
+            auto *const exchange_wid_op = new DAGConstantTuple();
             dag->AddOperator(exchange_wid_op);
             exchange_wid_op->values.emplace_back("$WID");
             exchange_wid_op->tuple =
@@ -117,11 +117,11 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
                             dag::type::Tuple::MakeTuple(
                                     {dag::type::Atomic::MakeAtomic("long")}));
 
-            auto const parquet_scan_op = new DAGParquetScan();
+            auto *const parquet_scan_op = new DAGParquetScan();
             dag->AddOperator(parquet_scan_op);
             parquet_scan_op->filesystem = "s3";
 
-            auto const column_scan_op = new DAGColumnScan();
+            auto *const column_scan_op = new DAGColumnScan();
             dag->AddOperator(column_scan_op);
 
             // Compute Parquet operator types
@@ -131,7 +131,8 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
                         dag::type::Tuple::MakeTuple({type}),
                         dag::type::ArrayLayout::kC, 1));
             }
-            auto const output_type = dag::type::Tuple::MakeTuple(column_types);
+            const auto *const output_type =
+                    dag::type::Tuple::MakeTuple(column_types);
             parquet_scan_op->tuple =
                     jbcoe::make_polymorphic_value<dag::collection::Tuple>(
                             output_type);
@@ -164,35 +165,35 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
 
             // Create new operators for inner DAG
             dag->set_inner_dag(nested_map_op, new DAG());
-            auto const inner_dag = dag->inner_dag(nested_map_op);
+            auto *const inner_dag = dag->inner_dag(nested_map_op);
 
-            auto const id_param_op = new DAGParameterLookup();
+            auto *const id_param_op = new DAGParameterLookup();
             inner_dag->AddOperator(id_param_op);
 
-            auto const id_projection_op = new DAGProjection();
+            auto *const id_projection_op = new DAGProjection();
             inner_dag->AddOperator(id_projection_op);
             id_projection_op->positions = {0};
 
-            auto const data_param_op = new DAGParameterLookup();
+            auto *const data_param_op = new DAGParameterLookup();
             inner_dag->AddOperator(data_param_op);
 
-            auto const data_projection_op = new DAGProjection();
+            auto *const data_projection_op = new DAGProjection();
             inner_dag->AddOperator(data_projection_op);
             data_projection_op->positions = {1};
 
-            auto const scan_op1 = new DAGRowScan();
+            auto *const scan_op1 = new DAGRowScan();
             inner_dag->AddOperator(scan_op1);
 
-            auto const scan_op2 = new DAGRowScan();
+            auto *const scan_op2 = new DAGRowScan();
             inner_dag->AddOperator(scan_op2);
 
-            auto const mat_columns_op = new DAGMaterializeColumnChunks();
+            auto *const mat_columns_op = new DAGMaterializeColumnChunks();
             inner_dag->AddOperator(mat_columns_op);
 
-            auto const cartesian_op = new DAGCartesian();
+            auto *const cartesian_op = new DAGCartesian();
             inner_dag->AddOperator(cartesian_op);
 
-            auto const mat_rows_op = new DAGMaterializeRowVector();
+            auto *const mat_rows_op = new DAGMaterializeRowVector();
             inner_dag->AddOperator(mat_rows_op);
 
             // Connect inner DAG

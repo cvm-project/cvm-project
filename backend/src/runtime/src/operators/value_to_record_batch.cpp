@@ -32,13 +32,14 @@ auto ConvertValueToRecordBatch(
     for (size_t i = 0; i < value_columns.size(); i++) {
         assert(!schema->field(i)->nullable());
         const auto type = schema->field(i)->type();
-        const auto fixed_width_type =
+        auto *const fixed_width_type =
                 dynamic_cast<arrow::FixedWidthType *>(type.get());
         assert(fixed_width_type != nullptr);
         const size_t type_width = fixed_width_type->bit_width() / 8;
 
-        const auto value = value_columns.at(i)->as<Array>();
-        const auto ptr = reinterpret_cast<const uint8_t *>(value->data.get());
+        auto *const value = value_columns.at(i)->as<Array>();
+        const auto *const ptr =
+                reinterpret_cast<const uint8_t *>(value->data.get());
 
         std::shared_ptr<arrow::Buffer> buffer(
                 new arrow::Buffer(ptr, num_rows * type_width),

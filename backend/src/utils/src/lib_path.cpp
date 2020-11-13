@@ -3,7 +3,7 @@
 #include <boost/filesystem/path.hpp>
 
 auto get_lib_path() -> boost::filesystem::path {
-    const auto lib_path = std::getenv("JITQPATH");
+    auto *const lib_path = std::getenv("JITQPATH");
     if (lib_path == nullptr) {
         throw std::runtime_error(
                 "JITQPATH is not defined, set it to your jitq installation "

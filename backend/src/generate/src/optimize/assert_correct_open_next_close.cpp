@@ -16,11 +16,11 @@ void AddAssertions(DAG *const dag) {
     std::vector<DAGOperator *> operators;
     boost::copy(dag->operators(), std::back_inserter(operators));
 
-    for (auto const op : operators) {
+    for (auto *const op : operators) {
         std::vector<DAG::Flow> out_flows;
         boost::copy(dag->out_flows(op), std::back_inserter(out_flows));
 
-        auto const aop = new DAGAssertCorrectOpenNextClose();
+        auto *const aop = new DAGAssertCorrectOpenNextClose();
         dag->AddOperator(aop);
 
         for (auto const &f : out_flows) {

@@ -15,7 +15,7 @@ struct Value {
     [[nodiscard]] auto as() const -> const ConcreteValueType * {
         static_assert(std::is_base_of<Value, ConcreteValueType>::value,
                       "Can only cast to types inheriting from Value.");
-        auto ret = dynamic_cast<const ConcreteValueType *>(this);
+        const auto *ret = dynamic_cast<const ConcreteValueType *>(this);
         assert(ret != nullptr);
         return ret;
     }

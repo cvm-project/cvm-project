@@ -29,7 +29,7 @@ void SimplePredicateMoveAround::Run(DAG *const dag,
                                     const std::string & /*config*/) const {
     // 1. gather filters
     CollectFiltersVisitor filter_collector;
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         filter_collector.Visit(op);
     }
 
@@ -55,7 +55,7 @@ void SimplePredicateMoveAround::Run(DAG *const dag,
 
             bool can_swap = false;
             for (auto const flow : dag->in_flows(currentOp)) {
-                auto const pred = flow.source.op;
+                auto *const pred = flow.source.op;
                 if (currentOp->name() != "row_scan" &&
                     currentOp->name() != "range_source" &&
                     std::all_of(filter->read_set.begin(),
@@ -84,7 +84,7 @@ void SimplePredicateMoveAround::Run(DAG *const dag,
             new_predecessors.insert(currentOp);
         }
 
-        const auto pred = dag->predecessor(filter);
+        auto *const pred = dag->predecessor(filter);
         const bool keep_original = new_predecessors.count(pred) > 0;
         new_predecessors.erase(pred);
 
@@ -102,7 +102,7 @@ void SimplePredicateMoveAround::Run(DAG *const dag,
         }
 
         // Add copy of the filter into the new places
-        for (auto const currentOp : new_predecessors) {
+        for (auto *const currentOp : new_predecessors) {
             DAGFilter *const filt = filter->Clone();
             dag->AddOperator(filt);
 

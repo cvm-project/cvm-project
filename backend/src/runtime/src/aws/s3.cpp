@@ -12,7 +12,7 @@
 #include "aws.hpp"
 namespace runtime::aws::s3 {
 
-auto MakeClient() -> Aws::S3::S3Client* {
+auto MakeClient() -> Aws::S3::S3Client * {
     aws::EnsureApiInitialized();
 
     Aws::Client::ClientConfiguration cfg;
@@ -23,7 +23,7 @@ auto MakeClient() -> Aws::S3::S3Client* {
     // NOLINTNEXTLINE(readability-magic-numbers)
     cfg.retryStrategy = std::make_shared<AggressiveRetryStrategy>(8, 750);
 
-    const auto endpoint_override = std::getenv("AWS_S3_ENDPOINT");
+    auto *const endpoint_override = std::getenv("AWS_S3_ENDPOINT");
     if (endpoint_override != nullptr) {
         cfg.endpointOverride = endpoint_override;
     }
@@ -33,15 +33,15 @@ auto MakeClient() -> Aws::S3::S3Client* {
         cfg.verifySSL = false;
     }
 
-    const auto region = std::getenv("AWS_DEFAULT_REGION");
+    auto *const region = std::getenv("AWS_DEFAULT_REGION");
     if (region != nullptr) {
         cfg.region = region;
     }
 
-    const auto url = std::getenv("HTTP_PROXY");
+    auto *const url = std::getenv("HTTP_PROXY");
     if (url != nullptr) {
         std::set<std::string> exceptions;
-        const auto no_proxy = std::getenv("NO_PROXY");
+        auto *const no_proxy = std::getenv("NO_PROXY");
         bool is_exception = false;
         if (no_proxy != nullptr && endpoint_url) {
             boost::split(exceptions, no_proxy, boost::is_any_of(","));
@@ -64,7 +64,7 @@ auto MakeClient() -> Aws::S3::S3Client* {
             false);
 }
 
-auto LookupErrorString(const Aws::S3::S3Errors& code) -> std::string {
+auto LookupErrorString(const Aws::S3::S3Errors &code) -> std::string {
     using S3Errors = Aws::S3::S3Errors;
     const static std::map<Aws::S3::S3Errors, std::string> strings = {
             {S3Errors::INCOMPLETE_SIGNATURE, "INCOMPLETE_SIGNATURE"},

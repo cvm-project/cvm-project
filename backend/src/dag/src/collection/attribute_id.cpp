@@ -23,7 +23,7 @@ void AttributeId::RemoveField(collection::Field *field) {
 
 void AttributeId::MoveFields(const std::shared_ptr<AttributeId> &other) {
     auto count = other->fields_.size();
-    for (auto &field : other->fields_) {
+    for (const auto &field : other->fields_) {
         fields_.insert(field);
         field->attribute_id_ = shared_from_this();
         // this is needed because reseting the attribute_id to this

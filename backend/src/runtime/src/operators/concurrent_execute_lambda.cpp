@@ -20,7 +20,7 @@ namespace runtime::operators {
 
 auto lambda_num_workers() -> size_t {
     static const char* const kNumWorkersVarName = "JITQ_LAMBDA_NUM_WORKERS";
-    const auto num_workers_str = std::getenv(kNumWorkersVarName);
+    auto* const num_workers_str = std::getenv(kNumWorkersVarName);
     if (num_workers_str == nullptr) {
         throw std::runtime_error(
                 (boost::format("Environment variable %1% not set.") %
@@ -32,7 +32,7 @@ auto lambda_num_workers() -> size_t {
 
 auto lambda_worker_id() -> size_t {
     static const char* const kWorkerIdVarName = "JITQ_LAMBDA_WORKER_ID";
-    const auto worker_id_str = std::getenv(kWorkerIdVarName);
+    auto* const worker_id_str = std::getenv(kWorkerIdVarName);
     if (worker_id_str == nullptr) {
         throw std::runtime_error(
                 (boost::format("Environment variable %1% not set.") %

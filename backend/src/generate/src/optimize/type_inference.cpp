@@ -33,8 +33,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
     private:
         auto HandleAntiJoin(const DAGOperator *const op) const
                 -> const Tuple * {
-            auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
-            auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
+            const auto *const left_input_type =
+                    dag_->predecessor(op, 0)->tuple->type;
+            const auto *const right_input_type =
+                    dag_->predecessor(op, 1)->tuple->type;
 
             if (left_input_type->field_types.empty()) {
                 throw std::invalid_argument(
@@ -46,8 +48,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         "Right anti-join input cannot be empty tuple");
             }
 
-            auto const left_key_type = left_input_type->field_types[0];
-            auto const right_key_type = right_input_type->field_types[0];
+            const auto *const left_key_type = left_input_type->field_types[0];
+            const auto *const right_key_type = right_input_type->field_types[0];
 
             if (dynamic_cast<const dag::type::Atomic *>(left_key_type) ==
                 nullptr) {
@@ -86,8 +88,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGCartesian *const op) const -> const Tuple * {
-            auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
-            auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
+            const auto *const left_input_type =
+                    dag_->predecessor(op, 0)->tuple->type;
+            const auto *const right_input_type =
+                    dag_->predecessor(op, 1)->tuple->type;
 
             auto output_fields = left_input_type->field_types;
             output_fields.insert(output_fields.end(),
@@ -98,7 +102,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGColumnScan *const op) const -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
 
             if (input_type->field_types.empty()) {
                 throw std::invalid_argument(
@@ -108,8 +112,9 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
             std::vector<const FieldType *> fields;
 
-            for (const auto field_type : input_type->field_types) {
-                auto const array_type = dynamic_cast<const Array *>(field_type);
+            for (const auto *const field_type : input_type->field_types) {
+                const auto *const array_type =
+                        dynamic_cast<const Array *>(field_type);
 
                 if (array_type == nullptr) {
                     throw std::invalid_argument(
@@ -144,7 +149,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGRowScan *const op) const -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
 
             if (input_type->field_types.size() != 1) {
                 throw std::invalid_argument(
@@ -152,7 +157,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         "field");
             }
 
-            auto const array_type =
+            const auto *const array_type =
                     dynamic_cast<const Array *>(input_type->field_types[0]);
 
             if (array_type == nullptr) {
@@ -175,23 +180,24 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         auto operator()(const DAGConcurrentExecute *const op) const
                 -> const Tuple * {
             assert(dag_->has_inner_dag(op));
-            auto const inner_dag = dag_->inner_dag(op);
+            auto *const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
         auto operator()(const DAGConcurrentExecuteLambda *const op) const
                 -> const Tuple * {
             assert(dag_->has_inner_dag(op));
-            auto const inner_dag = dag_->inner_dag(op);
+            auto *const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
         auto operator()(const DAGConcurrentExecuteProcess *const op) const
                 -> const Tuple * {
-            auto const input_type = dag_->predecessor(op, 0)->tuple->type;
+            const auto *const input_type =
+                    dag_->predecessor(op, 0)->tuple->type;
 
             for (auto const &field_type : input_type->field_types) {
-                auto const array_type =
+                const auto *const array_type =
                         dynamic_cast<const dag::type::Array *>(field_type);
                 if (array_type != nullptr) {
                     throw std::invalid_argument(
@@ -202,7 +208,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             }
 
             assert(dag_->has_inner_dag(op));
-            auto const inner_dag = dag_->inner_dag(op);
+            auto *const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
@@ -230,14 +236,14 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGGroupBy *const op) const -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
-            auto const partition_id_type = input_type->field_types[0];
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const partition_id_type = input_type->field_types[0];
 
             if (partition_id_type != Atomic::MakeAtomic("long")) {
                 throw std::invalid_argument(
                         "First field of GroupBy must be 'long'");
             }
-            auto const element_type =
+            const auto *const element_type =
                     Tuple::MakeTuple({input_type->field_types[1]});
 
             return Tuple::MakeTuple(
@@ -251,8 +257,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGExpandPattern *const op) const
                 -> const Tuple * {
-            auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
-            auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
+            const auto *const left_input_type =
+                    dag_->predecessor(op, 0)->tuple->type;
+            const auto *const right_input_type =
+                    dag_->predecessor(op, 1)->tuple->type;
 
             if (left_input_type->field_types.size() != 1) {
                 throw std::invalid_argument(
@@ -264,10 +272,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         "Right ExpandPattern input must have one field");
             }
 
-            auto const left_field_type =
+            const auto *const left_field_type =
                     dynamic_cast<const dag::type::Atomic *>(
                             left_input_type->field_types[0]);
-            auto const right_field_type =
+            const auto *const right_field_type =
                     dynamic_cast<const dag::type::Atomic *>(
                             right_input_type->field_types[0]);
 
@@ -289,8 +297,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGJoin *const op) const -> const Tuple * {
-            auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
-            auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
+            const auto *const left_input_type =
+                    dag_->predecessor(op, 0)->tuple->type;
+            const auto *const right_input_type =
+                    dag_->predecessor(op, 1)->tuple->type;
 
             if (left_input_type->field_types.empty()) {
                 throw std::invalid_argument(
@@ -303,8 +313,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             }
 
             for (int i = 0; i < op->num_keys; ++i) {
-                auto const left_key_type = left_input_type->field_types[i];
-                auto const right_key_type = right_input_type->field_types[i];
+                const auto *const left_key_type =
+                        left_input_type->field_types[i];
+                const auto *const right_key_type =
+                        right_input_type->field_types[i];
 
                 if (dynamic_cast<const dag::type::Atomic *>(left_key_type) ==
                     nullptr) {
@@ -339,7 +351,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGMaterializeColumnChunks *const op) const
                 -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
 
             std::vector<const FieldType *> column_types;
             for (auto const &type : input_type->field_types) {
@@ -352,9 +364,11 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGMaterializeParquet *const op) const
                 -> const Tuple * {
-            auto const conf_input_type = dag_->predecessor(op, 1)->tuple->type;
-            auto const conf_type = dynamic_cast<const dag::type::Atomic *>(
-                    conf_input_type->field_types.at(0));
+            const auto *const conf_input_type =
+                    dag_->predecessor(op, 1)->tuple->type;
+            const auto *const conf_type =
+                    dynamic_cast<const dag::type::Atomic *>(
+                            conf_input_type->field_types.at(0));
             if (conf_type == nullptr || conf_type->type != "std::string") {
                 throw std::invalid_argument(
                         "Configuration of MaterializeParquet must be string, "
@@ -362,10 +376,11 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         conf_input_type->to_string());
             }
 
-            auto const main_input_type = dag_->predecessor(op, 0)->tuple->type;
+            const auto *const main_input_type =
+                    dag_->predecessor(op, 0)->tuple->type;
 
             for (auto const &field_type : main_input_type->field_types) {
-                auto const array_type =
+                const auto *const array_type =
                         dynamic_cast<const dag::type::Array *>(field_type);
                 if (array_type == nullptr) {
                     throw std::invalid_argument(
@@ -383,7 +398,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                             main_input_type->to_string());
                 }
 
-                auto const atomic_type =
+                const auto *const atomic_type =
                         dynamic_cast<const dag::type::Atomic *>(
                                 inner_field_types.at(0));
                 if (atomic_type == nullptr) {
@@ -402,7 +417,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGMaterializeRowVector *const op) const
                 -> const Tuple * {
-            auto const element_type = dag_->predecessor(op)->tuple->type;
+            const auto *const element_type = dag_->predecessor(op)->tuple->type;
 
             return Tuple::MakeTuple(
                     {Array::MakeArray(element_type, ArrayLayout::kC, 1)});
@@ -410,20 +425,20 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGNestedMap *const op) const -> const Tuple * {
             assert(dag_->has_inner_dag(op));
-            auto const inner_dag = dag_->inner_dag(op);
+            auto *const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
         auto operator()(const DAGParallelMap *const op) const -> const Tuple * {
             assert(dag_->has_inner_dag(op));
-            auto const inner_dag = dag_->inner_dag(op);
+            auto *const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
         auto operator()(const DAGParallelMapOmp *const op) const
                 -> const Tuple * {
             assert(dag_->has_inner_dag(op));
-            auto const inner_dag = dag_->inner_dag(op);
+            auto *const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
@@ -433,7 +448,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGParquetScan *const op) const -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
             auto const &input_field_types = input_type->field_types;
 
             if (input_field_types.size() != 4) {
@@ -442,7 +457,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         "(file_path, slice_from, slice_to, num_slices).");
             }
 
-            auto const file_path_field_type =
+            const auto *const file_path_field_type =
                     dynamic_cast<const Atomic *>(input_field_types.at(0));
             if (file_path_field_type == nullptr ||
                 file_path_field_type->type != "std::string") {
@@ -452,7 +467,7 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
             }
 
             for (size_t i = 1; i < input_field_types.size(); i++) {
-                auto const atomic_type =
+                const auto *const atomic_type =
                         dynamic_cast<const Atomic *>(input_field_types.at(i));
                 if (atomic_type == nullptr || atomic_type->type != "long") {
                     throw std::invalid_argument(
@@ -465,8 +480,9 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGPartition *const op) const -> const Tuple * {
-            auto const conf_input_type = dag_->predecessor(op, 1)->tuple->type;
-            auto const single_long_type =
+            const auto *const conf_input_type =
+                    dag_->predecessor(op, 1)->tuple->type;
+            const auto *const single_long_type =
                     Tuple::MakeTuple({Atomic::MakeAtomic("long")});
 
             if (conf_input_type != single_long_type) {
@@ -475,7 +491,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         conf_input_type->to_string());
             }
 
-            auto const element_type = dag_->predecessor(op, 0)->tuple->type;
+            const auto *const element_type =
+                    dag_->predecessor(op, 0)->tuple->type;
 
             return Tuple::MakeTuple(
                     {Atomic::MakeAtomic("long"),
@@ -489,12 +506,12 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGPipeline *const op) const -> const Tuple * {
             assert(dag_->has_inner_dag(op));
-            auto const inner_dag = dag_->inner_dag(op);
+            auto *const inner_dag = dag_->inner_dag(op);
             return inner_dag->output().op->tuple->type;
         }
 
         auto operator()(const DAGProjection *const op) const -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
             auto const &input_field_types = input_type->field_types;
 
             std::vector<const FieldType *> output_field_types;
@@ -517,17 +534,18 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGRange *const op) const -> const Tuple * {
-            auto const pred = dag_->predecessor(op);
-            auto const input_type = pred->tuple->type;
-            auto const element_type = input_type->field_types[0];
-            auto const computed_output_type = Tuple::MakeTuple({element_type});
+            auto *const pred = dag_->predecessor(op);
+            const auto *const input_type = pred->tuple->type;
+            const auto *const element_type = input_type->field_types[0];
+            const auto *const computed_output_type =
+                    Tuple::MakeTuple({element_type});
 
             if (input_type->field_types.size() != 3) {
                 throw std::invalid_argument(
                         "Input of Range operator must be a triple");
             }
 
-            for (auto const t : input_type->field_types) {
+            for (const auto *const t : input_type->field_types) {
                 // TODO(ingo): it must also be a triple of *numbers*
                 if (t != element_type) {
                     throw std::invalid_argument(
@@ -550,8 +568,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGReduceByKey *const op) const -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
-            auto const key_type = input_type->field_types[0];
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const key_type = input_type->field_types[0];
 
             if (dynamic_cast<const dag::type::Atomic *>(key_type) == nullptr) {
                 throw std::invalid_argument(
@@ -563,8 +581,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGReduceByKeyGrouped *const op) const
                 -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
-            auto const key_type = input_type->field_types[0];
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const key_type = input_type->field_types[0];
 
             if (dynamic_cast<const dag::type::Atomic *>(key_type) == nullptr) {
                 throw std::invalid_argument(
@@ -576,8 +594,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 
         auto operator()(const DAGReduceByIndex *const op) const
                 -> const Tuple * {
-            auto const input_type = dag_->predecessor(op)->tuple->type;
-            auto const key_type = input_type->field_types[0];
+            const auto *const input_type = dag_->predecessor(op)->tuple->type;
+            const auto *const key_type = input_type->field_types[0];
 
             if (dynamic_cast<const dag::type::Atomic *>(key_type) == nullptr) {
                 throw std::invalid_argument(
@@ -588,8 +606,10 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
         }
 
         auto operator()(const DAGSemiJoin *const op) const -> const Tuple * {
-            auto const left_input_type = dag_->predecessor(op, 0)->tuple->type;
-            auto const right_input_type = dag_->predecessor(op, 1)->tuple->type;
+            const auto *const left_input_type =
+                    dag_->predecessor(op, 0)->tuple->type;
+            const auto *const right_input_type =
+                    dag_->predecessor(op, 1)->tuple->type;
 
             if (left_input_type->field_types.empty()) {
                 throw std::invalid_argument(
@@ -601,8 +621,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
                         "Right semijoin input cannot be empty tuple");
             }
 
-            auto const left_key_type = left_input_type->field_types[0];
-            auto const right_key_type = right_input_type->field_types[0];
+            const auto *const left_key_type = left_input_type->field_types[0];
+            const auto *const right_key_type = right_input_type->field_types[0];
 
             if (dynamic_cast<const dag::type::Atomic *>(left_key_type) ==
                 nullptr) {
@@ -668,8 +688,8 @@ auto ComputeOutputType(const DAG *const dag, const DAGOperator *const op)
 }
 
 void CheckOutputType(const DAGOperator *const op, const DAG *const dag) {
-    auto const computed_output_type = ComputeOutputType(dag, op);
-    auto const output_type = op->tuple->type;
+    const auto *const computed_output_type = ComputeOutputType(dag, op);
+    const auto *const output_type = op->tuple->type;
     if (output_type != computed_output_type) {
         throw std::invalid_argument(
                 (boost::format("Operator %1% (%2%) has the wrong output type:\n"
@@ -682,7 +702,7 @@ void CheckOutputType(const DAGOperator *const op, const DAG *const dag) {
 }
 
 void RecomputeOutputType(DAGOperator *const op, const DAG *const dag) {
-    auto const computed_output_type = ComputeOutputType(dag, op);
+    const auto *const computed_output_type = ComputeOutputType(dag, op);
     op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
             computed_output_type);
 }
@@ -690,11 +710,12 @@ void RecomputeOutputType(DAGOperator *const op, const DAG *const dag) {
 void SetInnerGraphInputTypes(DAGOperator *const op, const DAG *const dag) {
     if (!dag->has_inner_dag(op)) return;
 
-    auto const inner_dag = dag->inner_dag(op);
+    auto *const inner_dag = dag->inner_dag(op);
     for (auto const input : inner_dag->inputs()) {
-        auto const inner_op = input.second.op;
+        auto *const inner_op = input.second.op;
         auto const input_port = input.first;
-        auto const input_type = dag->predecessor(op, input_port)->tuple->type;
+        const auto *const input_type =
+                dag->predecessor(op, input_port)->tuple->type;
         inner_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
                 input_type);
     }

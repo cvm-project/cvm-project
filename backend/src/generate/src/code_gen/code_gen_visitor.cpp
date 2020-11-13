@@ -28,13 +28,13 @@ void CodeGenVisitor::operator()(DAGAntiJoin *op) {
 
     // Build key and value types
     // TODO(sabir): This currently only works for keys of size 1
-    const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
-    auto key_Tuple = up1Type->ComputeHeadTuple();
+    const auto *const up1Type = dag_->predecessor(op, 0)->tuple->type;
+    const auto *key_Tuple = up1Type->ComputeHeadTuple();
 
-    auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
+    const auto *key_type = EmitTupleStructDefinition(context_, key_Tuple);
 
-    auto value_tuple1 = up1Type->ComputeTailTuple();
-    auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
+    const auto *value_tuple1 = up1Type->ComputeTailTuple();
+    const auto *value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
 
     // Build operator
     std::vector<std::string> template_args = {key_type->name,
@@ -49,23 +49,25 @@ void CodeGenVisitor::operator()(DAGAntiJoinPredicated *op) {
 
     // Build key and value types
     // TODO(sabir): This currently only works for keys of size 1
-    const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
-    const auto up2Type = dag_->predecessor(op, 1)->tuple->type;
-    auto key_Tuple = up1Type->ComputeHeadTuple();
+    const auto *const up1Type = dag_->predecessor(op, 0)->tuple->type;
+    const auto *const up2Type = dag_->predecessor(op, 1)->tuple->type;
+    const auto *key_Tuple = up1Type->ComputeHeadTuple();
 
-    auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
+    const auto *key_type = EmitTupleStructDefinition(context_, key_Tuple);
 
-    auto value_tuple1 = up1Type->ComputeTailTuple();
-    auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
-    auto value_tuple2 = up2Type->ComputeTailTuple();
-    auto value_type2 = EmitTupleStructDefinition(context_, value_tuple2);
+    const auto *value_tuple1 = up1Type->ComputeTailTuple();
+    const auto *value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
+    const auto *value_tuple2 = up2Type->ComputeTailTuple();
+    const auto *value_type2 = EmitTupleStructDefinition(context_, value_tuple2);
 
     // Build operator
     std::vector<std::string> template_args = {key_type->name, value_type1->name,
                                               value_type2->name};
 
-    auto input_type1 = operator_descs_[dag_->predecessor(op, 0)].return_type;
-    auto input_type2 = operator_descs_[dag_->predecessor(op, 1)].return_type;
+    const auto *input_type1 =
+            operator_descs_[dag_->predecessor(op, 0)].return_type;
+    const auto *input_type2 =
+            operator_descs_[dag_->predecessor(op, 1)].return_type;
     const std::string functor_class =
             GenerateLlvmFunctor(context_, op->name(), op->llvm_ir,
                                 {input_type1, input_type2}, "bool");
@@ -144,7 +146,7 @@ void CodeGenVisitor::operator()(DAGConstantTuple *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ConstantTupleOperator");
 
-    const auto return_type = operator_descs_[op].return_type;
+    const auto *const return_type = operator_descs_[op].return_type;
     const auto tuple_arg =
             (format("%s{%s}") % return_type->name % join(op->values, ","))
                     .str();
@@ -171,8 +173,8 @@ void CodeGenVisitor::operator()(DAGMap *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
-    auto return_type = operator_descs_[op].return_type;
+    const auto *input_type = operator_descs_[dag_->predecessor(op)].return_type;
+    const auto *return_type = operator_descs_[op].return_type;
     const std::string functor_class = GenerateLlvmFunctor(
             context_, op->name(), op->llvm_ir, {input_type}, return_type->name);
 
@@ -183,7 +185,7 @@ void CodeGenVisitor::operator()(DAGMapCpp *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
+    const auto *input_type = operator_descs_[dag_->predecessor(op)].return_type;
     const std::string functor_class = GenerateCppFunctor(
             context_, op->name(), op->function_name, {input_type});
 
@@ -262,8 +264,8 @@ void CodeGenVisitor::operator()(DAGProjection *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "MapOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
-    auto return_type = operator_descs_[op].return_type;
+    const auto *input_type = operator_descs_[dag_->predecessor(op)].return_type;
+    const auto *return_type = operator_descs_[op].return_type;
 
     const auto functor_class =
             context_->GenerateSymbolName(var_name + "_func", true);
@@ -290,7 +292,7 @@ void CodeGenVisitor::operator()(DAGReduce *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "ReduceOperator");
 
-    auto return_type = operator_descs_[op].return_type;
+    const auto *return_type = operator_descs_[op].return_type;
     const std::string functor_class =
             GenerateLlvmFunctor(context_, op->name(), op->llvm_ir,
                                 {return_type, return_type}, return_type->name);
@@ -344,7 +346,7 @@ void CodeGenVisitor::operator()(DAGFilter *op) {
     const std::string var_name =
             CodeGenVisitor::visit_common(op, "FilterOperator");
 
-    auto input_type = operator_descs_[dag_->predecessor(op)].return_type;
+    const auto *input_type = operator_descs_[dag_->predecessor(op)].return_type;
     const std::string functor_class = GenerateLlvmFunctor(
             context_, op->name(), op->llvm_ir, {input_type}, "bool");
 
@@ -357,18 +359,18 @@ void CodeGenVisitor::operator()(DAGJoin *op) {
             CodeGenVisitor::visit_common(op, "JoinOperator");
 
     // Build key and value types
-    const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
-    const auto up2Type = dag_->predecessor(op, 1)->tuple->type;
+    const auto *const up1Type = dag_->predecessor(op, 0)->tuple->type;
+    const auto *const up2Type = dag_->predecessor(op, 1)->tuple->type;
 
-    auto key_Tuple = up1Type->ComputeHeadTuple(op->num_keys);
+    const auto *key_Tuple = up1Type->ComputeHeadTuple(op->num_keys);
 
-    auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
+    const auto *key_type = EmitTupleStructDefinition(context_, key_Tuple);
 
-    auto value_tuple1 = up1Type->ComputeTailTuple(op->num_keys);
-    auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
+    const auto *value_tuple1 = up1Type->ComputeTailTuple(op->num_keys);
+    const auto *value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
 
-    auto value_tuple2 = up2Type->ComputeTailTuple(op->num_keys);
-    auto value_type2 = EmitTupleStructDefinition(context_, value_tuple2);
+    const auto *value_tuple2 = up2Type->ComputeTailTuple(op->num_keys);
+    const auto *value_type2 = EmitTupleStructDefinition(context_, value_tuple2);
 
     // Build operator
     std::vector<std::string> template_args = {key_type->name, value_type1->name,
@@ -417,10 +419,10 @@ void CodeGenVisitor::operator()(DAGParquetScan *op) {
 
     for (size_t i = 0; i < range_filters.size(); i++) {
         auto const &ranges = range_filters[i];
-        auto const column_type =
+        const auto *const column_type =
                 dynamic_cast<const dag::type::Array *>(column_types[i]);
         assert(column_type != nullptr);
-        auto const item_type = dynamic_cast<const dag::type::Atomic *>(
+        const auto *const item_type = dynamic_cast<const dag::type::Atomic *>(
                 column_type->tuple_type->field_types.at(0));
         assert(item_type != nullptr);
         std::vector<std::string> column_predicates;
@@ -458,13 +460,13 @@ void CodeGenVisitor::operator()(DAGSemiJoin *op) {
 
     // Build key and value types
     // TODO(sabir): This currently only works for keys of size 1
-    const auto up1Type = dag_->predecessor(op, 0)->tuple->type;
-    auto key_Tuple = up1Type->ComputeHeadTuple();
+    const auto *const up1Type = dag_->predecessor(op, 0)->tuple->type;
+    const auto *key_Tuple = up1Type->ComputeHeadTuple();
 
-    auto key_type = EmitTupleStructDefinition(context_, key_Tuple);
+    const auto *key_type = EmitTupleStructDefinition(context_, key_Tuple);
 
-    auto value_tuple1 = up1Type->ComputeTailTuple();
-    auto value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
+    const auto *value_tuple1 = up1Type->ComputeTailTuple();
+    const auto *value_type1 = EmitTupleStructDefinition(context_, value_tuple1);
 
     // Build operator
     std::vector<std::string> template_args = {key_type->name,
@@ -505,11 +507,12 @@ void CodeGenVisitor::visit_reduce_by_key(DAGOperator *op,
     // Build key and value types
 
     // TODO(sabir): This currently only works for keys of size 1
-    auto key_type_tuple = op->tuple->type->ComputeHeadTuple();
-    auto key_type = EmitTupleStructDefinition(context_, key_type_tuple);
+    const auto *key_type_tuple = op->tuple->type->ComputeHeadTuple();
+    const auto *key_type = EmitTupleStructDefinition(context_, key_type_tuple);
 
-    auto value_type_tuple = op->tuple->type->ComputeTailTuple();
-    auto value_type = EmitTupleStructDefinition(context_, value_type_tuple);
+    const auto *value_type_tuple = op->tuple->type->ComputeTailTuple();
+    const auto *value_type =
+            EmitTupleStructDefinition(context_, value_type_tuple);
 
     // Construct functor
     const std::string functor_class =
@@ -537,11 +540,12 @@ void CodeGenVisitor::operator()(DAGReduceByIndex *op) {
             CodeGenVisitor::visit_common(op, "ReduceByIndexOperator");
 
     // Build key and value types
-    const auto key_type_tuple = op->tuple->type->ComputeHeadTuple();
-    const auto key_type = EmitTupleStructDefinition(context_, key_type_tuple);
+    const auto *const key_type_tuple = op->tuple->type->ComputeHeadTuple();
+    const auto *const key_type =
+            EmitTupleStructDefinition(context_, key_type_tuple);
 
-    const auto value_type_tuple = op->tuple->type->ComputeTailTuple();
-    const auto value_type =
+    const auto *const value_type_tuple = op->tuple->type->ComputeTailTuple();
+    const auto *const value_type =
             EmitTupleStructDefinition(context_, value_type_tuple);
 
     // Construct functor
@@ -592,7 +596,8 @@ auto CodeGenVisitor::visit_common(DAGOperator *op,
     const std::string var_name =
             context_->GenerateSymbolName("op_" + std::to_string(op->id), true);
 
-    auto output_type = EmitTupleStructDefinition(context_, op->tuple->type);
+    const auto *output_type =
+            EmitTupleStructDefinition(context_, op->tuple->type);
 
     operator_descs_.emplace(op, OperatorDesc{var_name, output_type});
     context_->includes().insert("\"" + operator_name + ".h\"");
@@ -605,7 +610,7 @@ void CodeGenVisitor::emitOperatorMake(
         const std::vector<std::string> &extra_template_args,
         const std::vector<std::string> &extra_args) {
     // First template argument: current tuple
-    auto return_type = operator_descs_[op].return_type;
+    const auto *return_type = operator_descs_[op].return_type;
     std::vector<std::string> template_args = {return_type->name};
 
     // Take over extra template arguments
@@ -615,7 +620,7 @@ void CodeGenVisitor::emitOperatorMake(
     // Default input arguments: references to predecessors
     std::vector<std::string> args;
     for (size_t i = 0; i < op->num_in_ports(); i++) {
-        const auto pred = dag_->predecessor(op, i);
+        auto *const pred = dag_->predecessor(op, i);
         const auto arg = "&" + operator_descs_[pred].var_name;
         args.emplace_back(arg);
     }

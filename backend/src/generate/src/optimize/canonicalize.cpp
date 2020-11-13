@@ -21,10 +21,10 @@ namespace optimize {
 
 void Canonicalize::Run(DAG *const dag, const std::string &config) const {
     // Recurse
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         if (dag->has_inner_dag(op)) {
             // Canonicalize inner DAG
-            auto const inner_dag = dag->inner_dag(op);
+            auto *const inner_dag = dag->inner_dag(op);
             Run(inner_dag, config);
 
             // Bring inputs in pre-defined order
@@ -124,7 +124,7 @@ void Canonicalize::Run(DAG *const dag, const std::string &config) const {
 
     // Compute unique label (=combination of incoming and outgoing path labels)
     ReverseLabelMap sorted_labels;
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         auto const label =
                 incoming_path_label[op] + "_" + outgoing_path_label[op];
         sorted_labels.emplace(label, op);
@@ -138,7 +138,7 @@ void Canonicalize::Run(DAG *const dag, const std::string &config) const {
         vertex_ids.emplace(it.second, vertex_ids.size());
     }
 
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         op->id = vertex_ids.at(op);
     }
 
@@ -173,12 +173,12 @@ void Canonicalize::Run(DAG *const dag, const std::string &config) const {
 
     // Move out operators -- this resets their IDs!
     DAG temp_dag;
-    for (auto const op : temp_ops) {
+    for (auto *const op : temp_ops) {
         dag->MoveOperator(&temp_dag, op);
     }
 
     // Add back everything (in deterministic order)
-    for (auto const op : temp_ops) {
+    for (auto *const op : temp_ops) {
         temp_dag.MoveOperator(dag, op);
     }
 
@@ -195,7 +195,7 @@ void Canonicalize::Run(DAG *const dag, const std::string &config) const {
     }
 
     // Reassign recomputed IDs (they were reset by the moving)
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         op->id = vertex_ids.at(op);
     }
 }

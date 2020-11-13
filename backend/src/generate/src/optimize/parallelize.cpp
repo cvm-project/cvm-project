@@ -37,17 +37,17 @@ auto StartParallelMap(DAG *const dag, DAGOperator *const source_op)
     assert(dag->in_degree(source_op) == 1);
     assert(dag->out_degree(source_op) == 1);
 
-    auto const pred_op = dag->predecessor(source_op);
-    auto const next_op = dag->successor(source_op);
+    auto *const pred_op = dag->predecessor(source_op);
+    auto *const next_op = dag->successor(source_op);
     auto const in_flow = dag->in_flow(source_op);
     auto const out_flow = dag->out_flow(source_op);
 
     // Create split operator
-    auto const split_op = MakeSplitOperator(source_op);
+    auto *const split_op = MakeSplitOperator(source_op);
     dag->AddOperator(split_op);
 
     // Create degree-of-parallelism operator
-    auto const dop_op = new DAGConstantTuple();
+    auto *const dop_op = new DAGConstantTuple();
     dag->AddOperator(dop_op);
     dop_op->values.emplace_back("$DOP");
     dop_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
@@ -55,13 +55,13 @@ auto StartParallelMap(DAG *const dag, DAGOperator *const source_op)
                     {dag::type::Atomic::MakeAtomic("long")}));
 
     // Create parallelize operator
-    auto const pop = new DAGParallelMap();
+    auto *const pop = new DAGParallelMap();
     dag->AddOperator(pop);
     dag->set_inner_dag(pop, new DAG());
-    auto const inner_dag = dag->inner_dag(pop);
+    auto *const inner_dag = dag->inner_dag(pop);
 
     // Fill the parallelize operator with a parameter lookup
-    auto const param_op = new DAGParameterLookup();
+    auto *const param_op = new DAGParameterLookup();
     inner_dag->AddOperator(param_op);
     inner_dag->set_input(param_op);
 
@@ -94,7 +94,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
         if (parallelize_operators.empty()) {
             // ...look for source operator to start a new one
             while (!source_operators.empty()) {
-                const auto source_op = source_operators.front();
+                auto *const source_op = source_operators.front();
                 source_operators.pop_front();
                 if (dag->contains(source_op)) {
                     parallelize_operators.push(
@@ -110,7 +110,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
         DAGParallelMap *const op = parallelize_operators.front();
         parallelize_operators.pop();
 
-        auto const inner_dag = dag->inner_dag(op);
+        auto *const inner_dag = dag->inner_dag(op);
         do {
             if (dag->out_degree(op) != 1) break;
             if (IsInstanceOf<DAGFilter,       //
@@ -118,8 +118,8 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                              DAGParquetScan,  //
                              DAGColumnScan>(dag->successor(op))) {
                 assert(dag->in_degree(op) == 1);
-                const auto other_op = dag->successor(op);
-                const auto next_op = dag->successor(other_op);
+                auto *const other_op = dag->successor(op);
+                auto *const next_op = dag->successor(other_op);
 
                 auto const inner_flow = dag->out_flow(op);
                 auto const out_flow = dag->out_flow(other_op);
@@ -135,14 +135,14 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 continue;
             }
             if (IsInstanceOf<DAGReduce>(dag->successor(op))) {
-                auto const red_op = dag->successor(op);
+                auto *const red_op = dag->successor(op);
 
                 // Pre-reduce operator
-                auto const pre_reduction_op = new DAGReduce();
+                auto *const pre_reduction_op = new DAGReduce();
                 inner_dag->AddOperator(pre_reduction_op);
                 pre_reduction_op->llvm_ir = red_op->llvm_ir;
 
-                auto const ensure_single_tuple_op = new DAGEnsureSingleTuple();
+                auto *const ensure_single_tuple_op = new DAGEnsureSingleTuple();
                 inner_dag->AddOperator(ensure_single_tuple_op);
 
                 // Flows
@@ -154,8 +154,8 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
             }
             if (IsInstanceOf<DAGReduceByKey>(dag->successor(op)) ||
                 IsInstanceOf<DAGReduceByKeyGrouped>(dag->successor(op))) {
-                auto const red_op = dag->successor(op);
-                const auto next_op = dag->successor(red_op);
+                auto *const red_op = dag->successor(op);
+                auto *const next_op = dag->successor(red_op);
 
                 auto const inner_flow = dag->out_flow(op);
                 auto const out_flow = dag->out_flow(red_op);
@@ -180,11 +180,11 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 pre_reduction_op->llvm_ir = red_op->llvm_ir;
 
                 // Partition by group key
-                auto const part_op = new DAGPartition();
+                auto *const part_op = new DAGPartition();
                 inner_dag->AddOperator(part_op);
 
                 // Create degree-of-parallelism operator
-                auto const dop_op = new DAGConstantTuple();
+                auto *const dop_op = new DAGConstantTuple();
                 inner_dag->AddOperator(dop_op);
                 dop_op->values.emplace_back("$DOP");
                 dop_op->tuple =
@@ -200,18 +200,18 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 inner_dag->set_output(part_op);
 
                 // GroupBy operator after the first parallel map
-                auto const ex_op = new DAGGroupBy();
+                auto *const ex_op = new DAGGroupBy();
                 dag->AddOperator(ex_op);
 
-                auto const proj_op = new DAGProjection();
+                auto *const proj_op = new DAGProjection();
                 dag->AddOperator(proj_op);
                 proj_op->positions = {1};
 
                 // Next parallel map (for post reduction)
-                auto const next_pop = new DAGParallelMap();
+                auto *const next_pop = new DAGParallelMap();
                 dag->AddOperator(next_pop);
                 dag->set_inner_dag(next_pop, new DAG());
-                auto const next_inner_dag = dag->inner_dag(next_pop);
+                auto *const next_inner_dag = dag->inner_dag(next_pop);
 
                 // Reconnect outer level
                 auto const outer_out_flow = dag->out_flow(op);
@@ -223,14 +223,14 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                              outer_out_flow.target.port);
 
                 // Start next parallel map
-                auto const next_param_op = new DAGParameterLookup();
+                auto *const next_param_op = new DAGParameterLookup();
                 next_inner_dag->AddOperator(next_param_op);
 
                 // Scan operators for (1) partitioning and (2) groupby
-                auto const scan_op1 = new DAGRowScan();
+                auto *const scan_op1 = new DAGRowScan();
                 next_inner_dag->AddOperator(scan_op1);
 
-                auto const scan_op2 = new DAGRowScan();
+                auto *const scan_op2 = new DAGRowScan();
                 next_inner_dag->AddOperator(scan_op2);
 
                 // Original reduce as post-reduce operator
@@ -249,14 +249,14 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 break;
             }
             if (IsInstanceOf<DAGPartition>(dag->successor(op))) {
-                const auto partition_op = dag->successor(op);
+                auto *const partition_op = dag->successor(op);
 
                 const auto partition_in_flow = dag->out_flow(op);
                 assert(partition_in_flow.target.port == 0);
                 const auto fanout_in_flow = dag->in_flow(partition_op, 1);
                 const auto out_flow = dag->out_flow(partition_op);
 
-                const auto dop_op = fanout_in_flow.source.op;
+                auto *const dop_op = fanout_in_flow.source.op;
 
                 // Outer flows
                 dag->RemoveFlow(partition_in_flow);
@@ -276,7 +276,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 continue;
             }
             if (IsInstanceOf<DAGExpandPattern>(dag->successor(op))) {
-                const auto pattern_op = dag->successor(op);
+                auto *const pattern_op = dag->successor(op);
 
                 const auto parallel_in_flow = dag->in_flow(op);
                 const auto pattern_in_flow = dag->out_flow(op);
@@ -285,7 +285,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 const auto out_flow = dag->out_flow(pattern_op);
 
                 // New outer operators
-                const auto cartesian_op = new DAGCartesian();
+                auto *const cartesian_op = new DAGCartesian();
                 dag->AddOperator(cartesian_op);
 
                 // Outer flows
@@ -307,10 +307,10 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 // Move pattern into parallel operator and connect
                 dag->MoveOperator(inner_dag, pattern_op);
 
-                const auto left_param_op = new DAGParameterLookup();
+                auto *const left_param_op = new DAGParameterLookup();
                 inner_dag->AddOperator(left_param_op);
 
-                const auto left_proj_op = new DAGProjection();
+                auto *const left_proj_op = new DAGProjection();
                 inner_dag->AddOperator(left_proj_op);
                 left_proj_op->positions = {0};
 
@@ -325,11 +325,11 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 for (const auto &input : existing_inputs) {
                     assert(input.first == 0);
 
-                    const auto right_param_op = input.second.op;
-                    const auto right_successor =
+                    auto *const right_param_op = input.second.op;
+                    auto *const right_successor =
                             inner_dag->successor(right_param_op);
 
-                    const auto right_proj_op = new DAGProjection();
+                    auto *const right_proj_op = new DAGProjection();
                     inner_dag->AddOperator(right_proj_op);
                     right_proj_op->positions = {1, 2, 3};  // XXX
 
@@ -342,7 +342,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 continue;
             }
             if (IsInstanceOf<DAGJoin>(dag->successor(op))) {
-                auto const join_op =
+                auto *const join_op =
                         reinterpret_cast<DAGJoin *>(dag->successor(op));
 
                 auto const this_in_flow = dag->out_flow(op);
@@ -354,11 +354,11 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 // (1) Prepare this side's input of the join
 
                 // Partition this side's input by join key
-                auto const this_part_op = new DAGPartition();
+                auto *const this_part_op = new DAGPartition();
                 inner_dag->AddOperator(this_part_op);
 
                 // Create degree-of-parallelism operator
-                auto const this_dop_op = new DAGConstantTuple();
+                auto *const this_dop_op = new DAGConstantTuple();
                 inner_dag->AddOperator(this_dop_op);
                 this_dop_op->values.emplace_back("$DOP");
                 this_dop_op->tuple =
@@ -373,17 +373,17 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 inner_dag->set_output(this_part_op);
 
                 // GroupBy operator after this side's parallel map
-                auto const this_grouping_op = new DAGGroupBy();
+                auto *const this_grouping_op = new DAGGroupBy();
                 dag->AddOperator(this_grouping_op);
 
                 // (2) Prepare other side's input of the join
 
                 // Partition other side's input by join key
-                auto const other_part_op = new DAGPartition();
+                auto *const other_part_op = new DAGPartition();
                 dag->AddOperator(other_part_op);
 
                 // Create degree-of-parallelism operator
-                auto const other_dop_op = new DAGConstantTuple();
+                auto *const other_dop_op = new DAGConstantTuple();
                 dag->AddOperator(other_dop_op);
                 other_dop_op->values.emplace_back("$DOP");
                 other_dop_op->tuple =
@@ -393,7 +393,7 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                                                 "long")}));
 
                 // GroupBy operator after other side's partitioning
-                auto const other_grouping_op = new DAGGroupBy();
+                auto *const other_grouping_op = new DAGGroupBy();
                 dag->AddOperator(other_grouping_op);
 
                 // (3) Outer level join of partitions
@@ -412,15 +412,15 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 dag->AddFlow(other_grouping_op, join_op, other_in_port);
 
                 // Project away the partition IDs
-                auto const proj_op = new DAGProjection();
+                auto *const proj_op = new DAGProjection();
                 dag->AddOperator(proj_op);
                 proj_op->positions = {1, 2};
 
                 // Next parallel map (for the actual join)
-                auto const next_pop = new DAGParallelMap();
+                auto *const next_pop = new DAGParallelMap();
                 dag->AddOperator(next_pop);
                 dag->set_inner_dag(next_pop, new DAG());
-                auto const next_inner_dag = dag->inner_dag(next_pop);
+                auto *const next_inner_dag = dag->inner_dag(next_pop);
 
                 // Reconnect outer level after the join
                 auto const out_flow = dag->out_flow(join_op);
@@ -434,35 +434,35 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 // (4) Fill the next parallel map with the actual join
 
                 // Unzip the two inputs (of each partition)
-                auto const left_param_op = new DAGParameterLookup();
+                auto *const left_param_op = new DAGParameterLookup();
                 next_inner_dag->AddOperator(left_param_op);
 
-                auto const right_param_op = new DAGParameterLookup();
+                auto *const right_param_op = new DAGParameterLookup();
                 next_inner_dag->AddOperator(right_param_op);
 
-                auto const left_proj_op = new DAGProjection();
+                auto *const left_proj_op = new DAGProjection();
                 next_inner_dag->AddOperator(left_proj_op);
                 left_proj_op->positions = {0};
 
-                auto const right_proj_op = new DAGProjection();
+                auto *const right_proj_op = new DAGProjection();
                 next_inner_dag->AddOperator(right_proj_op);
                 right_proj_op->positions = {1};
 
                 // Scan operators for (1) partitioning and (2) groupby
-                auto const left_scan_op1 = new DAGRowScan();
+                auto *const left_scan_op1 = new DAGRowScan();
                 next_inner_dag->AddOperator(left_scan_op1);
 
-                auto const left_scan_op2 = new DAGRowScan();
+                auto *const left_scan_op2 = new DAGRowScan();
                 next_inner_dag->AddOperator(left_scan_op2);
 
-                auto const right_scan_op1 = new DAGRowScan();
+                auto *const right_scan_op1 = new DAGRowScan();
                 next_inner_dag->AddOperator(right_scan_op1);
 
-                auto const right_scan_op2 = new DAGRowScan();
+                auto *const right_scan_op2 = new DAGRowScan();
                 next_inner_dag->AddOperator(right_scan_op2);
 
                 // Use the original join operator to do the actual join
-                auto const inner_join_op = new DAGJoin();
+                auto *const inner_join_op = new DAGJoin();
                 inner_join_op->num_keys = join_op->num_keys;
                 join_op->num_keys = 1;
                 next_inner_dag->AddOperator(inner_join_op);
@@ -497,17 +497,17 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
         }
 
         // Add materialize operator at end of inner plan of parallel map
-        auto const mat_op = new DAGMaterializeRowVector();
+        auto *const mat_op = new DAGMaterializeRowVector();
         inner_dag->AddOperator(mat_op);
 
         inner_dag->AddFlow(inner_dag->output().op, mat_op);
         inner_dag->set_output(mat_op);
 
         // Add scan operator after parallel map to get back individual tuples
-        auto const next_op = dag->successor(op);
+        auto *const next_op = dag->successor(op);
         auto const out_flow = dag->out_flow(op);
 
-        auto const sop = new DAGRowScan();
+        auto *const sop = new DAGRowScan();
         dag->AddOperator(sop);
 
         dag->RemoveFlow(out_flow);

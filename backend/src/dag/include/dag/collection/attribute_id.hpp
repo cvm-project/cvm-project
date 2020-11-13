@@ -19,16 +19,18 @@ public:
     static auto MakeAttributeId() -> std::shared_ptr<AttributeId>;
 
     void AddField(collection::Field *field);
-
     void MoveFields(const std::shared_ptr<AttributeId> &other);
     void RemoveField(collection::Field *field);
-    auto operator==(const AttributeId &other) -> bool {
+
+    auto operator==(const AttributeId &other) const -> bool {
         return id_ == other.id_;
     }
 
-    auto operator<(const AttributeId &other) -> bool { return id_ < other.id_; }
+    auto operator<(const AttributeId &other) const -> bool {
+        return id_ < other.id_;
+    }
 
-    auto name() -> std::string { return "c" + std::to_string(id_); }
+    auto name() const -> std::string { return "c" + std::to_string(id_); }
 
 private:
     AttributeId() { id_ = column_counter_++; }

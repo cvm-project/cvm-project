@@ -34,12 +34,12 @@ void CreatePipelines::Run(DAG *const dag,
     assert(boost::algorithm::any_of_equal(pipeline_drivers, dag->output().op));
 
     // Create a tree-shaped sub-plan for each pipeline driver
-    for (const auto driver : pipeline_drivers) {
+    for (auto *const driver : pipeline_drivers) {
         // Create pipeline operator
-        auto const pop = new DAGPipeline();
+        auto *const pop = new DAGPipeline();
         dag->AddOperator(pop);
         dag->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag->inner_dag(pop);
+        auto *const inner_dag = dag->inner_dag(pop);
         pop->num_inputs = 0;
 
         if (dag->output().op == driver) dag->set_output(pop);
@@ -81,7 +81,7 @@ void CreatePipelines::Run(DAG *const dag,
                              input_port);
 
                 // Connect inner successor to parameter lookup of that port
-                const auto param_op = new DAGParameterLookup();
+                auto *const param_op = new DAGParameterLookup();
                 inner_dag->AddOperator(param_op);
                 inner_dag->set_input(input_port, param_op);
                 inner_dag->AddFlow(param_op, in_flow.target.op,
@@ -111,12 +111,12 @@ void CreatePipelines::Run(DAG *const dag,
         // If necessary, materialize at end of pipeline and unnest before all
         // consuming operators
         if (!IsSingleTupleProducer(driver)) {
-            auto const mat_op = new DAGMaterializeRowVector();
+            auto *const mat_op = new DAGMaterializeRowVector();
             inner_dag->AddOperator(mat_op);
             inner_dag->AddFlow(inner_dag->output().op, mat_op);
             inner_dag->set_output(mat_op);
 
-            auto const scan_op = new DAGRowScan();
+            auto *const scan_op = new DAGRowScan();
             dag->AddOperator(scan_op);
 
             std::vector<DAG::Flow> out_flows;

@@ -40,8 +40,8 @@ public:
     }
 
     void operator()(DAGJoin *const op) const {
-        auto left = dag_->predecessor(op, 0);
-        auto right = dag_->predecessor(op, 1);
+        auto *left = dag_->predecessor(op, 0);
+        auto *right = dag_->predecessor(op, 1);
 
         // remap left input's key attribute_id to right input's one
         left->tuple->fields[0]->attribute_id()->MoveFields(
@@ -155,7 +155,7 @@ void AttributeIdTracking::Run(DAG *const dag,
             dag, attribute_id_tracking_visitor.functor());
 
     // Reset and recompute read sets
-    for (const auto op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         op->read_set.clear();
     }
 
@@ -164,12 +164,12 @@ void AttributeIdTracking::Run(DAG *const dag,
             dag, determine_read_set_visitor.functor());
 
     // Determine write set
-    for (const auto op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         op->write_set.clear();
 
         std::unordered_set<const dag::AttributeId *> input_attribute_ids;
         for (const auto flow : dag->in_flows(op)) {
-            const auto input_op = flow.source.op;
+            auto *const input_op = flow.source.op;
             for (const auto &field : input_op->tuple->fields) {
                 input_attribute_ids.insert(field->attribute_id().get());
             }

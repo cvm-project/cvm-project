@@ -23,31 +23,31 @@ namespace optimize {
 
 void TwoLevelExchange::Run(DAG *const dag,
                            const std::string & /*config*/) const {
-    for (auto const candidate_pop : dag->operators()) {
+    for (auto *const candidate_pop : dag->operators()) {
         if (!IsInstanceOf<DAGConcurrentExecute>(candidate_pop)) continue;
-        auto const pop = dynamic_cast<DAGConcurrentExecute *>(candidate_pop);
+        auto *const pop = dynamic_cast<DAGConcurrentExecute *>(candidate_pop);
         assert(pop != nullptr);
-        auto const inner_dag = dag->inner_dag(pop);
+        auto *const inner_dag = dag->inner_dag(pop);
 
         std::vector<DAGOperator *> exchange_operators;
-        for (auto const op : inner_dag->operators()) {
+        for (auto *const op : inner_dag->operators()) {
             if (IsInstanceOf<DAGExchange>(op)) {
                 exchange_operators.push_back(dynamic_cast<DAGExchange *>(op));
             }
         }
 
-        for (auto const op : exchange_operators) {
-            auto const dag = inner_dag;
+        for (auto *const op : exchange_operators) {
+            auto *const dag = inner_dag;
             auto const in_flow = dag->in_flow(op);
             auto const out_flow = dag->out_flow(op);
 
             // Add partitioned exchange operators
-            auto const level0_exchange_op = new DAGPartitionedExchange();
+            auto *const level0_exchange_op = new DAGPartitionedExchange();
             dag->AddOperator(level0_exchange_op);
             level0_exchange_op->num_levels = 2;
             level0_exchange_op->level_num = 0;
 
-            auto const level1_exchange_op = new DAGPartitionedExchange();
+            auto *const level1_exchange_op = new DAGPartitionedExchange();
             dag->AddOperator(level1_exchange_op);
             level1_exchange_op->num_levels = 2;
             level1_exchange_op->level_num = 1;

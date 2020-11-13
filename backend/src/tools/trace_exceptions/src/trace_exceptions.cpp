@@ -16,7 +16,7 @@ thread_local ExceptionInfo current_exception_info;
 
 auto demangle(const char *const symbol) -> std::string {
 #ifdef __GLIBCXX__
-    int status;
+    int status = 0;
     std::unique_ptr<char, void (*)(void *)> demangled_symbol(
             abi::__cxa_demangle(symbol, nullptr, nullptr, &status), &std::free);
     if (status != 0) return demangled_symbol.get();

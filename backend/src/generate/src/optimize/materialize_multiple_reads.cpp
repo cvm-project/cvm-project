@@ -33,7 +33,7 @@ void MaterializeMultipleReads::Run(DAG *const dag,
                                    const std::string & /*config*/) const {
     // Collect all operators with several consumers
     CollectMultipleReadsVisitor operator_collector(dag);
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         operator_collector.Visit(op);
     }
 
@@ -43,7 +43,7 @@ void MaterializeMultipleReads::Run(DAG *const dag,
         boost::copy(dag->out_flows(op), std::back_inserter(out_flows));
 
         // Add materialization operator
-        auto mat_op = new DAGMaterializeRowVector();
+        auto *mat_op = new DAGMaterializeRowVector();
         dag->AddOperator(mat_op);
         dag->AddFlow(op, mat_op);
 
@@ -53,7 +53,7 @@ void MaterializeMultipleReads::Run(DAG *const dag,
 
             dag->RemoveFlow(out_flow);
 
-            auto scan_op = new DAGRowScan();
+            auto *scan_op = new DAGRowScan();
             dag->AddOperator(scan_op);
             dag->AddFlow(mat_op, scan_op);
             dag->AddFlow(scan_op, out_flow.target.op, out_flow.target.port);

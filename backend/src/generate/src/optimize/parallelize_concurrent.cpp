@@ -53,32 +53,32 @@ public:
     // cppcheck-suppress noExplicitConstructor  // false positive
     explicit HandleSeedOperatorVisitor(DAG *const dag) : dag_(dag) {}
 
-    auto operator()(DAGCartesian *const op) -> DAGConcurrentExecute * {
-        auto const left_pred_op = dag_->predecessor(op, 0);
-        auto const right_pred_op = dag_->predecessor(op, 1);
-        auto const next_op = dag_->successor(op);
+    auto operator()(DAGCartesian *const op) const -> DAGConcurrentExecute * {
+        auto *const left_pred_op = dag_->predecessor(op, 0);
+        auto *const right_pred_op = dag_->predecessor(op, 1);
+        auto *const next_op = dag_->successor(op);
         auto const left_in_flow = dag_->in_flow(op, 0);
         auto const right_in_flow = dag_->in_flow(op, 1);
         auto const out_flow = dag_->out_flow(op);
 
         // Create parallelize operator
-        auto const pop = new DAGConcurrentExecute();
+        auto *const pop = new DAGConcurrentExecute();
         dag_->AddOperator(pop);
         dag_->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag_->inner_dag(pop);
+        auto *const inner_dag = dag_->inner_dag(pop);
         pop->num_inputs = 2;
 
         // Fill the parallelize operator with parameter lookups
-        auto const left_param_op = new DAGParameterLookup();
+        auto *const left_param_op = new DAGParameterLookup();
         inner_dag->AddOperator(left_param_op);
         inner_dag->set_input(0, left_param_op);
 
-        auto const right_param_op = new DAGParameterLookup();
+        auto *const right_param_op = new DAGParameterLookup();
         inner_dag->AddOperator(right_param_op);
         inner_dag->set_input(1, right_param_op);
 
         // Broadcast the right side
-        auto const bc_op = new DAGBroadcast();
+        auto *const bc_op = new DAGBroadcast();
         inner_dag->AddOperator(bc_op);
         inner_dag->AddFlow(right_param_op, bc_op);
 
@@ -99,32 +99,33 @@ public:
         return pop;
     }
 
-    auto operator()(DAGExpandPattern *const op) -> DAGConcurrentExecute * {
-        auto const pattern_pred_op = dag_->predecessor(op, 0);
-        auto const data_pred_op = dag_->predecessor(op, 1);
-        auto const next_op = dag_->successor(op);
+    auto operator()(DAGExpandPattern *const op) const
+            -> DAGConcurrentExecute * {
+        auto *const pattern_pred_op = dag_->predecessor(op, 0);
+        auto *const data_pred_op = dag_->predecessor(op, 1);
+        auto *const next_op = dag_->successor(op);
         auto const pattern_in_flow = dag_->in_flow(op, 0);
         auto const data_in_flow = dag_->in_flow(op, 1);
         auto const out_flow = dag_->out_flow(op);
 
         // Create parallelize operator
-        auto const pop = new DAGConcurrentExecute();
+        auto *const pop = new DAGConcurrentExecute();
         dag_->AddOperator(pop);
         dag_->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag_->inner_dag(pop);
+        auto *const inner_dag = dag_->inner_dag(pop);
         pop->num_inputs = 2;
 
         // Fill the parallelize operator with parameter lookups
-        auto const pattern_param_op = new DAGParameterLookup();
+        auto *const pattern_param_op = new DAGParameterLookup();
         inner_dag->AddOperator(pattern_param_op);
         inner_dag->set_input(0, pattern_param_op);
 
-        auto const data_param_op = new DAGParameterLookup();
+        auto *const data_param_op = new DAGParameterLookup();
         inner_dag->AddOperator(data_param_op);
         inner_dag->set_input(1, data_param_op);
 
         // Broadcast the pattern side
-        auto const bc_op = new DAGBroadcast();
+        auto *const bc_op = new DAGBroadcast();
         inner_dag->AddOperator(bc_op);
         inner_dag->AddFlow(pattern_param_op, bc_op);
 
@@ -146,36 +147,36 @@ public:
     }
 
 private:
-    auto HandleJoin(DAGOperator *const op) -> DAGConcurrentExecute * {
-        auto const left_pred_op = dag_->predecessor(op, 0);
-        auto const right_pred_op = dag_->predecessor(op, 1);
-        auto const next_op = dag_->successor(op);
+    auto HandleJoin(DAGOperator *const op) const -> DAGConcurrentExecute * {
+        auto *const left_pred_op = dag_->predecessor(op, 0);
+        auto *const right_pred_op = dag_->predecessor(op, 1);
+        auto *const next_op = dag_->successor(op);
         auto const left_in_flow = dag_->in_flow(op, 0);
         auto const right_in_flow = dag_->in_flow(op, 1);
         auto const out_flow = dag_->out_flow(op);
 
         // Create parallelize operator
-        auto const pop = new DAGConcurrentExecute();
+        auto *const pop = new DAGConcurrentExecute();
         dag_->AddOperator(pop);
         dag_->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag_->inner_dag(pop);
+        auto *const inner_dag = dag_->inner_dag(pop);
         pop->num_inputs = 2;
 
         // Fill the parallelize operator with parameter lookups
-        auto const left_param_op = new DAGParameterLookup();
+        auto *const left_param_op = new DAGParameterLookup();
         inner_dag->AddOperator(left_param_op);
         inner_dag->set_input(0, left_param_op);
 
-        auto const right_param_op = new DAGParameterLookup();
+        auto *const right_param_op = new DAGParameterLookup();
         inner_dag->AddOperator(right_param_op);
         inner_dag->set_input(1, right_param_op);
 
         // Add exchange operators
-        auto const left_exchange_op = new DAGExchange();
+        auto *const left_exchange_op = new DAGExchange();
         inner_dag->AddOperator(left_exchange_op);
         inner_dag->AddFlow(left_param_op, left_exchange_op);
 
-        auto const right_exchange_op = new DAGExchange();
+        auto *const right_exchange_op = new DAGExchange();
         inner_dag->AddOperator(right_exchange_op);
         inner_dag->AddFlow(right_param_op, right_exchange_op);
 
@@ -213,22 +214,22 @@ public:
         return HandleJoin(op);
     }
 
-    auto operator()(DAGRange *const op) -> DAGConcurrentExecute * {
+    auto operator()(DAGRange *const op) const -> DAGConcurrentExecute * {
         auto const in_flow = dag_->in_flow(op);
         auto const out_flow = dag_->out_flow(op);
 
         // Create parallelize operator
-        auto const pop = new DAGConcurrentExecute();
+        auto *const pop = new DAGConcurrentExecute();
         dag_->AddOperator(pop);
         dag_->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag_->inner_dag(pop);
+        auto *const inner_dag = dag_->inner_dag(pop);
 
         // Create split operator
-        auto const split_op = MakeSplitOperator(op);
+        auto *const split_op = MakeSplitOperator(op);
         dag_->AddOperator(split_op);
 
         // Create degree-of-parallelism operator
-        auto const dop_op = new DAGConstantTuple();
+        auto *const dop_op = new DAGConstantTuple();
         dag_->AddOperator(dop_op);
         dop_op->values.emplace_back("$DOP");
         dop_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
@@ -244,7 +245,7 @@ public:
         dag_->AddFlow(pop, out_flow.target);
 
         // Populate parallel inner DAG
-        auto const param_op = new DAGParameterLookup();
+        auto *const param_op = new DAGParameterLookup();
         inner_dag->AddOperator(param_op);
         inner_dag->set_input(param_op);
 
@@ -255,26 +256,26 @@ public:
         return pop;
     }
 
-    auto operator()(DAGReduce *const op) -> DAGConcurrentExecute * {
-        auto const pred_op = dag_->predecessor(op, 0);
+    auto operator()(DAGReduce *const op) const -> DAGConcurrentExecute * {
+        auto *const pred_op = dag_->predecessor(op, 0);
         auto const in_flow = dag_->in_flow(op, 0);
 
         // Create parallelize operator
-        auto const pop = new DAGConcurrentExecute();
+        auto *const pop = new DAGConcurrentExecute();
         dag_->AddOperator(pop);
         dag_->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag_->inner_dag(pop);
+        auto *const inner_dag = dag_->inner_dag(pop);
 
         // Populate parallel inner DAG
-        auto const param_op = new DAGParameterLookup();
+        auto *const param_op = new DAGParameterLookup();
         inner_dag->AddOperator(param_op);
         inner_dag->set_input(param_op);
 
         auto pre_reduction_op_ptr = std::make_unique<DAGReduce>();
-        auto const pre_reduction_op = pre_reduction_op_ptr.get();
+        auto *const pre_reduction_op = pre_reduction_op_ptr.get();
         pre_reduction_op->llvm_ir = op->llvm_ir;
 
-        auto const ensure_single_tuple_op = new DAGEnsureSingleTuple();
+        auto *const ensure_single_tuple_op = new DAGEnsureSingleTuple();
         inner_dag->AddOperator(ensure_single_tuple_op);
 
         inner_dag->AddOperator(pre_reduction_op_ptr.release());
@@ -290,16 +291,16 @@ public:
         return pop;
     }
 
-    auto operator()(DAGReduceByKey *const op) -> DAGConcurrentExecute * {
-        auto const pred_op = dag_->predecessor(op, 0);
+    auto operator()(DAGReduceByKey *const op) const -> DAGConcurrentExecute * {
+        auto *const pred_op = dag_->predecessor(op, 0);
         auto const in_flow = dag_->in_flow(op);
         auto const out_flow = dag_->out_flow(op);
 
         // Create parallelize operator
-        auto const pop = new DAGConcurrentExecute();
+        auto *const pop = new DAGConcurrentExecute();
         dag_->AddOperator(pop);
         dag_->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag_->inner_dag(pop);
+        auto *const inner_dag = dag_->inner_dag(pop);
 
         // Move seed operator into parallelize operator
         dag_->RemoveFlow(in_flow);
@@ -309,17 +310,17 @@ public:
         dag_->AddFlow(pop, out_flow.target);
 
         // Populate parallel inner DAG
-        auto const param_op = new DAGParameterLookup();
+        auto *const param_op = new DAGParameterLookup();
         inner_dag->AddOperator(param_op);
         inner_dag->set_input(param_op);
         inner_dag->AddFlow(param_op, op);
 
-        auto const exchange_op = new DAGExchange();
+        auto *const exchange_op = new DAGExchange();
         inner_dag->AddOperator(exchange_op);
         inner_dag->AddFlow(op, exchange_op);
 
         auto post_red_op_ptr = std::make_unique<DAGReduceByKey>();
-        auto const post_red_op = post_red_op_ptr.get();
+        auto *const post_red_op = post_red_op_ptr.get();
         post_red_op->llvm_ir = op->llvm_ir;
         inner_dag->AddOperator(post_red_op_ptr.release());
         inner_dag->AddFlow(exchange_op, post_red_op);
@@ -328,23 +329,23 @@ public:
         return pop;
     }
 
-    auto operator()(DAGTopK *const op) -> DAGConcurrentExecute * {
-        auto const pred_op = dag_->predecessor(op, 0);
+    auto operator()(DAGTopK *const op) const -> DAGConcurrentExecute * {
+        auto *const pred_op = dag_->predecessor(op, 0);
         auto const in_flow = dag_->in_flow(op, 0);
 
         // Create parallelize operator
-        auto const pop = new DAGConcurrentExecute();
+        auto *const pop = new DAGConcurrentExecute();
         dag_->AddOperator(pop);
         dag_->set_inner_dag(pop, new DAG());
-        auto const inner_dag = dag_->inner_dag(pop);
+        auto *const inner_dag = dag_->inner_dag(pop);
 
         // Populate parallel inner DAG
-        auto const param_op = new DAGParameterLookup();
+        auto *const param_op = new DAGParameterLookup();
         inner_dag->AddOperator(param_op);
         inner_dag->set_input(param_op);
 
         auto inner_topk_op_ptr = std::make_unique<DAGTopK>();
-        auto const inner_topk_op = inner_topk_op_ptr.get();
+        auto *const inner_topk_op = inner_topk_op_ptr.get();
         inner_topk_op->num_elements = op->num_elements;
 
         inner_dag->AddOperator(inner_topk_op_ptr.release());
@@ -378,23 +379,23 @@ void ExpandConcurrentExecutor(DAG *const dag, DAGConcurrentExecute *const pop) {
 
             // Move each successor into its concurrent executor
             for (auto const in_flow : in_flows) {
-                auto const next_op = in_flow.target.op;
+                auto *const next_op = in_flow.target.op;
                 auto const out_flow = dag->out_flow(next_op);
 
                 dag->RemoveFlow(out_flow);
 
                 // Create new concurrent executor
-                auto const pop = new DAGConcurrentExecute();
+                auto *const pop = new DAGConcurrentExecute();
                 dag->AddOperator(pop);
                 dag->set_inner_dag(pop, new DAG());
-                auto const inner_dag = dag->inner_dag(pop);
+                auto *const inner_dag = dag->inner_dag(pop);
                 pops.push_back(pop);
 
                 // Move operator
                 dag->MoveOperator(inner_dag, next_op);
 
                 // Populate inner DAG
-                auto const param_op = new DAGParameterLookup();
+                auto *const param_op = new DAGParameterLookup();
                 inner_dag->AddOperator(param_op);
                 inner_dag->AddFlow(param_op, next_op);
 
@@ -406,15 +407,15 @@ void ExpandConcurrentExecutor(DAG *const dag, DAGConcurrentExecute *const pop) {
                 dag->AddFlow(pop, out_flow.target);
             }
 
-            for (auto const op : pops) {
+            for (auto *const op : pops) {
                 ExpandConcurrentExecutor(dag, op);
             }
 
             break;
         }
 
-        auto const successor = dag->successor(pop);
-        auto const inner_dag = dag->inner_dag(pop);
+        auto *const successor = dag->successor(pop);
+        auto *const inner_dag = dag->inner_dag(pop);
 
         if (IsInstanceOf<DAGFilter,                //
                          DAGColumnScan,            //
@@ -450,7 +451,7 @@ void ExpandConcurrentExecutor(DAG *const dag, DAGConcurrentExecute *const pop) {
 
             // Recreate out flows
             for (auto const out_flow : out_flows) {
-                auto const next_op = out_flow.target.op;
+                auto *const next_op = out_flow.target.op;
                 dag->AddFlow(pop, next_op, out_flow.target.port);
             }
 
@@ -479,13 +480,13 @@ void MergeParallelOperators(DAG *const dag) {
 
     auto &pops = pops_collector.pops_;
     while (!pops.empty()) {
-        auto const pop = pops.front();
+        auto *const pop = pops.front();
         pops.pop_front();
 
         // Operator may have been merged already; skip it in that case
         if (!dag->contains(pop)) continue;
 
-        auto const inner_dag = dag->inner_dag(pop);
+        auto *const inner_dag = dag->inner_dag(pop);
         while (true) {
             // Find preceeding parallel operator
             auto const in_flow_range = dag->in_flows(pop);
@@ -496,9 +497,9 @@ void MergeParallelOperators(DAG *const dag) {
 
             if (in_flow_it == boost::end(in_flow_range)) break;
 
-            auto const other_pop =
+            auto *const other_pop =
                     dynamic_cast<DAGConcurrentExecute *>(in_flow_it->source.op);
-            auto const other_inner_dag = dag->inner_dag(other_pop);
+            auto *const other_inner_dag = dag->inner_dag(other_pop);
 
             // Remember out flows of predecessor
             std::vector<DAG::Flow> inbetween_flows;
@@ -568,7 +569,7 @@ void MergeParallelOperators(DAG *const dag) {
             }
 
             // Move operators
-            for (auto const op : temp_ops) {
+            for (auto *const op : temp_ops) {
                 other_inner_dag->MoveOperator(inner_dag, op);
             }
 
@@ -648,14 +649,14 @@ void ParallelizeConcurrent::Run(DAG *const dag,
                                 const std::string & /*config*/) const {
     // Collect seed operators
     std::vector<DAGOperator *> seeds;
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         if (IsParallizationSeed(op)) seeds.push_back(op);
     }
 
     // Put seed operators into parallel operators
     HandleSeedOperatorVisitor visitor(dag);
-    for (auto const op : seeds) {
-        auto const pop = visitor.Visit(op);
+    for (auto *const op : seeds) {
+        auto *const pop = visitor.Visit(op);
         ExpandConcurrentExecutor(dag, pop);
     }
 
@@ -663,25 +664,25 @@ void ParallelizeConcurrent::Run(DAG *const dag,
 
     // Don't broadcast constants
     std::vector<DAGOperator *> constant_ops;
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         if (IsInstanceOf<DAGConstantTuple>(op)) constant_ops.push_back(op);
     }
 
-    for (auto const op : constant_ops) {
+    for (auto *const op : constant_ops) {
         if (!IsInstanceOf<DAGConstantTuple>(op)) continue;
 
         auto const outer_flow = dag->out_flow(op);
-        auto const pop_cand = outer_flow.target.op;
+        auto *const pop_cand = outer_flow.target.op;
 
         if (!IsInstanceOf<DAGConcurrentExecute>(pop_cand)) continue;
 
-        auto const pop = dynamic_cast<DAGConcurrentExecute *>(pop_cand);
-        auto const inner_dag = dag->inner_dag(pop);
+        auto *const pop = dynamic_cast<DAGConcurrentExecute *>(pop_cand);
+        auto *const inner_dag = dag->inner_dag(pop);
 
-        auto const param_op = inner_dag->input(outer_flow.target.port).op;
+        auto *const param_op = inner_dag->input(outer_flow.target.port).op;
         assert(IsInstanceOf<DAGParameterLookup>(param_op));
 
-        auto const broadcast_op = inner_dag->successor(param_op);
+        auto *const broadcast_op = inner_dag->successor(param_op);
 
         if (!IsInstanceOf<DAGBroadcast>(broadcast_op)) continue;
 
@@ -712,9 +713,9 @@ void ParallelizeConcurrent::Run(DAG *const dag,
     }
 
     // HACK: do not parallelize final RBKs
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         if (!IsInstanceOf<DAGConcurrentExecute>(op)) continue;
-        auto const inner_dag = dag->inner_dag(op);
+        auto *const inner_dag = dag->inner_dag(op);
 
         // Find Exchange->RBK[->{Filter|Map}]*->(sink) pattern
         std::vector<DAGOperator *> candidate_ops;
@@ -731,7 +732,7 @@ void ParallelizeConcurrent::Run(DAG *const dag,
 
         if (!IsInstanceOf<DAGReduceByKey>(candidate_ops.back())) continue;
 
-        auto const exchange_op = inner_dag->predecessor(candidate_ops.back());
+        auto *const exchange_op = inner_dag->predecessor(candidate_ops.back());
 
         if (!IsInstanceOf<DAGExchange>(exchange_op)) continue;
 
@@ -748,7 +749,7 @@ void ParallelizeConcurrent::Run(DAG *const dag,
                 inner_dag->RemoveFlow(f);
             }
 
-            for (auto const cand_op : candidate_ops) {
+            for (auto *const cand_op : candidate_ops) {
                 inner_dag->MoveOperator(dag, cand_op);
             }
 

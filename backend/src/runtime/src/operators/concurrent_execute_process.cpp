@@ -23,7 +23,7 @@ namespace runtime::operators {
 
 auto process_num_workers() -> size_t {
     static const char *const kNumWorkersVarName = "JITQ_PROCESS_NUM_WORKERS";
-    const auto num_workers = std::getenv(kNumWorkersVarName);
+    auto *const num_workers = std::getenv(kNumWorkersVarName);
     if (num_workers == nullptr) {
         throw std::runtime_error(
                 (boost::format("Environment variable %1% not set.") %
@@ -35,7 +35,7 @@ auto process_num_workers() -> size_t {
 
 auto process_worker_id() -> size_t {
     static const char *const kWorkerIdVarName = "JITQ_PROCESS_WORKER_ID";
-    const auto worker_id = std::getenv(kWorkerIdVarName);
+    auto *const worker_id = std::getenv(kWorkerIdVarName);
     if (worker_id == nullptr) {
         throw std::runtime_error(
                 (boost::format("Environment variable %1% not set.") %

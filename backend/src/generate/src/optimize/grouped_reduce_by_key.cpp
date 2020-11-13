@@ -12,7 +12,7 @@ struct CollectReduceByKeyVisitor
                      boost::mpl::list<DAGReduceByKey>> {
     explicit CollectReduceByKeyVisitor(const DAG *const dag) : dag_(dag) {}
     void operator()(DAGReduceByKey *op) {
-        auto const pred = dag_->predecessor(op);
+        auto *const pred = dag_->predecessor(op);
         if (pred->tuple->fields[0]->properties().count(
                     dag::collection::FL_GROUPED) > 0) {
             reduce_by_keys_.emplace_back(op);
@@ -27,14 +27,14 @@ namespace optimize {
 void GroupedReduceByKey::Run(DAG *const dag,
                              const std::string & /*config*/) const {
     CollectReduceByKeyVisitor visitor(dag);
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         visitor.Visit(op);
     }
 
-    for (auto const op : visitor.reduce_by_keys_) {
+    for (auto *const op : visitor.reduce_by_keys_) {
         std::unique_ptr<DAGReduceByKeyGrouped> new_op_ptr(
                 new DAGReduceByKeyGrouped());
-        auto const new_op = new_op_ptr.get();
+        auto *const new_op = new_op_ptr.get();
 
         new_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
                 *op->tuple);

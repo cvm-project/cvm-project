@@ -55,17 +55,17 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
             llvm::MemoryBufferRef(llvm::StringRef(ir), llvm::StringRef("id")),
             err_, context_);
     // find out the return type
-    const auto func = module_->getFunction(kEntryFunctionName);
+    auto *const func = module_->getFunction(kEntryFunctionName);
     assert(func != nullptr);
-    auto t = func->getReturnType();
+    auto *t = func->getReturnType();
     if (t->isAggregateType()) {
         ret_type_ = ReturnType::kStruct;
         // save the insert instructions
         for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; i++) {
-                if (auto instr = llvm::dyn_cast<llvm::Instruction>(i)) {
+                if (auto *instr = llvm::dyn_cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::InsertValue) {
-                        auto insert = llvm::cast<llvm::InsertValueInst>(instr);
+                        auto *insert = llvm::cast<llvm::InsertValueInst>(instr);
                         assert(insert->getIndices().size() == 1);
                         const size_t pos = *(insert->idx_begin());
                         if (pos + 1 > ret_instruction_ids_.size()) {
@@ -81,7 +81,7 @@ Function::Function(const std::string &ir) : ret_type_(ReturnType::kUnknown) {
         // save the store instructions
         for (auto &b : *func) {
             for (auto i = b.begin(), ie = b.end(); i != ie; ++i) {
-                if (auto instr = llvm::dyn_cast<llvm::Instruction>(i)) {
+                if (auto *instr = llvm::dyn_cast<llvm::Instruction>(i)) {
                     if (instr->getOpcode() == llvm::Instruction::Store) {
                         // the store target uniquely identifies this instruction
                         ret_instruction_ids_.push_back(
@@ -99,14 +99,14 @@ auto Function::ComputeOutputPositionsPrimitive(size_t arg_position) const
         -> std::vector<size_t> {
     std::vector<size_t> res;
 
-    const auto function = module_->getFunction(kEntryFunctionName);
+    auto *const function = module_->getFunction(kEntryFunctionName);
     assert(function != nullptr);
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
-        auto b = u.getUser();
+        auto *b = u.getUser();
         if (llvm::isa<llvm::Instruction>(b)) {
-            auto inst = llvm::cast<llvm::Instruction>(b);
+            auto *inst = llvm::cast<llvm::Instruction>(b);
             if (llvm::Instruction::Ret == inst->getOpcode()) {
                 res.push_back(0);
             }
@@ -120,13 +120,13 @@ auto Function::ComputeOutputPositionsStruct(size_t arg_position) const
         -> std::vector<size_t> {
     std::vector<size_t> res;
 
-    const auto function = module_->getFunction(kEntryFunctionName);
+    auto *const function = module_->getFunction(kEntryFunctionName);
     assert(function != nullptr);
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
 
-        if (auto inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
+        if (auto *inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() == llvm::Instruction::InsertValue) {
                 // find the index
                 for (size_t i = 0; i < ret_instruction_ids_.size(); i++) {
@@ -147,13 +147,13 @@ auto Function::ComputeOutputPositionsCallerPtr(size_t arg_position) const
 
     // the first arg is the return pointer
     arg_position++;
-    const auto function = module_->getFunction(kEntryFunctionName);
+    auto *const function = module_->getFunction(kEntryFunctionName);
     assert(function != nullptr);
     auto &s = function->arg_begin()[arg_position];
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
 
-        if (auto inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
+        if (auto *inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() == llvm::Instruction::Store) {
                 // find the index
                 for (size_t i = 0; i < ret_instruction_ids_.size(); i++) {
@@ -187,7 +187,7 @@ auto Function::ComputeIsArgumentRead(size_t arg_pos) const -> bool {
     if (ret_type_ == ReturnType::kCallerPtr) {
         arg_pos++;
     }
-    const auto function = module_->getFunction(kEntryFunctionName);
+    auto *const function = module_->getFunction(kEntryFunctionName);
     assert(function != nullptr);
     auto &s = function->arg_begin()[arg_pos];
 
@@ -195,7 +195,7 @@ auto Function::ComputeIsArgumentRead(size_t arg_pos) const -> bool {
     for (auto it = s.use_begin(); it != s.use_end(); it++) {
         auto &u = *it;
 
-        if (auto inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
+        if (auto *inst = llvm::dyn_cast<llvm::Instruction>(u.getUser())) {
             if (inst->getOpcode() != llvm::Instruction::Store &&
                 inst->getOpcode() != llvm::Instruction::InsertValue &&
                 inst->getOpcode() != llvm::Instruction::Ret) {
@@ -220,7 +220,7 @@ void Function::AdjustFilterSignature(DAGFilter *const pFilter,
     // add the return pointer type to the argument types
     types.insert(types.begin(), llvm::Type::getInt8PtrTy(context_));
 
-    const auto old_function = module_->getFunction(kEntryFunctionName);
+    auto *const old_function = module_->getFunction(kEntryFunctionName);
     assert(old_function != nullptr);
     llvm::FunctionType *const function_type =
             llvm::FunctionType::get(llvm::Type::getVoidTy(context_),
@@ -233,7 +233,7 @@ void Function::AdjustFilterSignature(DAGFilter *const pFilter,
                                              old_function->getBasicBlockList());
 
     size_t counter = 1;
-    for (auto it = new_function->arg_begin(); it != new_function->arg_end();
+    for (auto *it = new_function->arg_begin(); it != new_function->arg_end();
          it++) {
         it->setName("." + std::to_string(counter++));
     }
@@ -252,13 +252,13 @@ void Function::AdjustFilterSignature(DAGFilter *const pFilter,
 
         // replace all uses of oldPos argument to use of newPos argument
         // +1 accounts for the return pointer
-        auto old_arg = old_function->arg_begin() + old_pos + 1;
-        auto new_arg = new_function->arg_begin() + new_pos + 1;
+        auto *old_arg = old_function->arg_begin() + old_pos + 1;
+        auto *new_arg = new_function->arg_begin() + new_pos + 1;
         old_arg->replaceAllUsesWith(new_arg);
     }
     // return pointer
-    auto old_arg = old_function->arg_begin();
-    auto new_arg = new_function->arg_begin();
+    auto *old_arg = old_function->arg_begin();
+    auto *new_arg = new_function->arg_begin();
     old_arg->replaceAllUsesWith(new_arg);
 
     old_function->eraseFromParent();
@@ -266,7 +266,7 @@ void Function::AdjustFilterSignature(DAGFilter *const pFilter,
 }
 
 void Function::AddInlineAttribute() {
-    const auto function = module_->getFunction(kEntryFunctionName);
+    auto *const function = module_->getFunction(kEntryFunctionName);
     assert(function != nullptr);
     function->addFnAttr(llvm::Attribute::AlwaysInline);
 }

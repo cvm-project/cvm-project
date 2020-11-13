@@ -182,7 +182,7 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
             agsafeset(subg, "color", "black", "");
 
             // Create inner graph
-            const auto inner_dag = dag->inner_dag(op);
+            auto *const inner_dag = dag->inner_dag(op);
             assert(dag->inner_dag(op) != nullptr);
             const std::string inner_graph_name =
                     graph_name + std::to_string(op->id) + "_";
@@ -195,8 +195,8 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
                 // Incoming edges should point to the corresponding parameter
                 // lookup operator
                 for (const auto input : inner_dag->inputs(f.target.port)) {
-                    auto const target_op = input.op;
-                    auto const node = agnode(
+                    auto *const target_op = input.op;
+                    auto *const node = agnode(
                             g,
                             to_char_ptr(node_name(inner_graph_name, target_op)),
                             0);
@@ -232,8 +232,8 @@ void buildDOT(const DAG *const dag, Agraph_t *g,
         // Add an edge for each combination
         for (auto const &source_info : source_info_range) {
             for (auto const &target_info : target_info_range) {
-                const auto source_node = get<0>(source_info.second);
-                const auto target_node = get<0>(target_info.second);
+                auto *const source_node = get<0>(source_info.second);
+                auto *const target_node = get<0>(target_info.second);
 
                 const auto &source_port_label = get<1>(source_info.second);
                 const auto &target_port_label = get<1>(target_info.second);

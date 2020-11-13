@@ -18,7 +18,7 @@ void VerifyDag(const DAG *const dag) {
     }
 
     // Verify operators
-    for (auto const op : dag->operators()) {
+    for (auto *const op : dag->operators()) {
         VerifyOperator(dag, op);
     }
 }
@@ -65,7 +65,7 @@ void VerifyOperator(const DAG *const dag, const DAGOperator *const op) {
 
     // Verify inner DAG
     if (dag->has_inner_dag(op)) {
-        auto const inner_dag = dag->inner_dag(op);
+        auto *const inner_dag = dag->inner_dag(op);
 
         // The number of input ports of the DAG must match the number of input
         // ports of the operator

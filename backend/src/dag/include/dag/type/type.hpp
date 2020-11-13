@@ -55,7 +55,7 @@ struct adl_serializer<raw_ptr<const DagType>> {
 
         // Look up unique type object in registry
         std::unique_ptr<const dag::type::Type> const_type(type.release());
-        const auto ret_type = MakeType(std::move(const_type));
+        const auto *const ret_type = MakeType(std::move(const_type));
 
         // Return inside raw_ptr
         return make_raw(

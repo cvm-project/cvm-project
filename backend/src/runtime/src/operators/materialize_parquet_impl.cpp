@@ -140,8 +140,8 @@ auto MaterializeParquetOperatorImpl::next()
     assert(conf_upstream_->next()->as<runtime::values::None>() != nullptr);
     conf_upstream_->close();
 
-    auto const tuple_value = ret->as<runtime::values::Tuple>();
-    auto const string_value =
+    auto* const tuple_value = ret->as<runtime::values::Tuple>();
+    auto* const string_value =
             tuple_value->fields[0]->as<runtime::values::String>();
     auto const conf_str = string_value->value;
 

@@ -227,7 +227,7 @@ public:
 
     auto Write(const void* const data, const int64_t nbytes)
             -> arrow::Status override {
-        auto const ptr = reinterpret_cast<const uint8_t*>(data);
+        const auto* const ptr = reinterpret_cast<const uint8_t*>(data);
         data_.insert(data_.end(), ptr, ptr + nbytes);
         return arrow::Status::OK();
     }

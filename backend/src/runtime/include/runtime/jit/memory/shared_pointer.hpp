@@ -106,7 +106,7 @@ public:
         if (this == &other) return *this;
 
         // Update this, saving current state
-        auto tmp_pointer = std::exchange(pointer_, other.pointer_);
+        auto* tmp_pointer = std::exchange(pointer_, other.pointer_);
         auto tmp_ref_counter = std::exchange(ref_counter_, other.ref_counter_);
 
         // Take new ownership, give up old one

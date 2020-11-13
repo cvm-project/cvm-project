@@ -144,7 +144,7 @@ struct CycleDetectionVisitor : public boost::default_dfs_visitor {
 };
 
 auto DAG::HasCycle() const -> bool {
-    for (const auto op : operators()) {
+    for (auto *const op : operators()) {
         if (in_degree(op) == 0) {
             bool has_cycle = false;
             CycleDetectionVisitor vis(&has_cycle);
@@ -169,7 +169,7 @@ struct TreeDetectionVisitor : public boost::default_bfs_visitor {
 
 auto DAG::IsTree() const -> bool {
     const DAGOperator *root = nullptr;
-    for (const auto op : operators()) {
+    for (auto *const op : operators()) {
         if (out_degree(op) > 1) return false;
         if (out_degree(op) == 0) {
             if (root != nullptr) return false;
@@ -215,8 +215,8 @@ auto DAG::to_operator(const Vertex &v) const -> DAGOperator * {
 auto DAG::to_flow(const Edge &e) const -> DAG::Flow {
     const auto source_v = boost::source(e, graph_);
     const auto target_v = boost::target(e, graph_);
-    const auto source_op = to_operator(source_v);
-    const auto target_op = to_operator(target_v);
+    auto *const source_op = to_operator(source_v);
+    auto *const target_op = to_operator(target_v);
 
     const auto source_port_map = boost::get(source_port_t(), graph_);
     const auto target_port_map = boost::get(target_port_t(), graph_);
@@ -485,7 +485,7 @@ auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
     std::map<size_t, DAGOperator *> operators;
     std::unordered_map<DAGOperator *, std::vector<FlowTipHelper>> predecessors;
 
-    for (auto &it : json.at("operators")) {
+    for (const auto &it : json.at("operators")) {
         std::string op_name = it.at("op");
         DAGOperator *op = nullptr;
         {
@@ -514,19 +514,19 @@ auto nlohmann::adl_serializer<std::unique_ptr<DAG>>::from_json(
         auto const preds = predecessors.at(op);
         for (size_t i = 0; i < preds.size(); i++) {
             auto const pred = preds.at(i);
-            auto const pred_op = operators.at(pred.op_id);
+            auto *const pred_op = operators.at(pred.op_id);
             dag->AddFlow(pred_op, pred.port, op, i);
         }
     }
 
     int current_output_port = 0;
-    for (auto &it : json.at("outputs")) {
+    for (const auto &it : json.at("outputs")) {
         const size_t op_id = it.at("op");
         const int port = it.at("port");
         dag->set_output(current_output_port++, operators.at(op_id), port);
     }
 
-    for (auto &it : json.at("inputs")) {
+    for (const auto &it : json.at("inputs")) {
         const size_t op_id = it.at("op");
         const int op_port = it.at("op_port");
         const int dag_port = it.at("dag_port");

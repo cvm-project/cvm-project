@@ -127,7 +127,7 @@ namespace optimize {
 void DetermineSortedness::Run(DAG *const dag,
                               const std::string & /*config*/) const {
     // Clear all attributes
-    for (auto op : dag->operators()) {
+    for (auto *op : dag->operators()) {
         for (auto &field : op->tuple->fields) {
             field->ClearProperties();
         }
@@ -138,7 +138,7 @@ void DetermineSortedness::Run(DAG *const dag,
     dag::utils::ApplyInReverseTopologicalOrder(dag, visitor.functor());
 
     // 'grouped' is implied by 'unique' or 'sorted'
-    for (auto op : dag->operators()) {
+    for (auto *op : dag->operators()) {
         for (auto &field : op->tuple->fields) {
             if (field->properties().count(FL_UNIQUE) > 0) {
                 field->AddProperty(FL_GROUPED);

@@ -40,13 +40,13 @@ auto RegisterPlan(std::unique_ptr<const DAG> dag) -> size_t {
 }
 
 auto DumpDag(const size_t plan_id) -> std::string {
-    const auto plan = PlanRegistry::at(plan_id);
+    auto* const plan = PlanRegistry::at(plan_id);
     const nlohmann::json dag_json(plan->dag);
     return dag_json.dump();
 }
 
 auto LoadPlan(const DAG* const dag) -> PlanFunctor {
-    auto const compiled_pipeline_op =
+    auto* const compiled_pipeline_op =
             boost::polymorphic_pointer_downcast<DAGCompiledPipeline>(
                     dag->output().op);
 
@@ -59,7 +59,7 @@ auto LoadPlan(const DAG* const dag) -> PlanFunctor {
 }
 
 void LoadPlan(const size_t plan_id) {
-    const auto plan = PlanRegistry::at(plan_id);
+    auto* const plan = PlanRegistry::at(plan_id);
     plan->functor = LoadPlan(plan->dag.get());
 }
 
@@ -80,7 +80,7 @@ auto ExecutePlan(const DAG* const dag, const std::string& inputs_str)
 
 auto ExecutePlan(const size_t plan_id, const std::string& inputs_str)
         -> std::string {
-    auto plan = PlanRegistry::at(plan_id);
+    auto* plan = PlanRegistry::at(plan_id);
     if (!plan->functor) {
         plan->functor = LoadPlan(plan->dag.get());
     }

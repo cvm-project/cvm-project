@@ -63,7 +63,7 @@ auto MakeExchangeS3Operator(std::unique_ptr<ValueOperator> &&main_upstream,
 
 auto ExchangeS3Operator::LookupQueryId() -> size_t {
     static const char *const kQueryIdVarName = "JITQ_QUERY_ID";
-    const auto query_id = std::getenv(kQueryIdVarName);
+    auto *const query_id = std::getenv(kQueryIdVarName);
     if (query_id == nullptr) {
         throw std::runtime_error(
                 (boost::format("Environment variable %1% not set.") %
@@ -76,7 +76,7 @@ auto ExchangeS3Operator::LookupQueryId() -> size_t {
 auto ExchangeS3Operator::LookupBucketName() -> std::string {
     static const char *const kBucketNameVarName =
             "JITQ_EXCHANGE_S3_BUCKET_NAME";
-    const auto bucket_name = std::getenv(kBucketNameVarName);
+    auto *const bucket_name = std::getenv(kBucketNameVarName);
     if (bucket_name == nullptr) {
         throw std::runtime_error(
                 (boost::format("Environment variable %1% not set.") %
@@ -94,8 +94,8 @@ void ExchangeS3Operator::open() {
         assert(dop_upstream_->next()->as<runtime::values::None>() != nullptr);
         dop_upstream_->close();
 
-        auto const tuple_value = ret->as<runtime::values::Tuple>();
-        auto const int_value =
+        auto *const tuple_value = ret->as<runtime::values::Tuple>();
+        auto *const int_value =
                 tuple_value->fields[0]->as<runtime::values::Int64>();
 
         num_workers_ = int_value->value;
@@ -108,8 +108,8 @@ void ExchangeS3Operator::open() {
         assert(wid_upstream_->next()->as<runtime::values::None>() != nullptr);
         wid_upstream_->close();
 
-        auto const tuple_value = ret->as<runtime::values::Tuple>();
-        auto const int_value =
+        auto *const tuple_value = ret->as<runtime::values::Tuple>();
+        auto *const int_value =
                 tuple_value->fields[0]->as<runtime::values::Int64>();
 
         worker_id_ = int_value->value;
@@ -152,7 +152,7 @@ auto ExchangeS3Operator::next() -> std::shared_ptr<values::Value> {
         return std::make_shared<values::None>();
     }
 
-    auto const filesystem = "s3";
+    const auto *const filesystem = "s3";
     auto const fs = filesystem::MakeFilesystem(filesystem);
 
     // Wait until (at least) one file is ready
@@ -270,7 +270,7 @@ void ExchangeS3Operator::ConsumeUpstream() {
         if (dynamic_cast<const values::None *>(input.get()) != nullptr) break;
 
         // Convert upstream value to arrow record batch
-        auto const tuple = input->as<values::Tuple>();
+        auto *const tuple = input->as<values::Tuple>();
         auto const key = tuple->fields.at(0)->as<values::Int64>()->value;
 
         std::vector<std::shared_ptr<values::Value>> columns(
@@ -283,7 +283,7 @@ void ExchangeS3Operator::ConsumeUpstream() {
     }
 
     // Open Parquet file writer
-    auto const filesystem = "s3";
+    const auto *const filesystem = "s3";
     auto const filename =
             (boost::format("s3://%1%/jitq/query-%2%/exchange-%3%/%4%.parquet") %
              bucket_name_ % query_id_ % exchange_id_ % worker_id_)

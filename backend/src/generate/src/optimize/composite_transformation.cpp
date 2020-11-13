@@ -11,7 +11,7 @@ void CompositeTransformation::Run(DAG *const dag,
                                   const std::string &config) const {
     const auto jconfig = nlohmann::json::parse(config);
     for (auto const &name : transformations_) {
-        auto const transformation =
+        const auto *const transformation =
                 optimize::DagTransformationRegistry::at(name);
         nlohmann::json::json_pointer jptr("/" + name);
         transformation->Run(dag, jconfig.value(jptr, nlohmann::json{}).dump());

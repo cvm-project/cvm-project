@@ -137,9 +137,9 @@ auto GenerateCode(DAG *const dag, const std::string &config)
             std::string("DEBUG=") + (do_debug_build ? "1" : "0");
 
 #if defined(WITH_LLVM_ASAN)
-    auto const asan_flag = "WITH_LLVM_ASAN=1";
+    const auto *const asan_flag = "WITH_LLVM_ASAN=1";
 #else
-    auto const asan_flag = "WITH_LLVM_ASAN=0";
+    const auto *const asan_flag = "WITH_LLVM_ASAN=0";
 #endif
 
     boost::process::ipstream make_std_out;
@@ -223,7 +223,7 @@ void GenerateTupleToValue(Context *const context,
         const std::string input_var_name_;
     };
 
-    auto const tuple_type_desc =
+    auto *const tuple_type_desc =
             context->tuple_type_descs().at(tuple_type).get();
 
     if (tuple_type_desc->has_struct_to_value) return;
@@ -268,8 +268,8 @@ void GenerateValueToTuple(Context *const context,
 
         auto operator()(const dag::type::Array *const type) const
                 -> std::string {
-            const auto inner_type = type->tuple_type;
-            const auto inner_typedef =
+            const auto *const inner_type = type->tuple_type;
+            auto *const inner_typedef =
                     context_->tuple_type_descs().at(inner_type).get();
 
             return (format("{%1%->as<Array>()->data.as<%2%>(),"
@@ -297,7 +297,7 @@ void GenerateValueToTuple(Context *const context,
         Context *const context_;
     };
 
-    auto const tuple_type_desc =
+    auto *const tuple_type_desc =
             context->tuple_type_descs().at(tuple_type).get();
 
     if (tuple_type_desc->has_value_to_struct) return;
@@ -334,7 +334,7 @@ auto GenerateExecuteTuples(DAG *const dag, Context *const context)
     // Compute execute function parameters
     std::map<size_t, const DAGOperator *> inputs;
     for (auto const input : dag->inputs()) {
-        auto const op = input.second.op;
+        auto *const op = input.second.op;
         auto const dag_port = input.first;
         assert(input.second.port == 0);
 
@@ -346,14 +346,14 @@ auto GenerateExecuteTuples(DAG *const dag, Context *const context)
 
     std::vector<std::string> packed_input_args;
     for (auto const input : inputs) {
-        auto const op = input.second;
+        const auto *const op = input.second;
         auto const dag_port = input.first;
 
         const std::string param_num = std::to_string(dag_port);
-        const auto tuple_type = op->tuple->type;
+        const auto *const tuple_type = op->tuple->type;
 
         // Parameters for function signature of 'execute_tuples'
-        const auto tuple_typedef =
+        auto *const tuple_typedef =
                 context->tuple_type_descs().at(tuple_type).get();
         packed_input_args.emplace_back((format("Optional<%1%> input_%2%") %
                                         tuple_typedef->name % param_num)
@@ -398,12 +398,12 @@ auto GenerateExecuteValues(DAG *const dag, Context *const context)
     // Compute execute function parameters
     std::vector<std::string> pack_input_args;
     for (auto const input : dag->inputs()) {
-        auto const op = input.second.op;
+        auto *const op = input.second.op;
         auto const dag_port = input.first;
 
         GenerateValueToTuple(context, op->tuple->type);
 
-        auto const tuple_type_desc =
+        auto *const tuple_type_desc =
                 context->tuple_type_descs().at(op->tuple->type).get();
 
         pack_input_args.emplace_back((format("ValueToTuple<%1%>(inputs[%2%])") %
@@ -412,7 +412,7 @@ auto GenerateExecuteValues(DAG *const dag, Context *const context)
     }
 
     // Main executable file: plan function on runtime values
-    auto const return_type = dag->output().op->tuple->type;
+    const auto *const return_type = dag->output().op->tuple->type;
     const auto func_name = context->GenerateSymbolName("execute_values", true);
     GenerateTupleToValue(context, return_type);
 
@@ -684,7 +684,7 @@ auto EmitTupleStructDefinition(Context *const context,
         }
 
         auto operator()(const dag::type::Array *const field) -> std::string {
-            auto item_desc =
+            const auto *item_desc =
                     EmitTupleStructDefinition(context_, field->tuple_type);
             std::vector<std::string> names;
             std::vector<std::string> types;
@@ -722,7 +722,7 @@ auto EmitTupleStructDefinition(Context *const context,
     std::vector<std::string> types;
     std::vector<std::string> names;
     for (auto pos = 0; pos < tuple->field_types.size(); pos++) {
-        auto f = tuple->field_types[pos];
+        const auto *f = tuple->field_types[pos];
         auto item_type = visitor.Visit(f);
         types.emplace_back(item_type);
         names.emplace_back("v" + std::to_string(pos));
