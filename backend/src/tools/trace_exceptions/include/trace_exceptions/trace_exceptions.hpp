@@ -15,6 +15,7 @@ struct ExceptionInfo {
     boost::stacktrace::stacktrace stacktrace;
 };
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 extern thread_local ExceptionInfo current_exception_info;
 
 }  //  namespace impl

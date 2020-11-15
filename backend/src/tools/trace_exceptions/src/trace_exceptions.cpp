@@ -10,6 +10,7 @@
 namespace trace_exceptions {
 namespace impl {
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 thread_local ExceptionInfo current_exception_info;
 
 }  // namespace impl

@@ -20,6 +20,7 @@ void ApplyInTopologicalOrderImpl(DAG *const dag,
                                  const RecursiveDagVisitor &on_entry_visitor,
                                  const RecursiveDagVisitor &on_exit_visitor) {
     std::vector<DAGOperator *> operators;
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)  // library code
     boost::topological_sort(
             dag->graph(),
             boost::make_function_output_iterator([&](const auto v) {
@@ -47,6 +48,7 @@ template <bool kReverseGraph, bool kDoRecursion>
 void ApplyInTopologicalOrderImpl(
         const DAG *const dag, const RecursiveConstDagVisitor &on_entry_visitor,
         const RecursiveConstDagVisitor &on_exit_visitor) {
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)  // library code
     ApplyInTopologicalOrderImpl<kReverseGraph, kDoRecursion>(
             // Cast away const qualifier
             const_cast<DAG *>(dag),
@@ -94,6 +96,7 @@ void ApplyInReverseTopologicalOrder(DAG *const dag, const DagVisitor &visitor) {
 
 void ApplyInReverseTopologicalOrder(const DAG *const dag,
                                     const DagVisitor &visitor) {
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)  // library code
     ApplyInTopologicalOrderImpl<true, false>(dag, std::bind(visitor, _1),
                                              // NOLINTNEXTLINE(cert-dcl50-cpp)
                                              [](...) {});

@@ -24,6 +24,8 @@ auto MakeClient() -> Aws::S3::S3Client * {
     cfg.retryStrategy = std::make_shared<AggressiveRetryStrategy>(8, 750);
 
     auto *const endpoint_override = std::getenv("AWS_S3_ENDPOINT");
+    // The following line silences the false positive/library bug in boost below
+    // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
     if (endpoint_override != nullptr) {
         cfg.endpointOverride = endpoint_override;
     }
@@ -44,6 +46,7 @@ auto MakeClient() -> Aws::S3::S3Client * {
         auto *const no_proxy = std::getenv("NO_PROXY");
         bool is_exception = false;
         if (no_proxy != nullptr && endpoint_url) {
+            // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
             boost::split(exceptions, no_proxy, boost::is_any_of(","));
             is_exception = exceptions.count(endpoint_url->hostname()) > 0;
         }

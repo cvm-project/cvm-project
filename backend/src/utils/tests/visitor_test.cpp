@@ -33,6 +33,7 @@ struct C : public Visitable {
 };
 
 // Overloaded function with observable side effect
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 size_t count_a, count_b, count_c, count_other, count_const, count_non_const;
 
 void ResetCounters() {

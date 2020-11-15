@@ -12,6 +12,7 @@ using runtime::memory::FreeRefCounter;
 using runtime::memory::RefCounter;
 using runtime::memory::SharedPointer;
 
+// NOLINTNEXTLINE(cppcoreguidelines-avoid-non-const-global-variables)
 std::unordered_map<int*, std::unique_ptr<int>> pointers;
 
 struct TestRefCounter : public RefCounter {  // NOLINT
