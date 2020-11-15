@@ -63,15 +63,17 @@ void ApplyInTopologicalOrderImpl(
 }
 
 void ApplyInTopologicalOrder(DAG *const dag, const DagVisitor &visitor) {
-    ApplyInTopologicalOrderImpl<false, false>(dag, std::bind(visitor, _1),
-                                              // NOLINTNEXTLINE(cert-dcl50-cpp)
-                                              [](...) {});
+    ApplyInTopologicalOrderImpl<false, false>(
+            dag, [visitor](const auto op, auto /*dag*/) { return visitor(op); },
+            // NOLINTNEXTLINE(cert-dcl50-cpp)
+            [](...) {});
 }
 
 void ApplyInTopologicalOrder(const DAG *const dag, const DagVisitor &visitor) {
-    ApplyInTopologicalOrderImpl<false, false>(dag, std::bind(visitor, _1),
-                                              // NOLINTNEXTLINE(cert-dcl50-cpp)
-                                              [](...) {});
+    ApplyInTopologicalOrderImpl<false, false>(
+            dag, [visitor](const auto op, auto /*dag*/) { return visitor(op); },
+            // NOLINTNEXTLINE(cert-dcl50-cpp)
+            [](...) {});
 }
 
 void ApplyInTopologicalOrderRecursively(
@@ -89,17 +91,19 @@ void ApplyInTopologicalOrderRecursively(
 }
 
 void ApplyInReverseTopologicalOrder(DAG *const dag, const DagVisitor &visitor) {
-    ApplyInTopologicalOrderImpl<true, false>(dag, std::bind(visitor, _1),
-                                             // NOLINTNEXTLINE(cert-dcl50-cpp)
-                                             [](...) {});
+    ApplyInTopologicalOrderImpl<true, false>(
+            dag, [visitor](const auto op, auto /*dag*/) { return visitor(op); },
+            // NOLINTNEXTLINE(cert-dcl50-cpp)
+            [](...) {});
 }
 
 void ApplyInReverseTopologicalOrder(const DAG *const dag,
                                     const DagVisitor &visitor) {
     // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDelete)  // library code
-    ApplyInTopologicalOrderImpl<true, false>(dag, std::bind(visitor, _1),
-                                             // NOLINTNEXTLINE(cert-dcl50-cpp)
-                                             [](...) {});
+    ApplyInTopologicalOrderImpl<true, false>(
+            dag, [visitor](const auto op, auto /*dag*/) { return visitor(op); },
+            // NOLINTNEXTLINE(cert-dcl50-cpp)
+            [](...) {});
 }
 
 void ApplyInReverseTopologicalOrderRecursively(

@@ -27,7 +27,7 @@ public:
     void from_json(const nlohmann::json &json) override;
     void to_json(nlohmann::json *json) const override;
 
-    std::string type = "";
+    std::string type;
 };
 
 }  // namespace type

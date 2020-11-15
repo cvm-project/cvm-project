@@ -33,11 +33,12 @@ public:
     auto name() const -> std::string { return "c" + std::to_string(id_); }
 
 private:
-    AttributeId() { id_ = column_counter_++; }
+    static auto next_global_id() -> size_t;
 
-    size_t id_;
+    AttributeId() : id_(next_global_id()) {}
+
+    const size_t id_;
     std::unordered_set<collection::Field *> fields_{};
-    static size_t column_counter_;
 };
 }  // namespace dag
 

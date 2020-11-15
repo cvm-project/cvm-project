@@ -227,7 +227,7 @@ struct result_struct {
     tuple_4 *data;
 };
 
-size_t len2 = kNumElements >> 1U;
+const size_t len2 = kNumElements >> 1U;
 
 auto join(tuple_2 *array1, tuple_3 *array2) -> result_struct {
     // build ht

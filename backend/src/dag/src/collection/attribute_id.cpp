@@ -2,8 +2,6 @@
 
 namespace dag {
 
-size_t AttributeId::column_counter_ = 0;
-
 auto AttributeId::MakeAttributeId() -> std::shared_ptr<AttributeId> {
     return std::shared_ptr<AttributeId>(new AttributeId);
 }
@@ -34,6 +32,11 @@ void AttributeId::MoveFields(const std::shared_ptr<AttributeId> &other) {
         }
     }
     other->fields_.clear();
+}
+
+auto AttributeId::next_global_id() -> size_t {
+    static size_t next_id = 0;
+    return next_id++;
 }
 
 }  // namespace dag
