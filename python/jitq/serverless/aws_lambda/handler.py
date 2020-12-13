@@ -51,15 +51,6 @@ class Handler:
             self.plan = event.get('plan', None)
             self.runner_env_vars = event.get('runner_env_vars', {})
 
-            # Return immediately if we are late
-            global_start_time = self.query_id / 1000
-            startup_max_delay = 20
-            startup_delay = time.time() - global_start_time
-            if startup_delay > startup_max_delay:
-                raise RuntimeError(
-                    'I took {:.3g}s to start. That\'s too long; giving up.'
-                    .format(startup_delay))
-
             max_workers = 32
             # pylint: disable=consider-using-with  # managed manually
             self.executor = ThreadPoolExecutor(max_workers=max_workers)
@@ -95,6 +86,15 @@ class Handler:
 
             logging.debug('sqs_config: %s', self.sqs_config)
             logging.debug('s3_config: %s', s3_config)
+
+            # Return immediately if we are late
+            global_start_time = self.query_id / 1000
+            startup_max_delay = 20
+            startup_delay = time.time() - global_start_time
+            if startup_delay > startup_max_delay:
+                raise RuntimeError(
+                    'I took {:.3g}s to start. That\'s too long; giving up.'
+                    .format(startup_delay))
 
             # Set up Lambda client
             self.lambda_client = boto3.client(
