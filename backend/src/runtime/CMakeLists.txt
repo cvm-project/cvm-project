@@ -5,7 +5,6 @@ set(RUNTIME_SOURCE_FILES
         src/memory/shared_pointer.cpp
         src/memory/values.cpp
         src/operators/arrow_helpers.cpp
-        src/operators/exchange_s3.cpp
         src/operators/expand_pattern.cpp
         src/operators/concurrent_execute_lambda.cpp
         src/operators/concurrent_execute_process.cpp
@@ -28,6 +27,7 @@ if(AWSSDK_FOUND)
             src/aws/s3.cpp
             src/aws/stderr_log_system.cpp
             src/filesystem/s3.cpp
+            src/operators/exchange_s3.cpp
         )
 endif()
 
