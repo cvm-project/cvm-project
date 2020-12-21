@@ -122,7 +122,7 @@ cd /tmp/ && \
 wget https://github.com/danmar/cppcheck/archive/1.88.zip && \
 unzip 1.88.zip && \
 cd /tmp/cppcheck-1.88 && \
-make -j$(nproc) SRCDIR=build CFGDIR=/opt/cppcheck-1.88/share/cfg HAVE_RULES=yes \
+make -j$(nproc) CFGDIR=/opt/cppcheck-1.88/share/cfg HAVE_RULES=yes \
      CXXFLAGS="-O2 -DNDEBUG -Wall -Wno-sign-compare -Wno-unused-function" && \
 sudo mkdir -p /opt/cppcheck-1.88/bin /opt/cppcheck-1.88/share && \
 sudo cp -r cfg /opt/cppcheck-1.88/share && \
