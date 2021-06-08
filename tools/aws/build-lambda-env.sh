@@ -18,7 +18,7 @@ ls /opt/arrow-*/lib/lib{arrow,parquet}.so* \
     done
 
 cd /output/build && \
-CC=clang-9.0 CXX=clang++-9.0 \
+CC=clang-11.0 CXX=clang++-11.0 \
     cmake /jitq/backend/src \
         -DCMAKE_BUILD_TYPE=Release \
         && \
