@@ -12,9 +12,10 @@ ls /opt/arrow-*/lib/lib{arrow,parquet}.so* \
         cp -d $line /output/$line
 
         # Link that ends up at /opt/lib
-        shortline="/opt/${line#/opt/*/}"
-        mkdir -p /output/$(dirname $shortline)
-        ln -fs $line /output/$shortline
+        linkname="/opt/${line#/opt/*/}"
+        linktarget="$(realpath --relative-to="/opt/lib" "$line")"
+        mkdir -p /output/$(dirname $linkname)
+        ln -fs $linktarget /output/$linkname
     done
 
 cd /output/build && \
