@@ -36,6 +36,7 @@ Resources:
         - SQSSendMessagePolicy:
             QueueName:
               !GetAtt JitqLambdaRunnerResultQueue.QueueName
+        - AmazonS3ReadOnlyAccess
         - S3CrudPolicy:
             BucketName: !Ref JitqLambdaRunnerBucket
         - LambdaInvokePolicy:
