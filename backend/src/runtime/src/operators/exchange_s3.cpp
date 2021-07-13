@@ -309,16 +309,17 @@ void ExchangeS3Operator::ConsumeUpstream() {
         auto const &record_batches = partitions[i];
 
         // Create arrow table from record batches
-        std::shared_ptr<arrow::Table> table;
-        operators::ThrowIfNotOK(arrow::Table::FromRecordBatches(
-                schema_, record_batches, &table));
+        auto maybe_table =
+                arrow::Table::FromRecordBatches(schema_, record_batches);
+        operators::ThrowIfNotOK(maybe_table);
+        auto const table = std::move(maybe_table).ValueOrDie();
         const size_t num_rows = table->num_rows();
 
         // Write current file
         operators::ThrowIfNotOK(file_writer->NewRowGroup(num_rows));
         for (size_t j = 0; j < table->num_columns(); j++) {
             operators::ThrowIfNotOK(file_writer->WriteColumnChunk(
-                    table->column(j)->data(), 0, num_rows));
+                    table->column(j), 0, num_rows));
         }
     }
 

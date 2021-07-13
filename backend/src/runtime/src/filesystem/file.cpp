@@ -9,18 +9,16 @@ namespace runtime::filesystem {
 
 auto LocalFileSystem::OpenForRead(const std::string &path)
         -> std::shared_ptr<::arrow::io::RandomAccessFile> {
-    std::shared_ptr<::arrow::io::ReadableFile> handle;
-    operators::ThrowIfNotOK(::arrow::io::ReadableFile::Open(
-            path, arrow::default_memory_pool(), &handle));
-    return handle;
+    auto const result = ::arrow::io::ReadableFile::Open(path);
+    operators::ThrowIfNotOK(result);
+    return result.ValueOrDie();
 }
 
 auto LocalFileSystem::OpenForWrite(const std::string &path)
         -> std::shared_ptr<::arrow::io::OutputStream> {
-    std::shared_ptr<::arrow::io::FileOutputStream> handle;
-    operators::ThrowIfNotOK(
-            ::arrow::io::FileOutputStream::Open(path, false, &handle));
-    return handle;
+    auto const result = ::arrow::io::FileOutputStream::Open(path);
+    operators::ThrowIfNotOK(result);
+    return result.ValueOrDie();
 }
 
 }  // namespace runtime::filesystem

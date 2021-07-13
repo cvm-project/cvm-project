@@ -7,13 +7,23 @@
 #include <string>
 #include <vector>
 
+#include <arrow/result.h>
 #include <arrow/status.h>
 #include <arrow/type.h>
+#include <boost/config.hpp>
 
 namespace runtime {
 namespace operators {
 
 void ThrowIfNotOK(const arrow::Status &status);
+
+template <class T>
+void ThrowIfNotOK(const arrow::Result<T> &result) {
+    if (BOOST_UNLIKELY(!result.ok())) {
+        throw std::runtime_error(result.status().CodeAsString() + ": " +
+                                 result.status().message());
+    }
+}
 
 auto MakeArrowSchema(std::vector<std::string> column_types,
                      std::vector<std::string> column_names)

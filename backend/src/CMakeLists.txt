@@ -112,10 +112,14 @@ add_library(googletest::gtest_main ALIAS gtest_main)
 
 include(GoogleTest)
 
-# Set up arrow
-find_package(arrow REQUIRED CONFIG)
-message(STATUS "Found arrow ${arrow_VERSION}")
+# Set up Arrow
+find_package(Arrow REQUIRED CONFIG 4.0)
+message(STATUS "Found arrow ${Arrow_VERSION}")
 set(arrow_LIBRARY arrow_shared)
+
+# Set up Parquet
+find_package(Parquet REQUIRED CONFIG 4.0)
+message(STATUS "Found parquet ${Parquet_VERSION}")
 set(parquet_LIBRARY parquet_shared)
 
 # Set up AWS SDK

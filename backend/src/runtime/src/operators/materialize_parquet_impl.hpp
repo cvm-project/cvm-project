@@ -31,7 +31,7 @@ void from_json(const nlohmann::json& j,
 }  // namespace operators
 }  // namespace runtime
 
-namespace parquet {
+namespace arrow {
 
 void from_json(const nlohmann::json& j,
                // NOLINTNEXTLINE(google-runtime-references)
@@ -49,6 +49,10 @@ NLOHMANN_JSON_SERIALIZE_ENUM(  //
                 {Compression::LZ4, "LZ4"},
                 {Compression::ZSTD, "ZSTD"},
         })
+
+}  // namespace arrow
+
+namespace parquet {
 
 // NOLINTNEXTLINE(google-runtime-references,modernize-avoid-c-arrays)
 NLOHMANN_JSON_SERIALIZE_ENUM(  //

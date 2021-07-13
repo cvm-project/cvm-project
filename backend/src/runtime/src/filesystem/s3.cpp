@@ -6,6 +6,7 @@
 
 #include <arrow/buffer.h>
 #include <arrow/io/interfaces.h>
+#include <arrow/result.h>
 #include <arrow/status.h>
 #include <aws/s3/S3Client.h>
 #include <aws/s3/model/GetObjectRequest.h>
@@ -46,7 +47,7 @@ public:
      * Implement RandomAccessFile interface
      */
 
-    auto GetSize(int64_t* const size) -> arrow::Status override {
+    auto GetSize() -> arrow::Result<int64_t> override {
         if (file_size_ < 0) {
             Aws::S3::Model::HeadObjectRequest request;
             request.WithBucket(bucket_.c_str()).WithKey(key_.c_str());
@@ -74,17 +75,15 @@ public:
             file_size_ = outcome.GetResult().GetContentLength();
         }
 
-        *size = file_size_;
-        return arrow::Status::OK();
+        return file_size_;
     }
 
     [[nodiscard]] auto supports_zero_copy() const -> bool override {
         return false;
     }
 
-    auto ReadAt(const int64_t position, const int64_t nbytes,
-                int64_t* const bytes_read, void* const buffer)
-            -> arrow::Status override {
+    auto ReadAt(const int64_t position, const int64_t nbytes, void* const out)
+            -> arrow::Result<int64_t> override {
         Aws::S3::Model::GetObjectRequest request;
         request.WithBucket(bucket_.c_str()).WithKey(key_.c_str());
         request.SetRange(
@@ -105,27 +104,27 @@ public:
                             .str());
         }
 
-        outcome.GetResult().GetBody().read((reinterpret_cast<char*>(buffer)),
+        outcome.GetResult().GetBody().read((reinterpret_cast<char*>(out)),
                                            nbytes);
-        *bytes_read = outcome.GetResult().GetContentLength();
 
-        return arrow::Status::OK();
+        auto const bytes_read = outcome.GetResult().GetContentLength();
+        assert(bytes_read == nbytes);
+        return bytes_read;
     }
 
-    auto ReadAt(const int64_t position, const int64_t nbytes,
-                std::shared_ptr<arrow::Buffer>* const out)
-            -> arrow::Status override {
-        std::shared_ptr<arrow::ResizableBuffer> buffer;
+    auto ReadAt(const int64_t position, const int64_t nbytes)
+            -> arrow::Result<std::shared_ptr<arrow::Buffer>> override {
+        auto maybe_buffer = AllocateResizableBuffer(nbytes, pool_);
 
-        ARROW_RETURN_NOT_OK(AllocateResizableBuffer(pool_, nbytes, &buffer));
+        if (!maybe_buffer.ok()) return maybe_buffer.status();
+        const std::shared_ptr<arrow::Buffer> buffer =
+                std::move(maybe_buffer).ValueOrDie();
 
-        int64_t bytes_read = 0;
-        ARROW_RETURN_NOT_OK(
-                ReadAt(position, nbytes, &bytes_read, buffer->mutable_data()));
+        auto const maybe_bytes_read =
+                ReadAt(position, nbytes, buffer->mutable_data());
+        if (!maybe_bytes_read.ok()) return maybe_bytes_read.status();
 
-        assert(bytes_read == nbytes);
-        *out = buffer;
-        return arrow::Status::OK();
+        return buffer;
     }
 
     /*
@@ -134,9 +133,7 @@ public:
 
     auto Close() -> arrow::Status override { return arrow::Status::OK(); }
 
-    auto Tell(int64_t* /*position*/) const -> arrow::Status override {
-        return arrow::Status::OK();
-    }
+    auto Tell() const -> arrow::Result<int64_t> override { return 0; }
 
     [[nodiscard]] auto closed() const -> bool override { return false; }
 
@@ -144,15 +141,15 @@ public:
      * Implement Readable interface
      */
 
-    auto Read(const int64_t nbytes, int64_t* const bytes_read, void* const out)
-            -> arrow::Status override {
-        return ReadAt(0, nbytes, bytes_read, out);
+    auto Read(const int64_t nbytes, void* const out)
+            -> arrow::Result<int64_t> override {
+        return ReadAt(0, nbytes, out);
     }
 
-    auto Read(const int64_t nbytes, std::shared_ptr<arrow::Buffer>* const out)
-            -> arrow::Status override {
+    auto Read(const int64_t nbytes)
+            -> arrow::Result<std::shared_ptr<arrow::Buffer>> override {
         // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
-        return ReadAt(0, nbytes, out);
+        return ReadAt(0, nbytes);
     }
 
     /*
@@ -214,9 +211,8 @@ public:
         return arrow::Status::OK();
     }
 
-    auto Tell(int64_t* const position) const -> arrow::Status override {
-        *position = data_.size();
-        return arrow::Status::OK();
+    auto Tell() const -> arrow::Result<int64_t> override {
+        return data_.size();
     }
 
     [[nodiscard]] auto closed() const -> bool override { return false; }

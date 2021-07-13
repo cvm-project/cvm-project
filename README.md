@@ -57,6 +57,7 @@ sudo apt install build-essential \
         flex \
         gcc-7 \
         g++-7 \
+        libre2-dev \
         libtinfo5 \
         libtinfo-dev \
         pkg-config \
@@ -170,30 +171,11 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.76.0
 
 Run the following outside your `venv` (but with the same version of Python).
 
-(Note: The patch fixes a problem mentioned [here](https://issues.apache.org/jira/browse/ARROW-5960). Maybe it will be addressed in a future verison.)
-
 ```bash
 mkdir -p /tmp/arrow && \
 cd /tmp/arrow && \
-wget https://github.com/apache/arrow/archive/apache-arrow-0.14.0.tar.gz -O - \
+wget https://github.com/apache/arrow/archive/apache-arrow-4.0.1.tar.gz -O - \
     | tar -xz --strip-components=1 && \
-{ patch -p1  <<\ENDOFMESSAGE
-    diff -pur a/cpp/CMakeLists.txt b/cpp/CMakeLists.txt
-    --- a/cpp/CMakeLists.txt   2019-06-29 00:26:37.000000000 +0200
-    +++ b/cpp/CMakeLists.txt    2019-07-16 16:36:03.980153919 +0200
-    @@ -642,8 +642,8 @@ if(ARROW_STATIC_LINK_LIBS)
-       add_dependencies(arrow_dependencies ${ARROW_STATIC_LINK_LIBS})
-     endif()
-    
-    -set(ARROW_SHARED_PRIVATE_LINK_LIBS ${ARROW_STATIC_LINK_LIBS} ${BOOST_SYSTEM_LIBRARY}
-    -                                   ${BOOST_FILESYSTEM_LIBRARY} ${BOOST_REGEX_LIBRARY})
-    +set(ARROW_SHARED_PRIVATE_LINK_LIBS ${ARROW_STATIC_LINK_LIBS} ${BOOST_FILESYSTEM_LIBRARY}
-    +                                   ${BOOST_SYSTEM_LIBRARY} ${BOOST_REGEX_LIBRARY})
-    
-     list(APPEND ARROW_STATIC_LINK_LIBS ${BOOST_SYSTEM_LIBRARY} ${BOOST_FILESYSTEM_LIBRARY}
-                 ${BOOST_REGEX_LIBRARY})
-ENDOFMESSAGE
-} && \
 pip3 install -r /tmp/arrow/python/requirements-build.txt && \
 pip3 install wheel && \
 mkdir -p /tmp/arrow/cpp/build && \
@@ -202,10 +184,16 @@ CXX=clang++-11.1 CC=clang-11.1 \
     cmake \
         -DPYTHON_EXECUTABLE=$(which python3) \
         -DCMAKE_CXX_STANDARD=17 \
-        -DCMAKE_INSTALL_PREFIX=/opt/arrow-0.14/ \
+        -DCMAKE_INSTALL_PREFIX=/opt/arrow-4.0.1/ \
         -DCMAKE_INSTALL_LIBDIR=lib \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DARROW_WITH_BROTLI=ON \
+        -DARROW_WITH_BZ2=ON \
+        -DARROW_WITH_LZ4=ON \
         -DARROW_WITH_RAPIDJSON=ON \
+        -DARROW_WITH_SNAPPY=ON \
+        -DARROW_WITH_ZLIB=ON \
+        -DARROW_WITH_ZSTD=ON \
         -DARROW_PARQUET=ON \
         -DARROW_PYTHON=ON \
         -DARROW_FLIGHT=OFF \
@@ -222,23 +210,24 @@ CXX=clang++-11.1 CC=clang-11.1 \
 make -j$(nproc) && \
 sudo make install && \
 cd /tmp/arrow/python && \
-PYARROW_WITH_PARQUET=1 ARROW_HOME=/opt/arrow-0.14/ \
+PYARROW_WITH_PARQUET=1 ARROW_HOME=/opt/arrow-4.0.1/ \
     python3 setup.py build_ext --bundle-arrow-cpp bdist_wheel && \
-sudo mkdir -p /opt/arrow-0.14/share && \
-sudo cp /tmp/arrow/python/dist/*.whl /opt/arrow-0.14/share
+sudo mkdir -p /opt/arrow-4.0.1/share && \
+sudo cp /tmp/arrow/python/dist/*.whl /opt/arrow-4.0.1/share && \
+sudo ln -s arrow /opt/arrow-4.0.1/lib/cmake/parquet
 ```
 
 Make the following command executed in the shells you use for development,
 for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
-export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/arrow-0.14
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/arrow-4.0.1
 ```
 
 Finally, run the following **in your `venv`**.
 
 ```bash
-pip3 install /opt/arrow-0.14/share/*.whl
+pip3 install /opt/arrow-4.0.1/share/*.whl
 ```
 
 ### AWS SDK (optional)

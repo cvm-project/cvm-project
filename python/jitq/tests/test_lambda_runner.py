@@ -40,7 +40,7 @@ def test_lambda_runner(jitq_aws_stack, jitq_context):
             .map(lambda i: (i % 2, i)) \
             .to_parquet(filename, column_names)
         table = pq.read_table(res)
-        assert column_names == [c.name for c in table.columns]
+        assert column_names == table.column_names
         res = zip(*[c.to_pylist() for c in table.columns])
         assert [(0, 0), (0, 2), (0, 4), (1, 1), (1, 3)] == sorted(res)
 

@@ -48,6 +48,7 @@ void from_json(const nlohmann::json& j,
 namespace parquet {
 
 void from_json(const nlohmann::json& j,
+               // NOLINTNEXTLINE(google-runtime-references)
                parquet::WriterProperties::Builder& properties_builder) {
     // Global properties
     if (j.contains("dictionary_pagesize_limit")) {
@@ -183,15 +184,16 @@ auto MaterializeParquetOperatorImpl::next()
         if (current_row_group_size == 0) break;
 
         if (current_row_group_size >= target_num_rows_per_row_group || !input) {
-            std::shared_ptr<arrow::Table> table;
-            operators::ThrowIfNotOK(
-                    arrow::Table::FromRecordBatches(current_row_group, &table));
+            auto const maybe_table =
+                    arrow::Table::FromRecordBatches(current_row_group);
+            operators::ThrowIfNotOK(maybe_table);
+            auto const& table = maybe_table.ValueOrDie();
             const size_t num_rows = table->num_rows();
 
             operators::ThrowIfNotOK(file_writer->NewRowGroup(num_rows));
             for (size_t i = 0; i < table->num_columns(); i++) {
                 operators::ThrowIfNotOK(file_writer->WriteColumnChunk(
-                        table->column(i)->data(), 0, num_rows));
+                        table->column(i), 0, num_rows));
             }
 
             current_row_group.clear();

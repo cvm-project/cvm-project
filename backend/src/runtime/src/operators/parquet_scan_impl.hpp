@@ -127,7 +127,7 @@ private:
             -> std::vector<int>;
 
     static auto EvaluateRangePredicates(
-            const std::shared_ptr<parquet::RowGroupStatistics>& statistics,
+            const std::shared_ptr<parquet::Statistics>& statistics,
             const std::vector<std::shared_ptr<Predicate>>& range_predicates,
             const TypeTag& type_tag) -> bool;
 

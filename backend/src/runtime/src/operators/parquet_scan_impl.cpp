@@ -259,7 +259,7 @@ struct ColumnTypeTraits<double> {
 
 template <typename ColumnType>
 auto EvaluateRangePredicatesImpl(
-        const std::shared_ptr<parquet::RowGroupStatistics>& statistics,
+        const std::shared_ptr<parquet::Statistics>& statistics,
         const std::vector<std::shared_ptr<Predicate>>& range_predicates)
         -> bool {
     using Traits = ColumnTypeTraits<ColumnType>;
@@ -282,7 +282,7 @@ auto EvaluateRangePredicatesImpl(
 }
 
 auto ParquetRowGroupOperator::EvaluateRangePredicates(
-        const std::shared_ptr<parquet::RowGroupStatistics>& statistics,
+        const std::shared_ptr<parquet::Statistics>& statistics,
         const std::vector<std::shared_ptr<Predicate>>& range_predicates,
         const TypeTag& type_tag) -> bool {
     return std::visit(

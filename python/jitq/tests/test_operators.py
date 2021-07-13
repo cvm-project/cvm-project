@@ -361,7 +361,7 @@ class TestParquet:
 
         parquet_files.copy_from_remote(filename)
         table = pq.read_table(parquet_files.to_local(filename))
-        assert column_names == [c.name for c in table.columns]
+        assert column_names == table.column_names
         res = zip(*[c.to_pylist() for c in table.columns])
         assert data == sorted(res)
 
@@ -376,7 +376,7 @@ class TestParquet:
 
         parquet_files.copy_from_remote(filename)
         table = pq.read_table(parquet_files.to_local(filename))
-        assert column_names == [c.name for c in table.columns]
+        assert column_names == table.column_names
         res = zip(*[c.to_pylist() for c in table.columns])
         assert [] == sorted(res)
 
