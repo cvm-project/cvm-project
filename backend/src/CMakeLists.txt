@@ -81,7 +81,7 @@ if(${WITH_LLVM_COVERAGE} AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 endif()
 
 # Set up Boost
-find_package(Boost 1.64 REQUIRED COMPONENTS
+find_package(Boost 1.76 REQUIRED COMPONENTS
         filesystem
         program_options
         stacktrace_basic

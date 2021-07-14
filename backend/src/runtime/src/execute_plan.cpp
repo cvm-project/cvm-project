@@ -54,8 +54,8 @@ auto LoadPlan(const DAG* const dag) -> PlanFunctor {
             get_lib_path() / "backend/gen" / compiled_pipeline_op->library_name;
     auto const function_name = compiled_pipeline_op->function_name;
 
-    return boost::dll::import<runtime::PlanFunction>(library_path,
-                                                     function_name);
+    return boost::dll::import_symbol<runtime::PlanFunction>(library_path,
+                                                            function_name);
 }
 
 void LoadPlan(const size_t plan_id) {
