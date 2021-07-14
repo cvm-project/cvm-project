@@ -18,13 +18,13 @@ variables:
   GTEST_COLOR: "1"
   PYTHONPATH: $CI_PROJECT_DIR/python:$CI_PROJECT_DIR/backend/build
   JITQPATH: $CI_PROJECT_DIR
-  LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-11.0.0/lib
-  ASAN_SYMBOLIZER_PATH: /opt/clang+llvm-11.0.0/bin/llvm-symbolizer
-  ASAN_LIBRARY_PATH: /opt/clang+llvm-11.0.0/lib/clang/11.0.0/lib/linux/libclang_rt.asan-x86_64.so
+  LD_LIBRARY_PATH: $LD_LIBRARY_PATH:/opt/clang+llvm-11.1.0/lib
+  ASAN_SYMBOLIZER_PATH: /opt/clang+llvm-11.1.0/bin/llvm-symbolizer
+  ASAN_LIBRARY_PATH: /opt/clang+llvm-11.1.0/lib/clang/11.1.0/lib/linux/libclang_rt.asan-x86_64.so
   ASAN_OPTIONS: intercept_tls_get_addr=0
   SEGFAULT_SIGNALS: "bus abrt"
-  CC: clang-11.0
-  CXX: clang++-11.0
+  CC: clang-11.1
+  CXX: clang++-11.1
 
 services:
   - name: minio/minio:RELEASE.2019-06-01T03-46-14Z
@@ -35,17 +35,17 @@ services:
     alias: sqsserver.local
 
 default:
-  image: ingomuellernet/buildenv-jitq:2020-11-14
+  image: ingomuellernet/buildenv-jitq:2021-07-14
   before_script:
     - pip3 install -r requirements.txt
     - >-
         (
-            echo "CC=clang-11.0"
-            echo "CXX=clang++-11.0"
-            echo "CXXFORMAT=clang-format-11.0"
-            echo "LLVMLINK=llvm-link-11.0"
-            echo "LLVMOPT=opt-11.0"
-            echo "LIBOMPDIR=/opt/clang+llvm-11.0.0/lib"
+            echo "CC=clang-11.1"
+            echo "CXX=clang++-11.1"
+            echo "CXXFORMAT=clang-format-11.1"
+            echo "LLVMLINK=llvm-link-11.1"
+            echo "LLVMOPT=opt-11.1"
+            echo "LIBOMPDIR=/opt/clang+llvm-11.1.0/lib"
         ) > backend/src/generate/src/code_gen/Makefile.local
     - cp jitq_config.ci.json jitq_config.json
   after_script:

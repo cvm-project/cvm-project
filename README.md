@@ -75,9 +75,9 @@ sudo apt remove cmake
 Then:
 
 ```bash
-sudo mkdir /opt/cmake-3.16.0/ && \
-cd /opt/cmake-3.16.0/ && \
-wget https://github.com/Kitware/CMake/releases/download/v3.16.0/cmake-3.16.0-Linux-x86_64.tar.gz -O - \
+sudo mkdir /opt/cmake-3.21.0/ && \
+cd /opt/cmake-3.21.0/ && \
+wget https://github.com/Kitware/CMake/releases/download/v3.21.0/cmake-3.21.0-linux-x86_64.tar.gz -O - \
     | sudo tar -xz --strip-components=1 && \
 for file in bin/*; \
 do \
@@ -90,13 +90,13 @@ done
 Download and add links:
 
 ```bash
-sudo mkdir /opt/clang+llvm-11.0.0/ && \
-cd /opt/clang+llvm-11.0.0/ && \
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz -O - \
+sudo mkdir /opt/clang+llvm-11.1.0/ && \
+cd /opt/clang+llvm-11.1.0/ && \
+    wget --progress=dot:giga https://github.com/llvm/llvm-project/releases/download/llvmorg-11.1.0/clang+llvm-11.1.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz -O - \
      | sudo tar -x -I xz --strip-components=1 && \
 for file in bin/*; \
 do \
-    sudo ln -s $PWD/$file /usr/bin/$(basename $file)-11.0; \
+    sudo ln -s $PWD/$file /usr/bin/$(basename $file)-11.1; \
 done
 ```
 
@@ -104,7 +104,7 @@ Make the following command executed in the shells you use for development,
 for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
-export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-11.0.0
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/clang+llvm-11.1.0
 ```
 
 8. cppcheck
@@ -148,22 +148,22 @@ sudo apt install libgraphviz-dev
 ```bash
 sudo apt install python3-dev autotools-dev libicu-dev libbz2-dev
 cd /tmp/ && \
-wget https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.tar.gz -O - \
+wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz -O - \
     | tar -xz && \
-cd /tmp/boost_1_73_0 && \
-echo "using clang : 11.0 : $(which clang-11.0) ; " > tools/build/src/user-config.jam && \
+cd /tmp/boost_1_76_0 && \
+echo "using clang : 11.1 : $(which clang-11.1) ; " > tools/build/src/user-config.jam && \
 PYTHONVERSION="$(python3 -c "import sys; print(str(sys.version_info.major) + '.' + str(sys.version_info.minor))")" && \
 export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$(python3 -c 'import sysconfig as s; print(s.get_path("include"))')" && \
-./bootstrap.sh --with-python=$(which python3) && \
-./b2 --toolset=clang-11.0 cxxflags=-fPIC --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.73.0 && \
-sudo ./b2 install --prefix=/opt/boost-1.73.0
+./bootstrap.sh --with-python=$(which python3) --prefix=/opt/boost-1.76.0 && \
+./b2 numa=on define=BOOST_FIBERS_SPINLOCK_TTAS_ADAPTIVE_FUTEX --toolset=clang-11.1 cxxflags=-fPIC --python=$PYTHONVERSION -j$(nproc) --prefix=/opt/boost-1.76.0 && \
+sudo ./b2 numa=on install --prefix=/opt/boost-1.76.0
 ```
 
 Make the following command executed in the shells you use for development,
 for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
-export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.73.0
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/boost-1.76.0
 ```
 
 11. Apache Arrow
@@ -198,7 +198,7 @@ pip3 install -r /tmp/arrow/python/requirements-build.txt && \
 pip3 install wheel && \
 mkdir -p /tmp/arrow/cpp/build && \
 cd /tmp/arrow/cpp/build && \
-CXX=clang++-11.0 CC=clang-11.0 \
+CXX=clang++-11.1 CC=clang-11.1 \
     cmake \
         -DPYTHON_EXECUTABLE=$(which python3) \
         -DCMAKE_CXX_STANDARD=17 \
@@ -252,7 +252,7 @@ wget https://github.com/aws/aws-sdk-cpp/archive/1.7.138.tar.gz -O - \
     | tar -xz --strip-components=1 && \
 mkdir -p /tmp/aws-sdk-cpp/build && \
 cd /tmp/aws-sdk-cpp/build && \
-CXX=clang++-11.0 CC=clang-11.0 \
+CXX=clang++-11.1 CC=clang-11.1 \
     sudo cmake \
         -DBUILD_ONLY="dynamodb;lambda;s3;sqs" \
         -DCMAKE_BUILD_TYPE=Debug \
@@ -280,7 +280,7 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/aws-sdk-cpp-1.7
 # Run in the root folder of the project
 export JITQPATH=$(git rev-parse --show-toplevel)
 export PYTHONPATH=$JITQPATH/python:$JITQPATH/backend/build
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-11.0.0/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/clang+llvm-11.1.0/lib
 ```
 
 2. Setup build (once):
@@ -289,13 +289,13 @@ Configure CMake:
 
 ```bash
 cd $JITQPATH/backend/build
-CXX=clang++-11.0 CC=clang-11.0 cmake ../src/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+CXX=clang++-11.1 CC=clang-11.1 cmake ../src/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 ```
 
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-9.0\nCXX=clang++-11.0\nCXXFORMAT=clang-format-11.0\nLIBOMPDIR=/opt/clang+llvm-11.0.0/lib" \
+echo -e "CC=clang-11.1\nCXX=clang++-11.1\nCXXFORMAT=clang-format-11.1\nLIBOMPDIR=/opt/clang+llvm-11.1.0/lib" \
     > $JITQPATH/backend/src/generate/src/code_gen/Makefile.local
 ```
 
@@ -355,8 +355,8 @@ cmake <...> -DWITH_LLVM_ASAN=ON
 Then, set up the following environment variables:
 
 ```bash
-export ASAN_SYMBOLIZER_PATH=/opt/clang+llvm-11.0.0/bin/llvm-symbolizer
-export ASAN_LIBRARY_PATH=/opt/clang+llvm-11.0.0/lib/clang/11.0.0/lib/linux/libclang_rt.asan-x86_64.so
+export ASAN_SYMBOLIZER_PATH=/opt/clang+llvm-11.1.0/bin/llvm-symbolizer
+export ASAN_LIBRARY_PATH=/opt/clang+llvm-11.1.0/lib/clang/11.1.0/lib/linux/libclang_rt.asan-x86_64.so
 ```
 
 Finally, run unittests or queries you want to test.

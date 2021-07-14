@@ -23,7 +23,7 @@ MarkupSafe==1.1.1
 matplotlib==3.3.3
 mccabe==0.6.1
 numba==0.48.0
-numpy==1.19.4
+numpy==1.21.0
 packaging==20.4
 pandas==0.25.3
 Pillow==8.0.1

@@ -11,19 +11,19 @@ include (ReleaseAsDefault)
 include (ExternalProject)
 
 # Setup clang-format
-find_package (ClangFormat 11.0 EXACT)
+find_package (ClangFormat 11.1 EXACT)
 if(ClangFormat_FOUND)
     enable_clang_format_targets()
 endif()
 
 # Setup clang-tidy
-find_package (ClangTidy 11.0 EXACT)
+find_package (ClangTidy 11.1 EXACT)
 if(ClangTidy_FOUND)
     enable_clang_tidy_targets()
 endif()
 
 # Set up LLVM
-find_package(LLVM 11.0 EXACT REQUIRED CONFIG)
+find_package(LLVM 11.1 EXACT REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")

@@ -1,7 +1,7 @@
 SCRIPTPATH:=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECTPATH:=$(realpath $(SCRIPTPATH)/../../..)
 
-DOCKERIMAGE=ingomuellernet/lambda-build-jitq:2020-12-13
+DOCKERIMAGE=ingomuellernet/lambda-build-jitq:2021-07-14
 
 all: build dependencies aws_lambda/lib
 	docker run --rm -it \
