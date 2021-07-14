@@ -22,3 +22,6 @@ leak:libcdt.so
 
 # When run through catchsegv, there is a small leak
 leak:libSegFault.so
+
+# Funnily, ASan seems to have a small leak
+leak:asan_new_delete.cpp
