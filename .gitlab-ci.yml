@@ -35,7 +35,7 @@ services:
     alias: sqsserver.local
 
 default:
-  image: ingomuellernet/buildenv-jitq:2021-07-15
+  image: ingomuellernet/buildenv-jitq:2021-07-16
   before_script:
     - pip3 install -r requirements.txt
     - >-
