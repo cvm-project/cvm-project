@@ -21,6 +21,7 @@ public:
     void close() override;
 
 private:
+    // cppcheck-suppress unusedPrivateFunction  // false positive
     void MaterializeResult();
 
     std::unique_ptr<ValueOperator> upstream_;
