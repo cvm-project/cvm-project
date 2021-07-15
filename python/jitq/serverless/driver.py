@@ -24,6 +24,7 @@ class Driver:
 
         max_workers = int(os.environ.get('JITQ_LAMBDA_DRIVER_NUM_THREADS', 20))
         self.logger.info('Using %s threads to spawn lambdas.', max_workers)
+        # pylint: disable=consider-using-with  # managed manually
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
         # Retrieve metadata from stack

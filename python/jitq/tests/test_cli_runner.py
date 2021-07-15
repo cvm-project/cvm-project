@@ -32,8 +32,7 @@ def test_runner(jitq_context):
 
         except subprocess.CalledProcessError as ex:
             logger.error(
-                'Fake lambda runtime failed. '
-                'Output on stderr:\n%s\nOutput on stdout:\n%s',
+                'Runner failed. Output on stderr:\n%s\nOutput on stdout:\n%s',
                 ex.stderr.decode('utf-8'),
                 ex.stdout.decode('utf-8'))
             raise ex

@@ -15,7 +15,7 @@ def get_llvm_ir(sig, func, **options):
     # replace the unituple with tuple
     # abi compliance
     return_type = replace_record(replace_unituple(return_type))
-    args = tuple([replace_record(replace_unituple(arg)) for arg in args])
+    args = tuple(replace_record(replace_unituple(arg)) for arg in args)
 
     res = JITQCFunc(func, (args, return_type), {}, options=options)
 

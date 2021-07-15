@@ -85,7 +85,7 @@ class RDD(abc.ABC):
         self.context = context
         self.output_type = None
         self.hash = None
-        if any([p.context != self.context for p in self.parents]):
+        if any(p.context != self.context for p in self.parents):
             raise ValueError("The context of all parents must be the same!")
 
     def cache(self):

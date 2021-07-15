@@ -61,6 +61,7 @@ class Handler:
                     .format(startup_delay))
 
             max_workers = 32
+            # pylint: disable=consider-using-with  # managed manually
             self.executor = ThreadPoolExecutor(max_workers=max_workers)
 
             # Load S3 config
@@ -299,6 +300,7 @@ class Handler:
 
         except BaseException:
             self._handle_exception()
+            return None  # keep pylint happy
 
 
 def run(event, context):

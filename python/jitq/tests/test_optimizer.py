@@ -43,22 +43,22 @@ class OptimizerTestCase:
             ["-i", self._input_file()]
 
         # Produce DOT output
-        opt = subprocess.Popen(cmd + ['-fDOT'],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
-        stdout, stderr = opt.communicate()
-        status = opt.wait()
+        with subprocess.Popen(cmd + ['-fDOT'],
+                              stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE) as opt:
+            stdout, stderr = opt.communicate()
+            status = opt.wait()
 
         if status != 0:
             raise RuntimeError("Error producing dot file:\n" +
                                stderr.decode('utf-8'))
 
         # Parse by dot
-        dot = subprocess.Popen('dot', stdin=subprocess.PIPE,
-                               stdout=subprocess.DEVNULL,
-                               stderr=subprocess.PIPE)
-        _, stderr = dot.communicate(stdout)
-        status = dot.wait()
+        with subprocess.Popen('dot', stdin=subprocess.PIPE,
+                              stdout=subprocess.DEVNULL,
+                              stderr=subprocess.PIPE) as dot:
+            _, stderr = dot.communicate(stdout)
+            status = dot.wait()
 
         if status != 0:
             raise RuntimeError("Error parsing produced dot file:\n" +
