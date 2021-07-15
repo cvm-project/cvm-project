@@ -703,7 +703,7 @@ void CheckOutputType(const DAGOperator *const op, const DAG *const dag) {
 
 void RecomputeOutputType(DAGOperator *const op, const DAG *const dag) {
     const auto *const computed_output_type = ComputeOutputType(dag, op);
-    op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+    op->tuple = isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
             computed_output_type);
 }
 
@@ -716,8 +716,9 @@ void SetInnerGraphInputTypes(DAGOperator *const op, const DAG *const dag) {
         auto const input_port = input.first;
         const auto *const input_type =
                 dag->predecessor(op, input_port)->tuple->type;
-        inner_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                input_type);
+        inner_op->tuple =
+                isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
+                        input_type);
     }
 }
 

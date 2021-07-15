@@ -31,7 +31,8 @@ void CodeGen::Run(DAG *const dag, const std::string &config) const {
 
     // Remember inputs, input tuples, and outputs
     std::vector<std::pair<int, DAG::FlowTip>> inputs;
-    std::vector<jbcoe::polymorphic_value<dag::collection::Tuple>> input_tuples;
+    std::vector<isocpp_p0201::polymorphic_value<dag::collection::Tuple>>
+            input_tuples;
     for (auto const &input : dag->inputs()) {
         inputs.emplace_back(input);
         input_tuples.emplace_back(input.second.op->tuple);

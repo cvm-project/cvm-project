@@ -50,9 +50,10 @@ auto StartParallelMap(DAG *const dag, DAGOperator *const source_op)
     auto *const dop_op = new DAGConstantTuple();
     dag->AddOperator(dop_op);
     dop_op->values.emplace_back("$DOP");
-    dop_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-            dag::type::Tuple::MakeTuple(
-                    {dag::type::Atomic::MakeAtomic("long")}));
+    dop_op->tuple =
+            isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
+                    dag::type::Tuple::MakeTuple(
+                            {dag::type::Atomic::MakeAtomic("long")}));
 
     // Create parallelize operator
     auto *const pop = new DAGParallelMap();
@@ -187,11 +188,9 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 auto *const dop_op = new DAGConstantTuple();
                 inner_dag->AddOperator(dop_op);
                 dop_op->values.emplace_back("$DOP");
-                dop_op->tuple =
-                        jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                                dag::type::Tuple::MakeTuple(
-                                        {dag::type::Atomic::MakeAtomic(
-                                                "long")}));
+                dop_op->tuple = isocpp_p0201::make_polymorphic_value<
+                        dag::collection::Tuple>(dag::type::Tuple::MakeTuple(
+                        {dag::type::Atomic::MakeAtomic("long")}));
 
                 // End this parallel operator
                 inner_dag->AddFlow(inner_dag->output().op, pre_reduction_op);
@@ -361,11 +360,9 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 auto *const this_dop_op = new DAGConstantTuple();
                 inner_dag->AddOperator(this_dop_op);
                 this_dop_op->values.emplace_back("$DOP");
-                this_dop_op->tuple =
-                        jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                                dag::type::Tuple::MakeTuple(
-                                        {dag::type::Atomic::MakeAtomic(
-                                                "long")}));
+                this_dop_op->tuple = isocpp_p0201::make_polymorphic_value<
+                        dag::collection::Tuple>(dag::type::Tuple::MakeTuple(
+                        {dag::type::Atomic::MakeAtomic("long")}));
 
                 // End this side's parallel map of the input
                 inner_dag->AddFlow(inner_dag->output().op, this_part_op, 0);
@@ -386,11 +383,9 @@ void Parallelize::Run(DAG *const dag, const std::string & /*config*/) const {
                 auto *const other_dop_op = new DAGConstantTuple();
                 dag->AddOperator(other_dop_op);
                 other_dop_op->values.emplace_back("$DOP");
-                other_dop_op->tuple =
-                        jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                                dag::type::Tuple::MakeTuple(
-                                        {dag::type::Atomic::MakeAtomic(
-                                                "long")}));
+                other_dop_op->tuple = isocpp_p0201::make_polymorphic_value<
+                        dag::collection::Tuple>(dag::type::Tuple::MakeTuple(
+                        {dag::type::Atomic::MakeAtomic("long")}));
 
                 // GroupBy operator after other side's partitioning
                 auto *const other_grouping_op = new DAGGroupBy();

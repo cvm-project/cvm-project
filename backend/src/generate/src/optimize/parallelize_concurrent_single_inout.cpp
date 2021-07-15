@@ -140,7 +140,7 @@ void ParallelizeConcurrentSingleInout::Run(
         const auto *const output_type = dag::type::Tuple::MakeTuple(
                 {dag::type::Atomic::MakeAtomic("std::string")});
         config_op->tuple =
-                jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
                         output_type);
         config_op->values = {
                 "R\"STRING("
@@ -159,7 +159,7 @@ void ParallelizeConcurrentSingleInout::Run(
         const auto *const worker_id_type = dag::type::Tuple::MakeTuple(
                 {dag::type::Atomic::MakeAtomic("long")});
         worker_id_op->tuple =
-                jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
                         worker_id_type);
         worker_id_op->values = {"$WID"};
 
@@ -199,7 +199,7 @@ void ParallelizeConcurrentSingleInout::Run(
         const auto *const parquet_output_type =
                 dag::type::Tuple::MakeTuple(column_types);
         parquet_scan_op->tuple =
-                jbcoe::make_polymorphic_value<dag::collection::Tuple>(
+                isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
                         parquet_output_type);
 
         // Compute Parquet operator column indices and filters

@@ -19,7 +19,7 @@ void from_json(const nlohmann::json &json, DAGOperator &op) {
     }
     auto const type =
             json.at("output_type").get<raw_ptr<const dag::type::Tuple>>();
-    op.tuple = jbcoe::make_polymorphic_value<Tuple>(type.get());
+    op.tuple = isocpp_p0201::make_polymorphic_value<Tuple>(type.get());
     op.from_json(json);
 }
 

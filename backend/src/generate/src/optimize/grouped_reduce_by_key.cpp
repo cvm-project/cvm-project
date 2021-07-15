@@ -36,8 +36,9 @@ void GroupedReduceByKey::Run(DAG *const dag,
                 new DAGReduceByKeyGrouped());
         auto *const new_op = new_op_ptr.get();
 
-        new_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                *op->tuple);
+        new_op->tuple =
+                isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
+                        *op->tuple);
         new_op->llvm_ir = op->llvm_ir;
 
         dag->AddOperator(new_op_ptr.release());

@@ -232,9 +232,10 @@ public:
         auto *const dop_op = new DAGConstantTuple();
         dag_->AddOperator(dop_op);
         dop_op->values.emplace_back("$DOP");
-        dop_op->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                dag::type::Tuple::MakeTuple(
-                        {dag::type::Atomic::MakeAtomic("long")}));
+        dop_op->tuple =
+                isocpp_p0201::make_polymorphic_value<dag::collection::Tuple>(
+                        dag::type::Tuple::MakeTuple(
+                                {dag::type::Atomic::MakeAtomic("long")}));
 
         // Fix up outer DAG
         dag_->RemoveFlow(in_flow);

@@ -119,8 +119,8 @@ void SimplePredicateMoveAround::Run(DAG *const dag,
             filt->llvm_ir = func.str();
 
             // copy the tuple
-            filt->tuple = jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                    *currentOp->tuple);
+            filt->tuple = isocpp_p0201::make_polymorphic_value<
+                    dag::collection::Tuple>(*currentOp->tuple);
         }
 
         // Remove the filter

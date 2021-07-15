@@ -69,21 +69,19 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
             part_dop_op->values.emplace_back(std::to_string(op->level_num));
             part_dop_op->values.emplace_back("$DOP");
             part_dop_op->values.emplace_back("$WID");
-            part_dop_op->tuple =
-                    jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                            dag::type::Tuple::MakeTuple(
-                                    {dag::type::Atomic::MakeAtomic("long"),
-                                     dag::type::Atomic::MakeAtomic("long"),
-                                     dag::type::Atomic::MakeAtomic("long"),
-                                     dag::type::Atomic::MakeAtomic("long")}));
+            part_dop_op->tuple = isocpp_p0201::make_polymorphic_value<
+                    dag::collection::Tuple>(dag::type::Tuple::MakeTuple(
+                    {dag::type::Atomic::MakeAtomic("long"),
+                     dag::type::Atomic::MakeAtomic("long"),
+                     dag::type::Atomic::MakeAtomic("long"),
+                     dag::type::Atomic::MakeAtomic("long")}));
 
             auto *const map_op = new DAGMapCpp();
             dag->AddOperator(map_op);
             map_op->function_name = "runtime::operators::ComputeGroupSizeTuple";
-            map_op->tuple =
-                    jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                            dag::type::Tuple::MakeTuple(
-                                    {dag::type::Atomic::MakeAtomic("long")}));
+            map_op->tuple = isocpp_p0201::make_polymorphic_value<
+                    dag::collection::Tuple>(dag::type::Tuple::MakeTuple(
+                    {dag::type::Atomic::MakeAtomic("long")}));
 
             auto *const group_by_op = new DAGGroupBy();
             dag->AddOperator(group_by_op);
@@ -103,19 +101,17 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
             auto *const exchange_dop_op = new DAGConstantTuple();
             dag->AddOperator(exchange_dop_op);
             exchange_dop_op->values.emplace_back("$DOP");
-            exchange_dop_op->tuple =
-                    jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                            dag::type::Tuple::MakeTuple(
-                                    {dag::type::Atomic::MakeAtomic("long")}));
+            exchange_dop_op->tuple = isocpp_p0201::make_polymorphic_value<
+                    dag::collection::Tuple>(dag::type::Tuple::MakeTuple(
+                    {dag::type::Atomic::MakeAtomic("long")}));
 
             // Create worker-ID operator
             auto *const exchange_wid_op = new DAGConstantTuple();
             dag->AddOperator(exchange_wid_op);
             exchange_wid_op->values.emplace_back("$WID");
-            exchange_wid_op->tuple =
-                    jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                            dag::type::Tuple::MakeTuple(
-                                    {dag::type::Atomic::MakeAtomic("long")}));
+            exchange_wid_op->tuple = isocpp_p0201::make_polymorphic_value<
+                    dag::collection::Tuple>(dag::type::Tuple::MakeTuple(
+                    {dag::type::Atomic::MakeAtomic("long")}));
 
             auto *const parquet_scan_op = new DAGParquetScan();
             dag->AddOperator(parquet_scan_op);
@@ -133,9 +129,8 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
             }
             const auto *const output_type =
                     dag::type::Tuple::MakeTuple(column_types);
-            parquet_scan_op->tuple =
-                    jbcoe::make_polymorphic_value<dag::collection::Tuple>(
-                            output_type);
+            parquet_scan_op->tuple = isocpp_p0201::make_polymorphic_value<
+                    dag::collection::Tuple>(output_type);
 
             // Compute Parquet operator column indices and filters
             auto const width = column_types.size();
