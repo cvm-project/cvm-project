@@ -254,7 +254,7 @@ auto ExchangeS3Operator::WaitForFile(const size_t sender_id) const
 
         using namespace std::chrono_literals;
         // NOLINTNEXTLINE(readability-magic-numbers)
-        std::this_thread::sleep_for(100ms * (1UL << std::min(j, 5UL)));
+        std::this_thread::sleep_for(100ms * (1UL << std::min(j, 2UL)));
     }
 
     auto const file_path =
