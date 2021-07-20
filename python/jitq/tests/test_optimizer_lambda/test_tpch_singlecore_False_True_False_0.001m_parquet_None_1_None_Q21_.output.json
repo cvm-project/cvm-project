@@ -967,7 +967,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -1742,7 +1742,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -2094,7 +2094,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "add_index": false,
@@ -2382,7 +2382,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "add_index": false,
@@ -3055,7 +3055,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -4585,7 +4585,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -5772,7 +5772,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24586Exx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.i1, i64 %arg.i2) local_unnamed_addr #0 {\nentry:\n  %.14 = add nsw i64 %arg.i2, %arg.i1\n  store i64 %.14, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
@@ -6716,7 +6716,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -7939,7 +7939,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24580E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2, i64 %arg.r.3) local_unnamed_addr #0 {\nentry:\n  store i64 %arg.r.0, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i64* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #1 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
@@ -9064,7 +9064,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -9939,7 +9939,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -10323,7 +10323,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "add_index": false,
@@ -10591,7 +10591,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "add_index": false,
@@ -12719,7 +12719,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -13938,7 +13938,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24564E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.r.0, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.r.1, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.r.2, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
@@ -15024,7 +15024,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -16243,7 +16243,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24560E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.r.2, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.r.0, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.r.1, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.4, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.3, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
@@ -17252,7 +17252,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -18439,7 +18439,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24556E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15({ i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack3 = bitcast { i64, i64 }* %retptr to i64*\n  store i64 %arg.r.1, i64* %retptr.repack3, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64 }, { i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.r.2, i64* %retptr.repack1, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(<{ i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  %.1.repack3 = bitcast <{ i64, i64 }>* %.1 to i64*\n  store i64 %.3, i64* %.1.repack3, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64 }>, <{ i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.4, i64* %.1.repack1, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
@@ -19365,7 +19365,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -20194,7 +20194,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -20915,7 +20915,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 3116157277586924753
                                             },
                                             {
                                                 "add_index": false,
@@ -21426,7 +21426,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "add_index": false,
@@ -21778,7 +21778,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24552E28Record$28int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1) local_unnamed_addr #0 {\nentry:\n  store i64 %arg.r.0, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
@@ -22357,7 +22357,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24538E39Record$28int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15({ i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2) local_unnamed_addr #0 {\nentry:\n  %retptr.repack5 = bitcast { i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.r.2, i64* %retptr.repack5, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.r.0, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64 }, { i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.r.1, i64* %retptr.repack3, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(<{ i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4) local_unnamed_addr #1 {\nentry:\n  %.1.repack5 = bitcast <{ i64, i64, i64 }>* %.1 to i64*\n  store i64 %.4, i64* %.1.repack5, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.2, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64 }>, <{ i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.3, i64* %.1.repack3, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
@@ -22931,7 +22931,7 @@
                                                         "port": 0
                                                     }
                                                 ],
-                                                "seed": 0
+                                                "seed": 8834728406234595308
                                             },
                                             {
                                                 "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q213run12$3clocals$3e18$3clambda$3e$24546E28Record$28int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1) local_unnamed_addr #0 {\nentry:\n  store i64 %arg.r.0, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  store i64 %.2, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
