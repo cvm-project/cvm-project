@@ -142,7 +142,7 @@ class Driver:
             return res
 
         worker_range_size = 1
-        if num_workers > 500:
+        if num_workers > 200:
             worker_range_size = math.ceil(math.sqrt(num_workers))
         num_ranges = math.ceil(num_workers / worker_range_size)
         worker_ranges = [((i + 0) * num_workers // num_ranges,
