@@ -62,6 +62,10 @@ void ExchangeS3::Run(DAG *const dag, const std::string & /*config*/) const {
             auto *const partition_op = new DAGPartition();
             dag->AddOperator(partition_op);
 
+            static const std::array<size_t, 2> kSeeds = {0x7a9b42ad54aa7fec,
+                                                         0x2b3ed088aad124d1};
+            partition_op->seed = kSeeds.at(op->level_num);
+
             // Create degree-of-parallelism operator
             auto *const part_dop_op = new DAGConstantTuple();
             dag->AddOperator(part_dop_op);
