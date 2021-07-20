@@ -17,9 +17,18 @@ auto MakeClient() -> Aws::S3::S3Client * {
 
     Aws::Client::ClientConfiguration cfg;
     // NOLINTNEXTLINE(readability-magic-numbers)
-    cfg.connectTimeoutMs = 3000;
+    cfg.connectTimeoutMs = 1000;  // sets CURLOPT_CONNECTTIMEOUT_MS (in ms)
+    // cfg.httpRequestTimeoutMs = 3000;  // sets CURLOPT_TIMEOUT_MS (in ms)
+    //                                   // This is the full transfer latency.
+    //                                   // Use with care!
     // NOLINTNEXTLINE(readability-magic-numbers)
-    cfg.requestTimeoutMs = 3000;
+    cfg.requestTimeoutMs = 1000;   // sets CURLOPT_LOW_SPEED_TIME (in ms,
+                                   // minimum is 1s)
+    cfg.tcpKeepAliveIntervalMs =   // XXX: work-around for bug in our SDK
+            cfg.requestTimeoutMs;  //      version
+    // NOLINTNEXTLINE(readability-magic-numbers)
+    cfg.lowSpeedLimit = 100 * 1000;  // sets CURLOPT_LOW_SPEED_LIMIT (in bytes
+                                     // per second)
     // NOLINTNEXTLINE(readability-magic-numbers)
     cfg.retryStrategy = std::make_shared<AggressiveRetryStrategy>(8, 750);
 
