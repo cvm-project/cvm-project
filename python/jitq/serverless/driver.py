@@ -55,6 +55,10 @@ class Driver:
             ),
         )
         self.lambda_function_name = stack_metadata['JitqLambdaRunnerFunction']
+        self.lambda_function_timeout = \
+            self.lambda_client.get_function_configuration(
+                FunctionName=self.lambda_function_name,
+            )['Timeout']
 
         # SQS
         self.sqs_resource = make_boto3_resource('sqs')
@@ -198,7 +202,8 @@ class Driver:
         num_exceptions = 0
 
         while len(messages) < num_workers:
-            if time.time() > start_fetch_time + 120:
+            if time.time() > start_fetch_time + \
+                    self.lambda_function_timeout + 20:
                 self.logger.error('  Timeout, giving up...', exc_info=True)
                 break
 

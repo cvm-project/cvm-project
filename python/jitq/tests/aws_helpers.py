@@ -153,6 +153,13 @@ def mock_boto3_client(service_name, *args, **kwargs):
             stubber.add_response('describe_stacks', JITQ_MOCK_STACK,
                                  expected_params)
         stubber.activate()
+    if service_name == 'lambda':
+        # Return hard-coded timeout
+        stubber = botocore.stub.Stubber(client)
+        stubber.add_response('get_function_configuration',
+                             {'Timeout': 60},
+                             {'FunctionName': TEST_LAMBDA_FUNCTION_NAME})
+        stubber.activate()
     return client
 
 
