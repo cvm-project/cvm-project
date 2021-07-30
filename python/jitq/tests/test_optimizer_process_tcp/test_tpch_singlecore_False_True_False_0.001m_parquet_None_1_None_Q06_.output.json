@@ -1,0 +1,930 @@
+{
+    "inputs": [
+        {
+            "dag_port": 0,
+            "op": 2,
+            "op_port": 0
+        },
+        {
+            "dag_port": 1,
+            "op": 1,
+            "op_port": 0
+        }
+    ],
+    "operators": [
+        {
+            "id": 0,
+            "inner_dag": {
+                "inputs": [
+                    {
+                        "dag_port": 0,
+                        "op": 9,
+                        "op_port": 0
+                    },
+                    {
+                        "dag_port": 1,
+                        "op": 11,
+                        "op_port": 0
+                    }
+                ],
+                "operators": [
+                    {
+                        "id": 0,
+                        "num_inputs": 1,
+                        "op": "zip",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 11,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 1,
+                        "op": "ensure_single_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 2,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q063run12$3clocals$3e18$3clambda$3e$24174Exx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.i1, i64 %arg.i2) local_unnamed_addr #0 {\nentry:\n  %.14 = add nsw i64 %arg.i2, %arg.i1\n  store i64 %.14, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
+                        "id": 2,
+                        "op": "reduce",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 3,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "add_index": false,
+                        "id": 3,
+                        "op": "column_scan",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 4,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "idx": 0,
+                                "ranges": []
+                            }
+                        ],
+                        "filesystem": "file",
+                        "id": 4,
+                        "op": "parquet_scan",
+                        "output_type": [
+                            {
+                                "layout": "C",
+                                "num_dimensions": 1,
+                                "tuple_type": [
+                                    {
+                                        "type": "long"
+                                    }
+                                ],
+                                "type": "array"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 5,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 5,
+                        "inner_dag": {
+                            "inputs": [
+                                {
+                                    "dag_port": 0,
+                                    "op": 2,
+                                    "op_port": 0
+                                },
+                                {
+                                    "dag_port": 0,
+                                    "op": 3,
+                                    "op_port": 0
+                                }
+                            ],
+                            "operators": [
+                                {
+                                    "id": 0,
+                                    "inner_dag": {
+                                        "inputs": [
+                                            {
+                                                "dag_port": 0,
+                                                "op": 3,
+                                                "op_port": 0
+                                            }
+                                        ],
+                                        "operators": [
+                                            {
+                                                "id": 0,
+                                                "op": "materialize_column_chunks",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 3,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "column_names": [
+                                                    "v0"
+                                                ],
+                                                "id": 1,
+                                                "op": "materialize_parquet_file",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 0,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 2,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 2,
+                                                "op": "expand_pattern",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 4,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 5,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 3,
+                                                "op": "parameter_lookup",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": []
+                                            },
+                                            {
+                                                "id": 4,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "R\"STRING(   {       \"filename\" : \"/tmp/jitq-query-result-%1$d.parquet\",       \"filesystem\" : \"file\"   })STRING\""
+                                                ]
+                                            },
+                                            {
+                                                "id": 5,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "static_cast<long>(   runtime::operators::process_worker_id())"
+                                                ]
+                                            }
+                                        ],
+                                        "outputs": [
+                                            {
+                                                "op": 1,
+                                                "port": 0
+                                            }
+                                        ]
+                                    },
+                                    "num_inputs": 1,
+                                    "op": "pipeline",
+                                    "output_type": [
+                                        {
+                                            "type": "std::string"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 1,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 1,
+                                    "inner_dag": {
+                                        "inputs": [
+                                            {
+                                                "dag_port": 0,
+                                                "op": 12,
+                                                "op_port": 0
+                                            },
+                                            {
+                                                "dag_port": 1,
+                                                "op": 13,
+                                                "op_port": 0
+                                            }
+                                        ],
+                                        "operators": [
+                                            {
+                                                "id": 0,
+                                                "op": "expand_pattern",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 2,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 1,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 1,
+                                                "op": "range_source",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 3,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 2,
+                                                "op": "projection",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "positions": [
+                                                    3
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 12,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 3,
+                                                "op": "projection",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "positions": [
+                                                    0,
+                                                    1,
+                                                    2
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 13,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 4,
+                                                "op": "ensure_single_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 5,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q063run12$3clocals$3e18$3clambda$3e$24174Exx\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.i1, i64 %arg.i2) local_unnamed_addr #0 {\nentry:\n  %.14 = add nsw i64 %arg.i2, %arg.i1\n  store i64 %.14, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i64* nocapture %.1, i64 %.2, i64 %.3) local_unnamed_addr #1 {\nentry:\n  %.14.i = add nsw i64 %.3, %.2\n  store i64 %.14.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
+                                                "id": 5,
+                                                "op": "reduce",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 6,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q063run12$3clocals$3e18$3clambda$3e$24172E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i64* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2, i64 %arg.r.3) local_unnamed_addr #0 {\nentry:\n  %.25 = mul nsw i64 %arg.r.2, %arg.r.1\n  store i64 %.25, i64* %retptr, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i64* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #1 {\nentry:\n  %.25.i = mul nsw i64 %.4, %.3\n  store i64 %.25.i, i64* %.1, align 8\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
+                                                "id": 6,
+                                                "op": "map",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 7,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq3rdd3RDD5alias12$3clocals$3e18$3clambda$3e$24168E5TupleIxxxxE\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15({ i64, i64, i64, i64 }* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.x.0, i64 %arg.x.1, i64 %arg.x.2, i64 %arg.x.3) local_unnamed_addr #0 {\nentry:\n  %retptr.repack7 = bitcast { i64, i64, i64, i64 }* %retptr to i64*\n  store i64 %arg.x.0, i64* %retptr.repack7, align 8\n  %retptr.repack1 = getelementptr inbounds { i64, i64, i64, i64 }, { i64, i64, i64, i64 }* %retptr, i64 0, i32 1\n  store i64 %arg.x.1, i64* %retptr.repack1, align 8\n  %retptr.repack3 = getelementptr inbounds { i64, i64, i64, i64 }, { i64, i64, i64, i64 }* %retptr, i64 0, i32 2\n  store i64 %arg.x.2, i64* %retptr.repack3, align 8\n  %retptr.repack5 = getelementptr inbounds { i64, i64, i64, i64 }, { i64, i64, i64, i64 }* %retptr, i64 0, i32 3\n  store i64 %arg.x.3, i64* %retptr.repack5, align 8\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline norecurse nounwind writeonly\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(<{ i64, i64, i64, i64 }>* nocapture %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) local_unnamed_addr #1 {\nentry:\n  %.1.repack7 = bitcast <{ i64, i64, i64, i64 }>* %.1 to i64*\n  store i64 %.2, i64* %.1.repack7, align 1\n  %.1.repack1 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 1\n  store i64 %.3, i64* %.1.repack1, align 1\n  %.1.repack3 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 2\n  store i64 %.4, i64* %.1.repack3, align 1\n  %.1.repack5 = getelementptr inbounds <{ i64, i64, i64, i64 }>, <{ i64, i64, i64, i64 }>* %.1, i64 0, i32 3\n  store i64 %.5, i64* %.1.repack5, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline norecurse nounwind writeonly }\n",
+                                                "id": 7,
+                                                "op": "map",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 8,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "func": "; ModuleID = 'id'\nsource_filename = \"<string>\"\ntarget datalayout = \"e-m:e-i64:64-f80:128-n8:16:32:64-S128\"\ntarget triple = \"x86_64-unknown-linux-gnu\"\n\n@\"_ZN08NumbaEnv4jitq5tests4tpch7queries3Q063run12$3clocals$3e18$3clambda$3e$24170E50Record$28int64$2c$20int64$2c$20int64$2c$20int64$29\" = common local_unnamed_addr global i8* null\n\n; Function Attrs: norecurse nounwind writeonly\ndefine i32 @notuniquename218303dba31a092a63fd8a50e54f2c15(i8* noalias nocapture %retptr, { i8*, i32 }** noalias nocapture readnone %excinfo, i64 %arg.r.0, i64 %arg.r.1, i64 %arg.r.2, i64 %arg.r.3) local_unnamed_addr #0 {\nentry:\n  %arg.r.3.off = add i64 %arg.r.3, -757382400\n  %0 = icmp ult i64 %arg.r.3.off, 31536000\n  %.72 = icmp sgt i64 %arg.r.2, 4\n  %or.cond1 = and i1 %.72, %0\n  br i1 %or.cond1, label %B32, label %B50\n\nB32:                                              ; preds = %entry\n  %.97 = icmp slt i64 %arg.r.2, 8\n  %.124 = icmp slt i64 %arg.r.0, 24\n  %spec.select = and i1 %.124, %.97\n  %phitmp = zext i1 %spec.select to i8\n  br label %B50\n\nB50:                                              ; preds = %B32, %entry\n  %\"$phi50.0.0\" = phi i8 [ 0, %entry ], [ %phitmp, %B32 ]\n  store i8 %\"$phi50.0.0\", i8* %retptr, align 1\n  ret i32 0\n}\n\n; Function Attrs: alwaysinline\ndefine void @cfunc.notuniquename218303dba31a092a63fd8a50e54f2c15(i8* %.1, i64 %.2, i64 %.3, i64 %.4, i64 %.5) #1 {\nentry:\n  %arg.r.3.off.i = add i64 %.5, -757382400\n  %0 = icmp ult i64 %arg.r.3.off.i, 31536000\n  %.72.i = icmp sgt i64 %.4, 4\n  %or.cond1.i = and i1 %.72.i, %0\n  br i1 %or.cond1.i, label %notuniquename218303dba31a092a63fd8a50e54f2c15.exit, label %notuniquename218303dba31a092a63fd8a50e54f2c15.exit.thread\n\nnotuniquename218303dba31a092a63fd8a50e54f2c15.exit: ; preds = %entry\n  %.97.i = icmp sgt i64 %.4, 7\n  %.124.i = icmp sgt i64 %.2, 23\n  %.24 = or i1 %.124.i, %.97.i\n  br i1 %.24, label %notuniquename218303dba31a092a63fd8a50e54f2c15.exit.thread, label %1\n\nnotuniquename218303dba31a092a63fd8a50e54f2c15.exit.thread: ; preds = %notuniquename218303dba31a092a63fd8a50e54f2c15.exit, %entry\n  br label %1\n\n1:                                                ; preds = %notuniquename218303dba31a092a63fd8a50e54f2c15.exit.thread, %notuniquename218303dba31a092a63fd8a50e54f2c15.exit\n  %2 = phi i1 [ false, %notuniquename218303dba31a092a63fd8a50e54f2c15.exit.thread ], [ true, %notuniquename218303dba31a092a63fd8a50e54f2c15.exit ]\n  %.31 = bitcast i8* %.1 to i1*\n  store i1 %2, i1* %.31, align 1\n  ret void\n}\n\nattributes #0 = { norecurse nounwind writeonly }\nattributes #1 = { alwaysinline }\n",
+                                                "id": 8,
+                                                "op": "filter",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 9,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "add_index": false,
+                                                "id": 9,
+                                                "op": "column_scan",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 10,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "columns": [
+                                                    {
+                                                        "idx": 4,
+                                                        "ranges": []
+                                                    },
+                                                    {
+                                                        "idx": 5,
+                                                        "ranges": []
+                                                    },
+                                                    {
+                                                        "idx": 6,
+                                                        "ranges": []
+                                                    },
+                                                    {
+                                                        "idx": 10,
+                                                        "ranges": []
+                                                    }
+                                                ],
+                                                "filesystem": "file",
+                                                "id": 10,
+                                                "op": "parquet_scan",
+                                                "output_type": [
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    },
+                                                    {
+                                                        "layout": "C",
+                                                        "num_dimensions": 1,
+                                                        "tuple_type": [
+                                                            {
+                                                                "type": "long"
+                                                            }
+                                                        ],
+                                                        "type": "array"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 11,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 11,
+                                                "op": "cartesian",
+                                                "output_type": [
+                                                    {
+                                                        "type": "std::string"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [
+                                                    {
+                                                        "op": 0,
+                                                        "port": 0
+                                                    },
+                                                    {
+                                                        "op": 14,
+                                                        "port": 0
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "id": 12,
+                                                "op": "parameter_lookup",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "predecessors": []
+                                            },
+                                            {
+                                                "id": 13,
+                                                "op": "parameter_lookup",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "std::string"
+                                                    }
+                                                ],
+                                                "predecessors": []
+                                            },
+                                            {
+                                                "id": 14,
+                                                "op": "constant_tuple",
+                                                "output_type": [
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    },
+                                                    {
+                                                        "type": "long"
+                                                    }
+                                                ],
+                                                "predecessors": [],
+                                                "values": [
+                                                    "0",
+                                                    "1",
+                                                    "1"
+                                                ]
+                                            }
+                                        ],
+                                        "outputs": [
+                                            {
+                                                "op": 4,
+                                                "port": 0
+                                            }
+                                        ]
+                                    },
+                                    "num_inputs": 2,
+                                    "op": "pipeline",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        }
+                                    ],
+                                    "predecessors": [
+                                        {
+                                            "op": 2,
+                                            "port": 0
+                                        },
+                                        {
+                                            "op": 3,
+                                            "port": 0
+                                        }
+                                    ]
+                                },
+                                {
+                                    "id": 2,
+                                    "op": "parameter_lookup",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "std::string"
+                                        }
+                                    ],
+                                    "predecessors": []
+                                },
+                                {
+                                    "id": 3,
+                                    "op": "parameter_lookup",
+                                    "output_type": [
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "long"
+                                        },
+                                        {
+                                            "type": "std::string"
+                                        }
+                                    ],
+                                    "predecessors": []
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "op": 0,
+                                    "port": 0
+                                }
+                            ]
+                        },
+                        "op": "concurrent_execute_process",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 6,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 6,
+                        "op": "cartesian",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 7,
+                                "port": 0
+                            },
+                            {
+                                "op": 0,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 7,
+                        "num_inputs": 1,
+                        "op": "zip",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 8,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 8,
+                        "op": "split_range",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [
+                            {
+                                "op": 9,
+                                "port": 0
+                            },
+                            {
+                                "op": 10,
+                                "port": 0
+                            }
+                        ]
+                    },
+                    {
+                        "id": 9,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            },
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": []
+                    },
+                    {
+                        "id": 10,
+                        "op": "constant_tuple",
+                        "output_type": [
+                            {
+                                "type": "long"
+                            }
+                        ],
+                        "predecessors": [],
+                        "values": [
+                            "static_cast<long>(   runtime::operators::process_num_workers())"
+                        ]
+                    },
+                    {
+                        "id": 11,
+                        "op": "parameter_lookup",
+                        "output_type": [
+                            {
+                                "type": "std::string"
+                            }
+                        ],
+                        "predecessors": []
+                    }
+                ],
+                "outputs": [
+                    {
+                        "op": 1,
+                        "port": 0
+                    }
+                ]
+            },
+            "num_inputs": 2,
+            "op": "pipeline",
+            "output_type": [
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": [
+                {
+                    "op": 1,
+                    "port": 0
+                },
+                {
+                    "op": 2,
+                    "port": 0
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                },
+                {
+                    "type": "long"
+                }
+            ],
+            "predecessors": []
+        },
+        {
+            "id": 2,
+            "op": "parameter_lookup",
+            "output_type": [
+                {
+                    "type": "std::string"
+                }
+            ],
+            "predecessors": []
+        }
+    ],
+    "outputs": [
+        {
+            "op": 0,
+            "port": 0
+        }
+    ]
+}
