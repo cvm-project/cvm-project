@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/algorithm/string/join.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/io_service.hpp>
 #include <boost/format.hpp>
@@ -148,6 +149,7 @@ void ConcurrentExecuteProcessOperator::ComputeResult() {
     ios.run();
 
     // Wait for processes to complete and fetch results
+    std::vector<std::string> failed_runners;
     for (auto &result : runner_results) {
         result.child.wait();
         auto const ret = result.child.exit_code();
@@ -165,9 +167,14 @@ void ConcurrentExecuteProcessOperator::ComputeResult() {
 
         // Check for error
         if (ret != 0) {
-            throw std::runtime_error("Runner " + std::to_string(runner_num) +
-                                     " failed.");
+            failed_runners.emplace_back(std::to_string(runner_num));
         }
+    }
+
+    // Throw if some runner has failed
+    if (!failed_runners.empty()) {
+        throw std::runtime_error("The following runners failed: " +
+                                 boost::join(failed_runners, ", "));
     }
 
     result_it_ = results_.begin();
