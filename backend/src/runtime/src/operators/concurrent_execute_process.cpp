@@ -97,6 +97,12 @@ void ConcurrentExecuteProcessOperator::ComputeResult() {
         dag_file << inner_dag_;
     }
 
+    // Set up file with host names for TCP operators
+    auto const host_file_path = boost::filesystem::unique_path(
+            boost::filesystem::temp_directory_path() / "jitq" /
+            "hosts-%%%%-%%%%-%%%%-%%%%.txt");
+    std::ofstream host_file(host_file_path.string());
+
     // Start processes with inner plans
     boost::asio::io_service ios;
     std::vector<RunnerResult> runner_results;
@@ -120,11 +126,18 @@ void ConcurrentExecuteProcessOperator::ComputeResult() {
         std::future<std::string> err;
         boost::process::async_pipe in(ios);
 
+        host_file << "127.0.0.1:" << (kWorkerBasePort + runner_num)
+                  << std::endl;
+
         // NOLINTNEXTLINE(clang-analyzer-core.NonNullParamChecker)
         boost::process::child child(
                 runner, "--dag", dag_path.string(),
                 boost::process::env["JITQ_PROCESS_WORKER_ID"] =
                         std::to_string(runner_num),
+                boost::process::env["JITQ_TCP_WORKER_ID"] =
+                        std::to_string(runner_num),
+                boost::process::env["JITQ_TCP_HOSTFILE_PATH"] =
+                        host_file_path.string(),
                 boost::process::env["JITQ_QUERY_ID"] = std::to_string(query_id),
                 boost::process::env["OMP_NUM_THREADS"] = std::to_string(1),
                 boost::process::std_out > out,  //
@@ -146,6 +159,9 @@ void ConcurrentExecuteProcessOperator::ComputeResult() {
                                               std::move(err), runner_num});
     }
 
+    host_file.close();
+
+    // Trigger feeding input to runner processes
     ios.run();
 
     // Wait for processes to complete and fetch results

@@ -27,7 +27,7 @@ template <typename... T>
 void print(T const &...args) {
     std::ostringstream buffer;
     detail::print_impl(buffer, ": ", args...);
-    std::cout << buffer.str() << std::flush;
+    std::cerr << buffer.str() << std::flush;
 }
 
 }  // namespace runtime::fibers

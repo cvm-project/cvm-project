@@ -21,6 +21,8 @@ public:
     void close() override;
 
 private:
+    static constexpr size_t kWorkerBasePort = 9200;
+
     // cppcheck-suppress unusedPrivateFunction  // false positive
     void ComputeResult();
 

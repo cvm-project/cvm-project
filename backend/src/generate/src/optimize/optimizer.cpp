@@ -116,7 +116,7 @@ void Optimizer::Run(DAG *const dag) {
 #ifndef DEBUG
         transformations.emplace_back("verify");
 #endif  // DEBUG
-    } else if (target == "process") {
+    } else if (target == "process/s3" || target == "process/tcp") {
         transformations.emplace_back("parallelize_concurrent");
         transformations.emplace_back("type_inference");
 #ifndef DEBUG
@@ -137,7 +137,12 @@ void Optimizer::Run(DAG *const dag) {
 #endif  // DEBUG
         }
 
-        transformations.emplace_back("exchange_s3");
+        if (target == "process/s3") {
+            transformations.emplace_back("exchange_s3");
+        } else {
+            assert(target == "process/tcp");
+            transformations.emplace_back("exchange_tcp");
+        }
         transformations.emplace_back("type_inference");
 #ifndef DEBUG
         transformations.emplace_back("verify");

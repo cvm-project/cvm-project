@@ -87,9 +87,12 @@ OPTIMIZER_CONFIGS = {
     'omp': OptimizerConfig(  # Optimizer with '-O2' and omp target
         join(TEST_BASE_DIR, 'test_optimizer_omp'),
         ['-O2', '-Tomp']),
-    'process': OptimizerConfig(  # Optimizer with '-O2' and process target
-        join(TEST_BASE_DIR, 'test_optimizer_process'),
-        ['-O2', '-Tprocess']),
+    'process_s3': OptimizerConfig(  # Optimizer with '-O2' and process target
+        join(TEST_BASE_DIR, 'test_optimizer_process_s3'),
+        ['-O2', '-Tprocess/s3']),
+    'process_tcp': OptimizerConfig(  # Optimizer with '-O2' and process target
+        join(TEST_BASE_DIR, 'test_optimizer_process_tcp'),
+        ['-O2', '-Tprocess/tcp']),
     'lambda': OptimizerConfig(  # Optimizer with '-O2' and lambda target
         join(TEST_BASE_DIR, 'test_optimizer_lambda'),
         ['-O2', '-Tlambda', '-ttwo-level-exchange']),

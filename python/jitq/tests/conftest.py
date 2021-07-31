@@ -168,7 +168,7 @@ def generate_testcases(generate_testcases_enabled, request):
 @pytest.fixture
 def jitq_context(target, generate_testcases, monkeypatch, request):
     # pylint: disable=unused-argument  # needed as fixture
-    if target == 'process':
+    if target.startswith('process/'):
         if 'JITQ_PROCESS_NUM_WORKERS' not in os.environ:
             monkeypatch.setenv('JITQ_PROCESS_NUM_WORKERS', '2')
         if 'JITQ_EXCHANGE_S3_BUCKET_NAME' not in os.environ:
