@@ -21,12 +21,14 @@ void print_impl(std::ostream &out, T const &arg, Ts const &...args) {
     detail::print_impl(out, args...);
 }
 
+auto wall_time() -> std::string;
+
 }  // namespace detail
 
 template <typename... T>
 void print(T const &...args) {
     std::ostringstream buffer;
-    detail::print_impl(buffer, ": ", args...);
+    detail::print_impl(buffer, detail::wall_time(), ": ", args...);
     std::cerr << buffer.str() << std::flush;
 }
 

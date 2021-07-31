@@ -1,5 +1,6 @@
 #include "trace.hpp"
 
+#include <chrono>
 #include <iomanip>
 #include <map>
 #include <mutex>
@@ -86,6 +87,14 @@ auto tag() -> std::string {
 }
 
 namespace detail {
+
+auto wall_time() -> std::string {
+    std::ostringstream out;
+    out << std::chrono::duration_cast<std::chrono::microseconds>(
+                   std::chrono::system_clock::now().time_since_epoch())
+                    .count();
+    return out.str();
+}
 
 void print_impl(std::ostream& out) { out << '\n'; }
 
