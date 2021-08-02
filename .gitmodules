@@ -19,6 +19,3 @@
 [submodule "3rdparty/polymorphic_value"]
 	path = 3rdparty/polymorphic_value
 	url = https://github.com/jbcoe/polymorphic_value
-[submodule "3rdparty/tl-expected"]
-	path = 3rdparty/tl-expected
-	url = https://github.com/TartanLlama/expected.git
