@@ -1,6 +1,7 @@
 #ifndef OPERATORS_PARQUET_SCAN_IMPL_HPP
 #define OPERATORS_PARQUET_SCAN_IMPL_HPP
 
+#include <condition_variable>
 #include <deque>
 #include <future>
 #include <map>
@@ -56,7 +57,10 @@ public:
     auto operator=(ParquetFileOperator&& other)
             -> ParquetFileOperator& = delete;
 
-    ~ParquetFileOperator() { assert(!metadata_fetcher_.joinable()); }
+    ~ParquetFileOperator() {
+        assert(!metadata_fetcher_.joinable());
+        assert(!upstream_fetcher_.joinable());
+    }
 
     void open();
     auto next() -> std::optional<std::unique_ptr<ParquetFileHandle>>;
@@ -65,9 +69,7 @@ public:
 private:
     static constexpr int32_t WAIT_DOWNLOAD_MS = 10;
 
-    void FetchMetaData(
-            const std::vector<std::pair<std::string, impl::RowGroupRange>>&
-                    file_infos);
+    void FetchMetaData();
 
     auto HasPendingFileHandles() -> bool;
     auto AreAllFilesProcessed() -> bool;
@@ -78,9 +80,13 @@ private:
 
     // Meta data fetcher thread and communication with the main thread
     std::thread metadata_fetcher_;
+    std::thread upstream_fetcher_;
     std::mutex mutex_;
-    int32_t nfiles_to_process_ = 0;
+    bool has_upstream_completed_ = false;
+    bool has_prefetching_completed_ = false;
+    std::condition_variable file_infos_cv_;
     std::queue<std::unique_ptr<ParquetFileHandle>> file_handles_;
+    std::queue<std::pair<std::string, impl::RowGroupRange>> file_infos_;
 };
 
 class ParquetRowGroupOperator {

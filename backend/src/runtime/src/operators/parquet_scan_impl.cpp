@@ -42,37 +42,45 @@ auto MakeParquetScanOperator(
 }
 
 void ParquetFileOperator::open() {
-    upstream_->open();
+    // Spawned in a separate thread to supply the file handles as soon as they
+    // are in
+    metadata_fetcher_ = std::thread(&ParquetFileOperator::FetchMetaData, this);
 
-    std::vector<std::pair<std::string, RowGroupRange>> file_infos;
-    while (true) {
-        auto const ret = upstream_->next();
+    upstream_fetcher_ = std::thread([this]() {
+        upstream_->open();
 
-        if (dynamic_cast<values::None*>(ret.get()) != nullptr) break;
+        while (true) {
+            auto const ret = upstream_->next();
 
-        auto const& fields = ret->as<values::Tuple>()->fields;
-        auto const file_path = fields.at(0)->as<values::String>()->value;
+            if (dynamic_cast<values::None*>(ret.get()) != nullptr) {
+                has_upstream_completed_ = true;
+                file_infos_cv_.notify_one();
+                break;
+            }
 
-        const size_t slice_from = fields.at(1)->as<values::Int64>()->value;
-        const size_t slice_to = fields.at(2)->as<values::Int64>()->value;
-        const size_t num_slices = fields.at(3)->as<values::Int64>()->value;
-        const RowGroupRange row_group_range{slice_from, slice_to, num_slices};
+            auto const& fields = ret->as<values::Tuple>()->fields;
+            auto const file_path = fields.at(0)->as<values::String>()->value;
 
-        file_infos.emplace_back(file_path, row_group_range);
-    }
-    nfiles_to_process_ = file_infos.size();
+            const size_t slice_from = fields.at(1)->as<values::Int64>()->value;
+            const size_t slice_to = fields.at(2)->as<values::Int64>()->value;
+            const size_t num_slices = fields.at(3)->as<values::Int64>()->value;
+            const RowGroupRange row_group_range{slice_from, slice_to,
+                                                num_slices};
 
-    metadata_fetcher_ = std::thread(&ParquetFileOperator::FetchMetaData, this,
-                                    std::move(file_infos));
+            std::lock_guard<std::mutex> lock(mutex_);
+            file_infos_.emplace(file_path, row_group_range);
+            file_infos_cv_.notify_one();
+        }
+    });
 }
 
 auto ParquetFileOperator::next()
         -> std::optional<std::unique_ptr<ParquetFileHandle>> {
+    WaitForFileHandles();
+
     if (AreAllFilesProcessed()) {
         return {};
     }
-
-    WaitForFileHandles();
 
     std::lock_guard<std::mutex> lock(mutex_);
     assert(!file_handles_.empty());
@@ -84,12 +92,30 @@ auto ParquetFileOperator::next()
 
 void ParquetFileOperator::close() {
     metadata_fetcher_.join();
+    upstream_fetcher_.join();
     upstream_->close();
 }
 
-void ParquetFileOperator::FetchMetaData(
-        const std::vector<std::pair<std::string, RowGroupRange>>& file_infos) {
-    for (auto const& [path, row_group_range] : file_infos) {
+void ParquetFileOperator::FetchMetaData() {
+    while (true) {
+        std::string path;
+        RowGroupRange row_group_range{};
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+            while (file_infos_.empty() && !has_upstream_completed_) {
+                file_infos_cv_.wait(lock);
+            }
+            if (!file_infos_.empty()) {
+                std::tie(path, row_group_range) = file_infos_.front();
+                file_infos_.pop();
+            } else {
+                assert(has_upstream_completed_);
+                break;
+            }
+        }
+
+        assert(!path.empty());
+
         auto source = fs_->OpenForRead(path);
         auto pq_file_reader = parquet::ParquetFileReader::Open(source);
         auto file_metadata = pq_file_reader->metadata();
@@ -101,19 +127,21 @@ void ParquetFileOperator::FetchMetaData(
             std::lock_guard<std::mutex> lock(mutex_);
             file_handles_.push(
                     std::unique_ptr<ParquetFileHandle>(std::move(handle)));
-            nfiles_to_process_--;
         }
     }
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    has_prefetching_completed_ = true;
 }
 
 auto ParquetFileOperator::HasPendingFileHandles() -> bool {
     std::lock_guard<std::mutex> lock(mutex_);
-    return file_handles_.empty() && nfiles_to_process_ > 0;
+    return file_handles_.empty() && !has_prefetching_completed_;
 }
 
 auto ParquetFileOperator::AreAllFilesProcessed() -> bool {
     std::lock_guard<std::mutex> lock(mutex_);
-    return file_handles_.empty() && nfiles_to_process_ == 0;
+    return file_handles_.empty() && has_prefetching_completed_;
 }
 
 void ParquetFileOperator::WaitForFileHandles() {
