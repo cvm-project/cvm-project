@@ -32,6 +32,7 @@ if(AWSSDK_FOUND)
     set(RUNTIME_SOURCE_FILES ${RUNTIME_SOURCE_FILES}
             src/aws/aggressive_retry_strategy.cpp
             src/aws/aws.cpp
+            src/aws/http_client.cpp
             src/aws/s3.cpp
             src/aws/stderr_log_system.cpp
             src/filesystem/s3.cpp

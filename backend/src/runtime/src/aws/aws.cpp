@@ -3,8 +3,10 @@
 #include <mutex>
 
 #include <aws/core/Aws.h>
+#include <aws/core/http/HttpClientFactory.h>
 #include <aws/core/utils/logging/AWSLogging.h>
 
+#include "aws/http_client.hpp"
 #include "aws/stderr_log_system.hpp"
 
 namespace runtime::aws {
@@ -45,6 +47,8 @@ void EnsureApiInitialized() {
     };
 
     static AwsApiHandle handle(std::move(options));
+
+    Aws::Http::SetHttpClientFactory(std::make_shared<HttpClientFactory>());
 
     is_initialized = true;
 }
