@@ -243,7 +243,7 @@ class Handler:
         # Compute remaining time
         timeout = 20
         try:
-            timeout = self.context.get_remaining_time_in_millis() / 1000.0 - 1
+            timeout = self.context.get_remaining_time_in_millis() / 1000.0 - 5
         except BaseException:
             pass
         timeout = str(timeout) + 's'
