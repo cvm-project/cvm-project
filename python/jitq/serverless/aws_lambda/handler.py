@@ -1,7 +1,9 @@
 import base64
 from concurrent.futures import ThreadPoolExecutor
+import glob
 import json
 import logging
+import logging.handlers
 import os
 from pathlib import Path
 import shutil
@@ -194,6 +196,8 @@ class Handler:
 
             logging.info('Worker %d done uploading log', self.worker_id)
 
+        shutil.rmtree(self.temp_dir)
+
     def _extract_plan(self):
         temp_gen_dir = os.path.join(self.temp_dir, 'backend', 'gen')
         dag_file_path = os.path.join(temp_gen_dir, 'dag.json')
@@ -316,5 +320,13 @@ class Handler:
 
 
 def run(event, context):
+    temp_dir = tempfile.gettempdir() + '/.*'
+    temp_files = glob.glob(temp_dir)
+    logging.info('Cleaning %s from previous runs. Current content:\n  %s',
+                 temp_dir, temp_files)
+    for temp_file in temp_files:
+        shutil.rmtree(temp_file, ignore_errors=True)
+    logging.info('Cleaning %s done.', temp_dir)
+
     handler = Handler(event, context)
     return handler.run()

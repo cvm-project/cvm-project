@@ -6,6 +6,7 @@ import logging
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from unittest import mock
 
@@ -188,6 +189,7 @@ def mock_make_api_call_process(self, operation_name, kwargs):
         env['JITQ_LAMBDA_RUNNER_RESULT_QUEUE_NAME'] = TEST_RESULT_QUEUE_NAME
         env['JITQ_LAMBDA_RUNNER_BUCKET_NAME'] = TEST_BUCKET_NAME
         env['JITQ_LAMBDA_FUNCTION_NAME'] = TEST_LAMBDA_FUNCTION_NAME
+        env['TMPDIR'] = tempfile.mkdtemp(prefix='jitq-fake-lambda-runtime-')
         env['OMP_NUM_THREADS'] = '1'
         if 'JITQ_LD_PRELOAD' in env:
             env['LD_PRELOAD'] = env['JITQ_LD_PRELOAD']
