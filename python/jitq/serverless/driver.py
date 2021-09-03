@@ -282,10 +282,11 @@ class Driver:
             self.logger.info('  Downloaded %s log files.',
                              len(filenames))
 
-        start_download_time = time.time()
+        last_download_time = time.time()
+        last_num_downloads = len(downloaded_files)
 
         while len(downloaded_files) < num_workers:
-            if time.time() > start_download_time + 120:
+            if time.time() > last_download_time + 10:
                 self.logger.error('  Timeout, giving up...', exc_info=True)
                 break
 
@@ -295,6 +296,10 @@ class Driver:
                 Prefix=s3_prefix + 'log/',
             )
             list(map(download_logs, logs_paginator))
+
+            if last_num_downloads < len(downloaded_files):
+                last_download_time = time.time()
+                last_num_downloads = len(downloaded_files)
 
     @staticmethod
     def extract_results(results):
