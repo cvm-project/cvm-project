@@ -10,6 +10,7 @@ variables:
   AWS_LAMBDA_ENDPOINT: 'http://doesnotwork.local:1234'  # Not used in CI tests but must exist
   AWS_S3_ENDPOINT: 'http://s3server.local:9000'
   AWS_SQS_ENDPOINT: 'http://sqsserver.local:9324'
+  NO_PROXY: 'doesnotwork.local,s3server.local,sqsserver.local'
   PYTEST_ADDOPTS: >-
       --color=yes -vs
       --log-cli-level INFO
@@ -35,7 +36,7 @@ services:
     alias: sqsserver.local
 
 default:
-  image: ingomuellernet/buildenv-jitq:2021-07-16
+  image: ingomuellernet/buildenv-jitq:2021-09-03
   before_script:
     - pip3 install -r requirements.txt
     - >-

@@ -126,7 +126,7 @@ message(STATUS "Found parquet ${Parquet_VERSION}")
 set(parquet_LIBRARY parquet_shared)
 
 # Set up AWS SDK
-find_package(AWSSDK CONFIG COMPONENTS
+find_package(AWSSDK 1.9 CONFIG COMPONENTS
         s3
     )
 

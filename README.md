@@ -235,30 +235,28 @@ pip3 install /opt/arrow-4.0.1/share/*.whl
 ```bash
 sudo apt install libcurl4-openssl-dev libssl-dev \
                  uuid-dev zlib1g-dev libpulse-dev && \
-mkdir -p /tmp/aws-sdk-cpp && \
-cd /tmp/aws-sdk-cpp && \
-wget https://github.com/aws/aws-sdk-cpp/archive/1.7.138.tar.gz -O - \
-    | tar -xz --strip-components=1 && \
+git clone --depth 1 --shallow-submodules --recurse-submodules --branch 1.9.94 \
+    https://github.com/aws/aws-sdk-cpp.git /tmp/aws-sdk-cpp/ && \
 mkdir -p /tmp/aws-sdk-cpp/build && \
 cd /tmp/aws-sdk-cpp/build && \
 CXX=clang++-11.1 CC=clang-11.1 \
-    sudo cmake \
+    cmake \
         -DBUILD_ONLY="dynamodb;lambda;s3;sqs" \
         -DCMAKE_BUILD_TYPE=Debug \
         -DCPP_STANDARD=17 \
         -DENABLE_TESTING=OFF \
         -DCUSTOM_MEMORY_MANAGEMENT=OFF \
-        -DCMAKE_INSTALL_PREFIX=/opt/aws-sdk-cpp-1.7/ \
-        -DAWS_DEPS_INSTALL_DIR:STRING=/opt/aws-sdk-cpp-1.7/ \
+        -DCMAKE_INSTALL_PREFIX=/opt/aws-sdk-cpp-1.9/ \
         .. && \
-sudo make -j$(nproc) install
+make -j$(nproc) install && \
+sudo make install
 ```
 
 Make the following command executed in the shells you use for development,
 for example via `~/.bashrc` or `/etc/profile.d/cmake-config.sh`:
 
 ```bash
-export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/aws-sdk-cpp-1.7
+export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/opt/aws-sdk-cpp-1.9
 ```
 
 ## Development

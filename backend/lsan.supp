@@ -25,3 +25,6 @@ leak:libSegFault.so
 
 # Funnily, ASan seems to have a small leak
 leak:asan_new_delete.cpp
+
+# The way the AWS SDK uses libcrypto seems to have a small leak
+leak:CRYPTO_zalloc
