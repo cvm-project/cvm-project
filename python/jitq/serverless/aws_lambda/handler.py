@@ -29,9 +29,9 @@ class Handler:
 
         self.event = event
         self.context = context
-        self.worker_id = 'unknown'
-        self.num_workers = 'unknown'
-        self.query_id = 'unknown'
+        self.worker_id = -1
+        self.num_workers = -1
+        self.query_id = -1
 
         # Read result queue parameters early. If we don't have those, we can't
         # communicate back the result or errors
