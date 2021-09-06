@@ -21,6 +21,9 @@ import botocore
 from utils import compute_config_from_endpoint
 
 
+NUM_MAX_LOG_FILES = 10
+
+
 class Handler:
     # pylint: disable=too-many-instance-attributes  # XXX: fixme
 
@@ -81,7 +84,10 @@ class Handler:
                     '%(asctime)s %(levelname)s %(message)s')
                 self.log_file_path = os.path.join(self.temp_dir, 'runner.log')
 
-                handler = logging.FileHandler(self.log_file_path)
+                handler = logging.handlers \
+                    .RotatingFileHandler(self.log_file_path,
+                                         maxBytes=1000 * 1000,
+                                         backupCount=NUM_MAX_LOG_FILES)
                 handler.setFormatter(formatter)
 
                 logging.getLogger().addHandler(handler)
@@ -187,11 +193,24 @@ class Handler:
         self.executor.shutdown()
 
         if self.enable_log_upload:
+            # Find log files
+            log_files = ['{}.{}'.format(self.log_file_path, i)
+                         for i in range(NUM_MAX_LOG_FILES, 0, -1)]
+            log_files = [f for f in log_files if Path(f).is_file()]
+
+            # Concatenate to single file
+            log_file_path = self.log_file_path + '.all'
+            with open(log_file_path, 'w') as output_log_file:
+                for fname in log_files:
+                    with open(fname, 'r') as input_log_file:
+                        shutil.copyfileobj(input_log_file, output_log_file)
+
+            # Upload
             self.s3_client.upload_file(
                 Bucket=self.s3_bucket,
                 Key=self.s3_prefix + 'log/worker-{}.log'.format(
                     self.worker_id),
-                Filename=self.log_file_path,
+                Filename=log_file_path,
             )
 
             logging.info('Worker %d done uploading log', self.worker_id)
