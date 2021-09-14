@@ -248,7 +248,7 @@ CXX=clang++-11.1 CC=clang-11.1 \
         -DCUSTOM_MEMORY_MANAGEMENT=OFF \
         -DCMAKE_INSTALL_PREFIX=/opt/aws-sdk-cpp-1.9/ \
         .. && \
-make -j$(nproc) install && \
+make -j$(nproc) && \
 sudo make install
 ```
 
