@@ -282,8 +282,14 @@ CXX=clang++-11.1 CC=clang-11.1 cmake ../src/ -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 Configure JIT compilation:
 
 ```bash
-echo -e "CC=clang-11.1\nCXX=clang++-11.1\nCXXFORMAT=clang-format-11.1\nLIBOMPDIR=/opt/clang+llvm-11.1.0/lib" \
-    > $JITQPATH/backend/src/generate/src/code_gen/Makefile.local
+(
+    echo "CC=clang-11.1"
+    echo "CXX=clang++-11.1"
+    echo "CXXFORMAT=clang-format-11.1"
+    echo "LLVMLINK=llvm-link-11.1"
+    echo "LLVMOPT=opt-11.1"
+    echo "LIBOMPDIR=/opt/clang+llvm-11.1.0/lib"
+) > $JITQPATH/backend/src/generate/src/code_gen/Makefile.local
 ```
 
 3. Build (after every change to the backend):
