@@ -399,7 +399,7 @@ Make sure you have Python 3.7.
 Install SAM:
 
 ```bash
-pip install -r $JITQPATH:/tools/aws/requirements.txt
+pip3 install -r $JITQPATH/tools/aws/requirements.txt
 ```
 
 Set up work-around to include `*.so` in SAM packages (assuming you are running in a venv), see [this issue](https://github.com/awslabs/aws-lambda-builders/issues/115):
