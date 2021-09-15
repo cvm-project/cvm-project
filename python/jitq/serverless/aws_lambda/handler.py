@@ -194,7 +194,8 @@ class Handler:
 
         if self.enable_log_upload:
             # Find log files
-            log_files = ['{}.{}'.format(self.log_file_path, i)
+            log_files = [self.log_file_path] + \
+                        ['{}.{}'.format(self.log_file_path, i)
                          for i in range(NUM_MAX_LOG_FILES, 0, -1)]
             log_files = [f for f in log_files if Path(f).is_file()]
 
